@@ -11,4 +11,4 @@ where a user wanted to add user-defined channels using m3u8 files.
 * [ ] Use Google Drive to sync channel data to your user account and allow remote adding
 * [ ] Get program guide data to supply streams if data exists
 * [ ] Find legit m3u streams to provide as samples
-* [ ] Integrate user data into channels app
+* [ ] Integrate user-submitted data into channels that can be setup and activated
