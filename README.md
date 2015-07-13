@@ -12,4 +12,5 @@ where a user wanted to add user-defined channels using m3u8 files.
 * [ ] Get program guide data to supply streams if data exists
 * [ ] Find legit m3u streams to provide as samples
 * [ ] Integrate user-submitted data into channels that can be setup and activated
+* [ ] Update channels when user updates user info
 * [ ] Add optional full-screen channel art for when the video is loading
