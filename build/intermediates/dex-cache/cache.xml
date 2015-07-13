@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\N\Documents\GitHub\cumulustv\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\22.2.0\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="5b37cf49773f7f17aca9830efd3053b0cac56728">
+        <dex dex="C:\Users\N\Documents\GitHub\cumulustv\app\build\intermediates\pre-dexed\debug\classes-e5d6de89ad458cb5c9568eb0be63a54f379c5521.jar" />
+    </item>
+    <item
+        jar="C:\Users\N\Documents\GitHub\cumulustv\app\build\intermediates\exploded-aar\com.android.support\leanback-v17\22.2.0\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="34b1bfb315bb66c080201bcf01b6954a96f91ebb">
+        <dex dex="C:\Users\N\Documents\GitHub\cumulustv\app\build\intermediates\pre-dexed\debug\classes-6c32c9d4b2463ab5d304b6f71d877dee44c4a5fa.jar" />
+    </item>
+    <item
+        jar="C:\Users\N\AppData\Local\Android\android-studio\sdk\extras\android\m2repository\com\android\support\support-annotations\22.2.0\support-annotations-22.2.0.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="66b42a1f3eb7676070b7ef7f14b603483aecbee1">
+        <dex dex="C:\Users\N\Documents\GitHub\cumulustv\app\build\intermediates\pre-dexed\debug\support-annotations-22.2.0-08fd8cec44b70d05f089b2177c3ffee0219dffc6.jar" />
+    </item>
+    <item
+        jar="C:\Users\N\Documents\GitHub\cumulustv\app\build\intermediates\exploded-aar\com.google.android.exoplayer\exoplayer\r1.2.4\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="a11cc1f4998cbbaa47c298f9f674d3c9802ff5dc">
+        <dex dex="C:\Users\N\Documents\GitHub\cumulustv\app\build\intermediates\pre-dexed\debug\classes-ec79a678635df0c0097dfe3f56608e749d42a012.jar" />
+    </item>
+    <item
+        jar="C:\Users\N\Documents\GitHub\cumulustv\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\jars\libs\internal_impl-22.2.0.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="57f2ab85c164ff1676ec64dee787981c046fab79">
+        <dex dex="C:\Users\N\Documents\GitHub\cumulustv\app\build\intermediates\pre-dexed\debug\internal_impl-22.2.0-fb7107cea1076072739edbc9ba83332682c70071.jar" />
+    </item>
+    <item
+        jar="C:\Users\N\Documents\GitHub\cumulustv\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.2.0\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="73753982da6bde518f3a4c6b372749981d14d1a0">
+        <dex dex="C:\Users\N\Documents\GitHub\cumulustv\app\build\intermediates\pre-dexed\debug\classes-71a8c8d3d799bea3ac3a352d3ae01a67c2b0323d.jar" />
+    </item>
+    <item
+        jar="C:\Users\N\Documents\GitHub\cumulustv\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="1ee588ff2c4daf7b97c1cbf922a6c7f027285c2f">
+        <dex dex="C:\Users\N\Documents\GitHub\cumulustv\app\build\intermediates\pre-dexed\debug\classes-a7134f23bf9d2cdb3fafce8e4f13e5ed3958d706.jar" />
+    </item>
+
+</items>
