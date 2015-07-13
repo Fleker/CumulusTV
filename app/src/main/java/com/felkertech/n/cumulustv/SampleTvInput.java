@@ -14,13 +14,18 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Surface;
+import android.view.View;
 import android.view.accessibility.CaptioningManager;
+import android.widget.ImageView;
 import android.widget.VideoView;
 
 import com.example.android.sampletvinput.player.TvInputPlayer;
 import com.google.android.exoplayer.ExoPlaybackException;
 import com.google.android.exoplayer.ExoPlayer;
+import com.google.android.exoplayer.text.CaptionStyleCompat;
+import com.google.android.exoplayer.text.SubtitleView;
 
 import java.io.IOException;
 
@@ -103,7 +108,14 @@ public class SampleTvInput extends TvInputService {
             // For the example implementation for the case, please see {@link RichTvInputService}.
         }
         @Override
+        public View onCreateOverlayView() {
+            ImageView iv = new ImageView(getApplicationContext());
+            iv.setImageDrawable(getResources().getDrawable(R.mipmap.ic_launcher));
+            return iv;
+        }
+        @Override
         public boolean onTune(Uri channelUri) {
+            setOverlayViewEnabled(true);
             String[] projection = {TvContract.Channels.COLUMN_SERVICE_ID, TvContract.Channels.COLUMN_INPUT_ID};
             String stream = "http://abclive.abcnews.com/i/abc_live4@136330/index_1200_av-b.m3u8";
             Log.d(TAG, "Tuning to "+channelUri.toString());
@@ -129,6 +141,7 @@ public class SampleTvInput extends TvInputService {
             // For the example implementation, please see {@link RichTvInputService}.
         }
         private boolean startPlayback(String url) {
+            setOverlayViewEnabled(true);
             Log.d(TAG, "Found channel & start playing "+url);
             if(exoPlayer == null) {
                 exoPlayer = new TvInputPlayer();
@@ -143,11 +156,15 @@ public class SampleTvInput extends TvInputService {
                         if(state == TvInputPlayer.STATE_BUFFERING) {
                             notifyVideoUnavailable(
                                     TvInputManager.VIDEO_UNAVAILABLE_REASON_BUFFERING);
+                            setOverlayViewEnabled(true);
                         } else if(state == TvInputPlayer.STATE_READY) {
-                            notifyVideoAvailable();
-                        } else if(state == TvInputPlayer.STATE_IDLE) {
-                            notifyVideoAvailable();
+
                         }
+
+                        /*else if(state == TvInputPlayer.STATE_IDLE) {
+                            notifyVideoAvailable();
+                            setOverlayViewEnabled(false);
+                        }*/
                     }
 
                     @Override
@@ -157,12 +174,14 @@ public class SampleTvInput extends TvInputService {
 
                     @Override
                     public void onPlayerError(ExoPlaybackException e) {
-
+                        Log.d(TAG, "An error occurs!");
+                        Log.d(TAG, e.getMessage());
                     }
 
                     @Override
                     public void onDrawnToSurface(Surface surface) {
-
+                        notifyVideoAvailable();
+                        setOverlayViewEnabled(false);
                     }
 
                     @Override
