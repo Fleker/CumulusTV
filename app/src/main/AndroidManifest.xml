@@ -54,6 +54,27 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
+
+        <!-- This service implements the SyncAdapter for updating program information regularly in
+        the background. It needs to be exported, so that the sync framework can access it. -->
+        <service android:name="com.example.android.sampletvinput.syncadapter.SyncService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+
+        <!-- Since the channel/program feed here does not require any authentication, we use a dummy
+        account used for SyncAdapter. -->
+        <service android:name="com.example.android.sampletvinput.syncadapter.DummyAccountService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
     </application>
 
     <uses-feature

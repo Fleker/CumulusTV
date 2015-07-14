@@ -2,6 +2,7 @@ package com.felkertech.n.cumulustv;
 
 import android.content.ComponentName;
 import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.android.sampletvinput.TvContractUtils;
 import com.example.android.sampletvinput.player.TvInputPlayer;
+import com.example.android.sampletvinput.syncadapter.SyncUtils;
 
 import java.sql.Blob;
 import java.util.ArrayList;
@@ -49,12 +51,23 @@ public class SampleSetup extends AppCompatActivity {
                 "US_TV",
                 "US_TV_PG",
                 "US_TV_D", "US_TV_L");
-        infoList.add(new TvManager.ProgramInfo("The News", "https://yt3.ggpht.com/-F2fw6o3bXkE/AAAAAAAAAAI/AAAAAAAAAAA/DMJGHPkK9As/s88-c-k-no/photo.jpg",
-                "Dr. Richard Besser", 60*60, new TvContentRating[] {rating}, new String[] {TvContract.Programs.Genres.NEWS}, ABCNews, TvInputPlayer.SOURCE_TYPE_HTTP_PROGRESSIVE, 0));
-        TvManager.ChannelInfo channel = new TvManager.ChannelInfo("6", "Custom Channel 1", "https://yt3.ggpht.com/-F2fw6o3bXkE/AAAAAAAAAAI/AAAAAAAAAAA/DMJGHPkK9As/s88-c-k-no/photo.jpg",
-                1337,0, 1, 1920, 1080, infoList);
+        infoList.add(new TvManager.ProgramInfo("ABC News Live", "https://yt3.ggpht.com/-F2fw6o3bXkE/AAAAAAAAAAI/AAAAAAAAAAA/DMJGHPkK9As/s88-c-k-no/photo.jpg",
+                "Currently streaming", 60*60, new TvContentRating[] {rating}, new String[] {TvContract.Programs.Genres.NEWS}, ABCNews, TvInputPlayer.SOURCE_TYPE_HTTP_PROGRESSIVE, 0));
+        TvManager.ChannelInfo channel = new TvManager.ChannelInfo("6", "ABC News", "https://yt3.ggpht.com/-F2fw6o3bXkE/AAAAAAAAAAI/AAAAAAAAAAA/DMJGHPkK9As/s88-c-k-no/photo.jpg",
+                0,0, 1, 1920, 1080, infoList);
 
-        Log.d(TAG, channel.originalNetworkId+" "+channel.transportStreamId+" "+channel.serviceId);
+        List<TvManager.ChannelInfo> list = new ArrayList<>();
+        list.add(channel);
+
+        TvContractUtils.updateChannels(this, info, list);
+        SyncUtils.setUpPeriodicSync(this, info);
+        SyncUtils.requestSync(info);
+        boolean mSyncRequested = true;
+        Log.d(TAG, "Everything happened");
+        finish();
+//        return;
+
+        /*Log.d(TAG, channel.originalNetworkId+" "+channel.transportStreamId+" "+channel.serviceId);
         values.put(TvContract.Channels.COLUMN_INPUT_ID, info);
 
         values.put(TvContract.Channels.COLUMN_DISPLAY_NUMBER, channel.number);
@@ -67,9 +80,26 @@ public class SampleSetup extends AppCompatActivity {
         values.put(TvContract.Channels.COLUMN_SERVICE_TYPE, TvContract.Channels.SERVICE_TYPE_AUDIO_VIDEO);
         values.put(TvContract.Channels.COLUMN_VIDEO_FORMAT, TvContract.Channels.VIDEO_FORMAT_1080P);
         values.put(TvContract.Channels.COLUMN_TYPE, TvContract.Channels.TYPE_OTHER);
-        values.put(TvContract.Channels.COLUMN_VERSION_NUMBER, 2); //TODO So I need to reset
 
-        String[] projection = {TvContract.Channels.COLUMN_INPUT_ID, TvContract.Channels.COLUMN_SERVICE_ID};
+        Uri uri = TvContract.buildChannelsUriForInput(info);
+        Cursor cursor = null;
+        try {
+            cursor = getContentResolver().query(uri, null, null, null, null);
+            if (cursor != null && cursor.getCount() > 0) {
+                Log.d(TAG, "Cursor already found stuff");
+                Log.d(TAG, "DELETE");
+                Uri delete = TvContract.buildChannelsUriForInput(info);
+                getContentResolver().delete(uri, null, null);
+//                return;
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+            Log.d(TAG, "Cursor found nothin");*/
+
+       /* String[] projection = {TvContract.Channels.COLUMN_INPUT_ID, TvContract.Channels.COLUMN_SERVICE_ID};
         Cursor cursor = null;
         try {
 //            Log.d(TAG, TvContract.Channels.COLUMN_SERVICE_ID + " = '1'");
@@ -87,10 +117,10 @@ public class SampleSetup extends AppCompatActivity {
             if (cursor != null) {
                 cursor.close();
             }
-        }
-        Uri uri = getContentResolver().insert(TvContract.Channels.CONTENT_URI, values);
+        }*/
+        /*Uri submit = getContentResolver().insert(TvContract.Channels.CONTENT_URI, values);
 
-        Log.d(TAG, "finish");
+        Log.d(TAG, "finish");*/
 //        finish();
     }
 }

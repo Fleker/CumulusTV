@@ -187,6 +187,28 @@ public class TvContractUtils {
         return programs;
     }
 
+    public static long getLastProgramEndTimeMillis(ContentResolver resolver, Uri channelUri) {
+        Uri uri = TvContract.buildProgramsUriForChannel(channelUri);
+        String[] projection = {Programs.COLUMN_END_TIME_UTC_MILLIS};
+        Cursor cursor = null;
+        try {
+            // TvProvider returns programs chronological order by default.
+            cursor = resolver.query(uri, projection, null, null, null);
+            if (cursor == null || cursor.getCount() == 0) {
+                return 0;
+            }
+            cursor.moveToLast();
+            return cursor.getLong(0);
+        } catch (Exception e) {
+            Log.w(TAG, "Unable to get last program end time for " + channelUri, e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return 0;
+    }
+
     public static List<TvManager.PlaybackInfo> getProgramPlaybackInfo(
             ContentResolver resolver, Uri channelUri, long startTimeMs, long endTimeMs,
             int maxProgramInReturn) {
