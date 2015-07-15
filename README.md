@@ -15,4 +15,5 @@ where a user wanted to add user-defined channels using m3u8 files.
 * [ ] Get program guide data to supply streams if data exists
 * [ ] Find m3u streams to provide as samples
 
-
+## Suggested Streams
+To help users quickly setup, I want a set of suggested streams (m3u8 files) that users can add. If you have a suggestion, add it as an issue for this project so I can add it to the list.
