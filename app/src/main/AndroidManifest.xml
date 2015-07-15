@@ -1,81 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.felkertech.n.cumulustv">
+    package="com.felkertech.n.cumulustv" >
 
     <!-- Required to play internet-based streaming contents. -->
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- Required to register a SyncStatusObserver. -->
-    <uses-permission android:name="android.permission.READ_SYNC_STATS"/>
+    <uses-permission android:name="android.permission.READ_SYNC_STATS" />
     <!-- Required to enable our SyncAdapter after it's created. -->
-    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
     <!-- Required because we're manually creating a new account. -->
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <!-- Required to update or read existing channel and program information in TvProvider. -->
     <uses-permission android:name="com.android.providers.tv.permission.READ_EPG_DATA" />
     <!-- Required to update channel and program information in TvProvider. -->
     <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" />
-
-    <application android:allowBackup="true" android:label="@string/app_name"
-        android:icon="@mipmap/ic_launcher" android:theme="@style/Theme.Leanback">
-
-        <service android:name=".SampleTvInput"
-            android:label="@string/sample_tv_input_name"
-            android:exported="true"
-            android:permission="android.permission.BIND_TV_INPUT">
-            <intent-filter>
-                <action android:name="android.media.tv.TvInputService" />
-            </intent-filter>
-            <meta-data android:name="android.media.tv.input"
-                android:resource="@xml/sample_tv_input" />
-        </service>
-        <activity android:name=".SamplePlayer" android:theme="@style/Theme.AppCompat"
-            android:exported="true"
-            android:label="Test Stream">
-            <intent-filter>
-                <action android:name="ANDROID.INTENT.ACTION.MAIN"/>
-                <category android:name="ANDROID.INTENT.CATEGORY.LEANBACK_LAUNCHER"/>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="ANDROID.INTENT.ACTION.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
-        <activity android:name=".SampleSetup"
-            android:exported="true"
-            android:theme="@style/Theme.AppCompat"
-            android:label="Setup Channels">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".SampleSettings"
-            android:exported="true"
-            android:theme="@style/Theme.AppCompat">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-
-        <!-- This service implements the SyncAdapter for updating program information regularly in
-        the background. It needs to be exported, so that the sync framework can access it. -->
-        <service android:name="com.example.android.sampletvinput.syncadapter.SyncService"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.content.SyncAdapter" />
-            </intent-filter>
-            <meta-data android:name="android.content.SyncAdapter"
-                android:resource="@xml/syncadapter" />
-        </service>
-
-        <!-- Since the channel/program feed here does not require any authentication, we use a dummy
-        account used for SyncAdapter. -->
-        <service android:name="com.example.android.sampletvinput.syncadapter.DummyAccountService">
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
-            </intent-filter>
-            <meta-data android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
-        </service>
-    </application>
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -83,10 +21,111 @@
     <uses-feature
         android:name="android.software.leanback"
         android:required="true" />
-    <!-- Required to expose this app in the store only when the device has TV input framework
-    with the TV app. -->
+    <!--
+    Required to expose this app in the store only when the device has TV input framework
+    with the TV app.
+    -->
     <uses-feature
         android:name="android.software.live_tv"
         android:required="true" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.Leanback" >
+        <service
+            android:name=".SampleTvInput"
+            android:exported="true"
+            android:label="@string/sample_tv_input_name"
+            android:permission="android.permission.BIND_TV_INPUT" >
+            <intent-filter>
+                <action android:name="android.media.tv.TvInputService" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.media.tv.input"
+                android:resource="@xml/sample_tv_input" />
+        </service>
+
+        <activity
+            android:name=".SamplePlayer"
+            android:exported="true"
+            android:label="Test Stream"
+            android:theme="@style/Theme.AppCompat" >
+            <!--<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>-->
+        </activity><activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="CumulusTV"
+            android:theme="@style/Theme.AppCompat" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SampleSetup"
+            android:exported="true"
+            android:label="Setup Channels"
+            android:theme="@style/Theme.AppCompat" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SampleSettings"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
+        <!--
+        This service implements the SyncAdapter for updating program information regularly in
+        the background. It needs to be exported, so that the sync framework can access it.
+        -->
+        <service
+            android:name="com.example.android.sampletvinput.syncadapter.SyncService"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+
+        <!--
+        Since the channel/program feed here does not require any authentication, we use a dummy
+        account used for SyncAdapter.
+        -->
+        <service android:name="com.example.android.sampletvinput.syncadapter.DummyAccountService" >
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+    </application>
 
 </manifest>

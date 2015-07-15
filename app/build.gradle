@@ -26,4 +26,5 @@ dependencies {
     compile 'com.android.support:leanback-v17:22.2.0'
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.google.android.exoplayer:exoplayer:r1.2.4'
+    compile 'com.afollestad:material-dialogs:0.7.6.0'
 }

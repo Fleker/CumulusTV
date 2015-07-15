@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">cumulustv</string>
     <string name="sample_tv_input_name">Cumulus TV</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 </resources>

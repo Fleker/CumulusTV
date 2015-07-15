@@ -17,7 +17,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.android.sampletvinput.TvContractUtils;
+import com.example.android.sampletvinput.data.Program;
 import com.example.android.sampletvinput.player.TvInputPlayer;
+import com.example.android.sampletvinput.syncadapter.SyncAdapter;
 import com.example.android.sampletvinput.syncadapter.SyncUtils;
 
 import java.sql.Blob;
@@ -45,6 +47,7 @@ public class SampleSetup extends AppCompatActivity {
         //TODO In the future have a list of stored channels. Now just hack it in
         ContentValues values = new ContentValues();
 
+/*
         List<TvManager.ProgramInfo> infoList = new ArrayList<TvManager.ProgramInfo>();
         TvContentRating rating = TvContentRating.createRating(
                 "com.android.tv",
@@ -53,11 +56,13 @@ public class SampleSetup extends AppCompatActivity {
                 "US_TV_D", "US_TV_L");
         infoList.add(new TvManager.ProgramInfo("ABC News Live", "https://yt3.ggpht.com/-F2fw6o3bXkE/AAAAAAAAAAI/AAAAAAAAAAA/DMJGHPkK9As/s88-c-k-no/photo.jpg",
                 "Currently streaming", 60*60, new TvContentRating[] {rating}, new String[] {TvContract.Programs.Genres.NEWS}, ABCNews, TvInputPlayer.SOURCE_TYPE_HTTP_PROGRESSIVE, 0));
-        TvManager.ChannelInfo channel = new TvManager.ChannelInfo("6", "ABC News", "https://yt3.ggpht.com/-F2fw6o3bXkE/AAAAAAAAAAI/AAAAAAAAAAA/DMJGHPkK9As/s88-c-k-no/photo.jpg",
-                0,0, 1, 1920, 1080, infoList);
+*/
+        /*TvManager.ChannelInfo channel = new TvManager.ChannelInfo("6", "ABC News", "https://yt3.ggpht.com/-F2fw6o3bXkE/AAAAAAAAAAI/AAAAAAAAAAA/DMJGHPkK9As/s88-c-k-no/photo.jpg",
+                0,0, 1, 1920, 1080, null);
 
         List<TvManager.ChannelInfo> list = new ArrayList<>();
-        list.add(channel);
+        list.add(channel);*/
+        List<TvManager.ChannelInfo> list = SyncAdapter.getChannels(this);
 
         TvContractUtils.updateChannels(this, info, list);
         SyncUtils.setUpPeriodicSync(this, info);
@@ -73,7 +78,7 @@ public class SampleSetup extends AppCompatActivity {
         values.put(TvContract.Channels.COLUMN_DISPLAY_NUMBER, channel.number);
         values.put(TvContract.Channels.COLUMN_DISPLAY_NAME, channel.name);
 //        values.put(TvContract.Channels.COLUMN_INPUT_ID, "CumulusTV");
-//        values.put(TvContract.Channels.COLUMN_INPUT_ID, TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", "SampleSetup")));
+        values.put(TvContract.Channels.COLUMN_INPUT_ID, TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", "SampleSetup")));
         values.put(TvContract.Channels.COLUMN_ORIGINAL_NETWORK_ID, 0);
         values.put(TvContract.Channels.COLUMN_TRANSPORT_STREAM_ID, 0);
         values.put(TvContract.Channels.COLUMN_SERVICE_ID, 1);

@@ -2,6 +2,7 @@ package com.felkertech.n.cumulustv;
 
 import android.media.tv.TvContentRating;
 
+import java.nio.channels.Channel;
 import java.util.List;
 
 /**
@@ -13,16 +14,19 @@ public class TvManager {
     private static final String VALUE_VIDEO_TYPE_MPEG_DASH = "MPEG_DASH";
 
     public static final class ChannelInfo {
-        public final String number;
-        public final String name;
-        public final String logoUrl;
-        public final int originalNetworkId;
-        public final int transportStreamId;
-        public final int serviceId;
-        public final int videoWidth;
-        public final int videoHeight;
-        public final List<ProgramInfo> programs;
+        public /*final*/ String number;
+        public /*final*/ String name;
+        public /*final*/ String logoUrl;
+        public /*final*/ int originalNetworkId;
+        public /*final*/ int transportStreamId;
+        public /*final*/ int serviceId;
+        public /*final*/ int videoWidth;
+        public /*final*/ int videoHeight;
+        public /*final*/ List<ProgramInfo> programs;
 
+        public ChannelInfo() {
+
+        }
         public ChannelInfo(String number, String name, String logoUrl, int originalNetworkId,
                            int transportStreamId, int serviceId, int videoWidth, int videoHeight,
                            List<ProgramInfo> programs) {

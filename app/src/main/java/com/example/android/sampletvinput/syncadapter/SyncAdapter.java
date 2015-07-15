@@ -18,6 +18,7 @@ package com.example.android.sampletvinput.syncadapter;
 
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
+import android.content.ComponentName;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentUris;
@@ -25,6 +26,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
 import android.content.SyncResult;
+import android.database.Cursor;
 import android.media.tv.TvContentRating;
 import android.media.tv.TvContract;
 import android.net.Uri;
@@ -35,11 +37,17 @@ import android.util.Log;
 import android.util.LongSparseArray;
 
 import com.example.android.sampletvinput.TvContractUtils;
+import com.example.android.sampletvinput.data.Program;
 import com.example.android.sampletvinput.player.TvInputPlayer;
+import com.felkertech.n.cumulustv.ChannelDatabase;
+import com.felkertech.n.cumulustv.JSONChannel;
 import com.felkertech.n.cumulustv.TvManager;
+
+import org.json.JSONException;
 
 import java.nio.channels.Channel;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -76,30 +84,87 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         if (inputId == null) {
             return;
         }
+        //REFRESH CHANNEL DATA FROM SHAREDPREFERENCES
+        List<TvManager.ChannelInfo> list = null;
+        try {
+            ChannelDatabase cdn = new ChannelDatabase(getContext());
+            Log.d(TAG, cdn.toString());
+            list = cdn.getChannels();
+            Log.d(TAG, list.toString());
+            Log.d(TAG, "Now updating channels");
+            if(list.size() <= 0)
+                return; //You haven't added any channels!
+            TvContractUtils.updateChannels(getContext(), inputId, list);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         List<TvManager.ChannelInfo> channels = getChannels(mContext);
         LongSparseArray<TvManager.ChannelInfo> channelMap = TvContractUtils.buildChannelMap(
                 mContext.getContentResolver(), inputId, channels);
         for (int i = 0; i < channelMap.size(); ++i) {
             Uri channelUri = TvContract.buildChannelUri(channelMap.keyAt(i));
             insertPrograms(channelUri, channelMap.valueAt(i));
+//            insertProgram(channelUri, channelMap.valueAt(i));
         }
+        Log.d(TAG, "Sync performed");
     }
 
-    public List<TvManager.ChannelInfo> getChannels(Context mContext) {
-        //TODO Get from db
-        String ABCNews = "http://abclive.abcnews.com/i/abc_live4@136330/index_1200_av-b.m3u8";
-        List<TvManager.ProgramInfo> infoList = new ArrayList<>();
+    public static List<TvManager.ChannelInfo> getChannels(Context mContext) {
         TvContentRating rating = TvContentRating.createRating(
                 "com.android.tv",
                 "US_TV",
                 "US_TV_PG",
                 "US_TV_D", "US_TV_L");
-        infoList.add(new TvManager.ProgramInfo("ABC News Live", "https://yt3.ggpht.com/-F2fw6o3bXkE/AAAAAAAAAAI/AAAAAAAAAAA/DMJGHPkK9As/s88-c-k-no/photo.jpg",
-                "Currently streaming", 60*60, new TvContentRating[] {rating}, new String[] {TvContract.Programs.Genres.NEWS}, ABCNews, TvInputPlayer.SOURCE_TYPE_HTTP_PROGRESSIVE, 0));
-        TvManager.ChannelInfo channel = new TvManager.ChannelInfo("6", "ABC News", "https://yt3.ggpht.com/-F2fw6o3bXkE/AAAAAAAAAAI/AAAAAAAAAAA/DMJGHPkK9As/s88-c-k-no/photo.jpg",
-                0,0, 1, 1920, 1080, infoList);
+        String ABCNews = "http://abclive.abcnews.com/i/abc_live4@136330/index_1200_av-b.m3u8"; //FIXME
+
+
+        String channels = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
+        Uri channelsQuery = TvContract.buildChannelsUriForInput(channels);
+        Log.d(TAG, channels+" "+channelsQuery.toString());
         List<TvManager.ChannelInfo> list = new ArrayList<>();
-        list.add(channel);
+        Cursor cursor = null;
+        try {
+            cursor = mContext.getContentResolver().query(channelsQuery, null, null, null, null);
+            while(cursor != null && cursor.moveToNext()) {
+                TvManager.ChannelInfo channel = new TvManager.ChannelInfo();
+                channel.number = cursor.getString(cursor.getColumnIndex(TvContract.Channels.COLUMN_DISPLAY_NUMBER));
+                channel.name = cursor.getString(cursor.getColumnIndex(TvContract.Channels.COLUMN_DISPLAY_NAME));
+                channel.originalNetworkId = cursor.getInt(cursor.getColumnIndex(TvContract.Channels.COLUMN_ORIGINAL_NETWORK_ID));
+                channel.transportStreamId = cursor.getInt(cursor.getColumnIndex(TvContract.Channels.COLUMN_TRANSPORT_STREAM_ID));
+                channel.serviceId = cursor.getInt(cursor.getColumnIndex(TvContract.Channels.COLUMN_SERVICE_ID));
+                channel.videoHeight = 1080;/* FIXME */
+                channel.videoWidth = 1920;/* FIXME */
+            /*TvManager.ChannelInfo channel = new TvManager.ChannelInfo(
+                    cursor.getString(cursor.getColumnIndex(TvContract.Channels.COLUMN_DISPLAY_NUMBER)),
+                    cursor.getString(cursor.getColumnIndex(TvContract.Channels.COLUMN_DISPLAY_NAME)),
+                    "", *//* Will get logo a little later *//*
+                    cursor.getInt(cursor.getColumnIndex(TvContract.Channels.COLUMN_ORIGINAL_NETWORK_ID)),
+                    cursor.getInt(cursor.getColumnIndex(TvContract.Channels.COLUMN_TRANSPORT_STREAM_ID)),
+                    cursor.getInt(cursor.getColumnIndex(TvContract.Channels.COLUMN_SERVICE_ID)),
+                    1920, *//*
+                    1080, *//* FIXME *//*
+                    null);*/
+//            Long rowId = mExistingChannelsMap.get(channel.originalNetworkId);
+                ChannelDatabase cdn = new ChannelDatabase(mContext);
+                JSONChannel jsonChannel = cdn.findChannel(channel.number);
+                channel.logoUrl = jsonChannel.getLogo();
+
+                List<TvManager.ProgramInfo> infoList = new ArrayList<>();
+                infoList.add(new TvManager.ProgramInfo(channel.name + " Live", jsonChannel.getLogo(),
+                        "Currently streaming", 60 * 60, new TvContentRating[]{rating}, new String[]{TvContract.Programs.Genres.NEWS}, jsonChannel.getUrl(), TvInputPlayer.SOURCE_TYPE_HTTP_PROGRESSIVE, 0));
+
+                channel.programs = infoList;
+                Log.d(TAG, channel.name+" ["+jsonChannel.getName()+"] ready "+jsonChannel.getLogo()+" "+jsonChannel.getUrl());
+                list.add(channel);
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        //tODO send blobs into a database
+
         return list;
     }
 
@@ -107,7 +172,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
      * Inserts programs from now to {@link SyncAdapter#SYNC_WINDOW_SEC}.
      *
      * @param channelUri The channel where the program info will be added.
-     * @param channelInfo {@link ChannelInfo} instance which includes program information.
+     * @param channelInfo {@link TvManager.ChannelInfo} instance which includes program information.
      */
     private void insertPrograms(Uri channelUri, TvManager.ChannelInfo channelInfo) {
         long durationSumSec = 0;
@@ -117,6 +182,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             return;
         }
         for (TvManager.ProgramInfo program : channelInfo.programs) {
+            Log.d(TAG, "Finding "+program.title+ " "+program.durationSec+" "+program.description+" "+program.posterArtUri+" "+program.videoUrl);
             durationSumSec += program.durationSec;
 
             ContentValues values = new ContentValues();
@@ -139,21 +205,27 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             programs.add(values);
         }
 
-        long nowSec = System.currentTimeMillis() / 1000;
+//        long nowSec = System.currentTimeMillis() / 1000;
+        long nowSec = new Date().getTime()/1000;
         long insertionEndSec = nowSec + SYNC_WINDOW_SEC;
         long lastProgramEndTimeSec = TvContractUtils.getLastProgramEndTimeMillis(
                 mContext.getContentResolver(), channelUri) / 1000;
         if (nowSec < lastProgramEndTimeSec) {
             nowSec = lastProgramEndTimeSec;
         }
-        long insertionStartTimeSec = nowSec - nowSec % durationSumSec;
+        long insertionStartTimeSec = nowSec - nowSec % (durationSumSec+1);
         long nextPos = insertionStartTimeSec;
+        Log.d(TAG, nowSec+" "+durationSumSec+" "+(nowSec % (durationSumSec+1))+" "+insertionStartTimeSec+" "+nextPos+" "+insertionEndSec);
         for (int i = 0; nextPos < insertionEndSec; ++i) {
             long programStartSec = nextPos;
             ArrayList<ContentProviderOperation> ops = new ArrayList<>();
             int programsCount = channelInfo.programs.size();
             for (int j = 0; j < programsCount; ++j) {
                 TvManager.ProgramInfo program = channelInfo.programs.get(j);
+                Log.d(TAG, "BulkAdding "+program.title+" @ "+(programStartSec/1000/60/60));
+                ops.add(ContentProviderOperation.newDelete(
+                    TvContract.Programs.CONTENT_URI).build());
+                Log.d(TAG, "Doop");
                 ops.add(ContentProviderOperation.newInsert(
                         TvContract.Programs.CONTENT_URI)
                         .withValues(programs.get(j))

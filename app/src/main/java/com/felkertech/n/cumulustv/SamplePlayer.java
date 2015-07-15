@@ -59,4 +59,5 @@ public class SamplePlayer extends AppCompatActivity {
             }
         });
     }
+    //TODO Fix launcher, direct to setp system
 }
