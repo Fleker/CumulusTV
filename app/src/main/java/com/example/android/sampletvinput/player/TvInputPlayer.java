@@ -23,6 +23,7 @@ import android.media.tv.TvTrackInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Surface;
 
 import com.google.android.exoplayer.DefaultLoadControl;
@@ -74,7 +75,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * integration with {@link android.media.tv.TvInputService}.
  */
 public class TvInputPlayer implements TextRenderer {
-    private static final String TAG = "TvInputPlayer";
+    private static final String TAG = "cumulus:TvInputPlayer";
 
     public static final int SOURCE_TYPE_HTTP_PROGRESSIVE = 0;
     public static final int SOURCE_TYPE_HLS = 1;
@@ -146,6 +147,7 @@ public class TvInputPlayer implements TextRenderer {
 
     public TvInputPlayer() {
         mHandler = new Handler();
+        Log.d(TAG, "I'm born!");
         for (int i = 0; i < RENDERER_COUNT; ++i) {
             mTvTracks[i] = new TvTrackInfo[0];
             mSelectedTvTracks[i] = NO_TRACK_SELECTED;
@@ -185,6 +187,7 @@ public class TvInputPlayer implements TextRenderer {
 
     public void prepare(Context context, final Uri uri, int sourceType) {
         if (sourceType == SOURCE_TYPE_HTTP_PROGRESSIVE) {
+            Log.d(TAG, "Prep HTTP_PROG");
             DefaultSampleSource sampleSource =
                     new DefaultSampleSource(new FrameworkSampleExtractor(context, uri, null), 2);
             mAudioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
@@ -194,6 +197,7 @@ public class TvInputPlayer implements TextRenderer {
             mTextRenderer = new DummyTrackRenderer();
             prepareInternal();
         } else if (sourceType == SOURCE_TYPE_HLS) {
+            Log.d(TAG, "Prep HLS");
             final String userAgent = getUserAgent(context);
             HlsPlaylistParser parser = new HlsPlaylistParser();
             ManifestFetcher<HlsPlaylist> playlistFetcher =
@@ -231,6 +235,7 @@ public class TvInputPlayer implements TextRenderer {
                         }
                     });
         } else if (sourceType == SOURCE_TYPE_MPEG_DASH) {
+            Log.d(TAG, "Prep MPEG DASH");
             final String userAgent = getUserAgent(context);
             MediaPresentationDescriptionParser parser = new MediaPresentationDescriptionParser();
             final ManifestFetcher<MediaPresentationDescription> manifestFetcher =

@@ -54,7 +54,7 @@ public class ChannelDatabase {
             TvManager.ChannelInfo ci = new TvManager.ChannelInfo();
             ci.number = channel.getNumber();
             ci.name = channel.getName();
-            ci.originalNetworkId = ci.name.toString().hashCode();;
+            ci.originalNetworkId = ci.name.toString().hashCode();
             Log.d(TAG, "Hash "+ci.originalNetworkId+" for "+ci.name);
 //            ci.originalNetworkId = i+1;
             ci.transportStreamId = 1;

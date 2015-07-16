@@ -193,6 +193,7 @@ public class SampleTvInput extends TvInputService {
                 exoPlayer.setSurface(mSurface);
                 exoPlayer.setVolume(mVolume);
             }
+            Log.d(TAG, "Start playing "+url);
             exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
             exoPlayer.setPlayWhenReady(true);
             return true;

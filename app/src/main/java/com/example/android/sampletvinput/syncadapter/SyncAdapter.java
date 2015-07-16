@@ -106,6 +106,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 mContext.getContentResolver(), inputId, channels);
         long startMs = System.currentTimeMillis();
         long endMs = startMs + FULL_SYNC_WINDOW_SEC * 1000;
+        Log.d(TAG, "Now start to get programs");
         for (int i = 0; i < channelMap.size(); ++i) {
             Uri channelUri = TvContract.buildChannelUri(channelMap.keyAt(i));
 //            insertPrograms(channelUri, channelMap.valueAt(i));

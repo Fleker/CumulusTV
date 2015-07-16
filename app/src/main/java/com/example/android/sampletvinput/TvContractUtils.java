@@ -71,34 +71,67 @@ public class TvContractUtils {
         // Create a map from original network ID to channel row ID for existing channels.
         SparseArray<Long> mExistingChannelsMap = new SparseArray<Long>();
         Uri channelsUri = TvContract.buildChannelsUriForInput(inputId);
-        String[] projection = {Channels._ID, Channels.COLUMN_ORIGINAL_NETWORK_ID, Channels.COLUMN_SERVICE_ID};
+        Log.d(TAG, "For "+inputId);
+        Log.d(TAG, "Creating cursor for "+channelsUri.toString());
+        Uri all = Uri.parse("content://android.media.tv/channel");
         Cursor cursor = null;
         ContentResolver resolver = context.getContentResolver();
         try {
-            cursor = resolver.query(channelsUri, projection, null, null, null);
+            cursor = resolver.query(all, null, null, null, null);
+            Log.d(TAG, "Found "+cursor.getCount()+" items in allcursor");
             while (cursor != null && cursor.moveToNext()) {
-                long rowId = cursor.getLong(0);
-                int originalNetworkId = cursor.getInt(1);
-                Log.d(TAG, "Assigning oni "+originalNetworkId+" to "+rowId+" "+cursor.getInt(2));
-                mExistingChannelsMap.put(cursor.getInt(1), rowId);
+                long rowId = cursor.getLong(cursor.getColumnIndex(Channels._ID));
+                int originalNetworkId = cursor.getInt(cursor.getColumnIndex(Channels.COLUMN_ORIGINAL_NETWORK_ID));
+                Log.d(TAG, "Seeing oni "+originalNetworkId+" to "+rowId+" "+cursor.getString(cursor.getColumnIndex(Channels.COLUMN_DISPLAY_NAME)));
+                mExistingChannelsMap.put(cursor.getInt(cursor.getColumnIndex(Channels.COLUMN_ORIGINAL_NETWORK_ID)), rowId);
+                mExistingChannelsMap.put(cursor.getString(cursor.getColumnIndex(Channels.COLUMN_DISPLAY_NUMBER)).hashCode(), rowId);
             }
+        } catch(Exception e) {
+            Log.e(TAG, e.getMessage()+"");
+            e.printStackTrace();
         } finally {
             if (cursor != null) {
                 cursor.close();
             }
         }
+        /*Log.d(TAG, "Now ping 2");
+        String[] projection = {Channels._ID, Channels.COLUMN_ORIGINAL_NETWORK_ID, Channels.COLUMN_SERVICE_ID, Channels.COLUMN_DISPLAY_NAME};
+        cursor = null;
+        resolver = context.getContentResolver();
+        try {
+            cursor = resolver.query(channelsUri, projection, null, null, null);
+            Log.d(TAG, "Found "+cursor.getCount()+" items in cursor");
+            while (cursor != null && cursor.moveToNext()) {
+                long rowId = cursor.getLong(0);
+                int originalNetworkId = cursor.getInt(1);
+//                Log.d(TAG, "Assigning oni "+originalNetworkId+" to "+rowId+" "+cursor.getInt(2)+", "+cursor.getString(3));
+//                mExistingChannelsMap.put(cursor.getInt(1), rowId);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }*/
 
         // If a channel exists, update it. If not, insert a new one.
         ContentValues values = new ContentValues();
         values.put(Channels.COLUMN_INPUT_ID, inputId);
         Map<Uri, String> logos = new HashMap<Uri, String>();
-        int index = 0;
         for (TvManager.ChannelInfo channel : channels) {
-            index++;
             Log.d(TAG, "Trying oni "+channel.originalNetworkId+" "+mExistingChannelsMap.get(channel.originalNetworkId)+" "+channel.serviceId);
             values.put(Channels.COLUMN_DISPLAY_NUMBER, channel.number);
             values.put(Channels.COLUMN_DISPLAY_NAME, channel.name);
-            values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, channel.originalNetworkId);
+            Long rowId = mExistingChannelsMap.get(channel.originalNetworkId);
+            if(rowId == null) {
+                values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, channel.originalNetworkId);
+                rowId = mExistingChannelsMap.get(channel.number.toString().hashCode());
+                Log.d(TAG, "Tried "+rowId+" as rowid");
+                if(rowId != null)
+                    values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, rowId);
+            } else
+                values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, rowId);
 //            values.put(Channels.COLUMN_TRANSPORT_STREAM_ID, channel.transportStreamId);
             values.put(Channels.COLUMN_TRANSPORT_STREAM_ID, 1); //FIXME Hack; can't get ChannelDatabase to output correctly
             values.put(Channels.COLUMN_SERVICE_ID, channel.serviceId);
@@ -108,23 +141,31 @@ public class TvContractUtils {
             } else {
                 values.putNull(Channels.COLUMN_VIDEO_FORMAT);
             }
-            Long rowId = mExistingChannelsMap.get(channel.originalNetworkId);
+
             Uri uri;
             if (rowId == null) {
-                values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, index);
+                values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, channel.number.toString().hashCode());
                 Log.d(TAG, "Insert "+values.toString());
                 uri = resolver.insert(TvContract.Channels.CONTENT_URI, values);
+                Log.d(TAG, uri.toString()+" "+uri.getLastPathSegment());
+                values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, uri.getLastPathSegment());
+                resolver.update(uri, values, null, null);
+                Log.d(TAG, "Changed oni");
             } else {
                 uri = TvContract.buildChannelUri(rowId);
                 Log.d(TAG, "Update " + values.toString());
+                Log.d(TAG, uri.toString()+"");
                 resolver.update(uri, values, null, null);
-                mExistingChannelsMap.remove(channel.serviceId);
+                mExistingChannelsMap.remove(channel.originalNetworkId);
+                mExistingChannelsMap.remove(Math.round(rowId));
+                mExistingChannelsMap.remove(channel.number.hashCode());
             }
             if (!TextUtils.isEmpty(channel.logoUrl) && false) { //FIXME Hack to show title
 //                logos.put(TvContract.buildChannelLogoUri(uri), channel.logoUrl);
                 Log.d(TAG, "LOGO "+uri.toString()+" "+channel.logoUrl);
                 logos.put(TvContract.buildChannelLogoUri(uri), channel.logoUrl);
             }
+            Log.d(TAG, mExistingChannelsMap.toString());
         }
         if (!logos.isEmpty()) {
             new InsertLogosTask(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, logos);
@@ -134,7 +175,10 @@ public class TvContractUtils {
         int size = mExistingChannelsMap.size();
         for(int i = 0; i < size; ++i) {
             Long rowId = mExistingChannelsMap.valueAt(i);
-            resolver.delete(TvContract.buildChannelUri(rowId), null, null);
+            Log.d(TAG, "Deleting item at "+rowId+" with "+mExistingChannelsMap.keyAt(i));
+            try {
+                resolver.delete(TvContract.buildChannelUri(rowId), null, null);
+            } catch(Exception ignored) {}
         }
     }
 
