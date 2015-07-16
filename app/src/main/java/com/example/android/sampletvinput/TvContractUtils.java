@@ -51,7 +51,7 @@ import java.util.Map;
  * Static helper methods for working with {@link android.media.tv.TvContract}.
  */
 public class TvContractUtils {
-    private static final String TAG = "TvContractUtils";
+    private static final String TAG = "cumulus:TvContractUtils";
     private static final boolean DEBUG = true;
 
     private static final SparseArray<String> VIDEO_HEIGHT_TO_FORMAT_MAP =
@@ -71,7 +71,7 @@ public class TvContractUtils {
         // Create a map from original network ID to channel row ID for existing channels.
         SparseArray<Long> mExistingChannelsMap = new SparseArray<Long>();
         Uri channelsUri = TvContract.buildChannelsUriForInput(inputId);
-        String[] projection = {Channels._ID, Channels.COLUMN_ORIGINAL_NETWORK_ID};
+        String[] projection = {Channels._ID, Channels.COLUMN_ORIGINAL_NETWORK_ID, Channels.COLUMN_SERVICE_ID};
         Cursor cursor = null;
         ContentResolver resolver = context.getContentResolver();
         try {
@@ -79,7 +79,8 @@ public class TvContractUtils {
             while (cursor != null && cursor.moveToNext()) {
                 long rowId = cursor.getLong(0);
                 int originalNetworkId = cursor.getInt(1);
-                mExistingChannelsMap.put(originalNetworkId, rowId);
+                Log.d(TAG, "Assigning oni "+originalNetworkId+" to "+rowId+" "+cursor.getInt(2));
+                mExistingChannelsMap.put(cursor.getInt(1), rowId);
             }
         } finally {
             if (cursor != null) {
@@ -91,11 +92,15 @@ public class TvContractUtils {
         ContentValues values = new ContentValues();
         values.put(Channels.COLUMN_INPUT_ID, inputId);
         Map<Uri, String> logos = new HashMap<Uri, String>();
+        int index = 0;
         for (TvManager.ChannelInfo channel : channels) {
+            index++;
+            Log.d(TAG, "Trying oni "+channel.originalNetworkId+" "+mExistingChannelsMap.get(channel.originalNetworkId)+" "+channel.serviceId);
             values.put(Channels.COLUMN_DISPLAY_NUMBER, channel.number);
             values.put(Channels.COLUMN_DISPLAY_NAME, channel.name);
             values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, channel.originalNetworkId);
-            values.put(Channels.COLUMN_TRANSPORT_STREAM_ID, channel.transportStreamId);
+//            values.put(Channels.COLUMN_TRANSPORT_STREAM_ID, channel.transportStreamId);
+            values.put(Channels.COLUMN_TRANSPORT_STREAM_ID, 1); //FIXME Hack; can't get ChannelDatabase to output correctly
             values.put(Channels.COLUMN_SERVICE_ID, channel.serviceId);
             String videoFormat = getVideoFormat(channel.videoHeight);
             if (videoFormat != null) {
@@ -106,13 +111,18 @@ public class TvContractUtils {
             Long rowId = mExistingChannelsMap.get(channel.originalNetworkId);
             Uri uri;
             if (rowId == null) {
+                values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, index);
+                Log.d(TAG, "Insert "+values.toString());
                 uri = resolver.insert(TvContract.Channels.CONTENT_URI, values);
             } else {
                 uri = TvContract.buildChannelUri(rowId);
+                Log.d(TAG, "Update " + values.toString());
                 resolver.update(uri, values, null, null);
-                mExistingChannelsMap.remove(channel.originalNetworkId);
+                mExistingChannelsMap.remove(channel.serviceId);
             }
-            if (!TextUtils.isEmpty(channel.logoUrl)) {
+            if (!TextUtils.isEmpty(channel.logoUrl) && false) { //FIXME Hack to show title
+//                logos.put(TvContract.buildChannelLogoUri(uri), channel.logoUrl);
+                Log.d(TAG, "LOGO "+uri.toString()+" "+channel.logoUrl);
                 logos.put(TvContract.buildChannelLogoUri(uri), channel.logoUrl);
             }
         }

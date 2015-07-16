@@ -47,7 +47,10 @@ public class SamplePlayer extends AppCompatActivity {
         myVideoView = (VideoView)this.findViewById(R.id.myVideoView);
         MediaController mc = new MediaController(this);
         myVideoView.setMediaController(mc);
-        urlStream = "http://abclive.abcnews.com/i/abc_live4@136330/index_1200_av-b.m3u8";
+        String ABCNews = "http://abclive.abcnews.com/i/abc_live4@136330/index_1200_av-b.m3u8";
+        String Brazil = "http://stream331.overseebrasil.com.br/live_previd_155/_definst_/live_previd_155/playlist.m3u8";
+        String NASA = "http://www.nasa.gov/multimedia/nasatv/NTV-Public-IPS.m3u8";
+        urlStream = ABCNews;
         Log.d(TAG, "About to open " + urlStream.toString());
         runOnUiThread(new Runnable() {
             @Override

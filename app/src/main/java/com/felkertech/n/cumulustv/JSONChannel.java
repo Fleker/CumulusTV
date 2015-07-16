@@ -14,7 +14,10 @@ public class JSONChannel {
             number = jsonObject.getString("number");
             name = jsonObject.getString("name");
             url = jsonObject.getString("url");
-            logo = jsonObject.getString("logo");
+            if(jsonObject.has("logo"))
+                logo = jsonObject.getString("logo");
+            else
+                logo = "";
         } catch (JSONException e) {
             e.printStackTrace();
         }

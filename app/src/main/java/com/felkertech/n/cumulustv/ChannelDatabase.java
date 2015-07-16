@@ -54,12 +54,15 @@ public class ChannelDatabase {
             TvManager.ChannelInfo ci = new TvManager.ChannelInfo();
             ci.number = channel.getNumber();
             ci.name = channel.getName();
-            ci.originalNetworkId = 0;
-            ci.transportStreamId = 0;
-            ci.serviceId = i+1;
+            ci.originalNetworkId = ci.name.toString().hashCode();;
+            Log.d(TAG, "Hash "+ci.originalNetworkId+" for "+ci.name);
+//            ci.originalNetworkId = i+1;
+            ci.transportStreamId = 1;
+            ci.serviceId = i+2;
+//            ci.serviceId = 2;
             ci.videoHeight = 1080;
             ci.videoWidth = 1920;
-            ci.logoUrl = channel.getLogo();
+//            ci.logoUrl = channel.getLogo();
             ci.programs = getPrograms(ci, channel.getUrl());
             channelInfos.add(ci);
         }

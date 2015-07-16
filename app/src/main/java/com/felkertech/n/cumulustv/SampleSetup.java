@@ -44,7 +44,6 @@ public class SampleSetup extends AppCompatActivity {
              info = getIntent().getStringExtra(TvInputInfo.EXTRA_INPUT_ID);
             Log.d(TAG, info);
         }
-        //TODO In the future have a list of stored channels. Now just hack it in
         ContentValues values = new ContentValues();
 
 /*

@@ -9,9 +9,13 @@
     <Button android:text="Add Stream" android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/add"/>
+    <Button android:text="Add Suggested Stream" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/add"
+        android:id="@+id/suggested"/>
     <Button android:text="View Streams" android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/add"
+        android:layout_below="@+id/suggested"
         android:id="@+id/view"/>
 <!--    <Button android:text="Delete Stream" android:layout_width="match_parent"
         android:layout_height="wrap_content"
