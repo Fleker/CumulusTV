@@ -27,46 +27,31 @@ import android.util.Log;
 import android.view.Surface;
 
 import com.google.android.exoplayer.DefaultLoadControl;
-import com.google.android.exoplayer.DummyTrackRenderer;
 import com.google.android.exoplayer.ExoPlaybackException;
 import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer.LoadControl;
 import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
 import com.google.android.exoplayer.MediaCodecTrackRenderer;
-import com.google.android.exoplayer.MediaCodecUtil;
 import com.google.android.exoplayer.MediaCodecVideoTrackRenderer;
-import com.google.android.exoplayer.SampleSource;
 import com.google.android.exoplayer.TrackRenderer;
-import com.google.android.exoplayer.chunk.ChunkSampleSource;
-import com.google.android.exoplayer.chunk.ChunkSource;
-import com.google.android.exoplayer.chunk.Format;
-import com.google.android.exoplayer.chunk.FormatEvaluator;
 import com.google.android.exoplayer.chunk.MultiTrackChunkSource;
-import com.google.android.exoplayer.dash.DashChunkSource;
-import com.google.android.exoplayer.dash.mpd.AdaptationSet;
-import com.google.android.exoplayer.dash.mpd.MediaPresentationDescription;
-import com.google.android.exoplayer.dash.mpd.MediaPresentationDescriptionParser;
-import com.google.android.exoplayer.dash.mpd.Period;
-import com.google.android.exoplayer.dash.mpd.Representation;
 import com.google.android.exoplayer.hls.HlsChunkSource;
 import com.google.android.exoplayer.hls.HlsPlaylist;
 import com.google.android.exoplayer.hls.HlsPlaylistParser;
 import com.google.android.exoplayer.hls.HlsSampleSource;
-import com.google.android.exoplayer.source.DefaultSampleSource;
-import com.google.android.exoplayer.source.FrameworkSampleExtractor;
+import com.google.android.exoplayer.text.Cue;
 import com.google.android.exoplayer.text.TextRenderer;
 import com.google.android.exoplayer.text.eia608.Eia608TrackRenderer;
-import com.google.android.exoplayer.upstream.BufferPool;
+import com.google.android.exoplayer.upstream.Allocator;
 import com.google.android.exoplayer.upstream.DataSource;
+import com.google.android.exoplayer.upstream.DefaultAllocator;
 import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 import com.google.android.exoplayer.upstream.UriDataSource;
 import com.google.android.exoplayer.util.ManifestFetcher;
-import com.google.android.exoplayer.util.MimeTypes;
-import com.google.android.exoplayer.util.Util;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -143,6 +128,11 @@ public class TvInputPlayer implements TextRenderer {
                         callback.onPlayerError(new ExoPlaybackException(e));
                     }
                 }
+
+                @Override
+                public void onDecoderInitialized(String s, long l, long l1) {
+
+                }
             };
 
     public TvInputPlayer() {
@@ -178,41 +168,37 @@ public class TvInputPlayer implements TextRenderer {
         });
     }
 
-    @Override
-    public void onText(String text) {
-        for (Callback callback : mCallbacks) {
-            callback.onText(text);
-        }
-    }
-
-    public void prepare(Context context, final Uri uri, int sourceType) {
+    public void prepare(final Context context, final Uri uri, int sourceType) {
         if (sourceType == SOURCE_TYPE_HTTP_PROGRESSIVE) {
             Log.d(TAG, "Prep HTTP_PROG");
-            DefaultSampleSource sampleSource =
+            /*DefaultSampleSource sampleSource =
                     new DefaultSampleSource(new FrameworkSampleExtractor(context, uri, null), 2);
             mAudioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
             mVideoRenderer = new MediaCodecVideoTrackRenderer(sampleSource,
                     MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 0, mHandler,
                     mVideoRendererEventListener, 50);
             mTextRenderer = new DummyTrackRenderer();
-            prepareInternal();
+            prepareInternal();*/
         } else if (sourceType == SOURCE_TYPE_HLS) {
             Log.d(TAG, "Prep HLS");
             final String userAgent = getUserAgent(context);
+            final int BUFFER_SEGMENT_SIZE = 64 * 1024;
             HlsPlaylistParser parser = new HlsPlaylistParser();
-            ManifestFetcher<HlsPlaylist> playlistFetcher =
-                    new ManifestFetcher<>(parser, uri.toString(), uri.toString(), userAgent);
+            UriDataSource dataSource = new DefaultUriDataSource(context, userAgent);
+            final ManifestFetcher<HlsPlaylist> playlistFetcher =
+                    new ManifestFetcher<HlsPlaylist>(uri.toString(), dataSource, parser);
+//                    new ManifestFetcher<HlsPlaylist>(parser, uri.toString(), uri.toString(), userAgent);
             playlistFetcher.singleLoad(mHandler.getLooper(),
                     new ManifestFetcher.ManifestCallback<HlsPlaylist>() {
                         @Override
-                        public void onManifest(String contentId, HlsPlaylist manifest) {
+                        public void onSingleManifest(HlsPlaylist hlsPlaylist) {
                             DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-                            DataSource dataSource = new UriDataSource(userAgent, bandwidthMeter);
+                            DataSource dataSource = new DefaultUriDataSource(context, userAgent);
                             HlsChunkSource chunkSource = new HlsChunkSource(dataSource,
-                                    uri.toString(), manifest, bandwidthMeter, null,
-                                    HlsChunkSource.ADAPTIVE_MODE_SPLICE);
-                            HlsSampleSource sampleSource = new HlsSampleSource(chunkSource, true,
-                                    2);
+                                    uri.toString(), hlsPlaylist, bandwidthMeter, null,
+                                    HlsChunkSource.ADAPTIVE_MODE_SPLICE, null);
+                            LoadControl lhc = new DefaultLoadControl(new DefaultAllocator(BUFFER_SEGMENT_SIZE));
+                            HlsSampleSource sampleSource = new HlsSampleSource(chunkSource, lhc, 2, true);
                             mAudioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
                             mVideoRenderer = new MediaCodecVideoTrackRenderer(sampleSource,
                                     MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 0, mHandler,
@@ -228,20 +214,32 @@ public class TvInputPlayer implements TextRenderer {
                         }
 
                         @Override
-                        public void onManifestError(String contentId, IOException e) {
+                        public void onSingleManifestError(IOException e) {
                             for (Callback callback : mCallbacks) {
                                 callback.onPlayerError(new ExoPlaybackException(e));
                             }
                         }
                     });
         } else if (sourceType == SOURCE_TYPE_MPEG_DASH) {
-            Log.d(TAG, "Prep MPEG DASH");
+            /*Log.d(TAG, "Prep MPEG DASH");
             final String userAgent = getUserAgent(context);
             MediaPresentationDescriptionParser parser = new MediaPresentationDescriptionParser();
             final ManifestFetcher<MediaPresentationDescription> manifestFetcher =
                     new ManifestFetcher<>(parser, uri.toString(), uri.toString(), userAgent);
             manifestFetcher.singleLoad(mHandler.getLooper(),
                     new ManifestFetcher.ManifestCallback<MediaPresentationDescription>() {
+                        @Override
+                        public void onSingleManifest(MediaPresentationDescription mediaPresentationDescription) {
+
+                        }
+
+                        @Override
+                        public void onSingleManifestError(IOException e) {
+                            for (Callback callback : mCallbacks) {
+                                callback.onPlayerError(new ExoPlaybackException(e));
+                            }
+                        }
+
                         @Override
                         public void onManifest(String contentId, MediaPresentationDescription manifest) {
                             Period period = manifest.periods.get(0);
@@ -344,14 +342,7 @@ public class TvInputPlayer implements TextRenderer {
 
                             prepareInternal();
                         }
-
-                        @Override
-                        public void onManifestError(String contentId, IOException e) {
-                            for (Callback callback : mCallbacks) {
-                                callback.onPlayerError(new ExoPlaybackException(e));
-                            }
-                        }
-                    });
+                    });*/
         } else {
             throw new IllegalArgumentException("Unknown source type: " + sourceType);
         }
@@ -461,6 +452,11 @@ public class TvInputPlayer implements TextRenderer {
         }
         return "SampleTvInput/" + versionName + " (Linux;Android " + Build.VERSION.RELEASE +
                 ") " + "ExoPlayerLib/" + ExoPlayerLibraryInfo.VERSION;
+    }
+
+    @Override
+    public void onCues(List<Cue> list) {
+
     }
 
     public interface Callback {

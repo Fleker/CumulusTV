@@ -10,59 +10,43 @@ import android.media.tv.TvContract;
 import android.media.tv.TvInputManager;
 import android.media.tv.TvInputService;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Looper;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
 import android.view.accessibility.CaptioningManager;
 import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.VideoView;
 
-import com.example.android.sampletvinput.TvContractUtils;
 import com.example.android.sampletvinput.player.TvInputPlayer;
 import com.google.android.exoplayer.ExoPlaybackException;
+import com.google.android.exoplayer.ExoPlayer;
+import com.google.android.exoplayer.text.CaptionStyleCompat;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by N on 7/12/2015.
  */
-public class SampleTvInput extends TvInputService {
+public class SampleTvInput1 extends TvInputService {
     HandlerThread mHandlerThread;
     BroadcastReceiver mBroadcastReceiver;
-//    ArrayList<BaseTvInputSessionImpl> mSessions;
+    //    ArrayList<BaseTvInputSessionImpl> mSessions;
     Handler mDbHandler;
     Handler mHandler;
     CaptioningManager mCaptioningManager;
-    String VIDEO_URL = "VIDEOURL";
-    SimpleSessionImpl session;
-    String TAG = "cumulus:TvInputService";
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "onCreate");
+        Log.d("cumulus:CTV", "HEllo");
         mHandlerThread = new HandlerThread(getClass()
                 .getSimpleName());
         mHandlerThread.start();
         mDbHandler = new Handler(mHandlerThread.getLooper());
-        /*mHandler = new Handler(Looper.myLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                Bundle b = msg.getData();
-                String src = b.getString(VIDEO_URL);
-                Log.d(TAG, "Got data: "+src+", "+(session != null));
-                if(session != null) {
-                    session.startPlayback(src);
-                }
-            }
-        };*/
+        mHandler = new Handler();
         mCaptioningManager = (CaptioningManager)
                 getSystemService(Context.CAPTIONING_SERVICE);
 
@@ -75,17 +59,12 @@ public class SampleTvInput extends TvInputService {
         intentFilter.addAction(TvInputManager
                 .ACTION_PARENTAL_CONTROLS_ENABLED_CHANGED);
         registerReceiver(mBroadcastReceiver, intentFilter);
-
     }
 
     @Nullable
     @Override
     public Session onCreateSession(String inputId) {
-//        return new SimpleSessionImpl(this);
-        session = new SimpleSessionImpl(this);
-        Log.d(TAG, "Start session "+inputId);
-        session.setOverlayViewEnabled(true);
-        return session;
+        return new SimpleSessionImpl(this);
     }
 
     /**
@@ -132,56 +111,44 @@ public class SampleTvInput extends TvInputService {
         public View onCreateOverlayView() {
             ImageView iv = new ImageView(getApplicationContext());
             iv.setImageDrawable(getResources().getDrawable(R.mipmap.ic_launcher));
-            Log.d(TAG, "Overlay");
             return iv;
         }
         @Override
         public boolean onTune(Uri channelUri) {
-            Log.d(TAG, "onTune");
-            notifyVideoUnavailable(TvInputManager.VIDEO_UNAVAILABLE_REASON_TUNING);
             setOverlayViewEnabled(true);
-            String[] projection = {TvContract.Channels.COLUMN_SERVICE_ID, TvContract.Channels.COLUMN_INPUT_ID, TvContract.Channels.COLUMN_DISPLAY_NUMBER};
+            String[] projection = {TvContract.Channels.COLUMN_SERVICE_ID, TvContract.Channels.COLUMN_INPUT_ID};
             String stream = "http://abclive.abcnews.com/i/abc_live4@136330/index_1200_av-b.m3u8";
             Log.d(TAG, "Tuning to "+channelUri.toString());
             Cursor cursor = null;
-            //Now look up this channel in the DB
             try {
                 cursor = getContentResolver().query(channelUri, projection, null, null, null);
                 if (cursor == null || cursor.getCount() == 0) {
                     return false;
                 }
                 cursor.moveToNext();
-                String tv_no = cursor.getString(cursor.getColumnIndex(TvContract.Channels.COLUMN_DISPLAY_NUMBER));
-                ChannelDatabase cdn = new ChannelDatabase(getApplicationContext());
-                JSONChannel ch = cdn.findChannel(tv_no);
-                stream = ch.getUrl();
+                /*stream = (cursor.getInt(0) == SimpleTvInputSetupActivity.CHANNEL_1_SERVICE_ID ?
+                        RESOURCE_1 : RESOURCE_2);*/
+//                stream = cursor.getString(cursor.getColumnIndex(SampleSetup.COLUMN_CHANNEL_URL));
                 Log.d(TAG, "Retrieved stream "+stream);
             } finally {
                 if (cursor != null) {
                     cursor.close();
                 }
             }
-            Log.d(TAG, "Tune into "+channelUri.toString());
-            /*PlayCurrentProgramRunnable mPlayCurrentProgramRunnable = new PlayCurrentProgramRunnable(channelUri);
-            mPlayCurrentProgramRunnable.run();*/
             return startPlayback(stream);
-//            return true;
             // NOTE: To display the program information (e.g. title) properly in the channel banner,
             // The implementation needs to register the program metadata on TvProvider.
             // For the example implementation, please see {@link RichTvInputService}.
         }
         private boolean startPlayback(String url) {
             setOverlayViewEnabled(true);
-            final String ETAG = "cumulus:exoplayer";
-            notifyVideoUnavailable(
-                    TvInputManager.VIDEO_UNAVAILABLE_REASON_BUFFERING);
             Log.d(TAG, "Found channel & start playing "+url);
             if(exoPlayer == null) {
                 exoPlayer = new TvInputPlayer();
                 exoPlayer.addCallback(new TvInputPlayer.Callback() {
                     @Override
                     public void onPrepared() {
-                        Log.d(ETAG, "Player onPrepared");
+
                     }
 
                     @Override
@@ -189,30 +156,9 @@ public class SampleTvInput extends TvInputService {
                         if(state == TvInputPlayer.STATE_BUFFERING) {
                             notifyVideoUnavailable(
                                     TvInputManager.VIDEO_UNAVAILABLE_REASON_BUFFERING);
-                            Log.d(ETAG, "Buffering");
                             setOverlayViewEnabled(true);
                         } else if(state == TvInputPlayer.STATE_READY) {
-                            Handler h = new Handler(Looper.myLooper()) {
-                                @Override
-                                public void handleMessage(Message msg) {
-                                    super.handleMessage(msg);
-                                    notifyVideoAvailable();
-                                    setOverlayViewEnabled(false);
-                                    Log.d(ETAG, "Now playing");
-                                }
-                            };
-                            h.sendEmptyMessageDelayed(0, 5000);
-                            setOverlayViewEnabled(true);
-                            Log.d(ETAG, "Ready");
-                        } else if(state == TvInputPlayer.STATE_IDLE) {
-                            Log.d(ETAG, "Idle");
-                        } else if(state == TvInputPlayer.STATE_ENDED) {
-                            Log.d(ETAG, "Ended");
-                        } else if(state == TvInputPlayer.STATE_PREPARING) {
-                            Log.d(ETAG, "Preparing");
-                            setOverlayViewEnabled(true);
-                            notifyVideoUnavailable(
-                                    TvInputManager.VIDEO_UNAVAILABLE_REASON_TUNING);
+
                         }
 
                         /*else if(state == TvInputPlayer.STATE_IDLE) {
@@ -223,24 +169,19 @@ public class SampleTvInput extends TvInputService {
 
                     @Override
                     public void onPlayWhenReadyCommitted() {
-                        Log.d(ETAG, "Play when ready committed");
+
                     }
 
                     @Override
                     public void onPlayerError(ExoPlaybackException e) {
                         Log.d(TAG, "An error occurs!");
-                        Toast.makeText(getApplicationContext(), "Error occurred with this channel: "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                        notifyVideoUnavailable(
-                                TvInputManager.VIDEO_UNAVAILABLE_REASON_UNKNOWN);
-                        setOverlayViewEnabled(true);
                         Log.d(TAG, e.getMessage());
                     }
 
                     @Override
                     public void onDrawnToSurface(Surface surface) {
-                        /*notifyVideoAvailable();
-                        setOverlayViewEnabled(false);*/
-                        Log.d(ETAG, "onDrawnToSurface");
+                        notifyVideoAvailable();
+                        setOverlayViewEnabled(false);
                     }
 
                     @Override
@@ -251,6 +192,7 @@ public class SampleTvInput extends TvInputService {
                 exoPlayer.setSurface(mSurface);
                 exoPlayer.setVolume(mVolume);
             }
+            Log.d(TAG, "Start playing "+url);
             exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
             exoPlayer.setPlayWhenReady(true);
             return true;
@@ -308,36 +250,6 @@ public class SampleTvInput extends TvInputService {
             // For the example implementation for the case, please see {@link RichTvInputService}.
             notifyContentAllowed();
             return true;
-        }
-    }
-    private class PlayCurrentProgramRunnable implements Runnable {
-        private static final int RETRY_DELAY_MS = 2000;
-        private final Uri mChannelUri;
-        private Context mContext;
-        private String TAG = "cumulus:SampleTVIpnut2";
-        public PlayCurrentProgramRunnable(Uri channelUri) {
-            mChannelUri = channelUri;
-            mContext = getApplicationContext();
-        }
-
-        @Override
-        public void run() {
-            long nowMs = System.currentTimeMillis();
-            List<TvManager.PlaybackInfo> programs = TvContractUtils.getProgramPlaybackInfo(
-                    mContext.getContentResolver(), mChannelUri, nowMs, nowMs + 1, 1);
-            if (!programs.isEmpty()) {
-//                mHandler.removeMessages(MSG_PLAY_PROGRAM);
-//                mHandler.obtainMessage(MSG_PLAY_PROGRAM, programs.get(0)).sendToTarget();
-                Bundle b = new Bundle();
-                b.putString(VIDEO_URL, programs.get(0).videoUrl);
-                Message m = new Message();
-                m.setData(b);
-                mHandler.sendMessage(m);
-            } else {
-                Log.w(TAG, "Failed to get program info for " + mChannelUri + ". Retry in " +
-                        RETRY_DELAY_MS + "ms.");
-//                mDbHandler.postDelayed(mPlayCurrentProgramRunnable, RETRY_DELAY_MS);
-            }
         }
     }
 }
