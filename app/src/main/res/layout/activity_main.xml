@@ -1,22 +1,37 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:layout_height="match_parent"
     tools:context="com.felkertech.n.cumulustv.MainActivity">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="center"
+        android:src="@drawable/cactus"/>
 
     <Button android:text="Add Stream" android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="128dp"
+        android:layout_marginRight="64dp"
+        android:layout_marginLeft="64dp"
         android:id="@+id/add"/>
     <Button android:text="Add Suggested Stream" android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/add"
+        android:layout_marginRight="64dp"
+        android:layout_marginLeft="64dp"
         android:id="@+id/suggested"/>
     <Button android:text="View Streams" android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/suggested"
+        android:layout_marginRight="64dp"
+        android:layout_marginLeft="64dp"
         android:id="@+id/view"/>
+    <Button android:text="Go to Live Channels" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view"
+        android:layout_marginRight="64dp"
+        android:layout_marginLeft="64dp"
+        android:id="@+id/gotoapp"/>
 <!--    <Button android:text="Delete Stream" android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/view"

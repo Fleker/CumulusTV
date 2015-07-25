@@ -103,12 +103,14 @@ public class SampleTvInput extends TvInputService {
         @Override
         public void onRelease() {
             if (exoPlayer != null) {
+                Log.d(TAG, "Released from surface");
                 exoPlayer.release();
             }
         }
         @Override
         public boolean onSetSurface(Surface surface) {
             if (exoPlayer != null) {
+                Log.d(TAG, "Set to surface");
                 exoPlayer.setSurface(surface);
             }
             mSurface = surface;
@@ -190,7 +192,7 @@ public class SampleTvInput extends TvInputService {
                             notifyVideoUnavailable(
                                     TvInputManager.VIDEO_UNAVAILABLE_REASON_BUFFERING);
                             Log.d(ETAG, "Buffering");
-                            setOverlayViewEnabled(true);
+//                            setOverlayViewEnabled(true);
                         } else if(state == TvInputPlayer.STATE_READY) {
                             Handler h = new Handler(Looper.myLooper()) {
                                 @Override
@@ -201,7 +203,7 @@ public class SampleTvInput extends TvInputService {
                                     Log.d(ETAG, "Now playing");
                                 }
                             };
-                            h.sendEmptyMessageDelayed(0, 5000);
+                            h.sendEmptyMessageDelayed(0, 2500);
                             setOverlayViewEnabled(true);
                             Log.d(ETAG, "Ready");
                         } else if(state == TvInputPlayer.STATE_IDLE) {
@@ -209,10 +211,11 @@ public class SampleTvInput extends TvInputService {
                         } else if(state == TvInputPlayer.STATE_ENDED) {
                             Log.d(ETAG, "Ended");
                         } else if(state == TvInputPlayer.STATE_PREPARING) {
-                            Log.d(ETAG, "Preparing");
-                            setOverlayViewEnabled(true);
                             notifyVideoUnavailable(
                                     TvInputManager.VIDEO_UNAVAILABLE_REASON_TUNING);
+                            Log.d(ETAG, "Preparing");
+                            setOverlayViewEnabled(false);
+                            setOverlayViewEnabled(true);
                         }
 
                         /*else if(state == TvInputPlayer.STATE_IDLE) {

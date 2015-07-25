@@ -76,7 +76,8 @@ public class TvInputPlayer implements TextRenderer {
     private static final int MIN_BUFFER_MS = 1000;
     private static final int MIN_REBUFFER_MS = 5000;
 
-    private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
+    private static final int BUFFER_SEGMENT_SIZE = 256 * 1024;
+    private static final int BUFFER_SEGMENTS = 64;
     private static final int VIDEO_BUFFER_SEGMENTS = 200;
     private static final int AUDIO_BUFFER_SEGMENTS = 60;
     private static final int LIVE_EDGE_LATENCY_MS = 30000;
@@ -198,10 +199,10 @@ public class TvInputPlayer implements TextRenderer {
                                     uri.toString(), hlsPlaylist, bandwidthMeter, null,
                                     HlsChunkSource.ADAPTIVE_MODE_SPLICE, null);
                             LoadControl lhc = new DefaultLoadControl(new DefaultAllocator(BUFFER_SEGMENT_SIZE));
-                            HlsSampleSource sampleSource = new HlsSampleSource(chunkSource, lhc, 2, true);
+                            HlsSampleSource sampleSource = new HlsSampleSource(chunkSource, lhc, BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, true);
                             mAudioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
                             mVideoRenderer = new MediaCodecVideoTrackRenderer(sampleSource,
-                                    MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 0, mHandler,
+                                    MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000, mHandler,
                                     mVideoRendererEventListener, 50);
                             mTextRenderer = new Eia608TrackRenderer(sampleSource,
                                     TvInputPlayer.this, mHandler.getLooper());

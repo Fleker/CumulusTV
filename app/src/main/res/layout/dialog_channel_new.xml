@@ -6,24 +6,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/number"
-        android:text="6"
         android:hint="Channel Number"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/name"
-        android:text="ABC News"
         android:hint="Channel Name"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/logo"
-        android:text="https://yt3.ggpht.com/-F2fw6o3bXkE/AAAAAAAAAAI/AAAAAAAAAAA/DMJGHPkK9As/s88-c-k-no/photo.jpg"
         android:hint="Channel Logo Url"/>
+    <!--android:text="https://yt3.ggpht.com/-F2fw6o3bXkE/AAAAAAAAAAI/AAAAAAAAAAA/DMJGHPkK9As/s88-c-k-no/photo.jpg"-->
+    <!--android:text="http://abclive.abcnews.com/i/abc_live4@136330/index_1200_av-b.m3u8"-->
+
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/stream"
-        android:text="http://abclive.abcnews.com/i/abc_live4@136330/index_1200_av-b.m3u8"
         android:hint="Stream Url"/>
 </LinearLayout>

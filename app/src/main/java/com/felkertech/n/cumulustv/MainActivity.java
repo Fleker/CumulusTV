@@ -2,6 +2,7 @@ package com.felkertech.n.cumulustv;
 
 import android.content.ComponentName;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.tv.TvContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -196,7 +197,8 @@ public class MainActivity extends AppCompatActivity {
                         new JSONChannel("167", "Montery Bay Aquarium", "http://iphone-streaming.ustream.tv/uhls/9600798/streams/live/iphone/playlist.m3u8", "http://static-cdn1.ustream.tv/i/channel/live/1_9600798,256x144,b:2015071514.jpg"),
                         new JSONChannel("168", "Audubon Osprey Cam", "http://iphone-streaming.ustream.tv/uhls/11378037/streams/live/iphone/playlist.m3u8", "http://static-cdn1.ustream.tv/i/channel/live/1_11378037,256x144,b:2015071514.jpg"),
                         new JSONChannel("101", "ISS Stream", "http://iphone-streaming.ustream.tv/uhls/9408562/streams/live/iphone/playlist.m3u8", "http://static-cdn1.ustream.tv/i/channel/picture/9/4/0/8/9408562/9408562_iss_hr_1330361780,256x144,r:1.jpg"),
-                        new JSONChannel("400", "Beats One", "http://stream.connectcast.tv:1935/live/CC-EC1245DB-5C6A-CF57-D13A-BB36B3CBB488-34313/playlist.m3u8", "")
+//                        new JSONChannel("400", "Beats One", "http://stream.connectcast.tv:1935/live/CC-EC1245DB-5C6A-CF57-D13A-BB36B3CBB488-34313/playlist.m3u8", "")
+                        new JSONChannel("401", "California Garage Bands", "http://pablogott.videocdn.scaleengine.net/pablogott-iphone/play/ooftv1/playlist.m3u8", "")
                 };
                 ArrayList<String> channeltext = new ArrayList<String>();
                 for(JSONChannel j: channels) {
@@ -224,6 +226,13 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         }).show();
+            }
+        });
+        findViewById(R.id.gotoapp).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = getPackageManager().getLaunchIntentForPackage("com.google.android.tv");
+                startActivity(i);
             }
         });
     }
