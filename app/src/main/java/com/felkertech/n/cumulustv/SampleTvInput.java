@@ -21,6 +21,8 @@ import android.view.Surface;
 import android.view.View;
 import android.view.accessibility.CaptioningManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.sampletvinput.TvContractUtils;
@@ -132,10 +134,18 @@ public class SampleTvInput extends TvInputService {
         }
         @Override
         public View onCreateOverlayView() {
-            ImageView iv = new ImageView(getApplicationContext());
-            iv.setImageDrawable(getResources().getDrawable(R.mipmap.ic_launcher));
+            /*ImageView iv = new ImageView(getApplicationContext());
+            iv.setImageDrawable(getResources().getDrawable(R.mipmap.ic_launcher));*/
+            LinearLayout hero = new LinearLayout(getApplicationContext());
+            hero.setBackgroundColor(getResources().getColor(R.color.md_material_blue_600));
+
+            TextView tv = new TextView(getApplicationContext());
+            tv.setText("Loading Channel");
+            tv.setTextColor(getResources().getColor(R.color.lb_tv_white));
+            hero.addView(tv);
+
             Log.d(TAG, "Overlay");
-            return iv;
+            return hero;
         }
         @Override
         public boolean onTune(Uri channelUri) {
@@ -203,6 +213,8 @@ public class SampleTvInput extends TvInputService {
                                     Log.d(ETAG, "Now playing");
                                 }
                             };
+                            notifyVideoUnavailable(
+                                    TvInputManager.VIDEO_UNAVAILABLE_REASON_BUFFERING);
                             h.sendEmptyMessageDelayed(0, 2500);
                             setOverlayViewEnabled(true);
                             Log.d(ETAG, "Ready");

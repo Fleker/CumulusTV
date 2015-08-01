@@ -6,17 +6,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/number"
-        android:hint="Channel Number"/>
+        android:hint="Channel Number"
+        android:inputType="number" />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/name"
-        android:hint="Channel Name"/>
+        android:hint="Channel Name"
+        android:inputType="text|textCapWords" />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/logo"
-        android:hint="Channel Logo Url"/>
+        android:hint="Channel Logo Url"
+        android:inputType="text|textUri" />
     <!--android:text="https://yt3.ggpht.com/-F2fw6o3bXkE/AAAAAAAAAAI/AAAAAAAAAAA/DMJGHPkK9As/s88-c-k-no/photo.jpg"-->
     <!--android:text="http://abclive.abcnews.com/i/abc_live4@136330/index_1200_av-b.m3u8"-->
 
@@ -24,5 +27,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/stream"
-        android:hint="Stream Url"/>
+        android:hint="Stream Url"
+        android:inputType="text|textUri" />
 </LinearLayout>

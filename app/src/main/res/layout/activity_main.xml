@@ -10,7 +10,7 @@
 
     <Button android:text="Add Stream" android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="128dp"
+        android:layout_marginTop="112dp"
         android:layout_marginRight="64dp"
         android:layout_marginLeft="64dp"
         android:id="@+id/add"/>
@@ -32,6 +32,12 @@
         android:layout_marginRight="64dp"
         android:layout_marginLeft="64dp"
         android:id="@+id/gotoapp"/>
+    <Button android:text="View Software Licenses" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/gotoapp"
+        android:layout_marginRight="64dp"
+        android:layout_marginLeft="64dp"
+        android:id="@+id/osl"/>
 <!--    <Button android:text="Delete Stream" android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/view"

@@ -76,11 +76,11 @@ public class TvInputPlayer implements TextRenderer {
     private static final int MIN_BUFFER_MS = 1000;
     private static final int MIN_REBUFFER_MS = 5000;
 
-    private static final int BUFFER_SEGMENT_SIZE = 256 * 1024;
-    private static final int BUFFER_SEGMENTS = 64;
-    private static final int VIDEO_BUFFER_SEGMENTS = 200;
+    private static final int BUFFER_SEGMENT_SIZE = 256 * 1024 * 8;
+    private static final int BUFFER_SEGMENTS = 64 * 4;
+/*    private static final int VIDEO_BUFFER_SEGMENTS = 200;
     private static final int AUDIO_BUFFER_SEGMENTS = 60;
-    private static final int LIVE_EDGE_LATENCY_MS = 30000;
+    private static final int LIVE_EDGE_LATENCY_MS = 30000;*/
 
     private static final int NO_TRACK_SELECTED = -1;
 
@@ -183,7 +183,6 @@ public class TvInputPlayer implements TextRenderer {
         } else if (sourceType == SOURCE_TYPE_HLS) {
             Log.d(TAG, "Prep HLS");
             final String userAgent = getUserAgent(context);
-            final int BUFFER_SEGMENT_SIZE = 64 * 1024;
             HlsPlaylistParser parser = new HlsPlaylistParser();
             UriDataSource dataSource = new DefaultUriDataSource(context, userAgent);
             final ManifestFetcher<HlsPlaylist> playlistFetcher =

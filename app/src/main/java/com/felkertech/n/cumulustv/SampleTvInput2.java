@@ -13,24 +13,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
 import android.view.accessibility.CaptioningManager;
 import android.widget.ImageView;
-import android.widget.VideoView;
 
 import com.example.android.sampletvinput.TvContractUtils;
 import com.example.android.sampletvinput.player.TvInputPlayer;
-import com.example.android.sampletvinput.syncadapter.SyncUtils;
 import com.google.android.exoplayer.ExoPlaybackException;
-import com.google.android.exoplayer.ExoPlayer;
-import com.google.android.exoplayer.text.CaptionStyleCompat;
-import com.google.android.exoplayer.text.SubtitleView;
 
 import java.io.IOException;
 import java.util.List;

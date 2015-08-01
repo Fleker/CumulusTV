@@ -152,18 +152,18 @@ public class ChannelDatabase {
         channels.put(n00b.toJSON());
         save();
     }
-    public void update(JSONChannel n00b) throws JSONException {
-        if(!channelExists(n00b)) {
-            add(n00b);
+    public void update(JSONChannel ch) throws JSONException {
+        if(!channelExists(ch)) {
+            add(ch);
             return;
         } else {
             try {
                 JSONArray jsonArray = getJSONChannels();
                 for(int i = 0;i<jsonArray.length();i++) {
                     JSONChannel jsonChannel = new JSONChannel(jsonArray.getJSONObject(i));
-                    if(jsonChannel.getUrl().equals(n00b.getUrl())) {
+                    if(jsonChannel.getUrl().equals(ch.getUrl())) {
                         jsonArray.remove(i);
-                        jsonArray.put(i, n00b.toJSON());
+                        jsonArray.put(i, ch.toJSON());
                         save();
                     }
                 }
@@ -171,6 +171,17 @@ public class ChannelDatabase {
                 e.printStackTrace();
             }
         }
+    }
+    public void update(JSONChannel ch, int index) throws JSONException {
+        //With provided index, we can easily update that channel!
+        if(!channelExists(ch)) {
+            add(ch);
+            return;
+        }
+        JSONArray jsonArray = getJSONChannels();
+        jsonArray.remove(index);
+        jsonArray.put(index, ch.toJSON());
+        save();
     }
     public void delete(JSONChannel n00b) throws JSONException {
         if(!channelExists(n00b)) {
