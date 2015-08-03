@@ -1,8 +1,10 @@
 # CumulusTV
 Android TV Live Channel Plugin with user-entered stream files
 
-<img src='https://cloud.githubusercontent.com/assets/3291635/9031614/2a2534ba-3983-11e5-900f-a8cb99f3bf40.png'/>
-<img src='https://cloud.githubusercontent.com/assets/3291635/9021048/00a04364-37fd-11e5-85be-1e550796d922.png'/>
+<img src='https://cloud.githubusercontent.com/assets/3291635/9031614/2a2534ba-3983-11e5-900f-a8cb99f3bf40.png' width='640px'/>
+
+## Download it Now
+The app is available for free on <a href="https://play.google.com/apps/testing/com.felkertech.n.cumulustv">Google Play</a> as a beta. Anyone who downloads and uses the beta will be using the most recent <a href="https://github.com/Fleker/CumulusTV/releases">release</a>.
 
 ## History
 This originally started from a <a href="https://www.reddit.com/r/AndroidTV/comments/3cslyd/app_that_adds_m3u_iptv_streams_to_the_live/">thread on Reddit</a> 
@@ -17,7 +19,11 @@ where a user wanted to add user-defined channels using m3u8 files.
 * [x] Use Google Drive to sync channel data to your user account and allow remote adding
 * [ ] Find m3u streams to provide as samples
 * [ ] Get program guide data to supply streams if data exists
+* [ ] Add additional attributes that can be used to customize a stream, like custom genres and splashscreens
 
 
 ## Suggested Streams
 To help users quickly setup, I want a set of suggested streams (m3u8 files) that users can add. If you have a suggestion, add it as an issue for this project so I can add it to the list.
+
+## Photos
+<img src='https://cloud.githubusercontent.com/assets/3291635/9021048/00a04364-37fd-11e5-85be-1e550796d922.png' width='640px'/>
