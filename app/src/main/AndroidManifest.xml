@@ -120,7 +120,8 @@
         Since the channel/program feed here does not require any authentication, we use a dummy
         account used for SyncAdapter.
         -->
-        <service android:name="com.example.android.sampletvinput.syncadapter.DummyAccountService" >
+        <service android:name="com.example.android.sampletvinput.syncadapter.DummyAccountService"
+            android:icon="@drawable/ic_launcher">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>

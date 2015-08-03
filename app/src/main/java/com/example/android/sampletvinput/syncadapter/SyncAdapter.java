@@ -39,12 +39,26 @@ import android.util.LongSparseArray;
 import com.example.android.sampletvinput.TvContractUtils;
 import com.example.android.sampletvinput.data.Program;
 import com.example.android.sampletvinput.player.TvInputPlayer;
+import com.felkertech.n.boilerplate.Utils.SettingsManager;
 import com.felkertech.n.cumulustv.ChannelDatabase;
 import com.felkertech.n.cumulustv.JSONChannel;
+import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.TvManager;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveApi;
+import com.google.android.gms.drive.DriveContents;
+import com.google.android.gms.drive.DriveFile;
+import com.google.android.gms.drive.DriveId;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.channels.Channel;
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,8 +67,8 @@ import java.util.List;
 /**
  * A SyncAdapter implementation which updates program info periodically.
  */
-public class SyncAdapter extends AbstractThreadedSyncAdapter {
-    public static final String TAG = "SyncAdapter";
+public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks{
+    public static final String TAG = "cumulus:SyncAdapter";
 
     public static final String BUNDLE_KEY_INPUT_ID = "bundle_key_input_id";
     public static final long SYNC_FREQUENCY_SEC = 60 * 60 * 6;  // 6 hours
@@ -63,6 +77,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public static final long FULL_SYNC_FREQUENCY_SEC = 60 * 60 * 24;  // daily
     private static final int FULL_SYNC_WINDOW_SEC = 60 * 60 * 24 * 14;  // 2 weeks
     private static final int SHORT_SYNC_WINDOW_SEC = 60 * 60;  // 1 hour
+    private GoogleApiClient gapi;
 
     private final Context mContext;
 
@@ -79,9 +94,31 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     /**
      * Called periodically by the system in every {@code SYNC_FREQUENCY_SEC}.
      */
+    private Account account;
+    private Bundle extras;
+    private String authority;
+    private ContentProviderClient provider;
+    private SyncResult syncResult;
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority,
                               ContentProviderClient provider, SyncResult syncResult) {
+        this.account = account;
+        this.extras = extras;
+        this.authority = authority;
+        this.provider = provider;
+        this.syncResult = syncResult;
+
+        Log.d(TAG, "Opened SyncAdapter, connect to GPS");
+        gapi = new GoogleApiClient.Builder(getContext())
+                .addApi(Drive.API)
+                .addScope(Drive.SCOPE_FILE)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+        gapi.connect();
+    }
+
+    public void doLocalSync() {
         Log.d(TAG, "onPerformSync(" + account + ", " + authority + ", " + extras + ")");
         String inputId = extras.getString(SyncAdapter.BUNDLE_KEY_INPUT_ID);
         if (inputId == null) {
@@ -153,6 +190,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 //            Long rowId = mExistingChannelsMap.get(channel.originalNetworkId);
                 ChannelDatabase cdn = new ChannelDatabase(mContext);
                 JSONChannel jsonChannel = cdn.findChannel(channel.number);
+                if(jsonChannel == null)
+                    continue;
                 channel.logoUrl = jsonChannel.getLogo();
 
                 List<TvManager.ProgramInfo> infoList = new ArrayList<>();
@@ -454,5 +493,78 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 && oldProgram.getStartTimeUtcMillis() <= newProgram.getEndTimeUtcMillis()
                 && newProgram.getStartTimeUtcMillis() <= oldProgram.getEndTimeUtcMillis();*/
         return true;
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        final SettingsManager sm = new SettingsManager(getContext());
+        Log.d(TAG, "Grab and compare cloud data, then continue syncing");
+        //Pull from cloud. Save if newer, else write.
+        /*
+            I want to automatically do a local sync after all these cloud ops are done,
+            but only on the last op.
+            This variable tracks the number of cloud operations done.
+            First, I read into a temp file. (1)
+            If it's newer, then I do a read in, (2)
+            Otherwise, I do a write out (2)
+            Either way, I act only on the second operation
+         */
+        final int[] operations = new int[]{0};
+        /*
+            Setup a few key variables for this method
+         */
+        final DriveId driveId = DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id));
+        final String tempKey = ChannelDatabase.KEY+"SYNC";
+
+        sm.setGoogleDriveSyncable(gapi, new SettingsManager.GoogleDriveListener() {
+            @Override
+            public void onActionFinished() {
+                Log.d(TAG, "On operation "+operations[0]);
+                if(operations[0] >= 2) {
+                    doLocalSync();
+                } else {
+                    try {
+                        JSONObject jsonObject = new JSONObject(sm.getString(tempKey));
+                        if(jsonObject.has("modified")) {
+                            long cloudModified = jsonObject.getLong("modified");
+                            long localModified = new ChannelDatabase(getContext()).getLastModified();
+                            if(cloudModified > localModified) {
+                                //Read in
+                                Log.d(TAG, "Cloud newer, read in");
+                                operations[0]++;
+                                sm.readFromGoogleDrive(driveId, ChannelDatabase.KEY);
+                            } else {
+                                //Write out
+                                Log.d(TAG, "Local newer, write out");
+                                operations[0]++;
+                                sm.writeToGoogleDrive(driveId, sm.getString(ChannelDatabase.KEY));
+                            } //Else both files are the same and there's no need to modify anything
+                        } else {
+                            Log.d(TAG, "Cloud doesn't have a modified attribute, repair");
+                            operations[0]++;
+                            sm.writeToGoogleDrive(driveId, sm.getString(ChannelDatabase.KEY));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.d(TAG, "JSON error, repair");
+                        operations[0]++;
+                        sm.writeToGoogleDrive(driveId, sm.getString(ChannelDatabase.KEY));
+                    }
+                }
+
+            }
+        });
+        operations[0]++;
+        sm.readFromGoogleDrive(driveId, tempKey); //Save to temp
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }

@@ -32,19 +32,17 @@
         android:layout_marginRight="64dp"
         android:layout_marginLeft="64dp"
         android:id="@+id/gotoapp"/>
-    <Button android:text="View Software Licenses" android:layout_width="match_parent"
+    <Button android:text="Sync files with Google Drive" android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/gotoapp"
         android:layout_marginRight="64dp"
         android:layout_marginLeft="64dp"
-        android:id="@+id/osl"/>
-<!--    <Button android:text="Delete Stream" android:layout_width="match_parent"
+        android:id="@+id/gdrive"/>
+    <Button android:text="More..." android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/view"
-        android:id="@+id/delete"/>
-    <Button android:text="Edit Stream" android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/delete"
-        android:id="@+id/edit"/>-->
+        android:layout_below="@+id/gdrive"
+        android:layout_marginRight="64dp"
+        android:layout_marginLeft="64dp"
+        android:id="@+id/more_actions"/>
 
 </RelativeLayout>

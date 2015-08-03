@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -25,7 +26,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi;
+import com.google.android.gms.drive.DriveFile;
+import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.drive.OpenFileActivityBuilder;
 
 import org.json.JSONException;
 
@@ -35,6 +39,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public static String TAG = "cumulus:MainActivity";
     GoogleApiClient gapi;
     private static final int RESOLVE_CONNECTION_REQUEST_CODE = 100;
+    private static final int REQUEST_CODE_CREATOR = 102;
+    private static final int REQUEST_CODE_OPENER = 104;
+    SettingsManager sm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
+        sm = new SettingsManager(this);
         findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,7 +88,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                         Log.d(TAG, "K");
                                     }
                                     Log.d(TAG, cd.toString());
-                                    SyncUtils.requestSync(info);
+                                    writeDriveData();
+//                                    SyncUtils.requestSync(info);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -98,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 if(channelnames.length == 0) {
                     new MaterialDialog.Builder(MainActivity.this)
                             .title("You have no streams")
-                            .content("Add one of these streams")
+                            .content("Find a few streams to add")
                             .positiveText("OK")
                             .negativeText("No")
                             .callback(new MaterialDialog.ButtonCallback() {
@@ -140,7 +149,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                                         JSONChannel jsch = new JSONChannel(number, name, stream, logo);
                                                         cd.update(jsch, i);
                                                         Log.d(TAG, cd.toString());
-                                                        SyncUtils.requestSync(info);
+                                                        writeDriveData();
+//                                                        SyncUtils.requestSync(info);
                                                     } catch (JSONException e) {
                                                         e.printStackTrace();
                                                     }
@@ -174,7 +184,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                                                         JSONChannel jsch = new JSONChannel(number, name, stream, logo);
                                                                         cd.delete(jsch);
                                                                         Log.d(TAG, cd.toString());
-                                                                        SyncUtils.requestSync(info);
+                                                                        writeDriveData();
+//                                                                        SyncUtils.requestSync(info);
                                                                     } catch (JSONException e) {
                                                                         e.printStackTrace();
                                                                     }
@@ -226,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         new JSONChannel("168", "Audubon Osprey Cam", "http://iphone-streaming.ustream.tv/uhls/11378037/streams/live/iphone/playlist.m3u8", "http://static-cdn1.ustream.tv/i/channel/live/1_11378037,256x144,b:2015071514.jpg"),
                         new JSONChannel("101", "ISS Stream", "http://iphone-streaming.ustream.tv/uhls/9408562/streams/live/iphone/playlist.m3u8", "http://static-cdn1.ustream.tv/i/channel/picture/9/4/0/8/9408562/9408562_iss_hr_1330361780,256x144,r:1.jpg"),
 //                        new JSONChannel("400", "Beats One", "http://stream.connectcast.tv:1935/live/CC-EC1245DB-5C6A-CF57-D13A-BB36B3CBB488-34313/playlist.m3u8", "")
-                        new JSONChannel("401", "California Garage Bands", "http://pablogott.videocdn.scaleengine.net/pablogott-iphone/play/ooftv1/playlist.m3u8", ""),
+                        new JSONChannel("401", "California Garage Bands", "http://pablogott.videocdn.scaleengine.net/pablogott-iphone/play/ooftv1/playlist.m3u8", "https://avatars3.githubusercontent.com/u/9580532?v=3&s=460"),
 /*
                         new JSONChannel("900", "Euronews De", "http://fr-par-iphone-2.cdn.hexaglobe.net/streaming/euronews_ewns/14-live.m3u8", ""),
                         new JSONChannel("901", "TVI (Portugal)", "http://noscdn1.connectedviews.com:1935/live/smil:tvi.smil/playlist.m3u8", ""),
@@ -254,7 +265,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                     try {
                                         Toast.makeText(getApplicationContext(), charSequence+" has been added", Toast.LENGTH_SHORT).show();
                                         cd.add(j);
-                                        SyncUtils.requestSync(info);
+                                        writeDriveData();
+//                                        SyncUtils.requestSync(info);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -270,7 +282,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 startActivity(i);
             }
         });
-        findViewById(R.id.osl).setOnClickListener(new View.OnClickListener() {
+        /*findViewById(R.id.osl).setOnClickListener(new View.OnClickListener() {
            @Override
             public void onClick(View v) {
                new MaterialDialog.Builder(MainActivity.this)
@@ -278,12 +290,30 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                        .content(GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(getApplicationContext()))
                        .show();
            }
+        });*/
+        findViewById(R.id.gdrive).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gapi.connect();
+            }
+        });
+        findViewById(R.id.more_actions).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                moreClick();
+            }
         });
     }
 
     @Override
     public void onConnected(Bundle bundle) {
-        SettingsManager sm = new SettingsManager(this);
+        sm.setGoogleDriveSyncable(gapi, new SettingsManager.GoogleDriveListener() {
+            @Override
+            public void onActionFinished() {
+                final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
+                SyncUtils.requestSync(info);
+            }
+        }); //Enable GDrive
         Log.d(TAG, sm.getString(R.string.sm_google_drive_id)+"<< for onConnected");
         if(sm.getString(R.string.sm_google_drive_id).isEmpty()) {
             //We need a new file
@@ -296,39 +326,25 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         @Override
                         public void onPositive(MaterialDialog dialog) {
                             super.onPositive(dialog);
-                            ResultCallback<DriveApi.DriveContentsResult> contentsCallback = new
-                                    ResultCallback<DriveApi.DriveContentsResult>() {
-                                        @Override
-                                        public void onResult(DriveApi.DriveContentsResult result) {
-                                            if (!result.getStatus().isSuccess()) {
-                                                // Handle error
-                                                return;
-                                            }
-
-                                            MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
-                                                    .setMimeType("text/json").build();
-                                            IntentSender intentSender = Drive.DriveApi
-                                                    .newCreateFileActivityBuilder()
-                                                    .setInitialMetadata(metadataChangeSet)
-                                                    .setInitialDriveContents(result.getDriveContents())
-                                                    .build(gapi);
-                                            try {
-                                                startIntentSenderForResult(intentSender, 1, null, 0, 0, 0);
-                                            } catch (IntentSender.SendIntentException e) {
-                                                // Handle the exception
-                                            }
-                                        }
-                                    };
+                            Drive.DriveApi.newDriveContents(gapi)
+                                    .setResultCallback(driveContentsCallback);
                         }
                     })
                     .show();
+        } else {
+            //Great, user already has sync enabled, let's resync
+            readDriveData();
         }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        gapi.connect();
+        if(!new SettingsManager(this).getString(R.string.sm_google_drive_id).isEmpty()) {
+            gapi.connect();
+            ((Button) findViewById(R.id.gdrive)).setVisibility(View.GONE);
+            ((Button) findViewById(R.id.gdrive)).setEnabled(false);
+        }
         Log.d(TAG, "onStart");
     }
 
@@ -355,9 +371,148 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         switch (requestCode) {
             case RESOLVE_CONNECTION_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
+                    Log.d(TAG, "App connect +1");
                     gapi.connect();
+                } else {
+                    Log.d(TAG, "App cannot connect");
+                    new MaterialDialog.Builder(this)
+                            .title("Connection Issue")
+                            .content("Cannot connect to Google Drive at this moment.")
+                            .positiveText("OK")
+                            .negativeText("Try Again")
+                            .callback(new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onNegative(MaterialDialog dialog) {
+                                    super.onNegative(dialog);
+                                    gapi.connect();
+                                }
+                            }).show();
                 }
                 break;
+            case REQUEST_CODE_CREATOR:
+                if(data == null) //If op was canceled
+                    return;
+                DriveId driveId = (DriveId) data.getParcelableExtra(
+                        OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
+                Log.d(TAG, driveId.encodeToString()+", "+driveId.getResourceId()+", "+driveId.toInvariantString());
+                sm.setString(R.string.sm_google_drive_id, driveId.encodeToString());
+
+                DriveFile file = Drive.DriveApi.getFile(gapi,DriveId.decodeFromString(driveId.encodeToString()));
+                //Write initial data
+                writeDriveData();
+                break;
+            case REQUEST_CODE_OPENER:
+                if(data == null) //If op was canceled
+                    return;
+                driveId = (DriveId) data.getParcelableExtra(
+                        OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
+                Log.d(TAG, driveId.encodeToString()+", "+driveId.getResourceId()+", "+driveId.toInvariantString());
+                sm.setString(R.string.sm_google_drive_id, driveId.encodeToString());
+                new MaterialDialog.Builder(this)
+                        .title("Choose Initial Action")
+                        .positiveText("Write local data to file")
+                        .negativeText("Write file data to local")
+                        .callback(new MaterialDialog.ButtonCallback() {
+                            @Override
+                            public void onPositive(MaterialDialog dialog) {
+                                super.onPositive(dialog);
+                                readDriveData();
+                            }
+
+                            @Override
+                            public void onNegative(MaterialDialog dialog) {
+                                super.onNegative(dialog);
+                                writeDriveData();
+                            }
+                        })
+                        .show();
         }
+    }
+
+    /** GDRIVE **/
+    ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback =
+            new ResultCallback<DriveApi.DriveContentsResult>() {
+                @Override
+                public void onResult(DriveApi.DriveContentsResult result) {
+                    MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
+                            .setTitle("cumulustv_channels.json")
+                            .setDescription("JSON list of channels that can be imported using CumulusTV to view live streams")
+                            .setMimeType("application/json").build();
+                    IntentSender intentSender = Drive.DriveApi
+                            .newCreateFileActivityBuilder()
+                            .setActivityTitle("cumulustv_channels.json")
+                            .setInitialMetadata(metadataChangeSet)
+                            .setInitialDriveContents(result.getDriveContents())
+                            .build(gapi);
+                    try {
+                        startIntentSenderForResult(
+                                intentSender, REQUEST_CODE_CREATOR, null, 0, 0, 0);
+                    } catch (IntentSender.SendIntentException e) {
+                        Log.w(TAG, "Unable to send intent", e);
+                    }
+                }
+            };
+    public void oslClick() {
+        new MaterialDialog.Builder(MainActivity.this)
+                .title("Software Licenses")
+                .content(GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(getApplicationContext()))
+                .show();
+    }
+    public void moreClick() {
+        String[] actions = new String[] {"Switch Google Drive file", "Refresh Data", "View Software Licenses", "Reset Channel Data"};
+        new MaterialDialog.Builder(MainActivity.this)
+                .title("More Actions")
+                .items(actions)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+                        switch (i) {
+                            case 0:
+//                                Toast.makeText(MainActivity.this, "Not supported", Toast.LENGTH_SHORT).show();
+                                IntentSender intentSender = Drive.DriveApi
+                                        .newOpenFileActivityBuilder()
+                                        .setMimeType(new String[]{ "application/json", "text/*" })
+                                        .build(gapi);
+                                try {
+                                    startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0, 0);
+                                } catch (IntentSender.SendIntentException e) {
+                                    Log.w(TAG, "Unable to send intent", e);
+                                }
+                                break;
+                            case 1:
+                                readDriveData();
+                                break;
+                            case 2:
+                                oslClick();
+                                break;
+                            case 3:
+                                new MaterialDialog.Builder(MainActivity.this)
+                                        .title("Delete all your channel data?")
+                                        .positiveText("Yes")
+                                        .negativeText("NO")
+                                        .callback(new MaterialDialog.ButtonCallback() {
+                                            @Override
+                                            public void onPositive(MaterialDialog dialog) {
+                                                super.onPositive(dialog);
+                                                sm.setString(ChannelDatabase.KEY, "{'channels':[]}");
+                                                sm.writeToGoogleDrive(DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id)),
+                                                        sm.getString(ChannelDatabase.KEY));
+                                                sm.setString(R.string.sm_google_drive_id, "");
+                                                Toast.makeText(MainActivity.this, "The deed was done", Toast.LENGTH_SHORT).show();
+                                                onCreate(null);
+                                            }
+                                        })
+                                        .show();
+                                break;
+                        }
+                    }
+                })
+                .show();
+    }
+    public void readDriveData() {
+        sm.readFromGoogleDrive(DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id)), ChannelDatabase.KEY);
+    }
+    public void writeDriveData() {
+        sm.writeToGoogleDrive(DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id)), new ChannelDatabase(this).toString());
     }
 }

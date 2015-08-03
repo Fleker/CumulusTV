@@ -34,7 +34,7 @@ import android.os.IBinder;
 public class DummyAccountService extends Service {
     private static final String TAG = "DummyAccountService";
     private DummyAuthenticator mAuthenticator;
-    public static final String ACCOUNT_NAME = "DummyAccount";
+    public static final String ACCOUNT_NAME = "CumulusTV";
 
     public static Account getAccount(String accountType) {
         return new Account(ACCOUNT_NAME, accountType);

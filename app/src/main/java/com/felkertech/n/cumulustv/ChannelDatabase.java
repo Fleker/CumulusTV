@@ -1,5 +1,6 @@
 package com.felkertech.n.cumulustv;
 
+import android.bluetooth.le.AdvertiseData;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.tv.TvContentRating;
@@ -15,6 +16,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,9 +32,13 @@ public class ChannelDatabase {
     public ChannelDatabase(Context mContext) {
         this.mContext = mContext;
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
-        String spData = sp.getString(KEY, "{'channels':[]}");
+        String spData = sp.getString(KEY, "{'channels':[], 'modified':0}");
         try {
             obj = new JSONObject(spData);
+            if(!obj.has("modified")) {
+                obj.put("modified", 0l);
+                save();
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -203,13 +209,24 @@ public class ChannelDatabase {
         }
     }
     public void save() {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
-        SharedPreferences.Editor e = sp.edit();
-        e.putString(KEY, toString());
-        e.commit();
+        try {
+            setLastModified();
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
+            SharedPreferences.Editor e = sp.edit();
+            e.putString(KEY, toString());
+            e.commit();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
     @Override
     public String toString() {
         return obj.toString();
+    }
+    public long getLastModified() throws JSONException {
+        return obj.getLong("modified");
+    }
+    public void setLastModified() throws JSONException {
+        obj.put("modified", new Date().getTime());
     }
 }

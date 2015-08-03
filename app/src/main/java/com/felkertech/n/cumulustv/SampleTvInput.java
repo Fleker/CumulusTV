@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.media.tv.TvContract;
 import android.media.tv.TvInputManager;
@@ -16,10 +17,13 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v7.graphics.Palette;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
 import android.view.accessibility.CaptioningManager;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,6 +32,8 @@ import android.widget.Toast;
 import com.example.android.sampletvinput.TvContractUtils;
 import com.example.android.sampletvinput.player.TvInputPlayer;
 import com.google.android.exoplayer.ExoPlaybackException;
+import com.pnikosis.materialishprogress.ProgressWheel;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.List;
@@ -99,6 +105,7 @@ public class SampleTvInput extends TvInputService {
         private float mVolume;
         private Surface mSurface;
         private String TAG = "cumulus:TIS.S";
+        JSONChannel jsonChannel;
         SimpleSessionImpl(Context context) {
             super(context);
         }
@@ -134,18 +141,79 @@ public class SampleTvInput extends TvInputService {
         }
         @Override
         public View onCreateOverlayView() {
-            /*ImageView iv = new ImageView(getApplicationContext());
-            iv.setImageDrawable(getResources().getDrawable(R.mipmap.ic_launcher));*/
-            LinearLayout hero = new LinearLayout(getApplicationContext());
-            hero.setBackgroundColor(getResources().getColor(R.color.md_material_blue_600));
+            LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View v = inflater.inflate(R.layout.loading, null);
+//            v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
+            if(jsonChannel != null) {
+                ((TextView) v.findViewById(R.id.channel)).setText(jsonChannel.getNumber());
+                ((TextView) v.findViewById(R.id.title)).setText(jsonChannel.getName());
+                if(!jsonChannel.getLogo().isEmpty()) {
+                    final Bitmap[] bitmap = {null};
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Handler h = new Handler(Looper.getMainLooper()) {
+                                @Override
+                                public void handleMessage(Message msg) {
+                                    super.handleMessage(msg);
+                                    ((ImageView) v.findViewById(R.id.thumnail)).setImageBitmap(bitmap[0]);
 
-            TextView tv = new TextView(getApplicationContext());
-            tv.setText("Loading Channel");
-            tv.setTextColor(getResources().getColor(R.color.lb_tv_white));
-            hero.addView(tv);
+                                    //Use Palette to grab colors
+                                    Palette p = Palette.from(bitmap[0])
+                                            .generate();
+                                    if(p.getVibrantSwatch() != null) {
+                                        Log.d(TAG, "Use vibrant");
+                                        Palette.Swatch s = p.getVibrantSwatch();
+                                        v.setBackgroundColor(s.getRgb());
+                                        ((TextView) v.findViewById(R.id.channel)).setTextColor(s.getTitleTextColor());
+                                        ((TextView) v.findViewById(R.id.title)).setTextColor(s.getTitleTextColor());
+                                        ((TextView) v.findViewById(R.id.channel_msg)).setTextColor(s.getTitleTextColor());
+
+                                        //Now style the progress bar
+                                        if(p.getDarkVibrantSwatch() != null) {
+                                            Palette.Swatch dvs = p.getDarkVibrantSwatch();
+                                            ((ProgressWheel) v.findViewById(R.id.indeterminate_progress_large_library)).setBarColor(dvs.getRgb());
+                                        }
+                                    } else if(p.getDarkVibrantSwatch() != null) {
+                                        Log.d(TAG, "Use dark vibrant");
+                                        Palette.Swatch s = p.getDarkVibrantSwatch();
+                                        v.setBackgroundColor(s.getRgb());
+                                        ((TextView) v.findViewById(R.id.channel)).setTextColor(s.getTitleTextColor());
+                                        ((TextView) v.findViewById(R.id.title)).setTextColor(s.getTitleTextColor());
+                                        ((TextView) v.findViewById(R.id.channel_msg)).setTextColor(s.getTitleTextColor());
+                                        ((ProgressWheel) v.findViewById(R.id.indeterminate_progress_large_library)).setBarColor(s.getRgb());
+                                    } else {
+                                        //Go with default if no vibrant swatch exists
+                                        Log.d(TAG, "No vibrant swatch, "+p.getSwatches().size()+" others");
+                                        Palette.Swatch s = p.getSwatches().get(0);
+                                        v.setBackgroundColor(s.getRgb());
+                                        ((TextView) v.findViewById(R.id.channel)).setTextColor(s.getTitleTextColor());
+                                        ((TextView) v.findViewById(R.id.title)).setTextColor(s.getTitleTextColor());
+                                        ((TextView) v.findViewById(R.id.channel_msg)).setTextColor(s.getTitleTextColor());
+                                        ((ProgressWheel) v.findViewById(R.id.indeterminate_progress_large_library)).setBarColor(s.getBodyTextColor());
+                                    }
+                                }
+                            };
+                            try {
+                                bitmap[0] = Picasso.with(getApplicationContext())
+                                        .load(jsonChannel.getLogo())
+                                        .placeholder(R.drawable.ic_launcher)
+                                        .get();
+                                h.sendEmptyMessage(0);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+//                            .into((ImageView) v.findViewById(R.id.thumnail));
+                }
+            } else {
+                ((TextView) v.findViewById(R.id.channel)).setText("");
+                ((TextView) v.findViewById(R.id.title)).setText("");
+            }
 
             Log.d(TAG, "Overlay");
-            return hero;
+            return v;
         }
         @Override
         public boolean onTune(Uri channelUri) {
@@ -166,6 +234,7 @@ public class SampleTvInput extends TvInputService {
                 String tv_no = cursor.getString(cursor.getColumnIndex(TvContract.Channels.COLUMN_DISPLAY_NUMBER));
                 ChannelDatabase cdn = new ChannelDatabase(getApplicationContext());
                 JSONChannel ch = cdn.findChannel(tv_no);
+                jsonChannel = ch;
                 stream = ch.getUrl();
                 Log.d(TAG, "Retrieved stream "+stream);
             } finally {
@@ -173,7 +242,7 @@ public class SampleTvInput extends TvInputService {
                     cursor.close();
                 }
             }
-            Log.d(TAG, "Tune into "+channelUri.toString());
+            Log.d(TAG, "Tune into " + channelUri.toString());
             /*PlayCurrentProgramRunnable mPlayCurrentProgramRunnable = new PlayCurrentProgramRunnable(channelUri);
             mPlayCurrentProgramRunnable.run();*/
             return startPlayback(stream);
@@ -202,7 +271,8 @@ public class SampleTvInput extends TvInputService {
                             notifyVideoUnavailable(
                                     TvInputManager.VIDEO_UNAVAILABLE_REASON_BUFFERING);
                             Log.d(ETAG, "Buffering");
-//                            setOverlayViewEnabled(true);
+                            notifyVideoAvailable();
+                            setOverlayViewEnabled(true);
                         } else if(state == TvInputPlayer.STATE_READY) {
                             Handler h = new Handler(Looper.myLooper()) {
                                 @Override
@@ -213,9 +283,11 @@ public class SampleTvInput extends TvInputService {
                                     Log.d(ETAG, "Now playing");
                                 }
                             };
-                            notifyVideoUnavailable(
-                                    TvInputManager.VIDEO_UNAVAILABLE_REASON_BUFFERING);
-                            h.sendEmptyMessageDelayed(0, 2500);
+                            /*notifyVideoUnavailable(
+                                    TvInputManager.VIDEO_UNAVAILABLE_REASON_TUNING);*/
+                            notifyVideoAvailable();
+//                            h.sendEmptyMessageDelayed(0, 2000);
+                            h.sendEmptyMessageDelayed(0, 0);
                             setOverlayViewEnabled(true);
                             Log.d(ETAG, "Ready");
                         } else if(state == TvInputPlayer.STATE_IDLE) {
@@ -227,7 +299,6 @@ public class SampleTvInput extends TvInputService {
                                     TvInputManager.VIDEO_UNAVAILABLE_REASON_TUNING);
                             Log.d(ETAG, "Preparing");
                             setOverlayViewEnabled(false);
-                            setOverlayViewEnabled(true);
                         }
 
                         /*else if(state == TvInputPlayer.STATE_IDLE) {

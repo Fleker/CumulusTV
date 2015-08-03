@@ -44,7 +44,7 @@ public class SyncUtils {
         Bundle bundle = new Bundle();
         bundle.putString(SyncAdapter.BUNDLE_KEY_INPUT_ID, inputId);
         ContentResolver.addPeriodicSync(account, CONTENT_AUTHORITY, bundle,
-                SyncAdapter.SYNC_FREQUENCY_SEC);
+                SyncAdapter.SYNC_FREQUENCY_SEC/6); //Sync every hour b/c why not?
     }
 
     public static void requestSync(String inputId) {

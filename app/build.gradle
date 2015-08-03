@@ -9,10 +9,21 @@ android {
         applicationId "com.felkertech.n.cumulustv"
         minSdkVersion 21
         targetSdkVersion 22
-        versionCode 2
-        versionName "1.1-r1"
+        versionCode 3
+        versionName "1.1-r2"
+    }
+    signingConfigs {
+        debug {
+            keyAlias 'nick'
+            keyPassword 'P@55w0rdB@tt3ryST@P13'
+            storeFile file('C:/Users/guest1/Dropbox/ks.jks')
+            storePassword 'GitSansGlut33'
+        }
     }
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -28,4 +39,8 @@ dependencies {
     compile 'com.google.android.gms:play-services-drive:7.5.0'
     compile 'com.google.android.exoplayer:exoplayer:r1.4.0'
     compile 'com.afollestad:material-dialogs:0.7.6.0'
+//    compile 'me.zhanghai.android.materialprogressbar:library:1.0.2'
+    compile 'com.pnikosis:materialish-progress:1.5'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.android.support:palette-v7:22.2.1'
 }
