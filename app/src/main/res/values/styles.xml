@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="AppTheme" parent="@style/Theme.Leanback"></style>
+    <style name="CompatTheme" parent="Theme.AppCompat.NoActionBar">
+
+    </style>
+    <style name="main_button">
+        <item name="android:layout_marginLeft">80dp</item>
+        <item name="android:layout_marginRight">80dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+    </style>
 </resources>

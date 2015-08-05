@@ -11,9 +11,13 @@ import android.media.tv.TvContract;
 import android.media.tv.TvInputInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.sampletvinput.TvContractUtils;
@@ -34,33 +38,19 @@ public class SampleSetup extends AppCompatActivity {
     private String TAG = "cumulus:SampleSetup";
     private String ABCNews = "http://abclive.abcnews.com/i/abc_live4@136330/index_1200_av-b.m3u8";
     public static String COLUMN_CHANNEL_URL = "CHANNEL_URL";
+    private static int SETUP_DURATION = 40*1000;
+    private static int SETUP_UI_LAST = 5*1000; //DURATION - UI_LAST seconds is the last time UI list runs
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Toast.makeText(this, "Setup complete", Toast.LENGTH_SHORT).show();
+        setContentView(R.layout.activity_setup);
         Log.d(TAG, "Created me");
         String info = "";
         if(getIntent() != null) {
              info = getIntent().getStringExtra(TvInputInfo.EXTRA_INPUT_ID);
             Log.d(TAG, info);
         }
-        ContentValues values = new ContentValues();
 
-/*
-        List<TvManager.ProgramInfo> infoList = new ArrayList<TvManager.ProgramInfo>();
-        TvContentRating rating = TvContentRating.createRating(
-                "com.android.tv",
-                "US_TV",
-                "US_TV_PG",
-                "US_TV_D", "US_TV_L");
-        infoList.add(new TvManager.ProgramInfo("ABC News Live", "https://yt3.ggpht.com/-F2fw6o3bXkE/AAAAAAAAAAI/AAAAAAAAAAA/DMJGHPkK9As/s88-c-k-no/photo.jpg",
-                "Currently streaming", 60*60, new TvContentRating[] {rating}, new String[] {TvContract.Programs.Genres.NEWS}, ABCNews, TvInputPlayer.SOURCE_TYPE_HTTP_PROGRESSIVE, 0));
-*/
-        /*TvManager.ChannelInfo channel = new TvManager.ChannelInfo("6", "ABC News", "https://yt3.ggpht.com/-F2fw6o3bXkE/AAAAAAAAAAI/AAAAAAAAAAA/DMJGHPkK9As/s88-c-k-no/photo.jpg",
-                0,0, 1, 1920, 1080, null);
-
-        List<TvManager.ChannelInfo> list = new ArrayList<>();
-        list.add(channel);*/
         List<TvManager.ChannelInfo> list = SyncAdapter.getChannels(this);
 
         TvContractUtils.updateChannels(this, info, list);
@@ -68,63 +58,41 @@ public class SampleSetup extends AppCompatActivity {
         SyncUtils.requestSync(info);
         boolean mSyncRequested = true;
         Log.d(TAG, "Everything happened");
-        finish();
-//        return;
 
-        /*Log.d(TAG, channel.originalNetworkId+" "+channel.transportStreamId+" "+channel.serviceId);
-        values.put(TvContract.Channels.COLUMN_INPUT_ID, info);
-
-        values.put(TvContract.Channels.COLUMN_DISPLAY_NUMBER, channel.number);
-        values.put(TvContract.Channels.COLUMN_DISPLAY_NAME, channel.name);
-//        values.put(TvContract.Channels.COLUMN_INPUT_ID, "CumulusTV");
-        values.put(TvContract.Channels.COLUMN_INPUT_ID, TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", "SampleSetup")));
-        values.put(TvContract.Channels.COLUMN_ORIGINAL_NETWORK_ID, 0);
-        values.put(TvContract.Channels.COLUMN_TRANSPORT_STREAM_ID, 0);
-        values.put(TvContract.Channels.COLUMN_SERVICE_ID, 1);
-        values.put(TvContract.Channels.COLUMN_SERVICE_TYPE, TvContract.Channels.SERVICE_TYPE_AUDIO_VIDEO);
-        values.put(TvContract.Channels.COLUMN_VIDEO_FORMAT, TvContract.Channels.VIDEO_FORMAT_1080P);
-        values.put(TvContract.Channels.COLUMN_TYPE, TvContract.Channels.TYPE_OTHER);
-
-        Uri uri = TvContract.buildChannelsUriForInput(info);
-        Cursor cursor = null;
-        try {
-            cursor = getContentResolver().query(uri, null, null, null, null);
-            if (cursor != null && cursor.getCount() > 0) {
-                Log.d(TAG, "Cursor already found stuff");
-                Log.d(TAG, "DELETE");
-                Uri delete = TvContract.buildChannelsUriForInput(info);
-                getContentResolver().delete(uri, null, null);
-//                return;
+        final Handler killer = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                finish();
             }
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-            Log.d(TAG, "Cursor found nothin");*/
+        };
 
-       /* String[] projection = {TvContract.Channels.COLUMN_INPUT_ID, TvContract.Channels.COLUMN_SERVICE_ID};
-        Cursor cursor = null;
-        try {
-//            Log.d(TAG, TvContract.Channels.COLUMN_SERVICE_ID + " = '1'");
-            Log.d(TAG, TvContract.Channels.CONTENT_URI+"");
-            cursor = getContentResolver().query(TvContract.Channels.CONTENT_URI, projection, null, null, null);
-            if (cursor != null || cursor.getCount() > 1) {
-                cursor.moveToNext();
-                Log.d(TAG, "Retrieved stream "+cursor.getInt(cursor.getColumnIndex(TvContract.Channels.COLUMN_SERVICE_ID))+" @ "+cursor.getPosition());
-                getContentResolver().update(TvContract.Channels.CONTENT_URI, values, "'"+TvContract.Channels.COLUMN_SERVICE_ID + "' = '1'", null);
-            } else {
-                Log.d(TAG, "Insert new");
+        Handler h = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                Toast.makeText(getApplicationContext(), "Setup complete", Toast.LENGTH_SHORT).show();
+                killer.sendEmptyMessageDelayed(0, 10);
             }
-            getContentResolver().insert(TvContract.Channels.CONTENT_URI, values);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }*/
-        /*Uri submit = getContentResolver().insert(TvContract.Channels.CONTENT_URI, values);
+        };
+        h.sendEmptyMessageDelayed(0, SETUP_DURATION);
 
-        Log.d(TAG, "finish");*/
-//        finish();
+        //This is a neat little UI thing for people who have channels
+        final int[] channelIndex = new int[]{0};
+        ChannelDatabase cd = new ChannelDatabase(getApplicationContext());
+        final String[] channels = cd.getChannelNames();
+        if(channels.length <= 0)
+            return;
+        Handler i = new Handler(Looper.myLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                TextView channelsList = (TextView) findViewById(R.id.channel_list);
+                channelsList.setText(channelsList.getText()+"\n"+channels[channelIndex[0]]);
+                channelIndex[0]++;
+                if(channelIndex[0] <= channels.length)
+                    sendEmptyMessageDelayed(0, (SETUP_DURATION-SETUP_UI_LAST)/channels.length);
+            }
+        };
+        i.sendEmptyMessageDelayed(0, (SETUP_DURATION-SETUP_UI_LAST)/channels.length);
     }
 }

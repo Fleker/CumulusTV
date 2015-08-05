@@ -144,7 +144,14 @@ public class SampleTvInput extends TvInputService {
             LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View v = inflater.inflate(R.layout.loading, null);
 //            v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
-            if(jsonChannel != null) {
+            if(jsonChannel == null) {
+                ((TextView) v.findViewById(R.id.channel)).setText("");
+                ((TextView) v.findViewById(R.id.title)).setText("");
+            } else if(jsonChannel.hasSplashscreen()) {
+                ImageView iv = new ImageView(getApplicationContext());
+                Picasso.with(getApplicationContext()).load(jsonChannel.getSplashscreen()).into(iv);
+                return iv;
+            } else {
                 ((TextView) v.findViewById(R.id.channel)).setText(jsonChannel.getNumber());
                 ((TextView) v.findViewById(R.id.title)).setText(jsonChannel.getName());
                 if(!jsonChannel.getLogo().isEmpty()) {
@@ -207,9 +214,6 @@ public class SampleTvInput extends TvInputService {
                     }).start();
 //                            .into((ImageView) v.findViewById(R.id.thumnail));
                 }
-            } else {
-                ((TextView) v.findViewById(R.id.channel)).setText("");
-                ((TextView) v.findViewById(R.id.title)).setText("");
             }
 
             Log.d(TAG, "Overlay");

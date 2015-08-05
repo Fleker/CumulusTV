@@ -11,38 +11,42 @@
     <Button android:text="Add Stream" android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="112dp"
-        android:layout_marginRight="64dp"
-        android:layout_marginLeft="64dp"
+        style="@style/main_button"
         android:id="@+id/add"/>
     <Button android:text="Add Suggested Stream" android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/add"
-        android:layout_marginRight="64dp"
-        android:layout_marginLeft="64dp"
+        style="@style/main_button"
         android:id="@+id/suggested"/>
     <Button android:text="View Streams" android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/suggested"
-        android:layout_marginRight="64dp"
-        android:layout_marginLeft="64dp"
+        style="@style/main_button"
         android:id="@+id/view"/>
     <Button android:text="Go to Live Channels" android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/view"
-        android:layout_marginRight="64dp"
-        android:layout_marginLeft="64dp"
+        style="@style/main_button"
         android:id="@+id/gotoapp"/>
     <Button android:text="Sync files with Google Drive" android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/gotoapp"
-        android:layout_marginRight="64dp"
-        android:layout_marginLeft="64dp"
+        style="@style/main_button"
         android:id="@+id/gdrive"/>
     <Button android:text="More..." android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/gdrive"
-        android:layout_marginRight="64dp"
-        android:layout_marginLeft="64dp"
+        style="@style/main_button"
         android:id="@+id/more_actions"/>
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/version"
+        android:paddingRight="128dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="Version 1.2.0"
+        android:paddingBottom="16dp"
+        android:textSize="18sp"
+        android:fontFamily="sans-serif-black"/>
 </RelativeLayout>

@@ -4,6 +4,8 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.media.tv.TvContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -32,6 +35,7 @@ import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
 
 import org.json.JSONException;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -76,10 +80,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                 String name = ((EditText) l.findViewById(R.id.name)).getText().toString();
                                 String logo = ((EditText) l.findViewById(R.id.logo)).getText().toString();
                                 String stream = ((EditText) l.findViewById(R.id.stream)).getText().toString();
+                                String splash = ((EditText) l.findViewById(R.id.splash)).getText().toString();
                                 ChannelDatabase cd = new ChannelDatabase(getApplicationContext());
                                 try {
                                     Log.d(TAG, cd.toString());
-                                    JSONChannel jsch = new JSONChannel(number, name, stream, logo);
+                                    JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, "");
                                     if (cd.channelExists(jsch)) {
                                         Toast.makeText(getApplicationContext(), "Channel already exists", Toast.LENGTH_SHORT).show();
                                         Log.d(TAG, "no");
@@ -143,10 +148,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                                     String name = ((EditText) l.findViewById(R.id.name)).getText().toString();
                                                     String logo = ((EditText) l.findViewById(R.id.logo)).getText().toString();
                                                     String stream = ((EditText) l.findViewById(R.id.stream)).getText().toString();
+                                                    String splash = ((EditText) l.findViewById(R.id.splash)).getText().toString();
                                                     ChannelDatabase cd = new ChannelDatabase(getApplicationContext());
                                                     try {
                                                         Log.d(TAG, cd.toString());
-                                                        JSONChannel jsch = new JSONChannel(number, name, stream, logo);
+                                                        JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, "");
                                                         cd.update(jsch, i);
                                                         Log.d(TAG, cd.toString());
                                                         writeDriveData();
@@ -162,9 +168,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                                     final LinearLayout l = (LinearLayout) dialog.getCustomView();
                                                     String number = ((EditText) l.findViewById(R.id.number)).getText().toString();
                                                     Log.d(TAG, "Channel " + number);
-                                                    String name = ((EditText) l.findViewById(R.id.name)).getText().toString();
-                                                    String logo = ((EditText) l.findViewById(R.id.logo)).getText().toString();
-                                                    String stream = ((EditText) l.findViewById(R.id.stream)).getText().toString();
                                                     new MaterialDialog.Builder(MainActivity.this)
                                                             .title("Delete?")
                                                             .positiveText("Yes")
@@ -178,10 +181,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                                                     String name = ((EditText) l.findViewById(R.id.name)).getText().toString();
                                                                     String logo = ((EditText) l.findViewById(R.id.logo)).getText().toString();
                                                                     String stream = ((EditText) l.findViewById(R.id.stream)).getText().toString();
+                                                                    String splash = ((EditText) l.findViewById(R.id.splash)).getText().toString();
                                                                     ChannelDatabase cd = new ChannelDatabase(getApplicationContext());
                                                                     try {
                                                                         Log.d(TAG, cd.toString());
-                                                                        JSONChannel jsch = new JSONChannel(number, name, stream, logo);
+                                                                        JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, "");
                                                                         cd.delete(jsch);
                                                                         Log.d(TAG, cd.toString());
                                                                         writeDriveData();
@@ -231,13 +235,36 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 9xx MISC
                  */
                 final JSONChannel[] channels = { /* Some via http://rgw.ustream.tv/json.php/Ustream.searchBroadcast/ */
-                        new JSONChannel("900", "Artbeats Demo", "http://cdn-fms.rbs.com.br/hls-vod/sample1_1500kbps.f4v.m3u8", ""),
-                        new JSONChannel("100", "NASA Public", "http://iphone-streaming.ustream.tv/uhls/6540154/streams/live/iphone/playlist.m3u8", "http://static-cdn1.ustream.tv/i/channel/live/1_6540154,256x144,b:2015071514.jpg"),
-                        new JSONChannel("167", "Montery Bay Aquarium", "http://iphone-streaming.ustream.tv/uhls/9600798/streams/live/iphone/playlist.m3u8", "http://static-cdn1.ustream.tv/i/channel/live/1_9600798,256x144,b:2015071514.jpg"),
-                        new JSONChannel("168", "Audubon Osprey Cam", "http://iphone-streaming.ustream.tv/uhls/11378037/streams/live/iphone/playlist.m3u8", "http://static-cdn1.ustream.tv/i/channel/live/1_11378037,256x144,b:2015071514.jpg"),
-                        new JSONChannel("101", "ISS Stream", "http://iphone-streaming.ustream.tv/uhls/9408562/streams/live/iphone/playlist.m3u8", "http://static-cdn1.ustream.tv/i/channel/picture/9/4/0/8/9408562/9408562_iss_hr_1330361780,256x144,r:1.jpg"),
+                        new JSONChannel("900",
+                                "Artbeats Demo",
+                                "http://cdn-fms.rbs.com.br/hls-vod/sample1_1500kbps.f4v.m3u8", "", "",
+                                TvContract.Programs.Genres.ARTS),
+                        new JSONChannel("100",
+                                "NASA Public",
+                                "http://iphone-streaming.ustream.tv/uhls/6540154/streams/live/iphone/playlist.m3u8",
+                                "http://static-cdn1.ustream.tv/i/channel/live/1_6540154,256x144,b:2015071514.jpg", "",
+                                TvContract.Programs.Genres.TECH_SCIENCE),
+                        new JSONChannel("167",
+                                "Montery Bay Aquarium",
+                                "http://iphone-streaming.ustream.tv/uhls/9600798/streams/live/iphone/playlist.m3u8",
+                                "http://static-cdn1.ustream.tv/i/channel/live/1_9600798,256x144,b:2015071514.jpg", "",
+                                TvContract.Programs.Genres.ANIMAL_WILDLIFE),
+                        new JSONChannel("168",
+                                "Audubon Osprey Cam",
+                                "http://iphone-streaming.ustream.tv/uhls/11378037/streams/live/iphone/playlist.m3u8",
+                                "http://static-cdn1.ustream.tv/i/channel/live/1_11378037,256x144,b:2015071514.jpg", "",
+                                TvContract.Programs.Genres.ANIMAL_WILDLIFE),
+                        new JSONChannel("101",
+                                "ISS Stream",
+                                "http://iphone-streaming.ustream.tv/uhls/9408562/streams/live/iphone/playlist.m3u8",
+                                "http://static-cdn1.ustream.tv/i/channel/picture/9/4/0/8/9408562/9408562_iss_hr_1330361780,256x144,r:1.jpg", "",
+                                TvContract.Programs.Genres.TECH_SCIENCE),
 //                        new JSONChannel("400", "Beats One", "http://stream.connectcast.tv:1935/live/CC-EC1245DB-5C6A-CF57-D13A-BB36B3CBB488-34313/playlist.m3u8", "")
-                        new JSONChannel("401", "California Garage Bands", "http://pablogott.videocdn.scaleengine.net/pablogott-iphone/play/ooftv1/playlist.m3u8", "https://avatars3.githubusercontent.com/u/9580532?v=3&s=460"),
+                        new JSONChannel("401",
+                                "OutOfFocus.TV",
+                                "http://pablogott.videocdn.scaleengine.net/pablogott-iphone/play/ooftv1/playlist.m3u8",
+                                "http://i.imgur.com/QRCIhN4.png", "",
+                                TvContract.Programs.Genres.MUSIC),
 /*
                         new JSONChannel("900", "Euronews De", "http://fr-par-iphone-2.cdn.hexaglobe.net/streaming/euronews_ewns/14-live.m3u8", ""),
                         new JSONChannel("901", "TVI (Portugal)", "http://noscdn1.connectedviews.com:1935/live/smil:tvi.smil/playlist.m3u8", ""),
@@ -310,6 +337,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         sm.setGoogleDriveSyncable(gapi, new SettingsManager.GoogleDriveListener() {
             @Override
             public void onActionFinished() {
+                Log.d(TAG, "Sync req after drive action");
                 final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
                 SyncUtils.requestSync(info);
             }
@@ -342,10 +370,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onStart();
         if(!new SettingsManager(this).getString(R.string.sm_google_drive_id).isEmpty()) {
             gapi.connect();
-            ((Button) findViewById(R.id.gdrive)).setVisibility(View.GONE);
-            ((Button) findViewById(R.id.gdrive)).setEnabled(false);
+            findViewById(R.id.gdrive).setVisibility(View.GONE);
+            findViewById(R.id.gdrive).setEnabled(false);
         }
         Log.d(TAG, "onStart");
+        try {
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            ((TextView) findViewById(R.id.version)).setText("Version "+pInfo.versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -410,8 +445,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 sm.setString(R.string.sm_google_drive_id, driveId.encodeToString());
                 new MaterialDialog.Builder(this)
                         .title("Choose Initial Action")
-                        .positiveText("Write local data to file")
-                        .negativeText("Write file data to local")
+                        .positiveText("Write cloud data to local")
+                        .negativeText("Write local data to cloud")
                         .callback(new MaterialDialog.ButtonCallback() {
                             @Override
                             public void onPositive(MaterialDialog dialog) {
@@ -459,7 +494,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .show();
     }
     public void moreClick() {
-        String[] actions = new String[] {"Switch Google Drive file", "Refresh Data", "View Software Licenses", "Reset Channel Data"};
+        String[] actions = new String[] {"Switch Google Drive file", "Refresh Data - Cloud to Local", "View Software Licenses", "Reset Channel Data"};
         new MaterialDialog.Builder(MainActivity.this)
                 .title("More Actions")
                 .items(actions)
@@ -511,8 +546,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
     public void readDriveData() {
         sm.readFromGoogleDrive(DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id)), ChannelDatabase.KEY);
+
+        final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
+        SyncUtils.requestSync(info);
     }
     public void writeDriveData() {
         sm.writeToGoogleDrive(DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id)), new ChannelDatabase(this).toString());
+
+        final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
+        SyncUtils.requestSync(info);
     }
 }

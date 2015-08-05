@@ -195,8 +195,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
                 channel.logoUrl = jsonChannel.getLogo();
 
                 List<TvManager.ProgramInfo> infoList = new ArrayList<>();
+                Log.d(TAG, "Loading channel genres ("+jsonChannel.getName()+"): "+jsonChannel.getGenresString());
                 infoList.add(new TvManager.ProgramInfo(channel.name + " Live", jsonChannel.getLogo(),
-                        "Currently streaming", 60 * 60, new TvContentRating[]{rating}, new String[]{TvContract.Programs.Genres.NEWS}, jsonChannel.getUrl(), TvInputPlayer.SOURCE_TYPE_HTTP_PROGRESSIVE, 0));
+                        "Currently streaming", 60 * 60, new TvContentRating[]{rating}, jsonChannel.getGenres(), jsonChannel.getUrl(), TvInputPlayer.SOURCE_TYPE_HTTP_PROGRESSIVE, 0));
 
                 channel.programs = infoList;
                 Log.d(TAG, channel.name+" ["+jsonChannel.getName()+"] ready "+jsonChannel.getLogo()+" "+jsonChannel.getUrl());
@@ -281,8 +282,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
                     .setThumbnailUri(channelInfo.logoUrl)
                     .setStartTimeUtcMillis(new Date().getTime()+durationSumSec)
                     .setEndTimeUtcMillis(new Date().getTime()+durationSumSec+60*60)
-                    .setContentRatings(new TvContentRating[]{rating})
-                    .setCanonicalGenres(new String[]{TvContract.Programs.Genres.NEWS})
+                    .setContentRatings(channelInfo.programs.get(i).contentRatings)
+            /*new String[]{TvContract.Programs.Genres.NEWS}*/
+                    .setCanonicalGenres(channelInfo.programs.get(i).genres)
                     .setChannelId(channelInfo.serviceId)
                     .setLongDescription("This channel is a live stream of "+channelInfo.name)
                     .build();

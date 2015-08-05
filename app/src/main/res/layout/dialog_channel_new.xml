@@ -29,4 +29,10 @@
         android:id="@+id/stream"
         android:hint="Stream Url"
         android:inputType="text|textUri" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/splash"
+        android:hint="Splashscreen Url"
+        android:inputType="text|textUri" />
 </LinearLayout>
