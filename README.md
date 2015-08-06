@@ -25,5 +25,28 @@ where a user wanted to add user-defined channels using m3u8 files.
 ## Suggested Streams
 To help users quickly setup, I want a set of suggested streams (m3u8 files) that users can add. If you have a suggestion, add it as an issue for this project so I can add it to the list.
 
+## JSON Format
+Google Drive syncs a JSON file between all your devices that can be easily edited. Here is the format:
+
+    { 
+      "channels":[      //JSON Array
+        {"number": "1337", //Channel Number
+        "name": "Aquarium", //Channel Title
+        "logo": "logo.jpg", //Channel Logo
+        "url":"stream.m3u8", //Channel stream url
+        "splashscreen":"" //Optional splashscreen instead of default one
+        "genres":"NEWS,MUSIC" //Comma separated array of channel genres  
+        }],
+        "modified":"1234", //Timestamp in ms of last edit 
+        "possibleGenres":["NEWS", ...] //JSON array of genres which you can use
+      ]
+      
+    }
+
+## Plugin
+Want to make it easy for users to add a Twitch stream without entering a complicated URL? Then you want to create a plugin. This is an app that works easily with CumulusTV, simplifying the amount of work you need to do for a live channel to appear.
+
+**Plugins will be available in 1.2.0**
+
 ## Photos
 <img src='https://cloud.githubusercontent.com/assets/3291635/9021048/00a04364-37fd-11e5-85be-1e550796d922.png' width='640px'/>
