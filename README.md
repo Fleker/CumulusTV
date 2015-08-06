@@ -30,17 +30,17 @@ Google Drive syncs a JSON file between all your devices that can be easily edite
 
     { 
       "channels":[      //JSON Array
-        {"number": "1337", //Channel Number
-        "name": "Aquarium", //Channel Title
-        "logo": "logo.jpg", //Channel Logo
-        "url":"stream.m3u8", //Channel stream url
-        "splashscreen":"" //Optional splashscreen instead of default one
-        "genres":"NEWS,MUSIC" //Comma separated array of channel genres  
-        }],
+            {
+                "number": "1337", //Channel Number
+                "name": "Aquarium", //Channel Title
+                "logo": "logo.jpg", //Channel Logo
+                "url":"stream.m3u8", //Channel stream url
+                "splashscreen":"" //Optional splashscreen instead of default one
+                "genres":"NEWS,MUSIC" //Comma separated array of channel genres  
+            }
+        ],
         "modified":"1234", //Timestamp in ms of last edit 
-        "possibleGenres":["NEWS", ...] //JSON array of genres which you can use
-      ]
-      
+        "possibleGenres":["NEWS", ...] //JSON array of genres which you can use, that are supposed by AndroidTV
     }
 
 ## Plugin
