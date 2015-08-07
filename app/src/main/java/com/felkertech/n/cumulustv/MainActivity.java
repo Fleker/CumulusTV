@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.media.tv.TvContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,7 +23,9 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.android.sampletvinput.syncadapter.SyncUtils;
+import com.felkertech.n.boilerplate.Utils.CommaArray;
 import com.felkertech.n.boilerplate.Utils.SettingsManager;
+import com.felkertech.n.plugins.CumulusTvPlugin;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -38,6 +41,8 @@ import org.json.JSONException;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     public static String TAG = "cumulus:MainActivity";
@@ -63,45 +68,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new MaterialDialog.Builder(MainActivity.this)
-                        .title("Create a new channel")
-                        .customView(R.layout.dialog_channel_new, true)
-                        .positiveText("Create")
-                        .negativeText("Cancel")
-                        .callback(new MaterialDialog.ButtonCallback() {
-                            @Override
-                            public void onPositive(MaterialDialog dialog) {
-                                super.onPositive(dialog);
-                                Log.d(TAG, "Submission");
-                                //Get stuff
-                                LinearLayout l = (LinearLayout) dialog.getCustomView();
-                                String number = ((EditText) l.findViewById(R.id.number)).getText().toString();
-                                Log.d(TAG, "Channel " + number);
-                                String name = ((EditText) l.findViewById(R.id.name)).getText().toString();
-                                String logo = ((EditText) l.findViewById(R.id.logo)).getText().toString();
-                                String stream = ((EditText) l.findViewById(R.id.stream)).getText().toString();
-                                String splash = ((EditText) l.findViewById(R.id.splash)).getText().toString();
-                                ChannelDatabase cd = new ChannelDatabase(getApplicationContext());
-                                try {
-                                    Log.d(TAG, cd.toString());
-                                    JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, "");
-                                    if (cd.channelExists(jsch)) {
-                                        Toast.makeText(getApplicationContext(), "Channel already exists", Toast.LENGTH_SHORT).show();
-                                        Log.d(TAG, "no");
-                                    } else {
-                                        cd.add(jsch);
-                                        Log.d(TAG, "K");
-                                    }
-                                    Log.d(TAG, cd.toString());
-                                    writeDriveData();
-//                                    SyncUtils.requestSync(info);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        })
-                        .show();
-
+                openPluginPicker(true);
             }
         });
         findViewById(R.id.view).setOnClickListener(new View.OnClickListener() {
@@ -132,88 +99,41 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                 @Override
                                 public void onSelection(MaterialDialog materialDialog, View view, final int i, CharSequence charSequence) {
                                     Toast.makeText(getApplicationContext(), charSequence + " selected", Toast.LENGTH_SHORT).show();
-                                    final MaterialDialog md = new MaterialDialog.Builder(MainActivity.this)
-                                            .title("Edit Stream")
-                                            .positiveText("Update")
-                                            .negativeText("Delete")
-                                            .neutralText("Cancel")
-                                            .customView(R.layout.dialog_channel_new, true)
-                                            .callback(new MaterialDialog.ButtonCallback() {
-                                                @Override
-                                                public void onPositive(MaterialDialog dialog) {
-                                                    super.onPositive(dialog);
-                                                    LinearLayout l = (LinearLayout) dialog.getCustomView();
-                                                    String number = ((EditText) l.findViewById(R.id.number)).getText().toString();
-                                                    Log.d(TAG, "Channel " + number);
-                                                    String name = ((EditText) l.findViewById(R.id.name)).getText().toString();
-                                                    String logo = ((EditText) l.findViewById(R.id.logo)).getText().toString();
-                                                    String stream = ((EditText) l.findViewById(R.id.stream)).getText().toString();
-                                                    String splash = ((EditText) l.findViewById(R.id.splash)).getText().toString();
-                                                    ChannelDatabase cd = new ChannelDatabase(getApplicationContext());
-                                                    try {
-                                                        Log.d(TAG, cd.toString());
-                                                        JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, "");
-                                                        cd.update(jsch, i);
-                                                        Log.d(TAG, cd.toString());
-                                                        writeDriveData();
-//                                                        SyncUtils.requestSync(info);
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-
-                                                @Override
-                                                public void onNegative(MaterialDialog dialog) {
-                                                    super.onNegative(dialog);
-                                                    final LinearLayout l = (LinearLayout) dialog.getCustomView();
-                                                    String number = ((EditText) l.findViewById(R.id.number)).getText().toString();
-                                                    Log.d(TAG, "Channel " + number);
-                                                    new MaterialDialog.Builder(MainActivity.this)
-                                                            .title("Delete?")
-                                                            .positiveText("Yes")
-                                                            .negativeText("No")
-                                                            .callback(new MaterialDialog.ButtonCallback() {
-                                                                @Override
-                                                                public void onPositive(MaterialDialog dialog) {
-                                                                    super.onPositive(dialog);
-                                                                    String number = ((EditText) l.findViewById(R.id.number)).getText().toString();
-                                                                    Log.d(TAG, "DEL Channel " + number);
-                                                                    String name = ((EditText) l.findViewById(R.id.name)).getText().toString();
-                                                                    String logo = ((EditText) l.findViewById(R.id.logo)).getText().toString();
-                                                                    String stream = ((EditText) l.findViewById(R.id.stream)).getText().toString();
-                                                                    String splash = ((EditText) l.findViewById(R.id.splash)).getText().toString();
-                                                                    ChannelDatabase cd = new ChannelDatabase(getApplicationContext());
-                                                                    try {
-                                                                        Log.d(TAG, cd.toString());
-                                                                        JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, "");
-                                                                        cd.delete(jsch);
-                                                                        Log.d(TAG, cd.toString());
-                                                                        writeDriveData();
-//                                                                        SyncUtils.requestSync(info);
-                                                                    } catch (JSONException e) {
-                                                                        e.printStackTrace();
-                                                                    }
-                                                                }
-                                                            }).show();
-                                                }
-                                            })
-                                            .show();
-                                    md.setOnShowListener(new DialogInterface.OnShowListener() {
-                                        @Override
-                                        public void onShow(DialogInterface dialog) {
+                                    try {
+                                        JSONChannel jsonChannel = new JSONChannel(cdn.getJSONChannels().getJSONObject(i));
+                                        if(jsonChannel.hasSource()) {
+                                            //Search through all plugins for one of a given source
+                                            PackageManager pm = getPackageManager();
+                                            String pack = jsonChannel.getSource().split(",")[0];
+                                            boolean app_installed = false;
                                             try {
-                                                JSONChannel jsonChannel = new JSONChannel(cdn.getJSONChannels().getJSONObject(i));
-                                                LinearLayout l = (LinearLayout) md.getCustomView();
-                                                ((EditText) l.findViewById(R.id.number)).setText(jsonChannel.getNumber());
-                                                Log.d(TAG, "Channel " + jsonChannel.getNumber());
-                                                ((EditText) l.findViewById(R.id.name)).setText(jsonChannel.getName());
-                                                ((EditText) l.findViewById(R.id.logo)).setText(jsonChannel.getLogo());
-                                                ((EditText) l.findViewById(R.id.stream)).setText(jsonChannel.getUrl());
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
+                                                pm.getPackageInfo(pack, PackageManager.GET_ACTIVITIES);
+                                                app_installed = true;
+                                                //Open up this particular activity
+                                                Intent intent = new Intent();
+                                                intent.setClassName(pack,
+                                                        jsonChannel.getSource().split(",")[1]);
+                                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_EDIT);
+                                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NUMBER, jsonChannel.getNumber());
+                                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NAME, jsonChannel.getName());
+                                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_URL, jsonChannel.getUrl());
+                                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ICON, jsonChannel.getLogo());
+                                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_SPLASH, jsonChannel.getSplashscreen());
+                                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_GENRES, jsonChannel.getGenresString());
+                                                startActivity(intent);
                                             }
+                                            catch (PackageManager.NameNotFoundException e) {
+                                                app_installed = false;
+                                                Toast.makeText(MainActivity.this, "Plugin "+pack+" not installed.", Toast.LENGTH_SHORT).show();
+                                                openPluginPicker(false, i);
+                                            }
+                                        } else {
+                                            Log.d(TAG, "No specified source");
+                                            openPluginPicker(false, i);
                                         }
-                                    });
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             })
                             .show();
@@ -506,7 +426,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 //                                Toast.makeText(MainActivity.this, "Not supported", Toast.LENGTH_SHORT).show();
                                 IntentSender intentSender = Drive.DriveApi
                                         .newOpenFileActivityBuilder()
-                                        .setMimeType(new String[]{ "application/json", "text/*" })
+                                        .setMimeType(new String[]{"application/json", "text/*"})
                                         .build(gapi);
                                 try {
                                     startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0, 0);
@@ -555,5 +475,219 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
         SyncUtils.requestSync(info);
+    }
+
+    /* MAIN DIALOG INTERFACES */
+    public void addNewChannel() {
+        final MaterialDialog add = new MaterialDialog.Builder(MainActivity.this)
+                .title("Create a new channel")
+                .customView(R.layout.dialog_channel_new, true)
+                .positiveText("Create")
+                .negativeText("Cancel")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        super.onPositive(dialog);
+                        Log.d(TAG, "Submission");
+                        //Get stuff
+                        LinearLayout l = (LinearLayout) dialog.getCustomView();
+                        String number = ((EditText) l.findViewById(R.id.number)).getText().toString();
+                        Log.d(TAG, "Channel " + number);
+                        String name = ((EditText) l.findViewById(R.id.name)).getText().toString();
+                        String logo = ((EditText) l.findViewById(R.id.logo)).getText().toString();
+                        String stream = ((EditText) l.findViewById(R.id.stream)).getText().toString();
+                        String splash = ((EditText) l.findViewById(R.id.splash)).getText().toString();
+                        String genres = ((Button) l.findViewById(R.id.genres)).getText().toString();
+                        ChannelDatabase cd = new ChannelDatabase(getApplicationContext());
+                        try {
+                            Log.d(TAG, cd.toString());
+                            JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, genres);
+                            if (cd.channelExists(jsch)) {
+                                Toast.makeText(getApplicationContext(), "Channel already exists", Toast.LENGTH_SHORT).show();
+                                Log.d(TAG, "no");
+                            } else {
+                                cd.add(jsch);
+                                Log.d(TAG, "K");
+                            }
+                            Log.d(TAG, cd.toString());
+                            writeDriveData();
+//                                    SyncUtils.requestSync(info);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                })
+                .show();
+        includeGenrePicker(add);
+    }
+    public void editChannel(final int i) {
+        final ChannelDatabase cdn = new ChannelDatabase(getApplicationContext());
+        final MaterialDialog md = new MaterialDialog.Builder(MainActivity.this)
+                .title("Edit Stream")
+                .positiveText("Update")
+                .negativeText("Delete")
+                .neutralText("Cancel")
+                .customView(R.layout.dialog_channel_new, true)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        super.onPositive(dialog);
+                        LinearLayout l = (LinearLayout) dialog.getCustomView();
+                        String number = ((EditText) l.findViewById(R.id.number)).getText().toString();
+                        Log.d(TAG, "Channel " + number);
+                        String name = ((EditText) l.findViewById(R.id.name)).getText().toString();
+                        String logo = ((EditText) l.findViewById(R.id.logo)).getText().toString();
+                        String stream = ((EditText) l.findViewById(R.id.stream)).getText().toString();
+                        String splash = ((EditText) l.findViewById(R.id.splash)).getText().toString();
+                        String genres = ((Button) l.findViewById(R.id.genres)).getText().toString();
+                        ChannelDatabase cd = new ChannelDatabase(getApplicationContext());
+                        try {
+                            Log.d(TAG, cd.toString());
+                            JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, genres);
+                            cd.update(jsch, i);
+                            Log.d(TAG, cd.toString());
+                            writeDriveData();
+//                                                        SyncUtils.requestSync(info);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        super.onNegative(dialog);
+                        final LinearLayout l = (LinearLayout) dialog.getCustomView();
+                        String number = ((EditText) l.findViewById(R.id.number)).getText().toString();
+                        Log.d(TAG, "Channel " + number);
+                        new MaterialDialog.Builder(MainActivity.this)
+                                .title("Delete?")
+                                .positiveText("Yes")
+                                .negativeText("No")
+                                .callback(new MaterialDialog.ButtonCallback() {
+                                    @Override
+                                    public void onPositive(MaterialDialog dialog) {
+                                        super.onPositive(dialog);
+                                        String number = ((EditText) l.findViewById(R.id.number)).getText().toString();
+                                        Log.d(TAG, "DEL Channel " + number);
+                                        String name = ((EditText) l.findViewById(R.id.name)).getText().toString();
+                                        String logo = ((EditText) l.findViewById(R.id.logo)).getText().toString();
+                                        String stream = ((EditText) l.findViewById(R.id.stream)).getText().toString();
+                                        String splash = ((EditText) l.findViewById(R.id.splash)).getText().toString();
+                                        String genres = ((Button) l.findViewById(R.id.genres)).getText().toString();
+                                        ChannelDatabase cd = new ChannelDatabase(getApplicationContext());
+                                        try {
+                                            Log.d(TAG, cd.toString());
+                                            JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, genres);
+                                            cd.delete(jsch);
+                                            Log.d(TAG, cd.toString());
+                                            writeDriveData();
+//                                                                        SyncUtils.requestSync(info);
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }).show();
+                    }
+                })
+                .show();
+        md.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                try {
+                    JSONChannel jsonChannel = new JSONChannel(cdn.getJSONChannels().getJSONObject(i));
+                    LinearLayout l = (LinearLayout) md.getCustomView();
+                    ((EditText) l.findViewById(R.id.number)).setText(jsonChannel.getNumber());
+                    Log.d(TAG, "Channel " + jsonChannel.getNumber());
+                    ((EditText) l.findViewById(R.id.name)).setText(jsonChannel.getName());
+                    ((EditText) l.findViewById(R.id.logo)).setText(jsonChannel.getLogo());
+                    ((EditText) l.findViewById(R.id.stream)).setText(jsonChannel.getUrl());
+                    ((Button) l.findViewById(R.id.genres)).setText(jsonChannel.getGenresString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        includeGenrePicker(md);
+    }
+    public void includeGenrePicker(final MaterialDialog d) {
+        d.findViewById(R.id.genres).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new MaterialDialog.Builder(MainActivity.this)
+                        .title("Select Genres")
+                        .items(ChannelDatabase.getAllGenres())
+                        .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog materialDialog, Integer[] integers, CharSequence[] charSequences) {
+                                CommaArray genres = new CommaArray("");
+                                for (CharSequence g : charSequences) {
+                                    genres.add(g.toString());
+                                }
+                                ((Button) d.findViewById(R.id.genres)).setText(genres.toString());
+                                return false;
+                            }
+                        })
+                        .positiveText("Done")
+                        .show();
+            }
+        });
+    }
+    public void openPluginPicker(final boolean newChannel) {
+        openPluginPicker(newChannel, 0);
+    }
+    public void openPluginPicker(final boolean newChannel, final int index) {
+        final PackageManager pm = getPackageManager();
+        final Intent plugin_addchannel = new Intent("com.felkertech.cumulustv.ADD_CHANNEL");
+        final List<ResolveInfo> plugins = pm.queryIntentActivities(plugin_addchannel, 0);
+        ArrayList<String> plugin_names = new ArrayList<String>();
+        for (ResolveInfo ri : plugins) {
+            plugin_names.add(ri.loadLabel(pm).toString());
+        }
+        String[] plugin_names2 = plugin_names.toArray(new String[plugin_names.size()]);
+        new MaterialDialog.Builder(MainActivity.this)
+                .items(plugin_names2)
+                .title("Choose an app")
+                .content("Yes, if there's only one app, default to that one")
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+                        Toast.makeText(getApplicationContext(), "Pick " + i, Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent();
+//                        intent.setAction("com.felkertech.cumulustv.ADD_CHANNEL");
+                        if (newChannel) {
+                            Log.d(TAG, "Try to start ");
+                            ResolveInfo plugin_info = plugins.get(i);
+                            Log.d(TAG, plugin_info.activityInfo.applicationInfo.packageName+" "+
+                                    plugin_info.activityInfo.name);
+
+                            intent.setClassName(plugin_info.activityInfo.applicationInfo.packageName,
+                                    plugin_info.activityInfo.name);
+//                            ComponentName name=new ComponentName(plugin_info.activityInfo.applicationInfo.packageName,
+//                                    plugin_info.activityInfo.name);
+                            /*intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                                    Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);*/
+//                            intent.setComponent(name);
+                            intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
+                        } else {
+                            ChannelDatabase cdn = new ChannelDatabase(getApplicationContext());
+                            try {
+                                JSONChannel jsonChannel = new JSONChannel(cdn.getJSONChannels().getJSONObject(index));
+                                ResolveInfo plugin_info = plugins.get(i);
+                                intent.setClassName(plugin_info.activityInfo.applicationInfo.packageName,
+                                        plugin_info.activityInfo.name);
+                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_EDIT);
+                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NUMBER, jsonChannel.getNumber());
+                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NAME, jsonChannel.getName());
+                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_URL, jsonChannel.getUrl());
+                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ICON, jsonChannel.getLogo());
+                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_SPLASH, jsonChannel.getSplashscreen());
+                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_GENRES, jsonChannel.getGenresString());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        startActivity(intent);
+                    }
+                }).show();
     }
 }

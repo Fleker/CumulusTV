@@ -18,7 +18,7 @@
     </layouts>
   </component>
   <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_CUSTOM_FILTER" value="cumulus" />
+    <option name="TOOL_WINDOW_CUSTOM_FILTER" value="cumulus:SyncAdapter" />
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
   </component>
   <component name="ChangeListManager">
@@ -53,32 +53,76 @@
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="287" column="44" selection-start-line="287" selection-start-column="44" selection-end-line="287" selection-end-column="44" />
+              <caret line="675" column="32" selection-start-line="675" selection-start-column="32" selection-end-line="676" selection-end-column="71" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#2742#2898#0" expanded="true" />
+                <element signature="e#2897#2898#0" expanded="true" />
+                <element signature="e#2952#7741#0" expanded="true" />
+                <element signature="e#4259#7661#0" expanded="true" />
+                <element signature="e#7660#7661#0" expanded="true" />
+                <element signature="e#7740#7741#0" expanded="true" />
+                <element signature="e#7800#13298#0" expanded="true" />
+                <element signature="e#13297#13298#0" expanded="true" />
+                <element signature="e#13355#13604#0" expanded="true" />
+                <element signature="e#13603#13604#0" expanded="true" />
+                <element signature="e#14092#14240#0" expanded="true" />
+                <element signature="e#14239#14240#0" expanded="true" />
+                <element signature="e#14302#14447#0" expanded="true" />
+                <element signature="e#14446#14447#0" expanded="true" />
+                <element signature="e#14960#15001#0" expanded="true" />
+                <element signature="e#15036#15077#0" expanded="true" />
+                <element signature="e#16070#16134#0" expanded="true" />
+                <element signature="e#18830#18857#0" expanded="true" />
+                <element signature="e#19495#19522#0" expanded="true" />
+                <element signature="e#24502#24543#0" expanded="true" />
+                <element signature="e#24699#24726#0" expanded="true" />
+                <element signature="e#25293#25334#0" expanded="true" />
+                <element signature="e#25613#25654#0" expanded="true" />
+                <element signature="e#26225#28256#0" expanded="true" />
+                <element signature="e#28255#28256#0" expanded="true" />
+                <element signature="e#34182#35270#0" expanded="true" />
+                <element signature="e#34504#35166#0" expanded="true" />
+                <element signature="e#35165#35166#0" expanded="true" />
+                <element signature="e#35269#35270#0" expanded="true" />
+                <element signature="e#35338#35339#0" expanded="true" />
+                <element signature="e#35385#35386#0" expanded="true" />
+                <element signature="e#35757#35765#0" expanded="true" />
+                <element signature="e#36208#39226#0" expanded="true" />
+                <element signature="e#39225#39226#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="activity_setup.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_setup.xml">
-          <provider editor-type-id="android-designer">
-            <state />
-          </provider>
+      <file leaf-file-name="AndroidManifest.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-10.344828">
-              <caret line="61" column="36" selection-start-line="61" selection-start-column="36" selection-end-line="61" selection-end-column="36" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="173" column="17" selection-start-line="173" selection-start-column="17" selection-end-line="173" selection-end-column="17" />
+              <folding>
+                <element signature="e#1665#1683#0" expanded="true" />
+                <element signature="e#1931#1961#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SyncAdapter.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/sampletvinput/syncadapter/SyncAdapter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.60714287">
+              <caret line="199" column="110" selection-start-line="199" selection-start-column="110" selection-end-line="199" selection-end-column="110" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SyncAdapter.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/sampletvinput/syncadapter/SyncAdapter.java">
+      <file leaf-file-name="DataReceiver.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/plugins/DataReceiver.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-15.344828">
-              <caret line="199" column="108" selection-start-line="199" selection-start-column="102" selection-end-line="199" selection-end-column="108" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="45" column="32" selection-start-line="45" selection-start-column="32" selection-end-line="45" selection-end-column="32" />
               <folding />
             </state>
           </provider>
@@ -88,44 +132,62 @@
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/JSONChannel.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="83" column="46" selection-start-line="83" selection-start-column="46" selection-end-line="83" selection-end-column="46" />
+              <caret line="112" column="18" selection-start-line="112" selection-start-column="18" selection-end-line="112" selection-end-column="18" />
               <folding>
-                <element signature="e#1529#1530#0" expanded="true" />
-                <element signature="e#1558#1559#0" expanded="true" />
-                <element signature="e#1589#1590#0" expanded="true" />
-                <element signature="e#1616#1617#0" expanded="true" />
-                <element signature="e#2400#2401#0" expanded="true" />
-                <element signature="e#2429#2430#0" expanded="true" />
+                <element signature="e#1700#1701#0" expanded="true" />
+                <element signature="e#1729#1730#0" expanded="true" />
+                <element signature="e#1760#1761#0" expanded="true" />
+                <element signature="e#1787#1788#0" expanded="true" />
+                <element signature="e#2173#2174#0" expanded="true" />
+                <element signature="e#2202#2203#0" expanded="true" />
+                <element signature="e#2235#2236#0" expanded="true" />
+                <element signature="e#2280#2281#0" expanded="true" />
+                <element signature="e#2324#2325#0" expanded="true" />
+                <element signature="e#2360#2361#0" expanded="true" />
+                <element signature="e#3027#3028#0" expanded="true" />
+                <element signature="e#3056#3057#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/build.gradle">
+      <file leaf-file-name="MainPicker.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/plugins/MainPicker.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="12" column="27" selection-start-line="12" selection-start-column="27" selection-end-line="12" selection-end-column="27" />
-              <folding />
+              <caret line="85" column="22" selection-start-line="85" selection-start-column="22" selection-end-line="85" selection-end-column="22" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#1674#1907#0" expanded="true" />
+                <element signature="e#1906#1907#0" expanded="true" />
+                <element signature="e#1939#3210#0" expanded="true" />
+                <element signature="e#3209#3210#0" expanded="true" />
+                <element signature="e#3673#3906#0" expanded="true" />
+                <element signature="e#3905#3906#0" expanded="true" />
+                <element signature="e#7311#8138#0" expanded="true" />
+                <element signature="e#8137#8138#0" expanded="true" />
+                <element signature="e#8309#9395#0" expanded="true" />
+                <element signature="e#8629#9291#0" expanded="true" />
+                <element signature="e#9290#9291#0" expanded="true" />
+                <element signature="e#9394#9395#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CommaArray.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/boilerplate/Utils/CommaArray.java">
+      <file leaf-file-name="CumulusTvPlugin.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/plugins/CumulusTvPlugin.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="0" column="42" selection-start-line="0" selection-start-column="42" selection-end-line="0" selection-end-column="42" />
+              <caret line="84" column="50" selection-start-line="84" selection-start-column="50" selection-end-line="84" selection-end-column="50" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1522#1523#0" expanded="true" />
-                <element signature="e#1564#1565#0" expanded="true" />
-                <element signature="e#1621#1622#0" expanded="true" />
-                <element signature="e#1654#1655#0" expanded="true" />
-                <element signature="e#2021#2022#0" expanded="true" />
-                <element signature="e#2060#2061#0" expanded="true" />
-                <element signature="e#2407#2408#0" expanded="true" />
-                <element signature="e#2446#2447#0" expanded="true" />
+                <element signature="e#1775#1776#0" expanded="true" />
+                <element signature="e#1800#1801#0" expanded="true" />
+                <element signature="e#1927#1928#0" expanded="true" />
+                <element signature="e#1956#1957#0" expanded="true" />
+                <element signature="e#4438#4439#0" expanded="true" />
+                <element signature="e#4475#4476#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -135,35 +197,32 @@
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/ChannelDatabase.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="148" column="23" selection-start-line="148" selection-start-column="18" selection-end-line="148" selection-end-column="23" />
-              <folding>
-                <element signature="e#8790#8791#0" expanded="true" />
-                <element signature="e#8827#8828#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SettingsManager.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/boilerplate/Utils/SettingsManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="215" column="0" selection-start-line="215" selection-start-column="0" selection-end-line="215" selection-end-column="0" />
+              <caret line="162" column="16" selection-start-line="162" selection-start-column="16" selection-end-line="162" selection-end-column="16" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SampleSetup.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/SampleSetup.java">
+      <file leaf-file-name="plugin_strings.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/values/plugin_strings.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5691964">
-              <caret line="92" column="77" selection-start-line="92" selection-start-column="77" selection-end-line="92" selection-end-column="77" />
-              <folding>
-                <element signature="e#2380#2381#0" expanded="true" />
-                <element signature="e#2420#2421#0" expanded="true" />
-              </folding>
+            <state vertical-scroll-proportion="0.0">
+              <caret line="3" column="31" selection-start-line="3" selection-start-column="31" selection-end-line="3" selection-end-column="67" />
+              <folding />
             </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="dialog_channel_new.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/dialog_channel_new.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-8.586206">
+              <caret line="38" column="42" selection-start-line="38" selection-start-column="42" selection-end-line="38" selection-end-column="42" />
+              <folding />
+            </state>
+          </provider>
+          <provider editor-type-id="android-designer">
+            <state />
           </provider>
         </entry>
       </file>
@@ -172,9 +231,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="layoutResourceFile_vertical" />
         <option value="valueResourceFile" />
         <option value="Class" />
+        <option value="layoutResourceFile_vertical" />
       </list>
     </option>
   </component>
@@ -1711,20 +1770,25 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/android/sampletvinput/syncadapter/DummyAccountService.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/xml/authenticator.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/felkertech/n/boilerplate/Utils/SettingsManager.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/dialog_channel_new.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/SampleTvInput.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/values/colors.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/values/styles.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_setup.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/felkertech/n/boilerplate/Utils/CommaArray.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/MainActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/android/sampletvinput/syncadapter/SyncAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/ChannelDatabase.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/JSONChannel.java" />
         <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/SampleSetup.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/values/plugin_strings.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/dialog_channel_new.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/JSONChannel.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/fullphoto.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/MainActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/felkertech/n/plugins/CumulusTvPlugin.java" />
+        <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/felkertech/n/plugins/DataReceiver.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/felkertech/n/plugins/MainPicker.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/android/sampletvinput/syncadapter/SyncAdapter.java" />
       </list>
     </option>
   </component>
@@ -1770,9 +1834,8 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="ProjectPane" />
-      <pane id="PackagesPane" />
       <pane id="Scope" />
+      <pane id="ProjectPane" />
       <pane id="AndroidView">
         <subPane>
           <PATH>
@@ -1794,9 +1857,200 @@
               <option name="myItemId" value="app" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="CumulusTV" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="values" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderTypeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="CumulusTV" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="layout" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderTypeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="CumulusTV" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="CumulusTV" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="n" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="plugins" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="CumulusTV" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="n" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cumulustv" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="CumulusTV" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="n" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="CumulusTV" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sampletvinput" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="CumulusTV" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="sampletvinput" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="syncadapter" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="CumulusTV" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="manifests" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidManifestsGroupNode" />
+            </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
       <pane id="Scratches" />
     </panes>
   </component>
@@ -1812,6 +2066,11 @@
     <property name="ExportApk.Flavors" value="" />
     <property name="ExportApk.BuildType" value="release" />
     <property name="FullScreen" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="android.template.packageName">
+      <recent name="com.felkertech.n.plugins" />
+    </key>
   </component>
   <component name="RunManager" selected="Android Application.app">
     <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
@@ -2057,57 +2316,10 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/SampleTvInput.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="216" column="87" selection-start-line="216" selection-start-column="87" selection-end-line="216" selection-end-column="87" />
-          <folding>
-            <element signature="e#3796#3797#0" expanded="false" />
-            <element signature="e#3834#3835#0" expanded="false" />
-            <element signature="e#6098#10202#0" expanded="false" />
-            <element signature="e#10201#10202#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/SamplePlayer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/sampletvinput/player/TvInputPlayer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="78" column="29" selection-start-line="78" selection-start-column="29" selection-end-line="78" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="33" column="43" selection-start-line="33" selection-start-column="43" selection-end-line="33" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/xml/sample_tv_input.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/SampleTvInput2.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="25" column="56" selection-start-line="25" selection-start-column="56" selection-end-line="25" selection-end-column="56" />
-          <folding>
-            <element signature="e#3348#3349#0" expanded="false" />
-            <element signature="e#3386#3387#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2117,19 +2329,43 @@
           <caret line="6" column="23" selection-start-line="6" selection-start-column="23" selection-end-line="6" selection-end-column="23" />
           <folding>
             <element signature="imports" expanded="false" />
+            <element signature="e#1891#1892#0" expanded="false" />
+            <element signature="e#1922#1923#0" expanded="false" />
+            <element signature="e#1963#1964#0" expanded="false" />
+            <element signature="e#2022#2023#0" expanded="false" />
+            <element signature="e#2064#2065#0" expanded="false" />
+            <element signature="e#2111#2112#0" expanded="false" />
+            <element signature="e#2282#2283#0" expanded="false" />
+            <element signature="e#2330#2331#0" expanded="false" />
+            <element signature="e#3056#3057#0" expanded="false" />
+            <element signature="e#3116#3117#0" expanded="false" />
+            <element signature="e#3160#3161#0" expanded="false" />
+            <element signature="e#3205#3206#0" expanded="false" />
+            <element signature="e#3723#3724#0" expanded="false" />
+            <element signature="e#3800#3801#0" expanded="false" />
+            <element signature="e#3844#3845#0" expanded="false" />
+            <element signature="e#3905#3906#0" expanded="false" />
+            <element signature="e#4196#4197#0" expanded="false" />
+            <element signature="e#4258#4259#0" expanded="false" />
+            <element signature="e#4841#4842#0" expanded="false" />
+            <element signature="e#4884#4885#0" expanded="false" />
+            <element signature="e#5042#5043#0" expanded="false" />
+            <element signature="e#5074#5075#0" expanded="false" />
+            <element signature="e#8699#8700#0" expanded="false" />
+            <element signature="e#8730#8731#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/dialog_channel_new.xml">
-      <provider selected="true" editor-type-id="android-designer">
-        <state />
-      </provider>
       <provider editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
+      </provider>
+      <provider selected="true" editor-type-id="android-designer">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/MainActivity.java">
@@ -2138,31 +2374,60 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#2742#2898#0" expanded="true" />
+            <element signature="e#2897#2898#0" expanded="true" />
+            <element signature="e#2952#7741#0" expanded="true" />
+            <element signature="e#4259#7661#0" expanded="true" />
+            <element signature="e#7660#7661#0" expanded="true" />
+            <element signature="e#7740#7741#0" expanded="true" />
+            <element signature="e#7800#13298#0" expanded="true" />
+            <element signature="e#13297#13298#0" expanded="true" />
+            <element signature="e#13355#13604#0" expanded="true" />
+            <element signature="e#13603#13604#0" expanded="true" />
+            <element signature="e#14092#14240#0" expanded="true" />
+            <element signature="e#14239#14240#0" expanded="true" />
+            <element signature="e#14302#14447#0" expanded="true" />
+            <element signature="e#14446#14447#0" expanded="true" />
+            <element signature="e#14960#15001#0" expanded="true" />
+            <element signature="e#15036#15077#0" expanded="true" />
+            <element signature="e#16070#16134#0" expanded="true" />
+            <element signature="e#18830#18857#0" expanded="true" />
+            <element signature="e#19495#19522#0" expanded="true" />
+            <element signature="e#24502#24543#0" expanded="true" />
+            <element signature="e#24699#24726#0" expanded="true" />
+            <element signature="e#25293#25334#0" expanded="true" />
+            <element signature="e#25613#25654#0" expanded="true" />
+            <element signature="e#26225#28256#0" expanded="true" />
+            <element signature="e#28255#28256#0" expanded="true" />
+            <element signature="e#34182#35270#0" expanded="true" />
+            <element signature="e#34504#35166#0" expanded="true" />
+            <element signature="e#35165#35166#0" expanded="true" />
+            <element signature="e#35269#35270#0" expanded="true" />
+            <element signature="e#35338#35339#0" expanded="true" />
+            <element signature="e#35385#35386#0" expanded="true" />
+            <element signature="e#35757#35765#0" expanded="true" />
+            <element signature="e#36208#39226#0" expanded="true" />
+            <element signature="e#39225#39226#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="12" column="37" selection-start-line="12" selection-start-column="37" selection-end-line="12" selection-end-column="37" />
           <folding />
         </state>
       </provider>
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/SampleTvInput.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="216" column="87" selection-start-line="216" selection-start-column="87" selection-end-line="216" selection-end-column="87" />
-          <folding>
-            <element signature="e#3796#3797#0" expanded="false" />
-            <element signature="e#3834#3835#0" expanded="false" />
-            <element signature="e#6098#10202#0" expanded="false" />
-            <element signature="e#10201#10202#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2200,10 +2465,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="25" column="56" selection-start-line="25" selection-start-column="56" selection-end-line="25" selection-end-column="56" />
-          <folding>
-            <element signature="e#3348#3349#0" expanded="false" />
-            <element signature="e#3386#3387#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2213,29 +2474,49 @@
           <caret line="6" column="23" selection-start-line="6" selection-start-column="23" selection-end-line="6" selection-end-column="23" />
           <folding>
             <element signature="imports" expanded="false" />
+            <element signature="e#1891#1892#0" expanded="false" />
+            <element signature="e#1922#1923#0" expanded="false" />
+            <element signature="e#1963#1964#0" expanded="false" />
+            <element signature="e#2022#2023#0" expanded="false" />
+            <element signature="e#2064#2065#0" expanded="false" />
+            <element signature="e#2111#2112#0" expanded="false" />
+            <element signature="e#2282#2283#0" expanded="false" />
+            <element signature="e#2330#2331#0" expanded="false" />
+            <element signature="e#3056#3057#0" expanded="false" />
+            <element signature="e#3116#3117#0" expanded="false" />
+            <element signature="e#3160#3161#0" expanded="false" />
+            <element signature="e#3205#3206#0" expanded="false" />
+            <element signature="e#3723#3724#0" expanded="false" />
+            <element signature="e#3800#3801#0" expanded="false" />
+            <element signature="e#3844#3845#0" expanded="false" />
+            <element signature="e#3905#3906#0" expanded="false" />
+            <element signature="e#4196#4197#0" expanded="false" />
+            <element signature="e#4258#4259#0" expanded="false" />
+            <element signature="e#4841#4842#0" expanded="false" />
+            <element signature="e#4884#4885#0" expanded="false" />
+            <element signature="e#5042#5043#0" expanded="false" />
+            <element signature="e#5074#5075#0" expanded="false" />
+            <element signature="e#8699#8700#0" expanded="false" />
+            <element signature="e#8730#8731#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/dialog_channel_new.xml">
-      <provider selected="true" editor-type-id="android-designer">
-        <state />
-      </provider>
       <provider editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
+      <provider selected="true" editor-type-id="android-designer">
+        <state />
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/SampleTvInput2.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="25" column="56" selection-start-line="25" selection-start-column="56" selection-end-line="25" selection-end-column="56" />
-          <folding>
-            <element signature="e#3348#3349#0" expanded="false" />
-            <element signature="e#3386#3387#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2356,53 +2637,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/dialog_channel_new.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-18.137932">
-          <caret line="35" column="38" selection-start-line="35" selection-start-column="38" selection-end-line="35" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-25.206896">
           <caret line="43" column="32" selection-start-line="43" selection-start-column="32" selection-end-line="43" selection-end-column="32" />
           <folding />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="96" column="45" selection-start-line="96" selection-start-column="45" selection-end-line="96" selection-end-column="45" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/loading.xml">
       <provider editor-type-id="android-designer">
         <state />
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/loading.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-16.413794">
           <caret line="61" column="8" selection-start-line="61" selection-start-column="8" selection-end-line="62" selection-end-column="44" />
           <folding />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-5.037037">
-          <caret line="8" column="58" selection-start-line="8" selection-start-column="58" selection-end-line="8" selection-end-column="58" />
-          <folding />
-        </state>
+      <provider editor-type-id="android-designer">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/values/colors.xml">
@@ -2422,31 +2676,21 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_setup.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-10.344828">
+        <state vertical-scroll-proportion="0.0">
           <caret line="61" column="36" selection-start-line="61" selection-start-column="36" selection-end-line="61" selection-end-column="36" />
           <folding />
         </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/boilerplate/Utils/CommaArray.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="42" selection-start-line="0" selection-start-column="42" selection-end-line="0" selection-end-column="42" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1522#1523#0" expanded="true" />
-            <element signature="e#1564#1565#0" expanded="true" />
-            <element signature="e#1621#1622#0" expanded="true" />
-            <element signature="e#1654#1655#0" expanded="true" />
-            <element signature="e#2021#2022#0" expanded="true" />
-            <element signature="e#2060#2061#0" expanded="true" />
-            <element signature="e#2407#2408#0" expanded="true" />
-            <element signature="e#2446#2447#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2454,40 +2698,32 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="215" column="0" selection-start-line="215" selection-start-column="0" selection-end-line="215" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/sampletvinput/syncadapter/SyncAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-15.344828">
-          <caret line="199" column="108" selection-start-line="199" selection-start-column="102" selection-end-line="199" selection-end-column="108" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/ChannelDatabase.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="148" column="23" selection-start-line="148" selection-start-column="18" selection-end-line="148" selection-end-column="23" />
           <folding>
-            <element signature="e#8790#8791#0" expanded="true" />
-            <element signature="e#8827#8828#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/JSONChannel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="83" column="46" selection-start-line="83" selection-start-column="46" selection-end-line="83" selection-end-column="46" />
-          <folding>
-            <element signature="e#1529#1530#0" expanded="true" />
-            <element signature="e#1558#1559#0" expanded="true" />
-            <element signature="e#1589#1590#0" expanded="true" />
-            <element signature="e#1616#1617#0" expanded="true" />
-            <element signature="e#2400#2401#0" expanded="true" />
-            <element signature="e#2429#2430#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#1891#1892#0" expanded="false" />
+            <element signature="e#1922#1923#0" expanded="false" />
+            <element signature="e#1963#1964#0" expanded="false" />
+            <element signature="e#2022#2023#0" expanded="false" />
+            <element signature="e#2064#2065#0" expanded="false" />
+            <element signature="e#2111#2112#0" expanded="false" />
+            <element signature="e#2282#2283#0" expanded="false" />
+            <element signature="e#2330#2331#0" expanded="false" />
+            <element signature="e#3056#3057#0" expanded="false" />
+            <element signature="e#3116#3117#0" expanded="false" />
+            <element signature="e#3160#3161#0" expanded="false" />
+            <element signature="e#3205#3206#0" expanded="false" />
+            <element signature="e#3723#3724#0" expanded="false" />
+            <element signature="e#3800#3801#0" expanded="false" />
+            <element signature="e#3844#3845#0" expanded="false" />
+            <element signature="e#3905#3906#0" expanded="false" />
+            <element signature="e#4196#4197#0" expanded="false" />
+            <element signature="e#4258#4259#0" expanded="false" />
+            <element signature="e#4841#4842#0" expanded="false" />
+            <element signature="e#4884#4885#0" expanded="false" />
+            <element signature="e#5042#5043#0" expanded="false" />
+            <element signature="e#5074#5075#0" expanded="false" />
+            <element signature="e#8699#8700#0" expanded="false" />
+            <element signature="e#8730#8731#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -2505,24 +2741,189 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/MainActivity.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/SampleSetup.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="287" column="44" selection-start-line="287" selection-start-column="44" selection-end-line="287" selection-end-column="44" />
+          <caret line="92" column="77" selection-start-line="92" selection-start-column="77" selection-end-line="92" selection-end-column="77" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/SampleSetup.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5691964">
-          <caret line="92" column="77" selection-start-line="92" selection-start-column="77" selection-end-line="92" selection-end-column="77" />
+        <state vertical-scroll-proportion="0.32304037">
+          <caret line="8" column="58" selection-start-line="8" selection-start-column="58" selection-end-line="8" selection-end-column="58" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/dialog_channel_new.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-8.586206">
+          <caret line="38" column="42" selection-start-line="38" selection-start-column="42" selection-end-line="38" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/plugin_strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="3" column="31" selection-start-line="3" selection-start-column="31" selection-end-line="3" selection-end-column="67" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fullphoto.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-5.275862">
+          <caret line="9" column="15" selection-start-line="9" selection-start-column="15" selection-end-line="9" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="675" column="32" selection-start-line="675" selection-start-column="32" selection-end-line="676" selection-end-column="71" />
           <folding>
-            <element signature="e#2380#2381#0" expanded="true" />
-            <element signature="e#2420#2421#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#2742#2898#0" expanded="true" />
+            <element signature="e#2897#2898#0" expanded="true" />
+            <element signature="e#2952#7741#0" expanded="true" />
+            <element signature="e#4259#7661#0" expanded="true" />
+            <element signature="e#7660#7661#0" expanded="true" />
+            <element signature="e#7740#7741#0" expanded="true" />
+            <element signature="e#7800#13298#0" expanded="true" />
+            <element signature="e#13297#13298#0" expanded="true" />
+            <element signature="e#13355#13604#0" expanded="true" />
+            <element signature="e#13603#13604#0" expanded="true" />
+            <element signature="e#14092#14240#0" expanded="true" />
+            <element signature="e#14239#14240#0" expanded="true" />
+            <element signature="e#14302#14447#0" expanded="true" />
+            <element signature="e#14446#14447#0" expanded="true" />
+            <element signature="e#14960#15001#0" expanded="true" />
+            <element signature="e#15036#15077#0" expanded="true" />
+            <element signature="e#16070#16134#0" expanded="true" />
+            <element signature="e#18830#18857#0" expanded="true" />
+            <element signature="e#19495#19522#0" expanded="true" />
+            <element signature="e#24502#24543#0" expanded="true" />
+            <element signature="e#24699#24726#0" expanded="true" />
+            <element signature="e#25293#25334#0" expanded="true" />
+            <element signature="e#25613#25654#0" expanded="true" />
+            <element signature="e#26225#28256#0" expanded="true" />
+            <element signature="e#28255#28256#0" expanded="true" />
+            <element signature="e#34182#35270#0" expanded="true" />
+            <element signature="e#34504#35166#0" expanded="true" />
+            <element signature="e#35165#35166#0" expanded="true" />
+            <element signature="e#35269#35270#0" expanded="true" />
+            <element signature="e#35338#35339#0" expanded="true" />
+            <element signature="e#35385#35386#0" expanded="true" />
+            <element signature="e#35757#35765#0" expanded="true" />
+            <element signature="e#36208#39226#0" expanded="true" />
+            <element signature="e#39225#39226#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/plugins/CumulusTvPlugin.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="84" column="50" selection-start-line="84" selection-start-column="50" selection-end-line="84" selection-end-column="50" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1775#1776#0" expanded="true" />
+            <element signature="e#1800#1801#0" expanded="true" />
+            <element signature="e#1927#1928#0" expanded="true" />
+            <element signature="e#1956#1957#0" expanded="true" />
+            <element signature="e#4438#4439#0" expanded="true" />
+            <element signature="e#4475#4476#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="173" column="17" selection-start-line="173" selection-start-column="17" selection-end-line="173" selection-end-column="17" />
+          <folding>
+            <element signature="e#1665#1683#0" expanded="true" />
+            <element signature="e#1931#1961#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/ChannelDatabase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="162" column="16" selection-start-line="162" selection-start-column="16" selection-end-line="162" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/plugins/DataReceiver.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="45" column="32" selection-start-line="45" selection-start-column="32" selection-end-line="45" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/plugins/MainPicker.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="85" column="22" selection-start-line="85" selection-start-column="22" selection-end-line="85" selection-end-column="22" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1674#1907#0" expanded="true" />
+            <element signature="e#1906#1907#0" expanded="true" />
+            <element signature="e#1939#3210#0" expanded="true" />
+            <element signature="e#3209#3210#0" expanded="true" />
+            <element signature="e#3673#3906#0" expanded="true" />
+            <element signature="e#3905#3906#0" expanded="true" />
+            <element signature="e#7311#8138#0" expanded="true" />
+            <element signature="e#8137#8138#0" expanded="true" />
+            <element signature="e#8309#9395#0" expanded="true" />
+            <element signature="e#8629#9291#0" expanded="true" />
+            <element signature="e#9290#9291#0" expanded="true" />
+            <element signature="e#9394#9395#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/felkertech/n/cumulustv/JSONChannel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="112" column="18" selection-start-line="112" selection-start-column="18" selection-end-line="112" selection-end-column="18" />
+          <folding>
+            <element signature="e#1700#1701#0" expanded="true" />
+            <element signature="e#1729#1730#0" expanded="true" />
+            <element signature="e#1760#1761#0" expanded="true" />
+            <element signature="e#1787#1788#0" expanded="true" />
+            <element signature="e#2173#2174#0" expanded="true" />
+            <element signature="e#2202#2203#0" expanded="true" />
+            <element signature="e#2235#2236#0" expanded="true" />
+            <element signature="e#2280#2281#0" expanded="true" />
+            <element signature="e#2324#2325#0" expanded="true" />
+            <element signature="e#2360#2361#0" expanded="true" />
+            <element signature="e#3027#3028#0" expanded="true" />
+            <element signature="e#3056#3057#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/android/sampletvinput/syncadapter/SyncAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.60714287">
+          <caret line="199" column="110" selection-start-line="199" selection-start-column="110" selection-end-line="199" selection-end-column="110" />
+          <folding />
         </state>
       </provider>
     </entry>

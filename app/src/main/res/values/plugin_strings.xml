@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ACTIONS -->
+    <string name="add_channel">com.felkertech.cumulustv.ADD_CHANNEL</string>
+    <string name="receive_data">com.felkertech.cumulustv.RECEIVER</string>
+</resources>

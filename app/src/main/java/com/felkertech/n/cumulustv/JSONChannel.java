@@ -17,6 +17,7 @@ public class JSONChannel {
     private String logo;
     private String splashscreen;
     private String genres;
+    private String source;
     public JSONChannel(JSONObject jsonObject) {
         try {
             number = jsonObject.getString("number");
@@ -34,6 +35,10 @@ public class JSONChannel {
                 genres = jsonObject.getString("genres");
             else
                 genres = TvContract.Programs.Genres.LIFE_STYLE;
+            if(jsonObject.has("source"))
+                source = jsonObject.getString("source");
+            else
+                source = "";
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -74,6 +79,17 @@ public class JSONChannel {
         return !getSplashscreen().isEmpty();
     }
 
+    public String getSource() {
+        return source;
+    }
+    public boolean hasSource() {
+        return !getSource().isEmpty();
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
     public JSONObject toJSON() throws JSONException {
         JSONObject object = new JSONObject();
         object.put("number", getNumber());
@@ -82,7 +98,16 @@ public class JSONChannel {
         object.put("url", getUrl());
         object.put("splashscreen", getSplashscreen());
         object.put("genres", getGenresString());
+        object.put("source", getSource());
         return object;
+    }
+    public String toString() {
+        try {
+            return toJSON().toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     public String getGenresString() {
