@@ -160,15 +160,6 @@
             android:enabled="true"
             android:label="Ignore.me"
             android:theme="@style/CompatTheme" >
-            <intent-filter>
-                <action android:name="com.felkertech.cumulustv.ADD_CHANNEL"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT"/>
-                <!-- Can be a shortcut -->
-            </intent-filter>
         </activity>
 
         <receiver

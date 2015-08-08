@@ -19,6 +19,8 @@ import com.felkertech.n.cumulustv.R;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
+
 /**
  * For the sake of open source software and examples, the built-in picker will be a plugin
  * Created by Nick on 8/7/2015.
@@ -70,7 +72,7 @@ public class MainPicker extends CumulusTvPlugin {
                         }
                     })
                     .show();
-            includeGenrePicker(add);
+            includeGenrePicker(add, "");
         } else {
             final ChannelDatabase cdn = new ChannelDatabase(getApplicationContext());
             final MaterialDialog md = new MaterialDialog.Builder(MainPicker.this)
@@ -144,17 +146,26 @@ public class MainPicker extends CumulusTvPlugin {
                     ((Button) l.findViewById(R.id.genres)).setText(jsonChannel.getGenresString());
                 }
             });
-            includeGenrePicker(md);
+            includeGenrePicker(md, getChannel().getGenresString());
         }
     }
-    public void includeGenrePicker(final MaterialDialog d) {
+    public void includeGenrePicker(final MaterialDialog d, final String gString) {
         d.findViewById(R.id.genres).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ArrayList<Integer> selections = new ArrayList<>();
+                int index = 0;
+                for(String g: ChannelDatabase.getAllGenres()) {
+                    if(gString.contains(g)) {
+                        selections.add(index);
+                    }
+                    index++;
+                }
+
                 new MaterialDialog.Builder(MainPicker.this)
                         .title("Select Genres")
                         .items(ChannelDatabase.getAllGenres())
-                        .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
+                        .itemsCallbackMultiChoice(selections.toArray(new Integer[selections.size()]), new MaterialDialog.ListCallbackMultiChoice() {
                             @Override
                             public boolean onSelection(MaterialDialog materialDialog, Integer[] integers, CharSequence[] charSequences) {
                                 CommaArray genres = new CommaArray("");

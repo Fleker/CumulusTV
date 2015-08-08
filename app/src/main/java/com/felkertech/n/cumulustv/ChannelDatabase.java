@@ -167,11 +167,16 @@ public class ChannelDatabase {
         } else {
             try {
                 JSONArray jsonArray = getJSONChannels();
+                int finalindex = -1;
                 for(int i = 0;i<jsonArray.length();i++) {
                     JSONChannel jsonChannel = new JSONChannel(jsonArray.getJSONObject(i));
-                    if(jsonChannel.getUrl().equals(ch.getUrl())) {
+                    if(finalindex >= 0) {
+                        jsonArray.put(finalindex, ch.toJSON());
+                    } else if(jsonChannel.getUrl().equals(ch.getUrl())) {
+                        Log.d(TAG, "Remove "+i+" and put at "+i+": "+ch.toJSON().toString());
                         jsonArray.remove(i);
-                        jsonArray.put(i, ch.toJSON());
+                        jsonArray.put(i+1, jsonChannel.toJSON());
+                        finalindex = i;
                         save();
                     }
                 }

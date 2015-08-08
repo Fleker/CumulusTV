@@ -8,6 +8,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.media.tv.TvContract;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Layout;
@@ -104,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                         if(jsonChannel.hasSource()) {
                                             //Search through all plugins for one of a given source
                                             PackageManager pm = getPackageManager();
-                                            String pack = jsonChannel.getSource().split(",")[0];
+                                            final String pack = jsonChannel.getSource().split(",")[0];
                                             boolean app_installed = false;
                                             try {
                                                 pm.getPackageInfo(pack, PackageManager.GET_ACTIVITIES);
@@ -124,6 +125,26 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                             }
                                             catch (PackageManager.NameNotFoundException e) {
                                                 app_installed = false;
+                                                new MaterialDialog.Builder(MainActivity.this)
+                                                        .title("Plugin "+pack+" not installed")
+                                                        .content("What do you want to do instead?")
+                                                        .positiveText("Download app")
+                                                        .negativeText("Open in another plugin")
+                                                        .callback(new MaterialDialog.ButtonCallback() {
+                                                            @Override
+                                                            public void onPositive(MaterialDialog dialog) {
+                                                                super.onPositive(dialog);
+                                                                Intent i = new Intent(android.content.Intent.ACTION_VIEW);
+                                                                i.setData(Uri.parse("http://play.google.com/store/apps/details?id="+pack));
+                                                                startActivity(i);
+                                                            }
+
+                                                            @Override
+                                                            public void onNegative(MaterialDialog dialog) {
+                                                                super.onNegative(dialog);
+                                                                openPluginPicker(false, i);
+                                                            }
+                                                        }).show();
                                                 Toast.makeText(MainActivity.this, "Plugin "+pack+" not installed.", Toast.LENGTH_SHORT).show();
                                                 openPluginPicker(false, i);
                                             }
@@ -229,15 +250,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 startActivity(i);
             }
         });
-        /*findViewById(R.id.osl).setOnClickListener(new View.OnClickListener() {
-           @Override
-            public void onClick(View v) {
-               new MaterialDialog.Builder(MainActivity.this)
-                       .title("Open Source Licenses")
-                       .content(GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(getApplicationContext()))
-                       .show();
-           }
-        });*/
         findViewById(R.id.gdrive).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -414,7 +426,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .show();
     }
     public void moreClick() {
-        String[] actions = new String[] {"Switch Google Drive file", "Refresh Data - Cloud to Local", "View Software Licenses", "Reset Channel Data"};
+        String[] actions = new String[] {"Browse Plugins", "Switch Google Drive file", "Refresh Data - Cloud to Local", "View Software Licenses", "Reset Channel Data"};
         new MaterialDialog.Builder(MainActivity.this)
                 .title("More Actions")
                 .items(actions)
@@ -423,6 +435,37 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
                         switch (i) {
                             case 0:
+                                //Same opening
+                                final PackageManager pm = getPackageManager();
+                                final Intent plugin_addchannel = new Intent("com.felkertech.cumulustv.ADD_CHANNEL");
+                                final List<ResolveInfo> plugins = pm.queryIntentActivities(plugin_addchannel, 0);
+                                ArrayList<String> plugin_names = new ArrayList<String>();
+                                for (ResolveInfo ri : plugins) {
+                                    plugin_names.add(ri.loadLabel(pm).toString());
+                                }
+                                String[] plugin_names2 = plugin_names.toArray(new String[plugin_names.size()]);
+
+                                new MaterialDialog.Builder(MainActivity.this)
+                                        .title("Installed Plugins")
+                                        .items(plugin_names2)
+                                        .itemsCallback(new MaterialDialog.ListCallback() {
+                                            @Override
+                                            public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+                                                //I actually don't want to do anything right now, but will later
+                                            }
+                                        })
+                                        .positiveText("Download More")
+                                        .callback(new MaterialDialog.ButtonCallback() {
+                                            @Override
+                                            public void onPositive(MaterialDialog dialog) {
+                                                super.onPositive(dialog);
+                                                Intent i = new Intent(android.content.Intent.ACTION_VIEW);
+                                                i.setData(Uri.parse("http://play.google.com/store/search?q=cumulustv&c=apps"));
+                                                startActivity(i);
+                                            }
+                                        }).show();
+                                break;
+                            case 1:
 //                                Toast.makeText(MainActivity.this, "Not supported", Toast.LENGTH_SHORT).show();
                                 IntentSender intentSender = Drive.DriveApi
                                         .newOpenFileActivityBuilder()
@@ -434,13 +477,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                     Log.w(TAG, "Unable to send intent", e);
                                 }
                                 break;
-                            case 1:
+                            case 2:
                                 readDriveData();
                                 break;
-                            case 2:
+                            case 3:
                                 oslClick();
                                 break;
-                            case 3:
+                            case 4:
                                 new MaterialDialog.Builder(MainActivity.this)
                                         .title("Delete all your channel data?")
                                         .positiveText("Yes")
@@ -644,50 +687,85 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             plugin_names.add(ri.loadLabel(pm).toString());
         }
         String[] plugin_names2 = plugin_names.toArray(new String[plugin_names.size()]);
-        new MaterialDialog.Builder(MainActivity.this)
-                .items(plugin_names2)
-                .title("Choose an app")
-                .content("Yes, if there's only one app, default to that one")
-                .itemsCallback(new MaterialDialog.ListCallback() {
-                    @Override
-                    public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                        Toast.makeText(getApplicationContext(), "Pick " + i, Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent();
-//                        intent.setAction("com.felkertech.cumulustv.ADD_CHANNEL");
-                        if (newChannel) {
-                            Log.d(TAG, "Try to start ");
-                            ResolveInfo plugin_info = plugins.get(i);
-                            Log.d(TAG, plugin_info.activityInfo.applicationInfo.packageName+" "+
-                                    plugin_info.activityInfo.name);
+        Log.d(TAG, "Load plugins "+plugin_names.toString());
+        if(plugin_names.size() == 1) {
+            Intent intent = new Intent();
+            if (newChannel) {
+                Log.d(TAG, "Try to start ");
+                ResolveInfo plugin_info = plugins.get(0);
+                Log.d(TAG, plugin_info.activityInfo.applicationInfo.packageName + " " +
+                        plugin_info.activityInfo.name);
 
-                            intent.setClassName(plugin_info.activityInfo.applicationInfo.packageName,
-                                    plugin_info.activityInfo.name);
+                intent.setClassName(plugin_info.activityInfo.applicationInfo.packageName,
+                        plugin_info.activityInfo.name);
+                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
+            } else {
+                ChannelDatabase cdn = new ChannelDatabase(getApplicationContext());
+                try {
+                    JSONChannel jsonChannel = new JSONChannel(cdn.getJSONChannels().getJSONObject(index));
+                    ResolveInfo plugin_info = plugins.get(0);
+                    Log.d(TAG, plugin_info.activityInfo.applicationInfo.packageName + " " +
+                            plugin_info.activityInfo.name);
+                    intent.setClassName(plugin_info.activityInfo.applicationInfo.packageName,
+                            plugin_info.activityInfo.name);
+                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_EDIT);
+                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NUMBER, jsonChannel.getNumber());
+                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NAME, jsonChannel.getName());
+                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_URL, jsonChannel.getUrl());
+                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ICON, jsonChannel.getLogo());
+                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_SPLASH, jsonChannel.getSplashscreen());
+                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_GENRES, jsonChannel.getGenresString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            startActivity(intent);
+        } else {
+            new MaterialDialog.Builder(MainActivity.this)
+                    .items(plugin_names2)
+                    .title("Choose an app")
+                    .content("Yes, if there's only one app, default to that one")
+                    .itemsCallback(new MaterialDialog.ListCallback() {
+                        @Override
+                        public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+                            Toast.makeText(getApplicationContext(), "Pick " + i, Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent();
+//                        intent.setAction("com.felkertech.cumulustv.ADD_CHANNEL");
+                            if (newChannel) {
+                                Log.d(TAG, "Try to start ");
+                                ResolveInfo plugin_info = plugins.get(i);
+                                Log.d(TAG, plugin_info.activityInfo.applicationInfo.packageName + " " +
+                                        plugin_info.activityInfo.name);
+
+                                intent.setClassName(plugin_info.activityInfo.applicationInfo.packageName,
+                                        plugin_info.activityInfo.name);
 //                            ComponentName name=new ComponentName(plugin_info.activityInfo.applicationInfo.packageName,
 //                                    plugin_info.activityInfo.name);
                             /*intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                                     Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);*/
 //                            intent.setComponent(name);
-                            intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
-                        } else {
-                            ChannelDatabase cdn = new ChannelDatabase(getApplicationContext());
-                            try {
-                                JSONChannel jsonChannel = new JSONChannel(cdn.getJSONChannels().getJSONObject(index));
-                                ResolveInfo plugin_info = plugins.get(i);
-                                intent.setClassName(plugin_info.activityInfo.applicationInfo.packageName,
-                                        plugin_info.activityInfo.name);
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_EDIT);
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NUMBER, jsonChannel.getNumber());
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NAME, jsonChannel.getName());
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_URL, jsonChannel.getUrl());
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ICON, jsonChannel.getLogo());
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_SPLASH, jsonChannel.getSplashscreen());
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_GENRES, jsonChannel.getGenresString());
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
+                            } else {
+                                ChannelDatabase cdn = new ChannelDatabase(getApplicationContext());
+                                try {
+                                    JSONChannel jsonChannel = new JSONChannel(cdn.getJSONChannels().getJSONObject(index));
+                                    ResolveInfo plugin_info = plugins.get(i);
+                                    intent.setClassName(plugin_info.activityInfo.applicationInfo.packageName,
+                                            plugin_info.activityInfo.name);
+                                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_EDIT);
+                                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NUMBER, jsonChannel.getNumber());
+                                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NAME, jsonChannel.getName());
+                                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_URL, jsonChannel.getUrl());
+                                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ICON, jsonChannel.getLogo());
+                                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_SPLASH, jsonChannel.getSplashscreen());
+                                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_GENRES, jsonChannel.getGenresString());
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
+                            startActivity(intent);
                         }
-                        startActivity(intent);
-                    }
-                }).show();
+                    }).show();
+        }
     }
 }
