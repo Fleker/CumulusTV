@@ -17,9 +17,9 @@ where a user wanted to add user-defined channels using m3u8 files.
 * [x] User-input channels and other data
 * [x] Update channels when user updates user info
 * [x] Use Google Drive to sync channel data to your user account and allow remote adding
+* [x] Add additional attributes that can be used to customize a stream, like custom genres and splashscreens
 * [ ] Find m3u streams to provide as samples
 * [ ] Get program guide data to supply streams if data exists
-* [ ] Add additional attributes that can be used to customize a stream, like custom genres and splashscreens
 
 
 ## Suggested Streams
@@ -46,7 +46,7 @@ Google Drive syncs a JSON file between all your devices that can be easily edite
 ## Plugin
 Want to make it easy for users to add a Twitch stream without entering a complicated URL? Then you want to create a plugin. This is an app that works easily with CumulusTV, simplifying the amount of work you need to do for a live channel to appear.
 
-**Plugins will be available in 1.2.0**
+To learn how to do this, read <a href="https://github.com/Fleker/CumulusTV/wiki/Create-a-3rd-Party-Plugin">this wiki page</a>.
 
 ## Photos
 <img src='https://cloud.githubusercontent.com/assets/3291635/9021048/00a04364-37fd-11e5-85be-1e550796d922.png' width='640px'/>
