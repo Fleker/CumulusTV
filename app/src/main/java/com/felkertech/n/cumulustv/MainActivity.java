@@ -514,10 +514,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         SyncUtils.requestSync(info);
     }
     public void writeDriveData() {
-        sm.writeToGoogleDrive(DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id)), new ChannelDatabase(this).toString());
+        try {
+            sm.writeToGoogleDrive(DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id)), new ChannelDatabase(this).toString());
 
-        final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
-        SyncUtils.requestSync(info);
+            final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
+            SyncUtils.requestSync(info);
+        } catch(Exception e) {
+            //Probably invalid drive id. No worries, just let someone know
+            Toast.makeText(this, "Invalid drive file. Please choose a different file.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /* MAIN DIALOG INTERFACES */

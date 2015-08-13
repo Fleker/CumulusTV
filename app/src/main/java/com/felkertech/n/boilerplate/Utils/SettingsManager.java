@@ -171,6 +171,8 @@ public class SettingsManager {
      * @param resId The key for the desired preference
      */
     public void readFromGoogleDrive(DriveId driveId, final String resId) {
+        if(!gapi.isConnected())
+            return; //Stop the presses
         ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback =
                 new ResultCallback<DriveApi.DriveContentsResult>() {
                     @Override

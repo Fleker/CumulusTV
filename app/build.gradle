@@ -9,8 +9,8 @@ android {
         applicationId "com.felkertech.n.cumulustv"
         minSdkVersion 21
         targetSdkVersion 22
-        versionCode 5
-        versionName "1.2.0"
+        versionCode 6
+        versionName "1.2.1"
     }
     signingConfigs {
         debug {
@@ -37,7 +37,7 @@ dependencies {
     compile 'com.android.support:leanback-v17:22.2.1'
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.google.android.gms:play-services-drive:7.5.0'
-    compile 'com.google.android.exoplayer:exoplayer:r1.4.0'
+    compile 'com.google.android.exoplayer:exoplayer:r1.4.2'
     compile 'com.afollestad:material-dialogs:0.7.8.1'
     compile 'com.pnikosis:materialish-progress:1.5'
     compile 'com.squareup.picasso:picasso:2.5.2'

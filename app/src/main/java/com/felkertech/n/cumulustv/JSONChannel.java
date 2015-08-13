@@ -128,4 +128,8 @@ public class JSONChannel {
             return arrayList.toArray(new String[arrayList.size()]);
         }
     }
+    public boolean equals(JSONChannel compare) {
+        return getNumber().equals(compare.getNumber()) && getName().equals(compare.getName())
+                && getLogo().equals(compare.getLogo()) && getSource().equals(compare.getSource());
+    }
 }

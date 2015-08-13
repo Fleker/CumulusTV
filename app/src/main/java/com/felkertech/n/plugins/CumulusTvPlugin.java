@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PersistableBundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -86,6 +87,25 @@ public class CumulusTvPlugin extends AppCompatActivity {
         sendBroadcast(i);
         finish();
     }
+    public void saveChannel(JSONChannel newChannel, JSONChannel original) {
+        String jsonString = newChannel.toString();
+        Intent i = new Intent();
+        String ogString = original.toString();
+        i.setClassName("com.felkertech.n.cumulustv",
+                "com.felkertech.n.plugins.DataReceiver");
+        i.setAction("com.felkertech.cumulustv.RECEIVER");
+        i.putExtra(DataReceiver.INTENT_EXTRA_JSON, jsonString);
+        if(getChannel() != null)
+            i.putExtra(DataReceiver.INTENT_EXTRA_ORIGINAL_JSON, ogString);
+        if(proprietary)
+            i.putExtra(DataReceiver.INTENT_EXTRA_SOURCE, getApplicationInfo().packageName+","+getApplicationInfo().name);
+        else
+            i.putExtra(DataReceiver.INTENT_EXTRA_SOURCE, "");
+        i.putExtra(DataReceiver.INTENT_EXTRA_ACTION, DataReceiver.INTENT_EXTRA_ACTION_WRITE);
+        Log.d("cumulus:plugin", "Saving changes");
+        sendBroadcast(i);
+        finish();
+    }
 
     /**
      * Deletes the provided channel and resyncs. Then the app closes.
@@ -101,6 +121,8 @@ public class CumulusTvPlugin extends AppCompatActivity {
     }
 
     public JSONChannel getChannel() {
+        if(telegram.getStringExtra(INTENT_EXTRA_ACTION).equals(INTENT_ADD))
+            return null;
         String number = telegram.getStringExtra(INTENT_EXTRA_NUMBER);
         String name = telegram.getStringExtra(INTENT_EXTRA_NAME);
         String logo = telegram.getStringExtra(INTENT_EXTRA_ICON);

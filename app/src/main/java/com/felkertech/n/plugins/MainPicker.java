@@ -101,7 +101,7 @@ public class MainPicker extends CumulusTvPlugin {
                             String genres = ((Button) l.findViewById(R.id.genres)).getText().toString();
 
                             JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, genres);
-                            saveChannel(jsch);
+                            saveChannel(jsch, getChannel());
                         }
 
                         @Override

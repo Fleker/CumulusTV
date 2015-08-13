@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 public class DataReceiver extends BroadcastReceiver {
     public static String INTENT_EXTRA_JSON = "JSON";
+    public static String INTENT_EXTRA_ORIGINAL_JSON = "OGJSON";
     public static String INTENT_EXTRA_ACTION = "Dowhat";
     public static String INTENT_EXTRA_ACTION_WRITE = "Write";
     public static String INTENT_EXTRA_ACTION_DELETE = "Delete";
@@ -41,6 +42,19 @@ public class DataReceiver extends BroadcastReceiver {
                     JSONObject jo = new JSONObject(jsonString);
                     JSONChannel jsonChannel = new JSONChannel(jo);
                     jsonChannel.setSource(intent.getStringExtra(INTENT_EXTRA_SOURCE));
+                    if(intent.hasExtra(INTENT_EXTRA_ORIGINAL_JSON)) {
+                        //Clearly edited a stream
+                        JSONChannel original = new JSONChannel(new JSONObject(intent.getStringExtra(INTENT_EXTRA_ORIGINAL_JSON)));
+                        for(int i = 0; i < cdn.getJSONChannels().length(); i++) {
+                            JSONChannel item = new JSONChannel(cdn.getJSONChannels().getJSONObject(i));
+                            if(original.equals(item)) {
+                                Log.d(TAG, "Found a match");
+
+                            }
+                        }
+                    } else {
+
+                    }
                     if (cdn.channelExists(jsonChannel)) {
                         //Channel exists, so let's update
                         cdn.update(jsonChannel);

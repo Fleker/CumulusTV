@@ -198,7 +198,7 @@ public class TvInputPlayer implements TextRenderer {
                                     uri.toString(), hlsPlaylist, bandwidthMeter, null,
                                     HlsChunkSource.ADAPTIVE_MODE_SPLICE, null);
                             LoadControl lhc = new DefaultLoadControl(new DefaultAllocator(BUFFER_SEGMENT_SIZE));
-                            HlsSampleSource sampleSource = new HlsSampleSource(chunkSource, lhc, BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, true);
+                            HlsSampleSource sampleSource = new HlsSampleSource(chunkSource, lhc, BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE);
                             mAudioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
                             mVideoRenderer = new MediaCodecVideoTrackRenderer(sampleSource,
                                     MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000, mHandler,

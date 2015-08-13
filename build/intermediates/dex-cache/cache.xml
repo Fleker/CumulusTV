@@ -2,11 +2,11 @@
 <items version="2" >
 
     <item
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.afollestad\material-dialogs\0.7.8.1\jars\classes.jar"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.google.android.exoplayer\exoplayer\r1.4.2\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="332c3fb3a17fa7a66f84c701047aac964653fdf6">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-d4376d339d3abc9a3a1569af2f33282d16f7b32d.jar" />
+        sha1="8d240fc1031d5f5e85fdc2821b166da5353084e6">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-3808abc4d792d899de279ed328aa442f3123ae99.jar" />
     </item>
 
 </items>
