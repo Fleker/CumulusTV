@@ -208,7 +208,7 @@ public class SettingsManager {
 
                             //Step 5, send alert
                             if(gdl != null)
-                                gdl.onActionFinished();
+                                gdl.onActionFinished(true);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -242,7 +242,7 @@ public class SettingsManager {
                 com.google.android.gms.common.api.Status status =
                         driveContents.commit(gapi, null).await();
                 if(gdl != null)
-                    gdl.onActionFinished();
+                    gdl.onActionFinished(false);
                 return status.getStatus().isSuccess();
             } catch (IOException e) {
                 Log.e(TAG, "IOException while appending to the output stream", e);
@@ -263,6 +263,6 @@ public class SettingsManager {
         }
     }
     public interface GoogleDriveListener {
-        public abstract void onActionFinished();
+        public abstract void onActionFinished(boolean cloudToLocal);
     }
 }

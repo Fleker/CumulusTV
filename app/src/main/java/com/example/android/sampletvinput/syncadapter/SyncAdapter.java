@@ -520,7 +520,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
 
         sm.setGoogleDriveSyncable(gapi, new SettingsManager.GoogleDriveListener() {
             @Override
-            public void onActionFinished() {
+            public void onActionFinished(boolean ctl) {
                 Log.d(TAG, "On operation "+operations[0]);
                 if(operations[0] >= 2) {
                     doLocalSync();

@@ -247,7 +247,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View v) {
                 Intent i = getPackageManager().getLaunchIntentForPackage("com.google.android.tv");
-                startActivity(i);
+                if(i == null) {
+                    Toast.makeText(MainActivity.this, "Is Live Channels installed? Email felker.tech@gmail.com", Toast.LENGTH_SHORT).show();
+                } else {
+                    startActivity(i);
+                }
             }
         });
         findViewById(R.id.gdrive).setOnClickListener(new View.OnClickListener() {
@@ -268,10 +272,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void onConnected(Bundle bundle) {
         sm.setGoogleDriveSyncable(gapi, new SettingsManager.GoogleDriveListener() {
             @Override
-            public void onActionFinished() {
+            public void onActionFinished(boolean cloudToLocal) {
                 Log.d(TAG, "Sync req after drive action");
                 final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
                 SyncUtils.requestSync(info);
+                if(cloudToLocal) {
+                    Toast.makeText(MainActivity.this, "Download complete", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Upload complete", Toast.LENGTH_SHORT).show();
+                }
             }
         }); //Enable GDrive
         Log.d(TAG, sm.getString(R.string.sm_google_drive_id)+"<< for onConnected");

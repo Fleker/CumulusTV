@@ -38,7 +38,7 @@ public class SampleSetup extends AppCompatActivity {
     private String TAG = "cumulus:SampleSetup";
     private String ABCNews = "http://abclive.abcnews.com/i/abc_live4@136330/index_1200_av-b.m3u8";
     public static String COLUMN_CHANNEL_URL = "CHANNEL_URL";
-    private static int SETUP_DURATION = 40*1000;
+    private static int SETUP_DURATION = 35*1000;
     private static int SETUP_UI_LAST = 5*1000; //DURATION - UI_LAST seconds is the last time UI list runs
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +70,7 @@ public class SampleSetup extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                Toast.makeText(getApplicationContext(), "Setup complete", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Setup complete. Make sure you enable these channels in the channel list.", Toast.LENGTH_SHORT).show();
                 killer.sendEmptyMessageDelayed(0, 10);
             }
         };
@@ -87,7 +87,8 @@ public class SampleSetup extends AppCompatActivity {
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 TextView channelsList = (TextView) findViewById(R.id.channel_list);
-                channelsList.setText(channelsList.getText()+"\n"+channels[channelIndex[0]]);
+                if(channelIndex[0] < channels.length)
+                    channelsList.setText(channelsList.getText()+"\n"+channels[channelIndex[0]]);
                 channelIndex[0]++;
                 if(channelIndex[0] <= channels.length)
                     sendEmptyMessageDelayed(0, (SETUP_DURATION-SETUP_UI_LAST)/channels.length);
