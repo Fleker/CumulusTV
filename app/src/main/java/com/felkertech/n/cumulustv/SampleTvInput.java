@@ -29,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.example.android.sampletvinput.TvContractUtils;
 import com.example.android.sampletvinput.player.TvInputPlayer;
 import com.google.android.exoplayer.ExoPlaybackException;
@@ -37,6 +38,8 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.List;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by N on 7/12/2015.
@@ -57,6 +60,7 @@ public class SampleTvInput extends TvInputService {
         Log.d(TAG, "onCreate");
         mHandlerThread = new HandlerThread(getClass()
                 .getSimpleName());
+        Fabric.with(this, new Crashlytics());
         mHandlerThread.start();
         mDbHandler = new Handler(mHandlerThread.getLooper());
         /*mHandler = new Handler(Looper.myLooper()) {
@@ -83,6 +87,8 @@ public class SampleTvInput extends TvInputService {
         intentFilter.addAction(TvInputManager
                 .ACTION_PARENTAL_CONTROLS_ENABLED_CHANGED);
         registerReceiver(mBroadcastReceiver, intentFilter);
+
+
 
     }
 

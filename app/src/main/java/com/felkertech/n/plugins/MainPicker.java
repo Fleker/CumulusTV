@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.crashlytics.android.Crashlytics;
 import com.felkertech.n.boilerplate.Utils.CommaArray;
 import com.felkertech.n.cumulustv.ChannelDatabase;
 import com.felkertech.n.cumulustv.JSONChannel;
@@ -20,6 +21,8 @@ import com.felkertech.n.cumulustv.R;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * For the sake of open source software and examples, the built-in picker will be a plugin
@@ -33,12 +36,15 @@ public class MainPicker extends CumulusTvPlugin {
         Log.d(TAG, "Start a");
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Start b");
+        Fabric.with(this, new Crashlytics());
         setLabel(label);
         setProprietaryEditing(false);
         setContentView(R.layout.fullphoto);
         Log.d(TAG, areEditing() + "<");
         Log.d(TAG, getChannel().getName() + "<<");
         loadDialogs();
+
+
     }
     public void loadDialogs() {
         if(!areEditing()) {

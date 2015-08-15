@@ -20,6 +20,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.example.android.sampletvinput.TvContractUtils;
 import com.example.android.sampletvinput.data.Program;
 import com.example.android.sampletvinput.player.TvInputPlayer;
@@ -30,6 +31,8 @@ import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by N on 7/12/2015.
@@ -45,11 +48,14 @@ public class SampleSetup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
         Log.d(TAG, "Created me");
+
+        Fabric.with(this, new Crashlytics());
         String info = "";
         if(getIntent() != null) {
              info = getIntent().getStringExtra(TvInputInfo.EXTRA_INPUT_ID);
             Log.d(TAG, info);
         }
+
 
         List<TvManager.ChannelInfo> list = SyncAdapter.getChannels(this);
 

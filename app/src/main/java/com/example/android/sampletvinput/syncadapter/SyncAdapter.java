@@ -36,6 +36,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.LongSparseArray;
 
+import com.crashlytics.android.Crashlytics;
 import com.example.android.sampletvinput.TvContractUtils;
 import com.example.android.sampletvinput.data.Program;
 import com.example.android.sampletvinput.player.TvInputPlayer;
@@ -63,6 +64,8 @@ import java.nio.channels.Channel;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * A SyncAdapter implementation which updates program info periodically.
@@ -115,7 +118,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
+        Fabric.with(getContext(), new Crashlytics());
         gapi.connect();
+
     }
 
     public void doLocalSync() {
