@@ -7,6 +7,7 @@ import android.media.tv.TvContentRating;
 import android.media.tv.TvContract;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.android.sampletvinput.player.TvInputPlayer;
 
@@ -41,6 +42,7 @@ public class ChannelDatabase {
             }
             resetPossibleGenres(); //This will try to use the newest API data
         } catch (JSONException e) {
+            Toast.makeText(mContext, "Please report this error with your JSON file: "+e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
         rating = TvContentRating.createRating(
@@ -50,8 +52,13 @@ public class ChannelDatabase {
                 "US_TV_D", "US_TV_L");
     }
     public JSONArray getJSONChannels() throws JSONException {
-        JSONArray channels = obj.getJSONArray("channels");
-        return channels;
+        if(obj != null) {
+            JSONArray channels = obj.getJSONArray("channels");
+            return channels;
+        } else {
+            Toast.makeText(mContext, "Report this error with your JSON file: DatabaseObject2 is null", Toast.LENGTH_SHORT).show();
+        }
+        return new JSONArray();
     }
     public ArrayList<TvManager.ChannelInfo> getChannels() throws JSONException {
         JSONArray channels = getJSONChannels();
@@ -228,7 +235,12 @@ public class ChannelDatabase {
     }
     @Override
     public String toString() {
-        return obj.toString();
+        if(obj != null)
+            return obj.toString();
+        else {
+            Toast.makeText(mContext, "Report this error with your JSON file: DatabaseObject is null", Toast.LENGTH_SHORT).show();
+        }
+        return "";
     }
     public long getLastModified() throws JSONException {
         return obj.getLong("modified");

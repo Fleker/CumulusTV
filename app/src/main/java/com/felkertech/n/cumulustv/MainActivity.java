@@ -279,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 Log.d(TAG, "Sync req after drive action");
                 final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
                 SyncUtils.requestSync(info);
-                if(cloudToLocal) {
+                if (cloudToLocal) {
                     Toast.makeText(MainActivity.this, "Download complete", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(MainActivity.this, "Upload complete", Toast.LENGTH_SHORT).show();
@@ -438,7 +438,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .show();
     }
     public void moreClick() {
-        String[] actions = new String[] {"Browse Plugins", "Switch Google Drive file", "Refresh Data - Cloud to Local", "View Software Licenses", "Reset Channel Data"};
+        String[] actions = new String[] {"Browse Plugins",
+                "Switch Google Drive file",
+                "Refresh Data - Cloud to Local",
+                "View Software Licenses",
+                "Reset Channel Data",
+                "Graphics credited to bgiesing from GitHub"};
         new MaterialDialog.Builder(MainActivity.this)
                 .title("More Actions")
                 .items(actions)
@@ -471,7 +476,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                             @Override
                                             public void onPositive(MaterialDialog dialog) {
                                                 super.onPositive(dialog);
-                                                Intent i = new Intent(android.content.Intent.ACTION_VIEW);
+                                                Intent i = new Intent(Intent.ACTION_VIEW);
                                                 i.setData(Uri.parse("http://play.google.com/store/search?q=cumulustv&c=apps"));
                                                 startActivity(i);
                                             }
@@ -505,14 +510,25 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                             public void onPositive(MaterialDialog dialog) {
                                                 super.onPositive(dialog);
                                                 sm.setString(ChannelDatabase.KEY, "{'channels':[]}");
-                                                sm.writeToGoogleDrive(DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id)),
-                                                        sm.getString(ChannelDatabase.KEY));
+                                                try {
+                                                    DriveId did = DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id));
+                                                    sm.writeToGoogleDrive(did,
+                                                            sm.getString(ChannelDatabase.KEY));
+                                                } catch (Exception e) {
+                                                    Toast.makeText(MainActivity.this, "Error: DriveId is invalid", Toast.LENGTH_SHORT).show();
+                                                }
                                                 sm.setString(R.string.sm_google_drive_id, "");
                                                 Toast.makeText(MainActivity.this, "The deed was done", Toast.LENGTH_SHORT).show();
-                                                onCreate(null);
+                                                Intent i = new Intent(MainActivity.this, MainActivity.class);
+                                                startActivity(i);
                                             }
                                         })
                                         .show();
+                                break;
+                            case 5:
+                                Intent gi = new Intent(Intent.ACTION_VIEW);
+                                gi.setData(Uri.parse("http://github.com/fleker/cumulustv"));
+                                startActivity(gi);
                                 break;
                         }
                     }

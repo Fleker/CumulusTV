@@ -2,6 +2,9 @@ package com.felkertech.n.plugins;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
@@ -41,7 +44,8 @@ public class MainPicker extends CumulusTvPlugin {
         setProprietaryEditing(false);
         setContentView(R.layout.fullphoto);
         Log.d(TAG, areEditing() + "<");
-        Log.d(TAG, getChannel().getName() + "<<");
+        if(getChannel() != null)
+            Log.d(TAG, getChannel().getName() + "<<");
         loadDialogs();
 
 
@@ -113,29 +117,39 @@ public class MainPicker extends CumulusTvPlugin {
                         @Override
                         public void onNegative(MaterialDialog dialog) {
                             super.onNegative(dialog);
-                            final LinearLayout l = (LinearLayout) dialog.getCustomView();
+                            LinearLayout l = (LinearLayout) dialog.getCustomView();
                             String number = ((EditText) l.findViewById(R.id.number)).getText().toString();
                             Log.d(TAG, "Channel " + number);
-                            new MaterialDialog.Builder(MainPicker.this)
-                                    .title("Delete?")
-                                    .positiveText("Yes")
-                                    .negativeText("No")
-                                    .callback(new MaterialDialog.ButtonCallback() {
-                                        @Override
-                                        public void onPositive(MaterialDialog dialog) {
-                                            super.onPositive(dialog);
-                                            String number = ((EditText) l.findViewById(R.id.number)).getText().toString();
-                                            Log.d(TAG, "DEL Channel " + number);
-                                            String name = ((EditText) l.findViewById(R.id.name)).getText().toString();
-                                            String logo = ((EditText) l.findViewById(R.id.logo)).getText().toString();
-                                            String stream = ((EditText) l.findViewById(R.id.stream)).getText().toString();
-                                            String splash = ((EditText) l.findViewById(R.id.splash)).getText().toString();
-                                            String genres = ((Button) l.findViewById(R.id.genres)).getText().toString();
 
-                                            JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, genres);
-                                            deleteChannel(jsch);
-                                        }
-                                    }).show();
+                            Log.d(TAG, "DEL Channel " + number);
+                            String name = ((EditText) l.findViewById(R.id.name)).getText().toString();
+                            String logo = ((EditText) l.findViewById(R.id.logo)).getText().toString();
+                            String stream = ((EditText) l.findViewById(R.id.stream)).getText().toString();
+                            String splash = ((EditText) l.findViewById(R.id.splash)).getText().toString();
+                            String genres = ((Button) l.findViewById(R.id.genres)).getText().toString();
+
+                            final JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, genres);
+//                            dialog.dismiss();
+                            deleteChannel(jsch);
+                            /*Handler h = new Handler(Looper.getMainLooper()) {
+                                @Override
+                                public void handleMessage(Message msg) {
+                                    super.handleMessage(msg);
+                                    new MaterialDialog.Builder(MainPicker.this)
+                                            .title("Delete?")
+                                            .positiveText("Yes")
+                                            .negativeText("No")
+                                            .callback(new MaterialDialog.ButtonCallback() {
+                                                @Override
+                                                public void onPositive(MaterialDialog dialog) {
+                                                    super.onPositive(dialog);
+
+                                                }
+                                            })
+                                            .show();
+                                }
+                            };
+                            h.sendEmptyMessageDelayed(0, 2);*/
                         }
                     })
                     .show();

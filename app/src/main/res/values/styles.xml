@@ -2,7 +2,9 @@
 <resources>
     <style name="AppTheme" parent="@style/Theme.Leanback"></style>
     <style name="CompatTheme" parent="Theme.AppCompat.NoActionBar">
-
+        <item name="android:colorPrimary">#9C27B0</item>
+        <item name="android:colorPrimaryDark">#7B1FA2</item>
+        <item name="android:colorAccent">#64FFDA</item>
     </style>
     <style name="main_button">
         <item name="android:layout_marginLeft">80dp</item>

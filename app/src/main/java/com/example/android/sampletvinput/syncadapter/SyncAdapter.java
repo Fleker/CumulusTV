@@ -35,6 +35,7 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.LongSparseArray;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.example.android.sampletvinput.TvContractUtils;
@@ -520,49 +521,54 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
         /*
             Setup a few key variables for this method
          */
-        final DriveId driveId = DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id));
-        final String tempKey = ChannelDatabase.KEY+"SYNC";
+        try {
+            final DriveId driveId = DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id));
+            final String tempKey = ChannelDatabase.KEY+"SYNC";
 
-        sm.setGoogleDriveSyncable(gapi, new SettingsManager.GoogleDriveListener() {
-            @Override
-            public void onActionFinished(boolean ctl) {
-                Log.d(TAG, "On operation "+operations[0]);
-                if(operations[0] >= 2) {
-                    doLocalSync();
-                } else {
-                    try {
-                        JSONObject jsonObject = new JSONObject(sm.getString(tempKey));
-                        if(jsonObject.has("modified")) {
-                            long cloudModified = jsonObject.getLong("modified");
-                            long localModified = new ChannelDatabase(getContext()).getLastModified();
-                            if(cloudModified > localModified) {
-                                //Read in
-                                Log.d(TAG, "Cloud newer, read in");
-                                operations[0]++;
-                                sm.readFromGoogleDrive(driveId, ChannelDatabase.KEY);
+            sm.setGoogleDriveSyncable(gapi, new SettingsManager.GoogleDriveListener() {
+                @Override
+                public void onActionFinished(boolean ctl) {
+                    Log.d(TAG, "On operation "+operations[0]);
+                    if(operations[0] >= 2) {
+                        doLocalSync();
+                    } else {
+                        try {
+                            JSONObject jsonObject = new JSONObject(sm.getString(tempKey));
+                            if(jsonObject.has("modified")) {
+                                long cloudModified = jsonObject.getLong("modified");
+                                long localModified = new ChannelDatabase(getContext()).getLastModified();
+                                if(cloudModified > localModified) {
+                                    //Read in
+                                    Log.d(TAG, "Cloud newer, read in");
+                                    operations[0]++;
+                                    sm.readFromGoogleDrive(driveId, ChannelDatabase.KEY);
+                                } else {
+                                    //Write out
+                                    Log.d(TAG, "Local newer, write out");
+                                    operations[0]++;
+                                    sm.writeToGoogleDrive(driveId, sm.getString(ChannelDatabase.KEY));
+                                } //Else both files are the same and there's no need to modify anything
                             } else {
-                                //Write out
-                                Log.d(TAG, "Local newer, write out");
+                                Log.d(TAG, "Cloud doesn't have a modified attribute, repair");
                                 operations[0]++;
                                 sm.writeToGoogleDrive(driveId, sm.getString(ChannelDatabase.KEY));
-                            } //Else both files are the same and there's no need to modify anything
-                        } else {
-                            Log.d(TAG, "Cloud doesn't have a modified attribute, repair");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.d(TAG, "JSON error, repair");
                             operations[0]++;
                             sm.writeToGoogleDrive(driveId, sm.getString(ChannelDatabase.KEY));
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.d(TAG, "JSON error, repair");
-                        operations[0]++;
-                        sm.writeToGoogleDrive(driveId, sm.getString(ChannelDatabase.KEY));
                     }
-                }
 
-            }
-        });
-        operations[0]++;
-        sm.readFromGoogleDrive(driveId, tempKey); //Save to temp
+                }
+            });
+            operations[0]++;
+            sm.readFromGoogleDrive(driveId, tempKey); //Save to temp
+        } catch(Exception e) {
+            Toast.makeText(mContext, "Error: Google Drive file not found or is invalid", Toast.LENGTH_SHORT).show();
+            return;
+        }
     }
 
     @Override

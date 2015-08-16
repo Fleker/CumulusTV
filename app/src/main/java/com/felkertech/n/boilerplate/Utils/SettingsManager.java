@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -207,8 +210,16 @@ public class SettingsManager {
                             });*/
 
                             //Step 5, send alert
-                            if(gdl != null)
-                                gdl.onActionFinished(true);
+                            if(gdl != null) {
+                                Handler h = new Handler(Looper.getMainLooper()) {
+                                    @Override
+                                    public void handleMessage(Message msg) {
+                                        super.handleMessage(msg);
+                                        gdl.onActionFinished(true);
+                                    }
+                                };
+                                h.sendEmptyMessage(0);
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -241,8 +252,16 @@ public class SettingsManager {
                 outputStream.write(data.getBytes());
                 com.google.android.gms.common.api.Status status =
                         driveContents.commit(gapi, null).await();
-                if(gdl != null)
-                    gdl.onActionFinished(false);
+                if(gdl != null) {
+                    Handler h = new Handler(Looper.getMainLooper()) {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            super.handleMessage(msg);
+                            gdl.onActionFinished(false);
+                        }
+                    };
+                    h.sendEmptyMessage(0);
+                }
                 return status.getStatus().isSuccess();
             } catch (IOException e) {
                 Log.e(TAG, "IOException while appending to the output stream", e);

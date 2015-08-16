@@ -31,10 +31,10 @@
 
     <application
         android:allowBackup="true"
-        android:banner="@drawable/tv_banner"
-        android:icon="@drawable/ic_launcher"
+        android:banner="@drawable/tv_banner2"
+        android:icon="@drawable/high_res_icon2"
         android:label="@string/app_name"
-        android:logo="@drawable/tv_banner"
+        android:logo="@drawable/tv_banner2"
         android:theme="@style/Theme.Leanback" >
         <service
             android:name=".SampleTvInput"
@@ -127,7 +127,7 @@
         -->
         <service
             android:name="com.example.android.sampletvinput.syncadapter.DummyAccountService"
-            android:icon="@drawable/ic_launcher" >
+            android:icon="@drawable/high_res_icon2" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
