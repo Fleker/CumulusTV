@@ -68,7 +68,8 @@ public class ChannelDatabase {
             TvManager.ChannelInfo ci = new TvManager.ChannelInfo();
             ci.number = channel.getNumber();
             ci.name = channel.getName();
-            ci.originalNetworkId = ci.name.toString().hashCode();
+            if(ci.name != null)
+                ci.originalNetworkId = ci.name.hashCode();
             Log.d(TAG, "Hash "+ci.originalNetworkId+" for "+ci.name);
 //            ci.originalNetworkId = i+1;
             ci.transportStreamId = 1;
@@ -163,9 +164,14 @@ public class ChannelDatabase {
         return strings.toArray(new String[strings.size()]);
     }
     public void add(JSONChannel n00b) throws JSONException {
-        JSONArray channels = obj.getJSONArray("channels");
-        channels.put(n00b.toJSON());
-        save();
+        if(obj != null) {
+            JSONArray channels = obj.getJSONArray("channels");
+            channels.put(n00b.toJSON());
+            save();
+        } else {
+            Toast.makeText(mContext, "Error adding: object is undefined", Toast.LENGTH_SHORT).show();
+        }
+
     }
     public void update(JSONChannel ch) throws JSONException {
         if(!channelExists(ch)) {
@@ -243,7 +249,12 @@ public class ChannelDatabase {
         return "";
     }
     public long getLastModified() throws JSONException {
-        return obj.getLong("modified");
+        if(obj != null) {
+            return obj.getLong("modified");
+        } else {
+            Toast.makeText(mContext, "Report this error with your JSON file: DatabaseObject4 is null", Toast.LENGTH_SHORT).show();
+            return -1;
+        }
     }
     public void setLastModified() throws JSONException {
         obj.put("modified", new Date().getTime());

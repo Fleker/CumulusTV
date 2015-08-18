@@ -484,14 +484,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                 break;
                             case 1:
 //                                Toast.makeText(MainActivity.this, "Not supported", Toast.LENGTH_SHORT).show();
-                                IntentSender intentSender = Drive.DriveApi
-                                        .newOpenFileActivityBuilder()
-                                        .setMimeType(new String[]{"application/json", "text/*"})
-                                        .build(gapi);
-                                try {
-                                    startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0, 0);
-                                } catch (IntentSender.SendIntentException e) {
-                                    Log.w(TAG, "Unable to send intent", e);
+                                if (gapi.isConnected()) {
+                                    IntentSender intentSender = Drive.DriveApi
+                                            .newOpenFileActivityBuilder()
+                                            .setMimeType(new String[]{"application/json", "text/*"})
+                                            .build(gapi);
+                                    try {
+                                        startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0, 0);
+                                    } catch (IntentSender.SendIntentException e) {
+                                        Log.w(TAG, "Unable to send intent", e);
+                                    }
+                                } else {
+                                    Toast.makeText(MainActivity.this, "Please wait until Drive Service is active", Toast.LENGTH_SHORT).show();
                                 }
                                 break;
                             case 2:
@@ -536,7 +540,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .show();
     }
     public void readDriveData() {
-        sm.readFromGoogleDrive(DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id)), ChannelDatabase.KEY);
+        DriveId did;
+        try {
+             did = DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id));
+        }catch (Exception e) {
+            Toast.makeText(this, "Invalid drive file. Please choose a different file.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        sm.readFromGoogleDrive(did, ChannelDatabase.KEY);
 
         final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
         SyncUtils.requestSync(info);

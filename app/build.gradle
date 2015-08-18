@@ -14,8 +14,6 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
-
-
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
@@ -24,8 +22,8 @@ android {
         applicationId "com.felkertech.n.cumulustv"
         minSdkVersion 21
         targetSdkVersion 22
-        versionCode 9
-        versionName "1.2.4"
+        versionCode 10
+        versionName "1.2.5"
     }
     signingConfigs {
 

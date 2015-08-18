@@ -195,7 +195,7 @@ public class SampleTvInput extends TvInputService {
                                         ((TextView) v.findViewById(R.id.title)).setTextColor(s.getTitleTextColor());
                                         ((TextView) v.findViewById(R.id.channel_msg)).setTextColor(s.getTitleTextColor());
                                         ((ProgressWheel) v.findViewById(R.id.indeterminate_progress_large_library)).setBarColor(s.getRgb());
-                                    } else {
+                                    } else if(p.getSwatches().size() > 0){
                                         //Go with default if no vibrant swatch exists
                                         Log.d(TAG, "No vibrant swatch, "+p.getSwatches().size()+" others");
                                         Palette.Swatch s = p.getSwatches().get(0);
