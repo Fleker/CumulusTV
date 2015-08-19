@@ -114,6 +114,8 @@ public class JSONChannel {
         return genres;
     }
     public String[] getGenres() {
+        if(genres == null)
+            return new String[]{TvContract.Programs.Genres.LIFE_STYLE};
         if(genres.isEmpty())
             return new String[]{TvContract.Programs.Genres.LIFE_STYLE};
         else {

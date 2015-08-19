@@ -39,7 +39,7 @@
         android:layout_below="@+id/indeterminate_progress_large_library"/>
     <ImageView
         android:layout_width="match_parent"
-        android:src="@drawable/ic_launcher"
+        android:src="@drawable/high_res_icon2"
         android:id="@+id/thumnail"
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/indeterminate_progress_large_library"
