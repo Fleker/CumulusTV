@@ -48,5 +48,8 @@ Want to make it easy for users to add a Twitch stream without entering a complic
 
 To learn how to do this, read <a href="https://github.com/Fleker/CumulusTV/wiki/Create-a-3rd-Party-Plugin">this wiki page</a>.
 
+## Contributing
+This is a project meant for the community. If you're a developer and have a feature request, feel free to fork the project and submit an update through a pull request. 
+
 ## Photos
 <img src='https://cloud.githubusercontent.com/assets/3291635/9021048/00a04364-37fd-11e5-85be-1e550796d922.png' width='640px'/>
