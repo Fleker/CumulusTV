@@ -245,7 +245,12 @@ public class SampleTvInput extends TvInputService {
                 ChannelDatabase cdn = new ChannelDatabase(getApplicationContext());
                 JSONChannel ch = cdn.findChannel(tv_no);
                 jsonChannel = ch;
-                stream = ch.getUrl();
+                if(jsonChannel != null) {
+                    stream = ch.getUrl();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Channel "+tv_no+" not found", Toast.LENGTH_SHORT).show();
+                    notifyVideoUnavailable(TvInputManager.VIDEO_UNAVAILABLE_REASON_UNKNOWN);
+                }
                 Log.d(TAG, "Retrieved stream "+stream);
             } finally {
                 if (cursor != null) {

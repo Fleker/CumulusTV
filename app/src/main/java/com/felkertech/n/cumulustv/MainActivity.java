@@ -27,6 +27,7 @@ import com.crashlytics.android.Crashlytics;
 import com.example.android.sampletvinput.syncadapter.SyncUtils;
 import com.felkertech.n.boilerplate.Utils.CommaArray;
 import com.felkertech.n.boilerplate.Utils.SettingsManager;
+import com.felkertech.n.cumulustv.Intro.Intro;
 import com.felkertech.n.plugins.CumulusTvPlugin;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private static final int RESOLVE_CONNECTION_REQUEST_CODE = 100;
     private static final int REQUEST_CODE_CREATOR = 102;
     private static final int REQUEST_CODE_OPENER = 104;
+    public static final int LAST_GOOD_BUILD = 12;
     SettingsManager sm;
 
     @Override
@@ -68,6 +70,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .addOnConnectionFailedListener(this)
                 .build();
         sm = new SettingsManager(this);
+        if(sm.getInt(R.string.sm_last_version) < LAST_GOOD_BUILD) {
+            startActivity(new Intent(this, Intro.class));
+            finish();
+            return;
+        }
         Fabric.with(this, new Crashlytics());
         findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
             @Override

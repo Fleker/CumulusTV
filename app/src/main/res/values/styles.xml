@@ -11,4 +11,13 @@
         <item name="android:layout_marginRight">80dp</item>
         <item name="android:layout_marginBottom">4dp</item>
     </style>
+    <style name="background_text">
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:background">@color/kindablack</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:textSize">18dp</item>
+        <item name="android:fontFamily">sans-serif-black</item>
+    </style>
 </resources>

@@ -7,4 +7,14 @@
     <string name="action_settings">Settings</string>
 
     <string name="sm_google_drive_id">GDRIVE_FILE</string>
+    <string name="sm_last_version">VERSION</string>
+
+    <string name="intro_title_1">Welcome to CumulusTV</string>
+    <string name="intro_msg_1">"CumulusTV is an app that lets you create custom channels that can be played through the Live Channels app. Don't know what to watch? Pick a suggested channel."</string>
+    <string name="intro_title_2">Use Google Drive</string>
+    <string name="intro_msg_2">You can create a JSON file on Google Drive and have your channels synced across all your devices. Edits on your PC will also change them on this device, as long as you change the `modified` attribute.</string>
+    <string name="intro_title_3">Report Problems</string>
+    <string name="intro_msg_3">You can browse the source code on GitHub and report any issues you find or suggest a feature. Have a problem with the JSON? You can browse the format there.</string>
+    <string name="intro_title_4">Get Started</string>
+    <string name="intro_msg_4">"After creating channels, go to the Live Channels app. You'll have to make sure your channels are setup. Then, pick the channels you want visible."</string>
 </resources>

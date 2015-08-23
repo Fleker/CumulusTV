@@ -41,7 +41,7 @@ public class SampleSetup extends AppCompatActivity {
     private String TAG = "cumulus:SampleSetup";
     private String ABCNews = "http://abclive.abcnews.com/i/abc_live4@136330/index_1200_av-b.m3u8";
     public static String COLUMN_CHANNEL_URL = "CHANNEL_URL";
-    private static int SETUP_DURATION = 35*1000;
+    private static int SETUP_DURATION = 30*1000;
     private static int SETUP_UI_LAST = 5*1000; //DURATION - UI_LAST seconds is the last time UI list runs
     @Override
     protected void onCreate(Bundle savedInstanceState) {
