@@ -47,12 +47,10 @@ public class Intro extends AppIntro2 {
         loadMainActivity();
     }
 
-    /*@Override
+    @Override
     public boolean onKeyDown(int code, KeyEvent kvent) {
-        if(code == KeyEvent.KEYCODE_ENTER || code == KeyEvent.KEYCODE_BUTTON_A) {
+        if(code == KeyEvent.KEYCODE_DPAD_CENTER) {
             ViewPager vp = (ViewPager)this.findViewById(com.github.paolorotolo.appintro.R.id.view_pager);
-//            if(((ImageView) findViewById(com.github.paolorotolo.appintro.R.id.done)).getVisibility() == View.VISIBLE) {
-            Log.d("weather:intro", vp.getCurrentItem()+" "+(vp.getAdapter().getCount()-1));
             if(vp.getCurrentItem() == vp.getAdapter().getCount()-1) {
                 onDonePressed();
             } else {
@@ -61,5 +59,5 @@ public class Intro extends AppIntro2 {
             return false;
         }
         return super.onKeyDown(code, kvent);
-    }*/
+    }
 }

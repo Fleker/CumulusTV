@@ -22,8 +22,8 @@ android {
         applicationId "com.felkertech.n.cumulustv"
         minSdkVersion 21
         targetSdkVersion 22
-        versionCode 12
-        versionName "1.2.7"
+        versionCode 13
+        versionName "1.2.8"
     }
     signingConfigs {
 
