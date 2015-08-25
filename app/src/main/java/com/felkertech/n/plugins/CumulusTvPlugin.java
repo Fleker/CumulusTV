@@ -27,6 +27,8 @@ public class CumulusTvPlugin extends AppCompatActivity {
     public static String INTENT_EXTRA_SPLASH = "Splash";
     public static String INTENT_EXTRA_GENRES = "Genres";
     public static String TAGx = "cumulus:Plugin";
+    public static String INTENT_EXTRA_READ_ALL = "Readall";
+    public static String INTENT_EXTRA_ALL_CHANNELS = "Allchannels";
 
     private Intent telegram;
     private boolean isEdit;
@@ -61,6 +63,14 @@ public class CumulusTvPlugin extends AppCompatActivity {
      */
     public boolean areEditing() {
         return isEdit;
+    }
+
+    /**
+     * Determines whether you are reading all user channels or have just specified a single one
+     * @return
+     */
+    public boolean areReadingAll() {
+        return telegram.getBooleanExtra(INTENT_EXTRA_READ_ALL, false);
     }
 
     /**
@@ -140,5 +150,13 @@ public class CumulusTvPlugin extends AppCompatActivity {
      */
     public void setProprietaryEditing(boolean enabled) {
         proprietary = enabled;
+    }
+
+    public String getAllChannels() {
+        if(telegram.hasExtra(INTENT_EXTRA_ALL_CHANNELS)) {
+            return telegram.getStringExtra(INTENT_EXTRA_ALL_CHANNELS);
+        } else {
+            return "";
+        }
     }
 }

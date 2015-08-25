@@ -51,7 +51,7 @@ public class MainPicker extends CumulusTvPlugin {
 
     }
     public void loadDialogs() {
-        if(!areEditing()) {
+        if(!areEditing() && !areReadingAll()) {
             final MaterialDialog add = new MaterialDialog.Builder(MainPicker.this)
                     .title("Create a new channel")
                     .customView(R.layout.dialog_channel_new, true)
@@ -83,7 +83,7 @@ public class MainPicker extends CumulusTvPlugin {
                     })
                     .show();
             includeGenrePicker(add, "");
-        } else {
+        } else if(!areReadingAll()) {
             final ChannelDatabase cdn = new ChannelDatabase(getApplicationContext());
             final MaterialDialog md = new MaterialDialog.Builder(MainPicker.this)
                     .title("Edit Stream")
@@ -167,6 +167,10 @@ public class MainPicker extends CumulusTvPlugin {
                 }
             });
             includeGenrePicker(md, getChannel().getGenresString());
+        } else {
+            Toast.makeText(MainPicker.this, "This plugin doesn't support READALL", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, getAllChannels());
+            finish();
         }
     }
     public void includeGenrePicker(final MaterialDialog d, final String gString) {

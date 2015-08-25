@@ -18,6 +18,7 @@ public class JSONChannel {
     private String splashscreen;
     private String genres;
     private String source;
+    private String service;
     public JSONChannel(JSONObject jsonObject) {
         try {
             number = jsonObject.getString("number");
@@ -39,6 +40,10 @@ public class JSONChannel {
                 source = jsonObject.getString("source");
             else
                 source = "";
+            if(jsonObject.has("service"))
+                service = jsonObject.getString("service");
+            else
+                service = "";
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -133,5 +138,13 @@ public class JSONChannel {
     public boolean equals(JSONChannel compare) {
         return getNumber().equals(compare.getNumber()) && getName().equals(compare.getName())
                 && getLogo().equals(compare.getLogo()) && getSource().equals(compare.getSource());
+    }
+
+    public boolean hasService() {
+        return !service.isEmpty();
+    }
+
+    public String getService() {
+        return service;
     }
 }

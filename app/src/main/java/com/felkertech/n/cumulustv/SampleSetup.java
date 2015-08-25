@@ -86,8 +86,11 @@ public class SampleSetup extends AppCompatActivity {
         final int[] channelIndex = new int[]{0};
         ChannelDatabase cd = new ChannelDatabase(getApplicationContext());
         final String[] channels = cd.getChannelNames();
-        if(channels.length <= 0)
+        Log.d(TAG, "Run for "+channels.length+" times");
+        if(channels.length <= 0) {
+            Log.d(TAG, "What can you do if you have no channels");
             return;
+        }
         Handler i = new Handler(Looper.myLooper()) {
             @Override
             public void handleMessage(Message msg) {

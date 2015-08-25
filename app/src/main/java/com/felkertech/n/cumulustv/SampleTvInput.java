@@ -2,7 +2,9 @@ package com.felkertech.n.cumulustv;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -225,6 +227,17 @@ public class SampleTvInput extends TvInputService {
             Log.d(TAG, "Overlay");
             return v;
         }
+        public boolean tuneTo(String channel_no) {
+            ChannelDatabase cdn = new ChannelDatabase(getApplicationContext());
+            JSONChannel ch = cdn.findChannel(channel_no);
+            String stream;
+            jsonChannel = ch;
+            if(jsonChannel != null) {
+                stream = ch.getUrl();
+                return startPlayback(stream);
+            }
+            return false;
+        }
         @Override
         public boolean onTune(Uri channelUri) {
             Log.d(TAG, "onTune");
@@ -246,7 +259,32 @@ public class SampleTvInput extends TvInputService {
                 JSONChannel ch = cdn.findChannel(tv_no);
                 jsonChannel = ch;
                 if(jsonChannel != null) {
-                    stream = ch.getUrl();
+                    if(jsonChannel.hasService()) {
+                        PackageManager pm = getPackageManager();
+                        final String pack = jsonChannel.getService().split(",")[0];
+                        boolean app_installed = false;
+                        try {
+                            pm.getPackageInfo(pack, PackageManager.GET_ACTIVITIES);
+                            app_installed = true;
+                            //Open up this particular activity
+                            Intent intent = new Intent();
+                            intent.setClassName(pack,
+                                    jsonChannel.getService().split(",")[1]);
+                            startService(intent);
+                            Handler h = new Handler(Looper.getMainLooper()) {
+                                @Override
+                                public void handleMessage(Message msg) {
+                                    super.handleMessage(msg);
+                                    tuneTo(jsonChannel.getNumber());
+                                }
+                            };
+                            h.sendEmptyMessageDelayed(0, 5000);
+                        } catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        stream = ch.getUrl();
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(), "Channel "+tv_no+" not found", Toast.LENGTH_SHORT).show();
                     notifyVideoUnavailable(TvInputManager.VIDEO_UNAVAILABLE_REASON_UNKNOWN);
@@ -258,10 +296,7 @@ public class SampleTvInput extends TvInputService {
                 }
             }
             Log.d(TAG, "Tune into " + channelUri.toString());
-            /*PlayCurrentProgramRunnable mPlayCurrentProgramRunnable = new PlayCurrentProgramRunnable(channelUri);
-            mPlayCurrentProgramRunnable.run();*/
             return startPlayback(stream);
-//            return true;
             // NOTE: To display the program information (e.g. title) properly in the channel banner,
             // The implementation needs to register the program metadata on TvProvider.
             // For the example implementation, please see {@link RichTvInputService}.

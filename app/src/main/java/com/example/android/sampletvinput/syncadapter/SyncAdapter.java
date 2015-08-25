@@ -505,69 +505,76 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
 
     @Override
     public void onConnected(Bundle bundle) {
+        Log.d(TAG, "Connected");
         final SettingsManager sm = new SettingsManager(getContext());
-        Log.d(TAG, "Grab and compare cloud data, then continue syncing");
-        //Pull from cloud. Save if newer, else write.
-        /*
-            I want to automatically do a local sync after all these cloud ops are done,
-            but only on the last op.
-            This variable tracks the number of cloud operations done.
-            First, I read into a temp file. (1)
-            If it's newer, then I do a read in, (2)
-            Otherwise, I do a write out (2)
-            Either way, I act only on the second operation
-         */
-        final int[] operations = new int[]{0};
-        /*
-            Setup a few key variables for this method
-         */
-        try {
-            final DriveId driveId = DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id));
-            final String tempKey = ChannelDatabase.KEY+"SYNC";
+        if(sm.getString(R.string.sm_google_drive_id).length() > 4) {
+            Log.d(TAG, "Grab and compare cloud data, then continue syncing");
+            //Pull from cloud. Save if newer, else write.
+            /*
+                I want to automatically do a local sync after all these cloud ops are done,
+                but only on the last op.
+                This variable tracks the number of cloud operations done.
+                First, I read into a temp file. (1)
+                If it's newer, then I do a read in, (2)
+                Otherwise, I do a write out (2)
+                Either way, I act only on the second operation
+             */
+            final int[] operations = new int[]{0};
+            /*
+                Setup a few key variables for this method
+             */
+            try {
+                final DriveId driveId = DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id));
+                final String tempKey = ChannelDatabase.KEY+"SYNC";
 
-            sm.setGoogleDriveSyncable(gapi, new SettingsManager.GoogleDriveListener() {
-                @Override
-                public void onActionFinished(boolean ctl) {
-                    Log.d(TAG, "On operation "+operations[0]);
-                    if(operations[0] >= 2) {
-                        doLocalSync();
-                    } else {
-                        try {
-                            JSONObject jsonObject = new JSONObject(sm.getString(tempKey));
-                            if(jsonObject.has("modified")) {
-                                long cloudModified = jsonObject.getLong("modified");
-                                long localModified = new ChannelDatabase(getContext()).getLastModified();
-                                if(cloudModified > localModified) {
-                                    //Read in
-                                    Log.d(TAG, "Cloud newer, read in");
-                                    operations[0]++;
-                                    sm.readFromGoogleDrive(driveId, ChannelDatabase.KEY);
+                sm.setGoogleDriveSyncable(gapi, new SettingsManager.GoogleDriveListener() {
+                    @Override
+                    public void onActionFinished(boolean ctl) {
+                        Log.d(TAG, "On operation "+operations[0]);
+                        if(operations[0] >= 2) {
+                            doLocalSync();
+                        } else {
+                            try {
+                                JSONObject jsonObject = new JSONObject(sm.getString(tempKey));
+                                if(jsonObject.has("modified")) {
+                                    long cloudModified = jsonObject.getLong("modified");
+                                    long localModified = new ChannelDatabase(getContext()).getLastModified();
+                                    if(cloudModified > localModified) {
+                                        //Read in
+                                        Log.d(TAG, "Cloud newer, read in");
+                                        operations[0]++;
+                                        sm.readFromGoogleDrive(driveId, ChannelDatabase.KEY);
+                                    } else {
+                                        //Write out
+                                        Log.d(TAG, "Local newer, write out");
+                                        operations[0]++;
+                                        sm.writeToGoogleDrive(driveId, sm.getString(ChannelDatabase.KEY));
+                                    } //Else both files are the same and there's no need to modify anything
                                 } else {
-                                    //Write out
-                                    Log.d(TAG, "Local newer, write out");
+                                    Log.d(TAG, "Cloud doesn't have a modified attribute, repair");
                                     operations[0]++;
                                     sm.writeToGoogleDrive(driveId, sm.getString(ChannelDatabase.KEY));
-                                } //Else both files are the same and there's no need to modify anything
-                            } else {
-                                Log.d(TAG, "Cloud doesn't have a modified attribute, repair");
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Log.d(TAG, "JSON error, repair");
                                 operations[0]++;
                                 sm.writeToGoogleDrive(driveId, sm.getString(ChannelDatabase.KEY));
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.d(TAG, "JSON error, repair");
-                            operations[0]++;
-                            sm.writeToGoogleDrive(driveId, sm.getString(ChannelDatabase.KEY));
                         }
-                    }
 
-                }
-            });
-            operations[0]++;
-            sm.readFromGoogleDrive(driveId, tempKey); //Save to temp
-        } catch(Exception e) {
-            Toast.makeText(mContext, "Error: Google Drive file not found or is invalid", Toast.LENGTH_SHORT).show();
-            return;
+                    }
+                });
+                operations[0]++;
+                sm.readFromGoogleDrive(driveId, tempKey); //Save to temp
+            } catch(Exception e) {
+                Toast.makeText(mContext, "Error: Google Drive file not found or is invalid", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } else {
+            //No cloud storage
+            Log.d(TAG, "You have no cloud storage");
+            doLocalSync();
         }
     }
 
@@ -578,6 +585,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        Log.d(TAG, "Connection failed: "+connectionResult.getErrorCode());
     }
 }
