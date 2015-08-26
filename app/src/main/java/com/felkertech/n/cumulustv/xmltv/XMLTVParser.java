@@ -11,6 +11,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -25,56 +26,69 @@ public class XMLTVParser {
     private static final String ns = null;
     private static String TAG = "cumulus:XMLTVParser";
 
-    public static List parse(InputStream in) throws XmlPullParserException, IOException {
+    public static List parse(String in) throws XmlPullParserException, IOException {
         try {
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             XmlPullParser xpp = factory.newPullParser();
             Log.d(TAG, "Start parsing");
-            xpp.setInput(new InputStreamReader(in));
-            int eventType = xpp.getEventType();/*
+            Log.d(TAG, in.substring(0, 36));
+            xpp.setInput(new StringReader(in));
+            int eventType = xpp.getEventType();
+            Log.d(TAG, eventType+"");
+//            if(eventType == XmlPullParser.START_DOCUMENT)
+//                xpp.next();
+            /*
             xpp.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             xpp.setInput(new InputStreamReader(in));*/
             /*xpp.nextTag();
             xpp.nextTag();
             */return readFeed(xpp);
         } finally {
-            in.close();
+//            in.close();
         }
     }
     private static List readFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
         List entries = new ArrayList();
 
 //        parser.require(XmlPullParser.START_TAG, ns, "tv");
-        Log.d(TAG, parser.getName());
+        Log.d(TAG, parser.getName()+"");
         int eventType = parser.getEventType();
         while (parser.next() != XmlPullParser.END_DOCUMENT) {
             if (parser.getEventType() == XmlPullParser.START_DOCUMENT) {
-                continue;
+                Log.d(TAG, "Start document");
+//                parser.next();
+//                continue;
             } else if (eventType == XmlPullParser.END_DOCUMENT) {
-                continue;
+                Log.d(TAG, "Doc ended");
+//                continue;
             } else if (eventType == XmlPullParser.START_TAG) {
+                Log.d(TAG, "Found tag start");
                 String name = parser.getName();
+                Log.d(TAG, name+"<");
                 if(name.equals("tv")) {
                     entries.add(createTV(parser));
                 }
                 if (name.equals("channel")) {
 //                    createChannel(contentResolver, xpp);
                 } else if (name.equals("programme")) {
-                    entries.add(createProgramme(parser));
+//                    entries.add(createProgramme(parser));
                 }
             } else if (eventType == XmlPullParser.END_TAG) {
-                continue;
+                Log.d(TAG, "Tag ended");
+//                continue;
             } else if (eventType == XmlPullParser.TEXT) {
-                continue;
+                Log.d(TAG, "Found text "+parser.getText());
+//                continue;
             }
-            eventType = parser.next();
-            Log.d(TAG, "parse " + parser.getLineNumber() + " line");
+//            eventType = parser.next();
+            Log.d(TAG, "parse " + parser.getLineNumber() + " line "+parser.getEventType()+"   "+ parser.getText());
         }
         Log.d(TAG,"Finish parsing");
         return entries;
     }
     private static List<Program> createTV(XmlPullParser xpp) throws IOException, XmlPullParserException {
+        Log.d(TAG, "Created TV parsings");
         List<Program> entries = new ArrayList<>();
         int eventType = xpp.next();
         while (eventType != XmlPullParser.END_TAG && !"programme".equals(xpp.getName())) {

@@ -43,7 +43,10 @@ public class CumulusTvPlugin extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         telegram = getIntent();
-        isEdit = telegram.getStringExtra(INTENT_EXTRA_ACTION).equals(INTENT_EDIT);
+        if(telegram.hasExtra(INTENT_EXTRA_ACTION))
+            isEdit = telegram.getStringExtra(INTENT_EXTRA_ACTION).equals(INTENT_EDIT);
+        else
+            isEdit = false;
         Log.d(TAGx, "Initialized");
 
         setContentView(R.layout.loading);
@@ -70,7 +73,7 @@ public class CumulusTvPlugin extends AppCompatActivity {
      * @return
      */
     public boolean areReadingAll() {
-        return telegram.getBooleanExtra(INTENT_EXTRA_READ_ALL, false);
+        return telegram.getStringExtra(INTENT_EXTRA_ACTION).equals(INTENT_EXTRA_READ_ALL);
     }
 
     /**

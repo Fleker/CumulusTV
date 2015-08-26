@@ -500,7 +500,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
                                                 intent.setClassName(plugin_info.activityInfo.applicationInfo.packageName,
                                                         plugin_info.activityInfo.name);
-                                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_READ_ALL, true);
+                                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_EXTRA_READ_ALL);
                                                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ALL_CHANNELS, s);
                                                 startActivity(intent);
                                             }
@@ -581,7 +581,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                         try {
                                             response = client.newCall(request).execute();
 //                                            Log.d(TAG, response.body().string().substring(0,36));
-                                            InputStream s = response.body().byteStream();
+                                            String s = response.body().string();
                                             List<Program> programs = XMLTVParser.parse(s);
                                             Log.d(TAG, programs.toString());
                                         } catch (IOException e) {
