@@ -464,7 +464,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 "View Software Licenses",
                 "Reset Channel Data",
                 "Graphics credited to bgiesing from GitHub",
-                "Read XMLTV (TEST)"};
+                "Read XMLTV (EXPERIMENTAL)"};
         new MaterialDialog.Builder(MainActivity.this)
                 .title("More Actions")
                 .items(actions)
@@ -584,6 +584,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                             String s = response.body().string();
                                             List<Program> programs = XMLTVParser.parse(s);
                                             Log.d(TAG, programs.toString());
+                                            Log.d(TAG, "Parsed "+programs.size());
+                                            Log.d(TAG, "Program 1: "+ programs.get(0).getTitle());
                                         } catch (IOException e) {
                                             e.printStackTrace();
                                         } catch (XmlPullParserException e) {

@@ -4,14 +4,14 @@ package com.felkertech.n.cumulustv.xmltv;
  * Created by guest1 on 8/25/2015.
  */
 public class Program {
-    int channelId;
+    String channelId;
     long start;
     long end;
     String title;
     String subtitle;
     String description;
     long airDate;
-    public Program(int channelId, long start, long end) {
+    public Program(String channelId, long start, long end) {
         this.channelId = channelId;
         this.start = start;
         this.end = end;
@@ -41,7 +41,7 @@ public class Program {
         this.airDate = airDate;
     }
 
-    public int getChannelId() {
+    public String getChannelId() {
         return channelId;
     }
 
@@ -59,5 +59,10 @@ public class Program {
 
     public void setSubtitle(String subtitle) {
         this.subtitle = subtitle;
+    }
+
+    @Override
+    public String toString() {
+        return "'"+getTitle()+"': "+getDescription();
     }
 }

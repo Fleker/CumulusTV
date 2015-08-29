@@ -113,14 +113,21 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
         this.syncResult = syncResult;
 
         Log.d(TAG, "Opened SyncAdapter, connect to GPS");
-        gapi = new GoogleApiClient.Builder(getContext())
-                .addApi(Drive.API)
-                .addScope(Drive.SCOPE_FILE)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
+
         Fabric.with(getContext(), new Crashlytics());
-        gapi.connect();
+        SettingsManager sm = new SettingsManager(getContext());
+
+        if(sm.getString(R.string.sm_google_drive_id).length() > 4) {
+            gapi = new GoogleApiClient.Builder(getContext())
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+            gapi.connect();
+        } else {
+            doLocalSync();
+        }
 
     }
 
@@ -147,6 +154,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
         List<TvManager.ChannelInfo> channels = getChannels(mContext);
         LongSparseArray<TvManager.ChannelInfo> channelMap = TvContractUtils.buildChannelMap(
                 mContext.getContentResolver(), inputId, channels);
+        if(channelMap == null) {
+            Log.d(TAG, "?");
+            Toast.makeText(getContext(), "Couldn't find any channels. Uh-oh.", Toast.LENGTH_SHORT).show();
+        }
         long startMs = System.currentTimeMillis();
         long endMs = startMs + FULL_SYNC_WINDOW_SEC * 1000;
         Log.d(TAG, "Now start to get programs");
