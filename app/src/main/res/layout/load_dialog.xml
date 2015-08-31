@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:wheel="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="36sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:text="Connecting to Google Play Services"/>
+    <com.pnikosis.materialishprogress.ProgressWheel
+        android:id="@+id/indeterminate_progress_large_library"
+        android:layout_width="80dp"
+        android:layout_height="200dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        wheel:matProg_barColor="#9f0"
+        wheel:matProg_progressIndeterminate="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="64dp"
+        android:id="@+id/message"
+        android:textSize="24sp"
+        android:layout_centerHorizontal="true"
+        android:text="Loading..."/>
+</RelativeLayout>

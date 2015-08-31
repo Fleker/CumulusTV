@@ -1,7 +1,6 @@
 package com.felkertech.n.cumulustv;
 
 import android.content.ComponentName;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageInfo;
@@ -9,23 +8,16 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.media.tv.TvContract;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Layout;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 import com.example.android.sampletvinput.syncadapter.SyncUtils;
-import com.felkertech.n.boilerplate.Utils.CommaArray;
 import com.felkertech.n.boilerplate.Utils.SettingsManager;
 import com.felkertech.n.cumulustv.Intro.Intro;
 import com.felkertech.n.cumulustv.xmltv.Program;
@@ -41,20 +33,18 @@ import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
+import com.google.android.gms.*;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
-import io.fabric.sdk.android.Fabric;
 import org.json.JSONException;
-import org.w3c.dom.Text;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     public static String TAG = "cumulus:MainActivity";
@@ -64,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private static final int REQUEST_CODE_OPENER = 104;
     public static final int LAST_GOOD_BUILD = 12;
     SettingsManager sm;
+    MaterialDialog md;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -293,6 +284,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(Bundle bundle) {
+        if(md.isShowing()) {
+            md.dismiss();
+        }
         sm.setGoogleDriveSyncable(gapi, new SettingsManager.GoogleDriveListener() {
             @Override
             public void onActionFinished(boolean cloudToLocal) {
@@ -336,7 +330,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             gapi.connect();
             findViewById(R.id.gdrive).setVisibility(View.GONE);
             findViewById(R.id.gdrive).setEnabled(false);
+            Log.d(TAG, "Need to connect");
+
+        } else {
         }
+        md = new MaterialDialog.Builder(this)
+                .customView(R.layout.load_dialog, false)
+                .show();
         Log.d(TAG, "onStart");
         try {
             PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -354,6 +354,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+        if(md.isShowing()) {
+            ((TextView) md.getCustomView().findViewById(R.id.message)).setText("Error connecting: "+connectionResult.toString());
+        }
         Log.d(TAG, "oCF "+connectionResult.toString());
         if (connectionResult.hasResolution()) {
             try {
