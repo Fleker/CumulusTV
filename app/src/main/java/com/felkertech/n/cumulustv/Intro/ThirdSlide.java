@@ -20,8 +20,8 @@ public class ThirdSlide extends Fragment {
         View v = inflater.inflate(R.layout.intro_1, container, false);
         ((TextView) v.findViewById(R.id.title)).setText(R.string.intro_title_3);
         ((TextView) v.findViewById(R.id.description)).setText(R.string.intro_msg_3);
-        ((ImageView) v.findViewById(R.id.image)).setImageDrawable(getResources().getDrawable(R.drawable.github));
-        v.findViewById(R.id.main).setBackgroundColor(getResources().getColor(android.R.color.holo_red_dark));
+        ((ImageView) v.findViewById(R.id.image)).setImageDrawable(getResources().getDrawable(R.drawable.github2));
+        v.findViewById(R.id.main).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         return v;
     }
 }

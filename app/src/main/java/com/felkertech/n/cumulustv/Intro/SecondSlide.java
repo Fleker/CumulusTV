@@ -22,7 +22,7 @@ public class SecondSlide extends Fragment {
         ((TextView) v.findViewById(R.id.title)).setText(R.string.intro_title_2);
         ((TextView) v.findViewById(R.id.description)).setText(R.string.intro_msg_2);
         ((ImageView) v.findViewById(R.id.image)).setImageDrawable(getResources().getDrawable(R.drawable.gdrive));
-        v.findViewById(R.id.main).setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+        v.findViewById(R.id.main).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         return v;
     }
 }

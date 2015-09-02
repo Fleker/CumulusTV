@@ -20,8 +20,8 @@ public class FirstSlide extends Fragment {
         View v = inflater.inflate(R.layout.intro_1, container, false);
         ((TextView) v.findViewById(R.id.title)).setText(R.string.intro_title_1);
         ((TextView) v.findViewById(R.id.description)).setText(R.string.intro_msg_1);
-        ((ImageView) v.findViewById(R.id.image)).setImageDrawable(getResources().getDrawable(R.drawable.high_res_icon2));
-        v.findViewById(R.id.main).setBackgroundColor(getResources().getColor(R.color.md_material_blue_600));
+        ((ImageView) v.findViewById(R.id.image)).setImageDrawable(getResources().getDrawable(R.drawable.c_mobile));
+        v.findViewById(R.id.main).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         return v;
     }
 }

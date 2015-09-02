@@ -20,7 +20,7 @@ public class FourthSlide extends Fragment {
         View v = inflater.inflate(R.layout.intro_1, container, false);
         ((TextView) v.findViewById(R.id.title)).setText(R.string.intro_title_4);
         ((TextView) v.findViewById(R.id.description)).setText(R.string.intro_msg_4);
-        ((ImageView) v.findViewById(R.id.image)).setImageDrawable(getResources().getDrawable(R.drawable.livechannels2));
+        ((ImageView) v.findViewById(R.id.image)).setImageDrawable(getResources().getDrawable(R.drawable.livechannels3));
         v.findViewById(R.id.main).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         return v;
     }

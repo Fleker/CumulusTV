@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private static final int RESOLVE_CONNECTION_REQUEST_CODE = 100;
     private static final int REQUEST_CODE_CREATOR = 102;
     private static final int REQUEST_CODE_OPENER = 104;
-    public static final int LAST_GOOD_BUILD = 12;
+    public static final int LAST_GOOD_BUILD = 18;
     SettingsManager sm;
     MaterialDialog md;
 
@@ -586,9 +586,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 //                                            Log.d(TAG, response.body().string().substring(0,36));
                                             String s = response.body().string();
                                             List<Program> programs = XMLTVParser.parse(s);
-                                            Log.d(TAG, programs.toString());
+                                            /*Log.d(TAG, programs.toString());
                                             Log.d(TAG, "Parsed "+programs.size());
-                                            Log.d(TAG, "Program 1: "+ programs.get(0).getTitle());
+                                            Log.d(TAG, "Program 1: "+ programs.get(0).getTitle());*/
                                         } catch (IOException e) {
                                             e.printStackTrace();
                                         } catch (XmlPullParserException e) {

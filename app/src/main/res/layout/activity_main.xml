@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="center"
-        android:src="@drawable/c_background"/>
+        android:src="@drawable/c_background5"/>
 
     <Button android:text="Add Stream" android:layout_width="match_parent"
         android:layout_height="wrap_content"
