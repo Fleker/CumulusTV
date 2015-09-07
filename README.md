@@ -3,6 +3,11 @@ Android TV Live Channel Plugin with user-entered stream files
 
 <img src='https://cloud.githubusercontent.com/assets/3291635/9031614/2a2534ba-3983-11e5-900f-a8cb99f3bf40.png' width='640px'/>
 
+CumulusTV is a service that allows users to add `HLS` (HTTP Live Streaming) files and play them through the Live Channels app on Android TV. Channels can be added through Android TV, or sync your data with Google Drive and edit the data on any computer.
+
+## Contributing
+This is a community project. I welcome any other developers to contribute to this project as well, whether in the form of a web app, a phone app, or on the Android TV app. You can create an issue here, or send inquires @HandNF on Twitter.
+
 ## Download it Now
 The app is available for free on <a href="https://play.google.com/apps/testing/com.felkertech.n.cumulustv">Google Play</a> as a beta. Anyone who downloads and uses the beta will be using the most recent <a href="https://github.com/Fleker/CumulusTV/releases">release</a>.
 
@@ -47,9 +52,6 @@ Google Drive syncs a JSON file between all your devices that can be easily edite
 Want to make it easy for users to add a Twitch stream without entering a complicated URL? Then you want to create a plugin. This is an app that works easily with CumulusTV, simplifying the amount of work you need to do for a live channel to appear.
 
 To learn how to do this, read <a href="https://github.com/Fleker/CumulusTV/wiki/Create-a-3rd-Party-Plugin">this wiki page</a>.
-
-## Contributing
-This is a project meant for the community. If you're a developer and have a feature request, feel free to fork the project and submit an update through a pull request. 
 
 ## Photos
 <img src='https://cloud.githubusercontent.com/assets/3291635/9021048/00a04364-37fd-11e5-85be-1e550796d922.png' width='640px'/>
