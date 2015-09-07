@@ -34,10 +34,10 @@
 
     <application
         android:allowBackup="true"
-        android:banner="@drawable/c_banner3"
+        android:banner="@drawable/c_banner_3_2"
         android:icon="@drawable/c_mobile"
         android:label="@string/app_name"
-        android:logo="@drawable/c_banner3"
+        android:logo="@drawable/c_banner_3_2"
         android:theme="@style/Theme.Leanback" >
         <service
             android:name=".SampleTvInput"

@@ -284,8 +284,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(Bundle bundle) {
-        if(md.isShowing()) {
-            md.dismiss();
+        Log.d(TAG, "onConnected");
+        if(md != null) {
+            if (md.isShowing()) {
+                md.dismiss();
+            }
         }
         sm.setGoogleDriveSyncable(gapi, new SettingsManager.GoogleDriveListener() {
             @Override
@@ -327,16 +330,27 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     protected void onStart() {
         super.onStart();
         if(!new SettingsManager(this).getString(R.string.sm_google_drive_id).isEmpty()) {
-            gapi.connect();
-            findViewById(R.id.gdrive).setVisibility(View.GONE);
-            findViewById(R.id.gdrive).setEnabled(false);
-            Log.d(TAG, "Need to connect");
+            if(!gapi.isConnected()) {
+                md = new MaterialDialog.Builder(this)
+                        .customView(R.layout.load_dialog, false)
+                        .show();
+
+                gapi.connect();
+                findViewById(R.id.gdrive).setVisibility(View.GONE);
+                findViewById(R.id.gdrive).setEnabled(false);
+                Log.d(TAG, "Need to connect");
+            } else {
+                if(md != null) {
+                    if(md.isShowing())
+                        md.dismiss();
+                }
+            }
 
         } else {
         }
-        md = new MaterialDialog.Builder(this)
+        /*md = new MaterialDialog.Builder(this)
                 .customView(R.layout.load_dialog, false)
-                .show();
+                .show();*/
         Log.d(TAG, "onStart");
         try {
             PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -354,10 +368,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        if(md.isShowing()) {
-            ((TextView) md.getCustomView().findViewById(R.id.message)).setText("Error connecting: "+connectionResult.toString());
+        Log.d(TAG, "Error connecting " + connectionResult.getErrorCode());
+        if(md != null) {
+            if (md.isShowing()) {
+                ((TextView) md.getCustomView().findViewById(R.id.message)).setText("Error connecting: " + connectionResult.toString());
+            }
         }
-        Log.d(TAG, "oCF "+connectionResult.toString());
+        Log.d(TAG, "oCF " + connectionResult.toString());
         if (connectionResult.hasResolution()) {
             try {
                 connectionResult.startResolutionForResult(this, RESOLVE_CONNECTION_REQUEST_CODE);

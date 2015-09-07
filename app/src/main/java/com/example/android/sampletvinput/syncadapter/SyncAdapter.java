@@ -542,9 +542,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
                     @Override
                     public void onActionFinished(boolean ctl) {
                         Log.d(TAG, "On operation "+operations[0]);
-                        if(operations[0] >= 2) {
+                        if(operations[0] == 2) {
                             doLocalSync();
-                        } else {
+                        } else if(operations[0] < 2){
                             try {
                                 JSONObject jsonObject = new JSONObject(sm.getString(tempKey));
                                 if(jsonObject.has("modified")) {
