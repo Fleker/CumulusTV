@@ -23,22 +23,22 @@
         android:required="false" />
     <uses-feature
         android:name="android.software.leanback"
-        android:required="true" />
+        android:required="false" />
     <!--
     Required to expose this app in the store only when the device has TV input framework
     with the TV app.
     -->
     <uses-feature
         android:name="android.software.live_tv"
-        android:required="true" />
+        android:required="false" />
 
     <application
         android:allowBackup="true"
         android:banner="@drawable/c_banner_3_2"
         android:icon="@drawable/c_mobile"
         android:label="@string/app_name"
-        android:logo="@drawable/c_banner_3_2"
-        android:theme="@style/Theme.Leanback" >
+        android:logo="@drawable/c_banner_3_2">
+        <!--android:theme="@style/Theme.Leanback"-->
         <service
             android:name=".SampleTvInput"
             android:enabled="true"

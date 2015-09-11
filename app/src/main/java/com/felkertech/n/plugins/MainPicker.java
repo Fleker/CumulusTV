@@ -1,21 +1,27 @@
 package com.felkertech.n.plugins;
 
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.PersistableBundle;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.Surface;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
+import com.example.android.sampletvinput.player.TvInputPlayer;
 import com.felkertech.n.boilerplate.Utils.CommaArray;
 import com.felkertech.n.cumulustv.ChannelDatabase;
 import com.felkertech.n.cumulustv.JSONChannel;
@@ -82,7 +88,15 @@ public class MainPicker extends CumulusTvPlugin {
                         }
                     })
                     .show();
+            ((EditText) add.getCustomView().findViewById(R.id.stream)).setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    loadStream(add);
+                    return false;
+                }
+            });
             includeGenrePicker(add, "");
+            loadStream(add);
         } else if(!areReadingAll()) {
             final ChannelDatabase cdn = new ChannelDatabase(getApplicationContext());
             final MaterialDialog md = new MaterialDialog.Builder(MainPicker.this)
@@ -167,6 +181,14 @@ public class MainPicker extends CumulusTvPlugin {
                 }
             });
             includeGenrePicker(md, getChannel().getGenresString());
+            ((EditText) md.getCustomView().findViewById(R.id.stream)).setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    loadStream(md);
+                    return false;
+                }
+            });
+            loadStream(md);
         } else {
             Toast.makeText(MainPicker.this, "This plugin doesn't support READALL", Toast.LENGTH_SHORT).show();
             Log.d(TAG, getAllChannels());
@@ -204,5 +226,17 @@ public class MainPicker extends CumulusTvPlugin {
                         .show();
             }
         });
+    }
+
+    public void loadStream(MaterialDialog viewHolder) {
+        String url = getChannel().getUrl();
+        if(findViewById(R.id.stream) != null)
+            url = ((EditText) findViewById(R.id.stream)).getText().toString();
+        SurfaceView sv = (SurfaceView) viewHolder.getCustomView().findViewById(R.id.surface);
+        TvInputPlayer exoPlayer;
+        exoPlayer = new TvInputPlayer();
+        exoPlayer.setSurface(sv.getHolder().getSurface());
+        exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
+        exoPlayer.setPlayWhenReady(true);
     }
 }

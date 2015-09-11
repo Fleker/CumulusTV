@@ -423,82 +423,87 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
      * @param newPrograms A list of {@link Program} instances which includes program
      *         information.
      */
-    private void updatePrograms(Uri channelUri, List<Program> newPrograms) {
-        final int fetchedProgramsCount = newPrograms.size();
-        if (fetchedProgramsCount == 0) {
-            return;
-        }
-        List<Program> oldPrograms = TvContractUtils.getPrograms(mContext.getContentResolver(),
-                channelUri);
-        Program firstNewProgram = newPrograms.get(0);
-        int oldProgramsIndex = 0;
-        int newProgramsIndex = 0;
-        // Skip the past programs. They will be automatically removed by the system.
-        for (Program program : oldPrograms) {
-            oldProgramsIndex++;
-            if(program.getEndTimeUtcMillis() > firstNewProgram.getStartTimeUtcMillis()) {
-                break;
-            }
-        }
-        // Compare the new programs with old programs one by one and update/delete the old one or
-        // insert new program if there is no matching program in the database.
-        ArrayList<ContentProviderOperation> ops = new ArrayList<>();
-        while (newProgramsIndex < fetchedProgramsCount) {
-            Program oldProgram = oldProgramsIndex < oldPrograms.size()
-                    ? oldPrograms.get(oldProgramsIndex) : null;
-            Program newProgram = newPrograms.get(newProgramsIndex);
-            boolean addNewProgram = false;
-            if (oldProgram != null) {
-                if (oldProgram.equals(newProgram)) {
-                    // Exact match. No need to update. Move on to the next programs.
-                    oldProgramsIndex++;
-                    newProgramsIndex++;
-                } else if (needsUpdate(oldProgram, newProgram)) {
-                    // Partial match. Update the old program with the new one.
-                    // NOTE: Use 'update' in this case instead of 'insert' and 'delete'. There could
-                    // be application specific settings which belong to the old program.
-                    ops.add(ContentProviderOperation.newUpdate(
-                            TvContract.buildProgramUri(oldProgram.getProgramId()))
-                            .withValues(newProgram.toContentValues())
-                            .build());
-                    oldProgramsIndex++;
-                    newProgramsIndex++;
-                } else if (oldProgram.getEndTimeUtcMillis() < newProgram.getEndTimeUtcMillis()) {
-                    // No match. Remove the old program first to see if the next program in
-                    // {@code oldPrograms} partially matches the new program.
-                    ops.add(ContentProviderOperation.newDelete(
-                            TvContract.buildProgramUri(oldProgram.getProgramId()))
-                            .build());
-                    oldProgramsIndex++;
-                } else {
-                    // No match. The new program does not match any of the old programs. Insert it
-                    // as a new program.
-                    addNewProgram = true;
-                    newProgramsIndex++;
-                }
-            } else {
-                // No old programs. Just insert new programs.
-                addNewProgram = true;
-                newProgramsIndex++;
-            }
-            if (addNewProgram) {
-                ops.add(ContentProviderOperation
-                        .newInsert(TvContract.Programs.CONTENT_URI)
-                        .withValues(newProgram.toContentValues())
-                        .build());
-            }
-            // Throttle the batch operation not to cause TransactionTooLargeException.
-            if (ops.size() > BATCH_OPERATION_COUNT
-                    || newProgramsIndex >= fetchedProgramsCount) {
-                try {
-                    mContext.getContentResolver().applyBatch(TvContract.AUTHORITY, ops);
-                } catch (RemoteException | OperationApplicationException e) {
-                    Log.e(TAG, "Failed to insert programs.", e);
+    private void updatePrograms(final Uri channelUri, final List<Program> newPrograms) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final int fetchedProgramsCount = newPrograms.size();
+                if (fetchedProgramsCount == 0) {
                     return;
                 }
-                ops.clear();
+                List<Program> oldPrograms = TvContractUtils.getPrograms(mContext.getContentResolver(),
+                        channelUri);
+                Program firstNewProgram = newPrograms.get(0);
+                int oldProgramsIndex = 0;
+                int newProgramsIndex = 0;
+                // Skip the past programs. They will be automatically removed by the system.
+                for (Program program : oldPrograms) {
+                    oldProgramsIndex++;
+                    if(program.getEndTimeUtcMillis() > firstNewProgram.getStartTimeUtcMillis()) {
+                        break;
+                    }
+                }
+                // Compare the new programs with old programs one by one and update/delete the old one or
+                // insert new program if there is no matching program in the database.
+                ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+                while (newProgramsIndex < fetchedProgramsCount) {
+                    Program oldProgram = oldProgramsIndex < oldPrograms.size()
+                            ? oldPrograms.get(oldProgramsIndex) : null;
+                    Program newProgram = newPrograms.get(newProgramsIndex);
+                    boolean addNewProgram = false;
+                    if (oldProgram != null) {
+                        if (oldProgram.equals(newProgram)) {
+                            // Exact match. No need to update. Move on to the next programs.
+                            oldProgramsIndex++;
+                            newProgramsIndex++;
+                        } else if (needsUpdate(oldProgram, newProgram)) {
+                            // Partial match. Update the old program with the new one.
+                            // NOTE: Use 'update' in this case instead of 'insert' and 'delete'. There could
+                            // be application specific settings which belong to the old program.
+                            ops.add(ContentProviderOperation.newUpdate(
+                                    TvContract.buildProgramUri(oldProgram.getProgramId()))
+                                    .withValues(newProgram.toContentValues())
+                                    .build());
+                            oldProgramsIndex++;
+                            newProgramsIndex++;
+                        } else if (oldProgram.getEndTimeUtcMillis() < newProgram.getEndTimeUtcMillis()) {
+                            // No match. Remove the old program first to see if the next program in
+                            // {@code oldPrograms} partially matches the new program.
+                            ops.add(ContentProviderOperation.newDelete(
+                                    TvContract.buildProgramUri(oldProgram.getProgramId()))
+                                    .build());
+                            oldProgramsIndex++;
+                        } else {
+                            // No match. The new program does not match any of the old programs. Insert it
+                            // as a new program.
+                            addNewProgram = true;
+                            newProgramsIndex++;
+                        }
+                    } else {
+                        // No old programs. Just insert new programs.
+                        addNewProgram = true;
+                        newProgramsIndex++;
+                    }
+                    if (addNewProgram) {
+                        ops.add(ContentProviderOperation
+                                .newInsert(TvContract.Programs.CONTENT_URI)
+                                .withValues(newProgram.toContentValues())
+                                .build());
+                    }
+                    // Throttle the batch operation not to cause TransactionTooLargeException.
+                    if (ops.size() > BATCH_OPERATION_COUNT
+                            || newProgramsIndex >= fetchedProgramsCount) {
+                        try {
+                            mContext.getContentResolver().applyBatch(TvContract.AUTHORITY, ops);
+                        } catch (RemoteException | OperationApplicationException e) {
+                            Log.e(TAG, "Failed to insert programs.", e);
+                            return;
+                        }
+                        ops.clear();
+                    }
+                }
             }
-        }
+        }).start();
     }
     /**
      * Returns {@code true} if the {@code oldProgram} program needs to be updated with the
@@ -517,10 +522,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
     @Override
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "Connected");
-        final SettingsManager sm = new SettingsManager(getContext());
-        if(sm.getString(R.string.sm_google_drive_id).length() > 4) {
-            Log.d(TAG, "Grab and compare cloud data, then continue syncing");
-            //Pull from cloud. Save if newer, else write.
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final SettingsManager sm = new SettingsManager(getContext());
+                if(sm.getString(R.string.sm_google_drive_id).length() > 4) {
+                    Log.d(TAG, "Grab and compare cloud data, then continue syncing");
+                    //Pull from cloud. Save if newer, else write.
             /*
                 I want to automatically do a local sync after all these cloud ops are done,
                 but only on the last op.
@@ -530,63 +538,65 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
                 Otherwise, I do a write out (2)
                 Either way, I act only on the second operation
              */
-            final int[] operations = new int[]{0};
+                    final int[] operations = new int[]{0};
             /*
                 Setup a few key variables for this method
              */
-            try {
-                final DriveId driveId = DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id));
-                final String tempKey = ChannelDatabase.KEY+"SYNC";
+                    try {
+                        final DriveId driveId = DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id));
+                        final String tempKey = ChannelDatabase.KEY+"SYNC";
 
-                sm.setGoogleDriveSyncable(gapi, new SettingsManager.GoogleDriveListener() {
-                    @Override
-                    public void onActionFinished(boolean ctl) {
-                        Log.d(TAG, "On operation "+operations[0]);
-                        if(operations[0] == 2) {
-                            doLocalSync();
-                        } else if(operations[0] < 2){
-                            try {
-                                JSONObject jsonObject = new JSONObject(sm.getString(tempKey));
-                                if(jsonObject.has("modified")) {
-                                    long cloudModified = jsonObject.getLong("modified");
-                                    long localModified = new ChannelDatabase(getContext()).getLastModified();
-                                    if(cloudModified > localModified) {
-                                        //Read in
-                                        Log.d(TAG, "Cloud newer, read in");
-                                        operations[0]++;
-                                        sm.readFromGoogleDrive(driveId, ChannelDatabase.KEY);
-                                    } else {
-                                        //Write out
-                                        Log.d(TAG, "Local newer, write out");
+                        sm.setGoogleDriveSyncable(gapi, new SettingsManager.GoogleDriveListener() {
+                            @Override
+                            public void onActionFinished(boolean ctl) {
+                                Log.d(TAG, "On operation "+operations[0]);
+                                if(operations[0] == 2) {
+                                    doLocalSync();
+                                } else if(operations[0] < 2){
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(sm.getString(tempKey));
+                                        if(jsonObject.has("modified")) {
+                                            long cloudModified = jsonObject.getLong("modified");
+                                            long localModified = new ChannelDatabase(getContext()).getLastModified();
+                                            if(cloudModified > localModified) {
+                                                //Read in
+                                                Log.d(TAG, "Cloud newer, read in");
+                                                operations[0]++;
+                                                sm.readFromGoogleDrive(driveId, ChannelDatabase.KEY);
+                                            } else {
+                                                //Write out
+                                                Log.d(TAG, "Local newer, write out");
+                                                operations[0]++;
+                                                sm.writeToGoogleDrive(driveId, sm.getString(ChannelDatabase.KEY));
+                                            } //Else both files are the same and there's no need to modify anything
+                                        } else {
+                                            Log.d(TAG, "Cloud doesn't have a modified attribute, repair");
+                                            operations[0]++;
+                                            sm.writeToGoogleDrive(driveId, sm.getString(ChannelDatabase.KEY));
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                        Log.d(TAG, "JSON error, repair");
                                         operations[0]++;
                                         sm.writeToGoogleDrive(driveId, sm.getString(ChannelDatabase.KEY));
-                                    } //Else both files are the same and there's no need to modify anything
-                                } else {
-                                    Log.d(TAG, "Cloud doesn't have a modified attribute, repair");
-                                    operations[0]++;
-                                    sm.writeToGoogleDrive(driveId, sm.getString(ChannelDatabase.KEY));
+                                    }
                                 }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                Log.d(TAG, "JSON error, repair");
-                                operations[0]++;
-                                sm.writeToGoogleDrive(driveId, sm.getString(ChannelDatabase.KEY));
-                            }
-                        }
 
+                            }
+                        });
+                        operations[0]++;
+                        sm.readFromGoogleDrive(driveId, tempKey); //Save to temp
+                    } catch(Exception e) {
+                        Toast.makeText(mContext, "Error: Google Drive file not found or is invalid", Toast.LENGTH_SHORT).show();
+                        return;
                     }
-                });
-                operations[0]++;
-                sm.readFromGoogleDrive(driveId, tempKey); //Save to temp
-            } catch(Exception e) {
-                Toast.makeText(mContext, "Error: Google Drive file not found or is invalid", Toast.LENGTH_SHORT).show();
-                return;
+                } else {
+                    //No cloud storage
+                    Log.d(TAG, "You have no cloud storage");
+                    doLocalSync();
+                }
             }
-        } else {
-            //No cloud storage
-            Log.d(TAG, "You have no cloud storage");
-            doLocalSync();
-        }
+        }).start();
     }
 
     @Override

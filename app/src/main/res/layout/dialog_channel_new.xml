@@ -40,4 +40,10 @@
         android:layout_height="wrap_content"
         android:text="SELECT Genres"
         android:id="@+id/genres"/>
+    <SurfaceView
+        android:layout_width="128dp"
+        android:layout_marginTop="8dp"
+        android:id="@+id/surface"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="96dp" />
 </LinearLayout>

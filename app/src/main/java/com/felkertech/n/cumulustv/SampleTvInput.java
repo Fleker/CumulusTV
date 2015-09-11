@@ -80,7 +80,7 @@ public class SampleTvInput extends TvInputService {
         mCaptioningManager = (CaptioningManager)
                 getSystemService(Context.CAPTIONING_SERVICE);
 
-        setTheme(android.R.style.Theme_Holo_Light_NoActionBar);
+        setTheme(R.style.Theme_AppCompat_NoActionBar);
 
 //        mSessions = new ArrayList<BaseTvInputSessionImpl>();
         IntentFilter intentFilter = new IntentFilter();
@@ -89,9 +89,6 @@ public class SampleTvInput extends TvInputService {
         intentFilter.addAction(TvInputManager
                 .ACTION_PARENTAL_CONTROLS_ENABLED_CHANGED);
         registerReceiver(mBroadcastReceiver, intentFilter);
-
-
-
     }
 
     @Nullable

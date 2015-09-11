@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 import com.example.android.sampletvinput.syncadapter.SyncUtils;
+import com.felkertech.n.boilerplate.Utils.AppUtils;
 import com.felkertech.n.boilerplate.Utils.SettingsManager;
 import com.felkertech.n.cumulustv.Intro.Intro;
 import com.felkertech.n.cumulustv.xmltv.Program;
@@ -75,6 +76,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             return;
         }
         Fabric.with(this, new Crashlytics());
+
+        if(!AppUtils.isTV(this)) {
+            findViewById(R.id.gotoapp).setVisibility(View.GONE);
+        }
         findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
