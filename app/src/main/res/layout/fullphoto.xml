@@ -5,6 +5,6 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="center"
+        android:scaleType="centerCrop"
         android:src="@drawable/c_background5"/>
 </LinearLayout>

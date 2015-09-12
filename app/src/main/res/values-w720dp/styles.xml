@@ -1,47 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="@style/Theme.Leanback"></style>
-    <style name="CompatTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:colorPrimary">#9C27B0</item>
-        <item name="android:colorPrimaryDark">#7B1FA2</item>
-        <item name="android:colorAccent">#64FFDA</item>
-    </style>
-    <style name="main_button">
-        <item name="android:layout_marginLeft">16dp</item>
-        <item name="android:layout_marginRight">16dp</item>
-        <item name="android:layout_marginBottom">4dp</item>
-        <item name="android:fontFamily">sans-serif-condensed</item>
-    </style>
     <style name="background_text">
         <item name="android:paddingTop">4dp</item>
         <item name="android:background">@color/kindablack</item>
         <item name="android:paddingBottom">4dp</item>
         <item name="android:layout_marginBottom">16dp</item>
         <item name="android:layout_alignParentBottom">true</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">sans-serif-black</item>
     </style>
     <style name="background_text_art" parent="background_text">
-        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingLeft">64dp</item>
         <item name="android:paddingRight">8dp</item>
         <item name="android:layout_alignParentLeft">true</item>
     </style>
     <style name="background_text_version" parent="background_text">
-        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingRight">128dp</item>
         <item name="android:paddingLeft">8dp</item>
         <item name="android:layout_alignParentRight">true</item>
+    </style>
+    <style name="main_button">
+        <item name="android:layout_marginLeft">80dp</item>
+        <item name="android:layout_marginRight">80dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
     </style>
     <style name="intro_title">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:gravity">center</item>
-        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingLeft">32dp</item>
         <item name="android:layout_weight">2</item>
         <item name="android:fontFamily">sans-serif-thin</item>
         <item name="android:textColor">#ffffff</item>
-        <item name="android:paddingRight">8dp</item>
-        <item name="android:textSize">32sp</item>
+        <item name="android:paddingRight">32dp</item>
+        <item name="android:textSize">48sp</item>
     </style>
     <style name="intro_summary">
         <item name="android:layout_weight">1</item>
@@ -50,8 +43,8 @@
         <item name="android:layout_gravity">center</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">#ffffff</item>
-        <item name="android:paddingRight">16dp</item>
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:paddingRight">64dp</item>
+        <item name="android:paddingLeft">64dp</item>
+        <item name="android:textSize">28sp</item>
     </style>
 </resources>

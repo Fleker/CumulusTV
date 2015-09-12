@@ -5,7 +5,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="center"
+        android:scaleType="centerCrop"
         android:src="@drawable/c_background5"/>
 
     <Button android:text="Add Stream" android:layout_width="match_parent"
@@ -42,18 +42,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/artist"
-        android:paddingLeft="64dp"
-        android:paddingRight="8dp"
-        style="@style/background_text"
-        android:layout_alignParentLeft="true"
+        style="@style/background_text_art"
         android:text="Background art by Marcelo Franceschini"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/version"
-        android:paddingRight="128dp"
-        android:paddingLeft="8dp"
-        android:layout_alignParentRight="true"
         android:text="Version 1.2.0"
-        style="@style/background_text"/>
+        style="@style/background_text_version"/>
 </RelativeLayout>
