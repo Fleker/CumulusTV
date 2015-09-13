@@ -229,9 +229,13 @@ public class MainPicker extends CumulusTvPlugin {
     }
 
     public void loadStream(MaterialDialog viewHolder) {
-        String url = getChannel().getUrl();
+        String url = "";
+        if(getChannel() != null)
+            url = getChannel().getUrl();
         if(findViewById(R.id.stream) != null)
             url = ((EditText) findViewById(R.id.stream)).getText().toString();
+        if(url.isEmpty())
+            return;
         SurfaceView sv = (SurfaceView) viewHolder.getCustomView().findViewById(R.id.surface);
         TvInputPlayer exoPlayer;
         exoPlayer = new TvInputPlayer();
