@@ -22,12 +22,21 @@ android {
         applicationId "com.felkertech.n.cumulustv"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 21
-        versionName "1.3.5"
+        versionCode 22
+        versionName "1.3.6"
     }
     signingConfigs {
+        debug {
+            keyAlias 'nick'
+            keyPassword 'P@55w0rdB@tt3ryST@P13'
+            storeFile file('C:/Users/guest1/Dropbox/ks.jks')
+            storePassword 'GitSansGlut33'
+        }
     }
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

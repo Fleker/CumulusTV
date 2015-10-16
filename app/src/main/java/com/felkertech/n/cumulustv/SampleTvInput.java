@@ -208,11 +208,13 @@ public class SampleTvInput extends TvInputService {
                                     }
                                 };
                                 try {
-                                    bitmap[0] = Picasso.with(getApplicationContext())
-                                            .load(jsonChannel.getLogo())
-                                            .placeholder(R.drawable.ic_launcher)
-                                            .get();
-                                    h.sendEmptyMessage(0);
+                                    if(jsonChannel.getLogo() != null) {
+                                        bitmap[0] = Picasso.with(getApplicationContext())
+                                                .load(jsonChannel.getLogo())
+                                                .placeholder(R.drawable.ic_launcher)
+                                                .get();
+                                        h.sendEmptyMessage(0);
+                                    } //Else we have no set logo
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }

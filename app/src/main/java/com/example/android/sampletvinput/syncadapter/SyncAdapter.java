@@ -157,6 +157,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
         if(channelMap == null) {
             Log.d(TAG, "?");
             Toast.makeText(getContext(), "Couldn't find any channels. Uh-oh.", Toast.LENGTH_SHORT).show();
+            //Let's not continue running
+            return;
         }
         long startMs = System.currentTimeMillis();
         long endMs = startMs + FULL_SYNC_WINDOW_SEC * 1000;

@@ -30,7 +30,7 @@ public class XMLTVParser {
     private static final String PROGRAM = "programme";
     private static final String CHANNEL = "channel";
 
-    public static List parse(String in) throws XmlPullParserException, IOException {
+    public static List<Program> parse(String in) throws XmlPullParserException, IOException {
         try {
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -52,8 +52,8 @@ public class XMLTVParser {
 //            in.close();
         }
     }
-    private static List readFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
-        List entries = new ArrayList();
+    private static List<Program> readFeed(XmlPullParser parser) throws XmlPullParserException, IOException {
+        List<Program> entries = new ArrayList<>();
 
 //        parser.require(XmlPullParser.START_TAG, ns, "tv");
         Log.d(TAG, parser.getName()+"");
@@ -72,7 +72,7 @@ public class XMLTVParser {
                 String name = parser.getName();
                 Log.d(TAG, name+"<");
                 if(name.equals("tv")) {
-                    entries.add(createTV(parser));
+                    entries.addAll(createTV(parser));
                     return entries;
                 }
                 if (name.equals("channel")) {

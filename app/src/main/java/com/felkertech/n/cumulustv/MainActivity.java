@@ -291,7 +291,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "onConnected");
         if(md != null) {
-            if (md.isShowing()) {
+            if(md.isShowing()) {
                 md.dismiss();
             }
         }

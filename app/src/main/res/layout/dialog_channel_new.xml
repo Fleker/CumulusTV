@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <EditText
@@ -13,37 +13,53 @@
         android:layout_height="wrap_content"
         android:id="@+id/name"
         android:hint="Channel Name"
+        android:layout_below="@+id/number"
         android:inputType="text|textCapWords" />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/logo"
+        android:layout_below="@+id/name"
         android:hint="Channel Logo Url"
         android:inputType="text|textUri" />
-    <!--android:text="https://yt3.ggpht.com/-F2fw6o3bXkE/AAAAAAAAAAI/AAAAAAAAAAA/DMJGHPkK9As/s88-c-k-no/photo.jpg"-->
-    <!--android:text="http://abclive.abcnews.com/i/abc_live4@136330/index_1200_av-b.m3u8"-->
-
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/stream"
         android:hint="Stream Url"
+        android:layout_below="@+id/logo"
         android:inputType="text|textUri" />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/splash"
+        android:layout_below="@+id/stream"
         android:hint="Splashscreen Url"
         android:inputType="text|textUri" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/splash"
         android:text="SELECT Genres"
+        android:nextFocusDown="@+id/surface_player"
         android:id="@+id/genres"/>
-    <SurfaceView
-        android:layout_width="128dp"
-        android:layout_marginTop="8dp"
-        android:id="@+id/surface"
-        android:layout_gravity="center_horizontal"
-        android:layout_height="96dp" />
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:id="@+id/surface_player"
+        android:nextFocusUp="@id/genres"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/genres"
+        android:layout_height="wrap_content">
+        <SurfaceView
+            android:layout_width="128dp"
+            android:layout_marginTop="8dp"
+            android:id="@+id/surface"
+            android:layout_height="96dp" />
+    </LinearLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:id="@+id/stream_open"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/surface_player"
+        android:text="Open Stream"/>
+</RelativeLayout>

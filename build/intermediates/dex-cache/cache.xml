@@ -2,60 +2,53 @@
 <items version="2" >
 
     <item
-        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\libs\internal_impl-23.0.1.jar"
+        jar="C:\Users\guest1\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.0.1\support-annotations-23.0.1.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="f8e3a54c93b296bf43ebd5d02d490e67399da572">
-        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\internal_impl-23.0.1-9a61f50e143f49ac16844bd862800e34a9cb0b59.jar" />
+        sha1="1fce89a6428c51467090d7f424e4c9c3dbd55f7e">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\debug\support-annotations-23.0.1-5f87c0de9eddd8f3f981dca1100523f9e123c46a.jar" />
     </item>
     <item
-        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\palette-v7\23.0.1\jars\classes.jar"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.0.1\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="26067fcc2d59a1bc86a2f69d21930eba3436bb20">
-        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-d626ad9eb455d41e3b293f457bc140dd175c3102.jar" />
+        sha1="d86429b0f0b3f3cafbeb78dda1b9d89119ccb05d">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\debug\classes-3b20a57b789339998a7d9d31d44a7eb8b32629bd.jar" />
     </item>
     <item
-        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.0.1\jars\classes.jar"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\libs\internal_impl-23.0.1.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="05f91e15f9813b9fc9847e687c8247623651617d">
-        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-3463bfa6f18dfa788f3c99eccfa299530402b7d1.jar" />
+        sha1="aa92916125166649d8ad4ba3940c3dd7515596d3">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\debug\internal_impl-23.0.1-b8459254c60b5655ce8e5f5a1dc798b977c5b681.jar" />
     </item>
     <item
-        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.afollestad\material-dialogs\0.7.9.1\jars\classes.jar"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\palette-v7\23.0.1\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="278810b7c706bc3786d4dcb3f93f9afbb49e7c9a">
-        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-50ccbbdfdfc2262d949d6f75d95b96edbc8a861f.jar" />
+        sha1="a527cd5d9aa10f1a387cbd1c4c426fff5022a376">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\debug\classes-ed8ece3abc3e431aba0e8186555104079b07a853.jar" />
     </item>
     <item
-        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\classes.jar"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\leanback-v17\23.0.1\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="1f8341c0a9cf9933f4ccccb9988f357ed4d6f0c1">
-        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-6d8c9e93f70af348286f24232215584f8cadc174.jar" />
+        sha1="24a2c78bd7e59aedd5fbdf71cb99706264a0758a">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\debug\classes-98d0bb8c35e87670cab8686a26c5c859bff674c1.jar" />
     </item>
     <item
-        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\leanback-v17\23.0.1\jars\classes.jar"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="971ae815affb253c3887c0823ae4755499151e1f">
-        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-48b4d25cc627282bfc290df6250dcbde60f99454.jar" />
+        sha1="c31e21b53ff2f74664e498248d01453a32e32d48">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\debug\classes-b91ce9f6a89422e77ebac585b214e748df9a82cb.jar" />
     </item>
     <item
-        jar="C:\Users\Nick\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.0.1\support-annotations-23.0.1.jar"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\23.0.1\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="287069c220fcd7e6b478472296532d554a4ea125">
-        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\support-annotations-23.0.1-df6ff26e3db45723646d584003fed7dc7887087b.jar" />
-    </item>
-    <item
-        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\23.0.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="66d65fd07634299ddc5759628437bd4553b31a5a">
-        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-674c19fe3d77c618afe764eec0bf40a87b417ca7.jar" />
+        sha1="4356e230a981d1bbf047d848b91bc0d9b7c5bacc">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\debug\classes-2475919dc0c08c10c350dd2bbf9e90e04b0b4b1b.jar" />
     </item>
 
 </items>

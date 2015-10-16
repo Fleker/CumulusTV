@@ -147,10 +147,14 @@ public class TvContractUtils {
                 values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, channel.number.toString().hashCode());
                 Log.d(TAG, "Insert "+values.toString());
                 uri = resolver.insert(TvContract.Channels.CONTENT_URI, values);
-                Log.d(TAG, uri.toString()+" "+uri.getLastPathSegment());
-                values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, uri.getLastPathSegment());
-                resolver.update(uri, values, null, null);
-                Log.d(TAG, "Changed oni");
+                if(uri != null) {
+                    Log.d(TAG, uri.toString() + " " + uri.getLastPathSegment());
+                    values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, uri.getLastPathSegment());
+                    resolver.update(uri, values, null, null);
+                    Log.d(TAG, "Changed oni");
+                } else {
+                    //Hmmm
+                }
             } else {
                 uri = TvContract.buildChannelUri(rowId);
                 Log.d(TAG, "Update " + values.toString());

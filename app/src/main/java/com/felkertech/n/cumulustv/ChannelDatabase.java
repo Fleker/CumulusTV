@@ -133,8 +133,10 @@ public class ChannelDatabase {
             JSONArray jsonArray = getJSONChannels();
             for(int i = 0;i<jsonArray.length();i++) {
                 JSONChannel jsonChannel = new JSONChannel(jsonArray.getJSONObject(i));
-                if(jsonChannel.getNumber().equals(channelNumber))
-                    return jsonChannel;
+                if(jsonChannel.getNumber() != null) {
+                    if (jsonChannel.getNumber().equals(channelNumber))
+                        return jsonChannel;
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -241,9 +243,9 @@ public class ChannelDatabase {
     }
     @Override
     public String toString() {
-        if(obj != null)
+        if(obj != null) {
             return obj.toString();
-        else {
+        } else {
             Toast.makeText(mContext, "Report this error with your JSON file: DatabaseObject is null", Toast.LENGTH_SHORT).show();
         }
         return "";

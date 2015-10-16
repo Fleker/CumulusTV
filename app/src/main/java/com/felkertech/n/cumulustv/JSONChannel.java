@@ -88,6 +88,8 @@ public class JSONChannel {
         return source;
     }
     public boolean hasSource() {
+        if(getSource() == null)
+            return false;
         return !getSource().isEmpty();
     }
 
