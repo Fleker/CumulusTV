@@ -17,6 +17,8 @@ package com.felkertech.n.tv;
 import android.app.Activity;
 import android.os.Bundle;
 
+import com.felkertech.n.cumulustv.R;
+
 /*
  * MainActivity class that loads MainFragment
  */

@@ -28,6 +28,7 @@ import android.widget.VideoView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.felkertech.n.cumulustv.R;
 
 /**
  * PlaybackOverlayActivity for video playback that loads PlaybackOverlayFragment

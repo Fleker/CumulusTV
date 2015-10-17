@@ -91,7 +91,7 @@ public class MainPicker extends CumulusTvPlugin {
                         }
                     })
                     .show();
-            ((EditText) add.getCustomView().findViewById(R.id.stream_open)).setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            ((EditText) add.getCustomView().findViewById(R.id.stream)).setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                     loadStream(add);

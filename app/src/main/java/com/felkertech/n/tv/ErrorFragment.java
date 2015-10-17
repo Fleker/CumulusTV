@@ -18,6 +18,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.felkertech.n.cumulustv.R;
+
 /*
  * This class demonstrates how to extend ErrorFragment
  */

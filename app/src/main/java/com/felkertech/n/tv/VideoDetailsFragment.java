@@ -42,6 +42,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.felkertech.n.cumulustv.MainActivity;
+import com.felkertech.n.cumulustv.R;
 
 import java.util.Collections;
 import java.util.List;

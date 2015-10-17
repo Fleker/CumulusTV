@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/logo"
-        android:layout_below="@+id/name"
+        android:layout_below="@id/name"
         android:hint="Channel Logo Url"
         android:inputType="text|textUri" />
     <EditText
@@ -27,21 +27,20 @@
         android:layout_height="wrap_content"
         android:id="@+id/stream"
         android:hint="Stream Url"
-        android:layout_below="@+id/logo"
+        android:layout_below="@id/logo"
         android:inputType="text|textUri" />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/splash"
-        android:layout_below="@+id/stream"
+        android:layout_below="@id/stream"
         android:hint="Splashscreen Url"
         android:inputType="text|textUri" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/splash"
+        android:layout_below="@id/splash"
         android:text="SELECT Genres"
-        android:nextFocusDown="@+id/surface_player"
         android:id="@+id/genres"/>
     <LinearLayout
         android:layout_width="wrap_content"
@@ -60,6 +59,6 @@
         android:layout_width="match_parent"
         android:id="@+id/stream_open"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/surface_player"
+        android:layout_below="@id/surface_player"
         android:text="Open Stream"/>
 </RelativeLayout>

@@ -190,18 +190,18 @@
             android:name="com.felkertech.n.tv.LeanbackActivity"
             android:banner="@drawable/app_icon_your_company"
             android:icon="@drawable/app_icon_your_company"
-            android:label="@string/title_activity_leanback"
+            android:label="@string/app_name"
             android:logo="@drawable/app_icon_your_company"
             android:screenOrientation="landscape" >
-            <intent-filter>
+           <!-- <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <activity android:name="com.felkertech.n.tv.DetailsActivity" />
-        <activity android:name=".PlaybackOverlayActivity" />
-        <activity android:name=".BrowseErrorActivity" />
+        <activity android:name="com.felkertech.n.tv.PlaybackOverlayActivity" />
+        <activity android:name="com.felkertech.n.tv.BrowseErrorActivity" />
     </application>
 
 </manifest>

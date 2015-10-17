@@ -24,6 +24,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
+import com.felkertech.n.cumulustv.R;
+
 /*
  * BrowseErrorActivity shows how to use ErrorFragment
  */
