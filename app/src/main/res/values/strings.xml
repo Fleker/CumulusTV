@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">cumulustv</string>
+    <string name="app_name">Cumulus TV</string>
     <string name="sample_tv_input_name">Cumulus TV</string>
     <string name="title_activity_main">MainActivity</string>
 
@@ -54,4 +54,19 @@
     <string name="error_fragment_message">An error occurred</string>
     <string name="dismiss_error">Dismiss</string>
     <string name="oops">Oops</string>
+
+    <!--Leanback Menu Items-->
+    <string name="manage_livechannels">Open Live Channels</string>
+    <string name="manage_add_suggested">Add Suggested Channels</string>
+    <string name="manage_add_new">Add New Channel</string>
+
+    <string name="settings_sync_file">Sync File with Google Drive</string>
+    <string name="settings_browse_plugins">Browse Plugins</string>
+    <string name="settings_switch_google_drive">Switch Google Drive File</string>
+    <string name="settings_refresh_cloud_local">Refresh Data - Cloud to Local</string>
+    <string name="settings_view_licenses">View Software Licenses</string>
+    <string name="settings_reset_channel_data">Reset Channel Data</string>
+    <string name="settings_about">About</string>
+    <string name="settings_read_xmltv">Read XMLTV (Experimental)</string>
 </resources>
+

@@ -57,6 +57,7 @@ public class SamplePlayer extends AppCompatActivity {
                 TvInputPlayer exoPlayer;
                 exoPlayer = new TvInputPlayer();
                 exoPlayer.setSurface(sv.getHolder().getSurface());
+                exoPlayer.setVolume(1);
                 exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
                 exoPlayer.setPlayWhenReady(true);
             }

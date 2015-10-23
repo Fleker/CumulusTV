@@ -23,7 +23,7 @@
         android:required="false" />
     <uses-feature
         android:name="android.software.leanback"
-        android:required="true" />
+        android:required="false" />
     <!--
     Required to expose this app in the store only when the device has TV input framework
     with the TV app.
@@ -32,7 +32,8 @@
         android:name="android.software.live_tv"
         android:required="false" />
 
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!--<uses-permission android:name="android.permission.RECORD_AUDIO" />-->
+    <!-- We're not using search -->
 
     <application
         android:allowBackup="true"
@@ -86,11 +87,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <activity
             android:name=".SampleSetup"
@@ -188,20 +189,18 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name="com.felkertech.n.tv.LeanbackActivity"
-            android:banner="@drawable/app_icon_your_company"
-            android:icon="@drawable/app_icon_your_company"
+            android:theme="@style/Theme.Leanback"
             android:label="@string/app_name"
-            android:logo="@drawable/app_icon_your_company"
             android:screenOrientation="landscape" >
-           <!-- <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
         </activity>
-        <activity android:name="com.felkertech.n.tv.DetailsActivity" />
-        <activity android:name="com.felkertech.n.tv.PlaybackOverlayActivity" />
-        <activity android:name="com.felkertech.n.tv.BrowseErrorActivity" />
+        <activity android:name="com.felkertech.n.tv.DetailsActivity" android:theme="@style/Theme.Leanback" />
+        <activity android:name="com.felkertech.n.tv.PlaybackOverlayActivity" android:theme="@style/Theme.Leanback" />
+        <activity android:name="com.felkertech.n.tv.BrowseErrorActivity" android:theme="@style/Theme.Leanback" />
     </application>
 
 </manifest>

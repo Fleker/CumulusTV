@@ -68,7 +68,7 @@ public final class MovieList {
         return list;
     }
 
-    private static Movie buildMovieInfo(String category, String title,
+    public static Movie buildMovieInfo(String category, String title,
                                         String description, String studio, String videoUrl, String cardImageUrl,
                                         String bgImageUrl) {
         Movie movie = new Movie();

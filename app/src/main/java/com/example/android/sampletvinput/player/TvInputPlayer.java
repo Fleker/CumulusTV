@@ -27,15 +27,28 @@ import android.util.Log;
 import android.view.Surface;
 
 import com.google.android.exoplayer.DefaultLoadControl;
+import com.google.android.exoplayer.DummyTrackRenderer;
 import com.google.android.exoplayer.ExoPlaybackException;
 import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer.LoadControl;
 import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
 import com.google.android.exoplayer.MediaCodecTrackRenderer;
+import com.google.android.exoplayer.MediaCodecUtil;
 import com.google.android.exoplayer.MediaCodecVideoTrackRenderer;
 import com.google.android.exoplayer.TrackRenderer;
-import com.google.android.exoplayer.chunk.MultiTrackChunkSource;
+import com.google.android.exoplayer.chunk.ChunkSampleSource;
+import com.google.android.exoplayer.chunk.ChunkSource;
+import com.google.android.exoplayer.chunk.Format;
+import com.google.android.exoplayer.chunk.FormatEvaluator;
+import com.google.android.exoplayer.dash.DashChunkSource;
+import com.google.android.exoplayer.dash.DefaultDashTrackSelector;
+import com.google.android.exoplayer.dash.mpd.AdaptationSet;
+import com.google.android.exoplayer.dash.mpd.MediaPresentationDescription;
+import com.google.android.exoplayer.dash.mpd.MediaPresentationDescriptionParser;
+import com.google.android.exoplayer.dash.mpd.Period;
+import com.google.android.exoplayer.dash.mpd.Representation;
+import com.google.android.exoplayer.extractor.ExtractorSampleSource;
 import com.google.android.exoplayer.hls.HlsChunkSource;
 import com.google.android.exoplayer.hls.HlsPlaylist;
 import com.google.android.exoplayer.hls.HlsPlaylistParser;
@@ -43,15 +56,16 @@ import com.google.android.exoplayer.hls.HlsSampleSource;
 import com.google.android.exoplayer.text.Cue;
 import com.google.android.exoplayer.text.TextRenderer;
 import com.google.android.exoplayer.text.eia608.Eia608TrackRenderer;
-import com.google.android.exoplayer.upstream.Allocator;
 import com.google.android.exoplayer.upstream.DataSource;
 import com.google.android.exoplayer.upstream.DefaultAllocator;
 import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
-import com.google.android.exoplayer.upstream.UriDataSource;
 import com.google.android.exoplayer.util.ManifestFetcher;
+import com.google.android.exoplayer.util.MimeTypes;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -78,23 +92,24 @@ public class TvInputPlayer implements TextRenderer {
 
     private int BUFFER_SEGMENT_SIZE = 256 * 1024 * 4;
     private int BUFFER_SEGMENTS = 64 * 2;
-/*    private static final int VIDEO_BUFFER_SEGMENTS = 200;
+
+
+    private static final int VIDEO_BUFFER_SEGMENTS = 200;
     private static final int AUDIO_BUFFER_SEGMENTS = 60;
-    private static final int LIVE_EDGE_LATENCY_MS = 30000;*/
+    private static final int LIVE_EDGE_LATENCY_MS = 30000;
 
     private static final int NO_TRACK_SELECTED = -1;
 
     private final Handler mHandler;
     private final ExoPlayer mPlayer;
-    private TrackRenderer mVideoRenderer;
-    private TrackRenderer mAudioRenderer;
-    private TrackRenderer mTextRenderer;
+    private TrackRenderer videoRenderer;
+    private TrackRenderer audioRenderer;
+    private TrackRenderer textRenderer;
     private final CopyOnWriteArrayList<Callback> mCallbacks;
     private float mVolume;
     private Surface mSurface;
     private TvTrackInfo[][] mTvTracks = new TvTrackInfo[RENDERER_COUNT][];
     private int[] mSelectedTvTracks = new int[RENDERER_COUNT];
-    private MultiTrackChunkSource[] mMultiTrackSources = new MultiTrackChunkSource[RENDERER_COUNT];
 
     private final MediaCodecVideoTrackRenderer.EventListener mVideoRendererEventListener =
             new MediaCodecVideoTrackRenderer.EventListener() {
@@ -104,8 +119,8 @@ public class TvInputPlayer implements TextRenderer {
                 }
 
                 @Override
-                public void onVideoSizeChanged(int width, int height, float pixelWidthHeightRatio) {
-                    // Do nothing.
+                public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+
                 }
 
                 @Override
@@ -136,7 +151,50 @@ public class TvInputPlayer implements TextRenderer {
                 }
             };
 
+    private final CopyOnWriteArrayList<Callback> callbacks;
+    private final MediaCodecVideoTrackRenderer.EventListener videoRendererEventListener =
+            new MediaCodecVideoTrackRenderer.EventListener() {
+                @Override
+                public void onDroppedFrames(int count, long elapsed) {
+                    // Do nothing.
+                }
+
+                @Override
+                public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+                    //Do nothing
+                }
+
+                @Override
+                public void onDrawnToSurface(Surface surface) {
+                    for(Callback callback : callbacks) {
+                        callback.onDrawnToSurface(surface);
+                    }
+                }
+
+                @Override
+                public void onDecoderInitialized(String decoderName, long elapsedRealtimeMs, long initializationDurationMs) {
+
+                }
+
+                @Override
+                public void onDecoderInitializationError(
+                        MediaCodecTrackRenderer.DecoderInitializationException e) {
+                    for(Callback callback : callbacks) {
+                        callback.onPlayerError(new ExoPlaybackException(e));
+                    }
+                }
+
+                @Override
+                public void onCryptoError(MediaCodec.CryptoException e) {
+                    for(Callback callback : callbacks) {
+                        callback.onPlayerError(new ExoPlaybackException(e));
+                    }
+                }
+            };
+
+
     public TvInputPlayer() {
+        callbacks = new CopyOnWriteArrayList<>();
         mHandler = new Handler();
         Log.d(TAG, "I'm born!");
         for (int i = 0; i < RENDERER_COUNT; ++i) {
@@ -169,22 +227,27 @@ public class TvInputPlayer implements TextRenderer {
         });
     }
 
-    public void prepare(final Context context, final Uri uri, int sourceType) {
+    public void prepare(final Context context, final Uri originalUri, int sourceType) {
+        final String userAgent = getUserAgent(context);
+        final DefaultHttpDataSource dataSource = new DefaultHttpDataSource(userAgent, null);
+        final Uri uri = processUriParameters(originalUri, dataSource);
+
         if (sourceType == SOURCE_TYPE_HTTP_PROGRESSIVE) {
             Log.d(TAG, "Prep HTTP_PROG");
-            /*DefaultSampleSource sampleSource =
-                    new DefaultSampleSource(new FrameworkSampleExtractor(context, uri, null), 2);
-            mAudioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
-            mVideoRenderer = new MediaCodecVideoTrackRenderer(sampleSource,
+            ExtractorSampleSource sampleSource =
+                    new ExtractorSampleSource(uri, dataSource, new DefaultAllocator(BUFFER_SEGMENT_SIZE),
+                            BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE);
+            audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
+            videoRenderer = new MediaCodecVideoTrackRenderer(sampleSource,
                     MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 0, mHandler,
-                    mVideoRendererEventListener, 50);
-            mTextRenderer = new DummyTrackRenderer();
-            prepareInternal();*/
+                    videoRendererEventListener, 50);
+            textRenderer = new DummyTrackRenderer();
+            prepareInternal();
         } else if (sourceType == SOURCE_TYPE_HLS) {
             Log.d(TAG, "Prep HLS");
-            final String userAgent = getUserAgent(context);
+//            final String userAgent = getUserAgent(context);
             HlsPlaylistParser parser = new HlsPlaylistParser();
-            UriDataSource dataSource = new DefaultUriDataSource(context, userAgent);
+//            UriDataSource dataSource = new DefaultUriDataSource(context, userAgent);
             final ManifestFetcher<HlsPlaylist> playlistFetcher =
                     new ManifestFetcher<HlsPlaylist>(uri.toString(), dataSource, parser);
 //                    new ManifestFetcher<HlsPlaylist>(parser, uri.toString(), uri.toString(), userAgent);
@@ -194,16 +257,21 @@ public class TvInputPlayer implements TextRenderer {
                         public void onSingleManifest(HlsPlaylist hlsPlaylist) {
                             DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
                             DataSource dataSource = new DefaultUriDataSource(context, userAgent);
-                            HlsChunkSource chunkSource = new HlsChunkSource(dataSource,
+
+                            /*HlsChunkSource chunkSource = new HlsChunkSource(dataSource,
                                     uri.toString(), hlsPlaylist, bandwidthMeter, null,
-                                    HlsChunkSource.ADAPTIVE_MODE_SPLICE, null);
+                                    HlsChunkSource.ADAPTIVE_MODE_SPLICE, null);*/
+                            HlsChunkSource chunkSource = new HlsChunkSource(dataSource, uri.toString(),
+                                    hlsPlaylist, bandwidthMeter,
+                                    null, HlsChunkSource.ADAPTIVE_MODE_SPLICE);
+
                             LoadControl lhc = new DefaultLoadControl(new DefaultAllocator(BUFFER_SEGMENT_SIZE));
                             HlsSampleSource sampleSource = new HlsSampleSource(chunkSource, lhc, BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE);
-                            mAudioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
-                            mVideoRenderer = new MediaCodecVideoTrackRenderer(sampleSource,
+                            audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
+                            videoRenderer = new MediaCodecVideoTrackRenderer(sampleSource,
                                     MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000, mHandler,
                                     mVideoRendererEventListener, 50);
-                            mTextRenderer = new Eia608TrackRenderer(sampleSource,
+                            textRenderer = new Eia608TrackRenderer(sampleSource,
                                     TvInputPlayer.this, mHandler.getLooper());
                             // TODO: Implement custom HLS source to get the internal track metadata.
                             mTvTracks[TvTrackInfo.TYPE_SUBTITLE] = new TvTrackInfo[1];
@@ -221,38 +289,24 @@ public class TvInputPlayer implements TextRenderer {
                         }
                     });
         } else if (sourceType == SOURCE_TYPE_MPEG_DASH) {
-            /*Log.d(TAG, "Prep MPEG DASH");
-            final String userAgent = getUserAgent(context);
+            Log.d(TAG, "Prep MPEG DASH");
             MediaPresentationDescriptionParser parser = new MediaPresentationDescriptionParser();
             final ManifestFetcher<MediaPresentationDescription> manifestFetcher =
-                    new ManifestFetcher<>(parser, uri.toString(), uri.toString(), userAgent);
+                    new ManifestFetcher<>(uri.toString(), dataSource, parser);
             manifestFetcher.singleLoad(mHandler.getLooper(),
                     new ManifestFetcher.ManifestCallback<MediaPresentationDescription>() {
                         @Override
-                        public void onSingleManifest(MediaPresentationDescription mediaPresentationDescription) {
-
-                        }
-
-                        @Override
-                        public void onSingleManifestError(IOException e) {
-                            for (Callback callback : mCallbacks) {
-                                callback.onPlayerError(new ExoPlaybackException(e));
-                            }
-                        }
-
-                        @Override
-                        public void onManifest(String contentId, MediaPresentationDescription manifest) {
-                            Period period = manifest.periods.get(0);
-                            LoadControl loadControl = new DefaultLoadControl(new BufferPool(
+                        public void onSingleManifest(MediaPresentationDescription manifest) {
+                            Period period = manifest.getPeriod(0);
+                            LoadControl loadControl = new DefaultLoadControl(new DefaultAllocator(
                                     BUFFER_SEGMENT_SIZE));
-                            DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
 
                             // Determine which video representations we should use for playback.
                             int maxDecodableFrameSize;
                             try {
                                 maxDecodableFrameSize = MediaCodecUtil.maxH264DecodableFrameSize();
                             } catch (MediaCodecUtil.DecoderQueryException e) {
-                                for (Callback callback : mCallbacks) {
+                                for (Callback callback : callbacks) {
                                     callback.onPlayerError(new ExoPlaybackException(e));
                                 }
                                 return;
@@ -262,7 +316,7 @@ public class TvInputPlayer implements TextRenderer {
                                     AdaptationSet.TYPE_VIDEO);
                             List<Representation> videoRepresentations =
                                     period.adaptationSets.get(videoAdaptationSetIndex).representations;
-                            ArrayList<Integer> videoRepresentationIndexList = new ArrayList<Integer>();
+                            ArrayList<Integer> videoRepresentationIndexList = new ArrayList<>();
                             for (int i = 0; i < videoRepresentations.size(); i++) {
                                 Format format = videoRepresentations.get(i).format;
                                 if (format.width * format.height > maxDecodableFrameSize) {
@@ -275,24 +329,24 @@ public class TvInputPlayer implements TextRenderer {
                                 }
                             }
 
+
                             // Build the video renderer.
                             if (videoRepresentationIndexList.isEmpty()) {
-                                mVideoRenderer = new DummyTrackRenderer();
+                                videoRenderer = new DummyTrackRenderer();
                             } else {
-                                int[] videoRepresentationIndices = Util.toArray(
-                                        videoRepresentationIndexList);
-                                DataSource videoDataSource = new UriDataSource(userAgent, bandwidthMeter);
+                                DataSource videoDataSource = new DefaultUriDataSource(context, userAgent);
+                                DefaultBandwidthMeter videoBandwidthMeter = new DefaultBandwidthMeter();
                                 ChunkSource videoChunkSource = new DashChunkSource(manifestFetcher,
-                                        videoAdaptationSetIndex, videoRepresentationIndices,
+                                        DefaultDashTrackSelector.newVideoInstance(context, true, false),
                                         videoDataSource,
-                                        new FormatEvaluator.AdaptiveEvaluator(bandwidthMeter),
-                                        LIVE_EDGE_LATENCY_MS);
+                                        new FormatEvaluator.AdaptiveEvaluator(videoBandwidthMeter), LIVE_EDGE_LATENCY_MS,
+                                        0, true, null, null);
                                 ChunkSampleSource videoSampleSource = new ChunkSampleSource(
                                         videoChunkSource, loadControl,
-                                        VIDEO_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, true);
-                                mVideoRenderer = new MediaCodecVideoTrackRenderer(videoSampleSource,
+                                        VIDEO_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE);
+                                videoRenderer = new MediaCodecVideoTrackRenderer(videoSampleSource,
                                         MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 0, mHandler,
-                                        mVideoRendererEventListener, 50);
+                                        videoRendererEventListener, 50);
                             }
 
                             // Build the audio chunk sources.
@@ -300,10 +354,10 @@ public class TvInputPlayer implements TextRenderer {
                                     AdaptationSet.TYPE_AUDIO);
                             AdaptationSet audioAdaptationSet = period.adaptationSets.get(
                                     audioAdaptationSetIndex);
-                            List<ChunkSource> audioChunkSourceList = new ArrayList<ChunkSource>();
+                            List<ChunkSource> audioChunkSourceList = new ArrayList<>();
                             List<TvTrackInfo> audioTrackList = new ArrayList<>();
                             if (audioAdaptationSet != null) {
-                                DataSource audioDataSource = new UriDataSource(userAgent, bandwidthMeter);
+                                DataSource audioDataSource = new DefaultUriDataSource(context, userAgent);
                                 FormatEvaluator audioEvaluator = new FormatEvaluator.FixedEvaluator();
                                 List<Representation> audioRepresentations =
                                         audioAdaptationSet.representations;
@@ -311,38 +365,46 @@ public class TvInputPlayer implements TextRenderer {
                                     Format format = audioRepresentations.get(i).format;
                                     audioTrackList.add(new TvTrackInfo.Builder(TvTrackInfo.TYPE_AUDIO,
                                             Integer.toString(i))
-                                            .setAudioChannelCount(format.numChannels)
+                                            .setAudioChannelCount(format.audioChannels)
                                             .setAudioSampleRate(format.audioSamplingRate)
                                             .setLanguage(format.language)
                                             .build());
                                     audioChunkSourceList.add(new DashChunkSource(manifestFetcher,
-                                            audioAdaptationSetIndex, new int[] {i}, audioDataSource,
-                                            audioEvaluator, LIVE_EDGE_LATENCY_MS));
+                                            DefaultDashTrackSelector.newAudioInstance(),
+                                            audioDataSource,
+                                            audioEvaluator, LIVE_EDGE_LATENCY_MS, 0, null, null));
                                 }
                             }
 
                             // Build the audio renderer.
-                            final MultiTrackChunkSource audioChunkSource;
+                            //final MultiTrackChunkSource audioChunkSource;
                             if (audioChunkSourceList.isEmpty()) {
-                                mAudioRenderer = new DummyTrackRenderer();
+                                audioRenderer = new DummyTrackRenderer();
                             } else {
-                                audioChunkSource = new MultiTrackChunkSource(audioChunkSourceList);
-                                SampleSource audioSampleSource = new ChunkSampleSource(audioChunkSource,
-                                        loadControl, AUDIO_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, true);
-                                mAudioRenderer = new MediaCodecAudioTrackRenderer(audioSampleSource);
+                                //audioChunkSource = new MultiTrackChunkSource(audioChunkSourceList);
+                                //SampleSource audioSampleSource = new ChunkSampleSource(audioChunkSource,
+                                //        loadControl, AUDIO_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE);
+                                //audioRenderer = new MediaCodecAudioTrackRenderer(audioSampleSource);
                                 TvTrackInfo[] tracks = new TvTrackInfo[audioTrackList.size()];
                                 audioTrackList.toArray(tracks);
                                 mTvTracks[TvTrackInfo.TYPE_AUDIO] = tracks;
                                 mSelectedTvTracks[TvTrackInfo.TYPE_AUDIO] = 0;
-                                mMultiTrackSources[TvTrackInfo.TYPE_AUDIO] = audioChunkSource;
+                                //multiTrackChunkSources[TvTrackInfo.TYPE_AUDIO] = audioChunkSource;
                             }
 
                             // Build the text renderer.
-                            mTextRenderer = new DummyTrackRenderer();
+                            textRenderer = new DummyTrackRenderer();
 
                             prepareInternal();
                         }
-                    });*/
+
+                        @Override
+                        public void onSingleManifestError(IOException e) {
+                            for (Callback callback : callbacks) {
+                                callback.onPlayerError(new ExoPlaybackException(e));
+                            }
+                        }
+                    });
         } else {
             throw new IllegalArgumentException("Unknown source type: " + sourceType);
         }
@@ -373,17 +435,6 @@ public class TvInputPlayer implements TextRenderer {
             mPlayer.setRendererEnabled(trackType, false);
         } else {
             int trackIndex = Integer.parseInt(trackId);
-            if (mMultiTrackSources[trackType] == null) {
-                mPlayer.setRendererEnabled(trackType, true);
-            } else {
-                boolean playWhenReady = mPlayer.getPlayWhenReady();
-                mPlayer.setPlayWhenReady(false);
-                mPlayer.setRendererEnabled(trackType, false);
-                mPlayer.sendMessage(mMultiTrackSources[trackType],
-                        MultiTrackChunkSource.MSG_SELECT_TRACK, trackIndex);
-                mPlayer.setRendererEnabled(trackType, true);
-                mPlayer.setPlayWhenReady(playWhenReady);
-            }
         }
         return true;
     }
@@ -394,16 +445,16 @@ public class TvInputPlayer implements TextRenderer {
 
     public void setVolume(float volume) {
         mVolume = volume;
-        if (mPlayer != null && mAudioRenderer != null) {
-            mPlayer.sendMessage(mAudioRenderer, MediaCodecAudioTrackRenderer.MSG_SET_VOLUME,
+        if (mPlayer != null && audioRenderer != null) {
+            mPlayer.sendMessage(audioRenderer, MediaCodecAudioTrackRenderer.MSG_SET_VOLUME,
                     volume);
         }
     }
 
     public void setSurface(Surface surface) {
         mSurface = surface;
-        if (mPlayer != null && mVideoRenderer != null) {
-            mPlayer.sendMessage(mVideoRenderer, MediaCodecVideoTrackRenderer.MSG_SET_SURFACE,
+        if (mPlayer != null && videoRenderer != null) {
+            mPlayer.sendMessage(videoRenderer, MediaCodecVideoTrackRenderer.MSG_SET_SURFACE,
                     surface);
         }
     }
@@ -429,10 +480,10 @@ public class TvInputPlayer implements TextRenderer {
     }
 
     private void prepareInternal() {
-        mPlayer.prepare(mAudioRenderer, mVideoRenderer, mTextRenderer);
-        mPlayer.sendMessage(mAudioRenderer, MediaCodecAudioTrackRenderer.MSG_SET_VOLUME,
+        mPlayer.prepare(audioRenderer, videoRenderer, textRenderer);
+        mPlayer.sendMessage(audioRenderer, MediaCodecAudioTrackRenderer.MSG_SET_VOLUME,
                 mVolume);
-        mPlayer.sendMessage(mVideoRenderer, MediaCodecVideoTrackRenderer.MSG_SET_SURFACE,
+        mPlayer.sendMessage(videoRenderer, MediaCodecVideoTrackRenderer.MSG_SET_SURFACE,
                 mSurface);
         // Disable text track by default.
         mPlayer.setRendererEnabled(TvTrackInfo.TYPE_SUBTITLE, false);
@@ -456,7 +507,22 @@ public class TvInputPlayer implements TextRenderer {
 
     @Override
     public void onCues(List<Cue> list) {
+    }
+    private static boolean isPlayerPrepared(ExoPlayer player) {
+        int state = player.getPlaybackState();
+        return state != ExoPlayer.STATE_PREPARING && state != ExoPlayer.STATE_IDLE;
+    }
 
+    private static Uri processUriParameters(Uri uri, DefaultHttpDataSource dataSource) {
+        String[] parameters = uri.getPath().split("\\|");
+        for (int i = 1; i < parameters.length; i++) {
+            String[] pair = parameters[i].split("=", 2);
+            if (pair.length == 2) {
+                dataSource.setRequestProperty(pair[0], pair[1]);
+            }
+        }
+
+        return uri.buildUpon().path(parameters[0]).build();
     }
 
     public interface Callback {

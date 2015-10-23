@@ -22,11 +22,8 @@ android {
         applicationId "com.felkertech.n.cumulustv"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 22
-        versionName "1.3.6"
-    }
-    signingConfigs {
-
+        versionCode 23
+        versionName "1.4-alpha 1"
     }
     buildTypes {
         release {
@@ -41,10 +38,10 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.5.1@aar') {
         transitive = true;
     }
-    compile 'com.android.support:recyclerview-v7:23.1.0'
-    compile 'com.android.support:leanback-v17:23.1.0'
+    compile 'com.android.support:recyclerview-v7:23.0.1'
+    compile 'com.android.support:leanback-v17:22.+'
     compile 'com.android.support:appcompat-v7:23.1.0'
-    compile 'com.google.android.exoplayer:exoplayer:r1.4.2'
+    compile 'com.google.android.exoplayer:exoplayer:r1.5.0'
     compile 'com.afollestad:material-dialogs:0.7.9.1'
     compile 'com.pnikosis:materialish-progress:1.5'
     compile 'com.squareup.picasso:picasso:2.5.2'

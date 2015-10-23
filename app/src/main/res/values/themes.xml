@@ -8,6 +8,5 @@
         <item name="android:windowAllowEnterTransitionOverlap">true</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:colorPrimary">@color/search_opaque</item>
-
     </style>
 </resources>

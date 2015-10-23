@@ -628,7 +628,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         DriveId did;
         try {
              did = DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id));
-        }catch (Exception e) {
+        } catch (Exception e) {
             Toast.makeText(this, "Invalid drive file. Please choose a different file.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -705,7 +705,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
                             Toast.makeText(getApplicationContext(), "Pick " + i, Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent();
-//                        intent.setAction("com.felkertech.cumulustv.ADD_CHANNEL");
                             if (newChannel) {
                                 Log.d(TAG, "Try to start ");
                                 ResolveInfo plugin_info = plugins.get(i);
@@ -714,11 +713,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
                                 intent.setClassName(plugin_info.activityInfo.applicationInfo.packageName,
                                         plugin_info.activityInfo.name);
-//                            ComponentName name=new ComponentName(plugin_info.activityInfo.applicationInfo.packageName,
-//                                    plugin_info.activityInfo.name);
-                            /*intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-                                    Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);*/
-//                            intent.setComponent(name);
+
                                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
                             } else {
                                 ChannelDatabase cdn = new ChannelDatabase(getApplicationContext());

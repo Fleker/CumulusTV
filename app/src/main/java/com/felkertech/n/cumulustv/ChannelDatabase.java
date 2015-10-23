@@ -77,7 +77,7 @@ public class ChannelDatabase {
 //            ci.serviceId = 2;
             ci.videoHeight = 1080;
             ci.videoWidth = 1920;
-//            ci.logoUrl = channel.getLogo();
+            ci.logoUrl = channel.getLogo();
             ci.programs = getPrograms(ci, channel.getUrl());
             channelInfos.add(ci);
         }
