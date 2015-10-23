@@ -4,19 +4,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,8 +22,6 @@ import com.felkertech.n.cumulustv.ChannelDatabase;
 import com.felkertech.n.cumulustv.JSONChannel;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.SamplePlayer;
-
-import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -78,7 +69,7 @@ public class MainPicker extends CumulusTvPlugin {
                             super.onPositive(dialog);
                             Log.d(TAG, "Submission");
                             //Get stuff
-                            LinearLayout l = (LinearLayout) dialog.getCustomView();
+                            RelativeLayout l = (RelativeLayout) dialog.getCustomView();
                             String number = ((EditText) l.findViewById(R.id.number)).getText().toString();
                             Log.d(TAG, "Channel " + number);
                             String name = ((EditText) l.findViewById(R.id.name)).getText().toString();

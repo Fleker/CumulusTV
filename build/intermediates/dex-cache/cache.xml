@@ -2,158 +2,67 @@
 <items version="2" >
 
     <item
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\23.0.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="4356e230a981d1bbf047d848b91bc0d9b7c5bacc">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-2475919dc0c08c10c350dd2bbf9e90e04b0b4b1b.jar" />
-    </item>
-    <item
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.crashlytics.sdk.android\crashlytics-core\2.3.4\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="467417b1695583fbaee8de0e5f4202b6a2b578e1">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-adad32cd3238d43ed86bce0c44e82190c6514220.jar" />
-    </item>
-    <item
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.github.paolorotolo\appintro\3.2.0\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="88a6346382185deaeb9e3cc7d89717bc67d2fb16">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-cfd3e1f5e82d5e7eba15e1e1cf5eaa47a605e45e.jar" />
-    </item>
-    <item
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.google.android.exoplayer\exoplayer\r1.5.0\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="8edce611040feb12ca309b2852bde512437cd635">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-2db017c6913a902138e942d7d1b4ada5d65958f7.jar" />
-    </item>
-    <item
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.0\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="ddde541c289c8b816a8f8fd6c325d80788c522a6">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-bb89c846d6811934988bc37864185093dd56ca17.jar" />
-    </item>
-    <item
-        jar="C:\Users\guest1\.gradle\caches\modules-2\files-2.1\com.squareup.okio\okio\1.4.0\5b72bf48563ea8410e650de14aa33ff69a3e8c35\okio-1.4.0.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="5b72bf48563ea8410e650de14aa33ff69a3e8c35">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\okio-1.4.0-49508a8284a0425e4732c1ed6fb14da27b5bb90b.jar" />
-    </item>
-    <item
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\palette-v7\23.1.0\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="167a5721524b1d2810d1b41ed76eff1d53a0e82b">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-0f87fe63d2cf0ff437f3d06afd1f401d0944ae4e.jar" />
-    </item>
-    <item
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.0\jars\libs\internal_impl-23.1.0.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="8716243bf04bae8d6c9ca94d27b9a9be7236f0a3">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\internal_impl-23.1.0-bad5684de7d1e7acd3d0895358b92ba1853ab881.jar" />
-    </item>
-    <item
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.crashlytics.sdk.android\beta\1.1.3\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="b7a78990c10481f43cb4909f535ef4f11e60f1ab">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-012a3fb2689e37eab0e08f51447f9835efe5a79c.jar" />
-    </item>
-    <item
-        jar="C:\Users\guest1\.gradle\caches\modules-2\files-2.1\com.squareup.okhttp\okhttp\2.4.0\40340c0748190fe897baf7bffbc1b282734294e5\okhttp-2.4.0.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="40340c0748190fe897baf7bffbc1b282734294e5">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\okhttp-2.4.0-464b7a7999acaacafb948abbb8836dc8196825aa.jar" />
-    </item>
-    <item
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.crashlytics.sdk.android\answers\1.3.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="441ace5a20e7fcf94f30b4394d882ed2f79237c3">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-1f83a814652d1bbaf4bf1a799923aa89ee6f12d3.jar" />
-    </item>
-    <item
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.crashlytics.sdk.android\crashlytics\2.5.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="2b1fb39b3c4feeb031b00744fbbe464e3d31a88d">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-cc480555bbe81e0348ed71d481ad23db7dfff58a.jar" />
-    </item>
-    <item
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.1.0\jars\classes.jar"
+        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.1.0\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
         sha1="57ae0d750ff83f0c738d21720224ac7ea866a094">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-4cb92036f32d0009ad57110d40180258d5e4a81b.jar" />
+        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-8e6519be895214e0e8d99ab29bd149880291585e.jar" />
     </item>
     <item
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\leanback-v17\22.2.1\jars\classes.jar"
+        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.0\jars\libs\internal_impl-23.1.0.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="8716243bf04bae8d6c9ca94d27b9a9be7236f0a3">
+        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\internal_impl-23.1.0-7b04956c2f0db50f3dda8d8c52451629278495ae.jar" />
+    </item>
+    <item
+        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\leanback-v17\22.2.1\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
         sha1="ca160ada98f0d1ff0d080364f20a4ccf0b6bab5a">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-95f47052b896289c056d04a8e3674dba462f8837.jar" />
+        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-d6eca5ef414c7c2c5c854c768dd330499e1b9f5f.jar" />
     </item>
     <item
-        jar="C:\Users\guest1\.gradle\caches\modules-2\files-2.1\com.squareup.picasso\picasso\2.5.2\7446d06ec8d4f7ffcc53f1da37c95f200dcb9387\picasso-2.5.2.jar"
+        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\23.0.1\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="7446d06ec8d4f7ffcc53f1da37c95f200dcb9387">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\picasso-2.5.2-02fdd1c78a3cde65886fbdfe11d91c2ee7fc477d.jar" />
+        sha1="4356e230a981d1bbf047d848b91bc0d9b7c5bacc">
+        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-674c19fe3d77c618afe764eec0bf40a87b417ca7.jar" />
     </item>
     <item
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-base\7.5.0\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="a78183f30e769a98ab4820794f597763088d3065">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-424b61f84aeabe0aeb4cb3fec2abe4f8816b63f5.jar" />
-    </item>
-    <item
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.afollestad\material-dialogs\0.7.9.1\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="278810b7c706bc3786d4dcb3f93f9afbb49e7c9a">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-7f7b2d8d9e5a5bef199277ccef4fb6d66d477563.jar" />
-    </item>
-    <item
-        jar="C:\Users\guest1\.gradle\caches\modules-2\files-2.1\com.github.bumptech.glide\glide\3.4.0\82552712133e094bbb565289fb2bc2d2952ba551\glide-3.4.0.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="82552712133e094bbb565289fb2bc2d2952ba551">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\glide-3.4.0-4bf0b192c1c319c9b9ab904c7e24bb5f0f7b98c4.jar" />
-    </item>
-    <item
-        jar="C:\Users\guest1\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.1.0\support-annotations-23.1.0.jar"
+        jar="C:\Users\Nick\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.1.0\support-annotations-23.1.0.jar"
         jumboMode="false"
         revision="22.0.1"
         sha1="92e3fc113ec3ee36b64603a38857b95700025633">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\support-annotations-23.1.0-9e3d79dea9713b12bcc95d64b248d3bfc6cdf784.jar" />
+        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\support-annotations-23.1.0-e6a586f69699af732ebc93e220733d011b7f3607.jar" />
     </item>
     <item
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\io.fabric.sdk.android\fabric\1.3.5\jars\classes.jar"
+        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.google.android.exoplayer\exoplayer\r1.5.0\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="6e65060ef2ec6ec98365250d2119d7968626fd3f">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-38585cb3aed0d68f632462b9a262e746f04946d9.jar" />
+        sha1="8edce611040feb12ca309b2852bde512437cd635">
+        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-054cddf1371c7321d38e4816034b8ba5e79543c6.jar" />
     </item>
     <item
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-drive\7.5.0\jars\classes.jar"
+        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\palette-v7\23.1.0\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="f44d03c138cb6488fdbaa65e3a7e5878861a56d8">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-3a31f0f211752331ad199584affcb1f8e570f3f1.jar" />
+        sha1="167a5721524b1d2810d1b41ed76eff1d53a0e82b">
+        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-5802a688c79ba975680d6202f88bcd0f007462d1.jar" />
     </item>
     <item
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.pnikosis\materialish-progress\1.5\jars\classes.jar"
+        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.0\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="75c54c470e19b251749e6e6c2cf3d73c0b50aa64">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-d312b5a5936484819d1922909db02e6bac24f05c.jar" />
+        sha1="ddde541c289c8b816a8f8fd6c325d80788c522a6">
+        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-a01e7ff511754f5f5b4839ac774d8af56e52eb23.jar" />
+    </item>
+    <item
+        jar="C:\Users\Nick\.gradle\caches\modules-2\files-2.1\com.github.bumptech.glide\glide\3.4.0\82552712133e094bbb565289fb2bc2d2952ba551\glide-3.4.0.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="82552712133e094bbb565289fb2bc2d2952ba551">
+        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\glide-3.4.0-cdfa03dda7688b54df6db71458d1c5c919fbf05d.jar" />
     </item>
 
 </items>
