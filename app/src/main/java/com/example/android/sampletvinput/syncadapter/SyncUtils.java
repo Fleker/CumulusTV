@@ -28,7 +28,7 @@ import android.util.Log;
  * Static helper methods for working with the SyncAdapter framework.
  */
 public class SyncUtils {
-    private static final String TAG = "SyncUtils";
+    private static final String TAG = "cumulus:SyncUtils";
     private static final String CONTENT_AUTHORITY = TvContract.AUTHORITY;
     public static final String ACCOUNT_TYPE = "com.example.android.sampletvinput.account";
 

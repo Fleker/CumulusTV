@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.MediaController;
 import android.widget.VideoView;
@@ -49,6 +50,7 @@ public class SamplePlayer extends AppCompatActivity {
                 }
             });
         } else {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             getSupportActionBar().hide();
             String url = parameters.getStringExtra(KEY_VIDEO_URL);
             if(!url.isEmpty()) {

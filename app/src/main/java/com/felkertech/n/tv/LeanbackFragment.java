@@ -60,6 +60,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.android.sampletvinput.syncadapter.SyncUtils;
+import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.boilerplate.Utils.SettingsManager;
 import com.felkertech.n.cumulustv.ChannelDatabase;
 import com.felkertech.n.cumulustv.JSONChannel;
@@ -185,7 +186,23 @@ public class LeanbackFragment extends BrowseFragment
             e.printStackTrace();
         }
 
-        //Second row are actions
+        //Second row is suggested channels (not really yet)
+        HeaderItem suggestedChannelsHeader = new HeaderItem(1, "Suggested Channels");
+        GridItemPresenter suggestedChannelsPresenter = new GridItemPresenter();
+        ArrayObjectAdapter suggestedRowsAdapter = new ArrayObjectAdapter(suggestedChannelsPresenter);
+        suggestedRowsAdapter.add("//TODO");
+
+        //Third row is Drive
+        HeaderItem driveHeader = new HeaderItem(1, "Google Drive Sync");
+        GridItemPresenter drivePresenter = new GridItemPresenter();
+        ArrayObjectAdapter driveAdapter = new ArrayObjectAdapter(drivePresenter);
+        driveAdapter.add("Connect to Google Drive");
+        driveAdapter.add(getString(R.string.settings_refresh_cloud_local));
+        driveAdapter.add("Upload to cloud");
+        driveAdapter.add(getString(R.string.settings_switch_google_drive));
+        driveAdapter.add(getString(R.string.settings_sync_file));
+
+        //Fourth row are actions
         HeaderItem gridHeader = new HeaderItem(1, "Manage");
         GridItemPresenter mGridPresenter = new GridItemPresenter();
         ArrayObjectAdapter gridRowAdapter = new ArrayObjectAdapter(mGridPresenter);
@@ -193,16 +210,14 @@ public class LeanbackFragment extends BrowseFragment
         gridRowAdapter.add(getString(R.string.manage_add_suggested));
         gridRowAdapter.add(getString(R.string.manage_add_new));
         gridRowAdapter.add("Empty Plugin");
+        gridRowAdapter.add("Settings");
         mRowsAdapter.add(new ListRow(gridHeader, gridRowAdapter));
 
-        //Third row are settings/more
+        //Settings will become its own activity
         HeaderItem gridHeader2 = new HeaderItem(1, "Settings");
         GridItemPresenter mGridPresenter2 = new GridItemPresenter();
         ArrayObjectAdapter gridRowAdapter2 = new ArrayObjectAdapter(mGridPresenter2);
-        gridRowAdapter2.add(getString(R.string.settings_sync_file));
         gridRowAdapter2.add(getString(R.string.settings_browse_plugins));
-        gridRowAdapter2.add(getString(R.string.settings_switch_google_drive));
-        gridRowAdapter2.add(getString(R.string.settings_refresh_cloud_local));
         gridRowAdapter2.add(getString(R.string.settings_view_licenses));
         gridRowAdapter2.add(getString(R.string.settings_reset_channel_data));
         gridRowAdapter2.add(getString(R.string.about_app));
@@ -394,7 +409,7 @@ public class LeanbackFragment extends BrowseFragment
 
                 DriveFile file = Drive.DriveApi.getFile(gapi,DriveId.decodeFromString(driveId.encodeToString()));
                 //Write initial data
-                writeDriveData();
+                ActivityUtils.writeDriveData(getActivity(), gapi);
                 break;
             case REQUEST_CODE_OPENER:
                 if(data == null) //If op was canceled
@@ -417,7 +432,7 @@ public class LeanbackFragment extends BrowseFragment
                             @Override
                             public void onNegative(MaterialDialog dialog) {
                                 super.onNegative(dialog);
-                                writeDriveData();
+                                ActivityUtils.writeDriveData(getActivity(), gapi);
                             }
                         })
                         .show();
@@ -520,7 +535,7 @@ public class LeanbackFragment extends BrowseFragment
                                         try {
                                             Toast.makeText(getActivity(), charSequence+" has been added", Toast.LENGTH_SHORT).show();
                                             cd.add(j);
-                                            writeDriveData();
+                                            ActivityUtils.writeDriveData(getActivity(), gapi);
 //                                        SyncUtils.requestSync(info);
                                         } catch (JSONException e) {
                                             e.printStackTrace();
@@ -529,7 +544,7 @@ public class LeanbackFragment extends BrowseFragment
                                 }
                             }).show();
                 } else if(title.equals(getString(R.string.manage_add_new))) {
-                    openPluginPicker(true);
+                    ActivityUtils.openPluginPicker(true, getActivity());
                 } else if(title.equals(getString(R.string.settings_sync_file))) {
                     if (gapi.isConnected()) {
                         IntentSender intentSender = Drive.DriveApi
@@ -604,7 +619,7 @@ public class LeanbackFragment extends BrowseFragment
                 } else if(title.equals(getString(R.string.settings_refresh_cloud_local))) {
                     readDriveData();
                 } else if(title.equals(getString(R.string.settings_view_licenses))) {
-                    oslClick();
+                    ActivityUtils.oslClick(getActivity());
                 } else if(title.equals(getString(R.string.settings_reset_channel_data))) {
                     new MaterialDialog.Builder(getActivity())
                             .title("Delete all your channel data?")
@@ -755,111 +770,5 @@ public class LeanbackFragment extends BrowseFragment
 
         final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
         SyncUtils.requestSync(info);
-    }
-    public void writeDriveData() {
-        try {
-            sm.writeToGoogleDrive(DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id)), new ChannelDatabase(getActivity()).toString());
-
-            final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
-            SyncUtils.requestSync(info);
-        } catch(Exception e) {
-            //Probably invalid drive id. No worries, just let someone know
-            Toast.makeText(getActivity(), "Invalid drive file. Please choose a different file.", Toast.LENGTH_SHORT).show();
-        }
-    }
-    /* PLUGIN INTERFACES */
-    public void openPluginPicker(final boolean newChannel) {
-        openPluginPicker(newChannel, 0);
-    }
-    public void openPluginPicker(final boolean newChannel, final int index) {
-        final PackageManager pm = getActivity().getPackageManager();
-        final Intent plugin_addchannel = new Intent("com.felkertech.cumulustv.ADD_CHANNEL");
-        final List<ResolveInfo> plugins = pm.queryIntentActivities(plugin_addchannel, 0);
-        ArrayList<String> plugin_names = new ArrayList<String>();
-        for (ResolveInfo ri : plugins) {
-            plugin_names.add(ri.loadLabel(pm).toString());
-        }
-        String[] plugin_names2 = plugin_names.toArray(new String[plugin_names.size()]);
-        Log.d(TAG, "Load plugins " + plugin_names.toString());
-        if(plugin_names.size() == 1) {
-            Intent intent = new Intent();
-            if (newChannel) {
-                Log.d(TAG, "Try to start ");
-                ResolveInfo plugin_info = plugins.get(0);
-                Log.d(TAG, plugin_info.activityInfo.applicationInfo.packageName + " " +
-                        plugin_info.activityInfo.name);
-
-                intent.setClassName(plugin_info.activityInfo.applicationInfo.packageName,
-                        plugin_info.activityInfo.name);
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
-            } else {
-                ChannelDatabase cdn = new ChannelDatabase(getActivity());
-                try {
-                    JSONChannel jsonChannel = new JSONChannel(cdn.getJSONChannels().getJSONObject(index));
-                    ResolveInfo plugin_info = plugins.get(0);
-                    Log.d(TAG, plugin_info.activityInfo.applicationInfo.packageName + " " +
-                            plugin_info.activityInfo.name);
-                    intent.setClassName(plugin_info.activityInfo.applicationInfo.packageName,
-                            plugin_info.activityInfo.name);
-                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_EDIT);
-                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NUMBER, jsonChannel.getNumber());
-                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NAME, jsonChannel.getName());
-                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_URL, jsonChannel.getUrl());
-                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ICON, jsonChannel.getLogo());
-                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_SPLASH, jsonChannel.getSplashscreen());
-                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_GENRES, jsonChannel.getGenresString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            startActivity(intent);
-        } else {
-            new MaterialDialog.Builder(getActivity())
-                    .items(plugin_names2)
-                    .title("Choose an app")
-                    .content("Yes, if there's only one app, default to that one")
-                    .itemsCallback(new MaterialDialog.ListCallback() {
-                        @Override
-                        public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                            Toast.makeText(getActivity(), "Pick " + i, Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent();
-                            if (newChannel) {
-                                Log.d(TAG, "Try to start ");
-                                ResolveInfo plugin_info = plugins.get(i);
-                                Log.d(TAG, plugin_info.activityInfo.applicationInfo.packageName + " " +
-                                        plugin_info.activityInfo.name);
-
-                                intent.setClassName(plugin_info.activityInfo.applicationInfo.packageName,
-                                        plugin_info.activityInfo.name);
-
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
-                            } else {
-                                ChannelDatabase cdn = new ChannelDatabase(getActivity());
-                                try {
-                                    JSONChannel jsonChannel = new JSONChannel(cdn.getJSONChannels().getJSONObject(index));
-                                    ResolveInfo plugin_info = plugins.get(i);
-                                    intent.setClassName(plugin_info.activityInfo.applicationInfo.packageName,
-                                            plugin_info.activityInfo.name);
-                                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_EDIT);
-                                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NUMBER, jsonChannel.getNumber());
-                                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NAME, jsonChannel.getName());
-                                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_URL, jsonChannel.getUrl());
-                                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ICON, jsonChannel.getLogo());
-                                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_SPLASH, jsonChannel.getSplashscreen());
-                                    intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_GENRES, jsonChannel.getGenresString());
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            startActivity(intent);
-                        }
-                    }).show();
-        }
-    }
-    public void oslClick() {
-        new MaterialDialog.Builder(getActivity())
-                .title("Software Licenses")
-                .content(GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(getActivity()))
-                .show();
     }
 }

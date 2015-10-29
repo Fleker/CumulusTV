@@ -29,7 +29,7 @@
     <string name="play_pause_description">Play Pause Button</string>
     <string name="loading">Loading&#8230;</string>
     <string name="no_video_found">No video was found</string>
-    <string name="about_app">About DemoCast Player</string>
+    <string name="about_app">@string/settings_about</string>
     <string name="version">Version: %1$s</string>
     <string name="popular_header">Popular Videos</string>
     <string name="preferences">PREFERENCES</string>
@@ -66,7 +66,7 @@
     <string name="settings_refresh_cloud_local">Refresh Data - Cloud to Local</string>
     <string name="settings_view_licenses">View Software Licenses</string>
     <string name="settings_reset_channel_data">Reset Channel Data</string>
-    <string name="settings_about">About</string>
+    <string name="settings_about">About Cumulus TV</string>
     <string name="settings_read_xmltv">Read XMLTV (Experimental)</string>
 </resources>
 
