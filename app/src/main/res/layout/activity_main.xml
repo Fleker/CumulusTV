@@ -8,12 +8,12 @@
         android:scaleType="centerCrop"
         android:src="@drawable/c_background5"/>
 
-    <Button android:text="Add Stream" android:layout_width="match_parent"
+    <Button android:text="@string/manage_add_new" android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="112dp"
         style="@style/main_button"
         android:id="@+id/add"/>
-    <Button android:text="Add Suggested Stream" android:layout_width="match_parent"
+    <Button android:text="@string/manage_add_suggested" android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/add"
         style="@style/main_button"
@@ -23,7 +23,7 @@
         android:layout_below="@+id/suggested"
         style="@style/main_button"
         android:id="@+id/view"/>
-    <Button android:text="Go to Live Channels" android:layout_width="match_parent"
+    <Button android:text="@string/manage_livechannels" android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/view"
         style="@style/main_button"

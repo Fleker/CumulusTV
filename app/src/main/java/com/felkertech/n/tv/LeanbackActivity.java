@@ -15,9 +15,21 @@
 package com.felkertech.n.tv;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+import com.felkertech.n.ActivityUtils;
+import com.felkertech.n.boilerplate.Utils.SettingsManager;
+import com.felkertech.n.cumulustv.Intro.Intro;
+import com.felkertech.n.cumulustv.MainActivity;
 import com.felkertech.n.cumulustv.R;
+
+import io.fabric.sdk.android.Fabric;
 
 /*
  * MainActivity class that loads MainFragment
@@ -26,10 +38,35 @@ public class LeanbackActivity extends Activity {
     /**
      * Called when the activity is first created.
      */
+    LeanbackFragment lbf;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leanback);
+        lbf = (LeanbackFragment) getFragmentManager().findFragmentById(R.id.main_browse_fragment);
+        SettingsManager sm = new SettingsManager(this);
+        if(sm.getInt(R.string.sm_last_version) < MainActivity.LAST_GOOD_BUILD) {
+            startActivity(new Intent(this, Intro.class));
+            finish();
+            return;
+        }
+        Fabric.with(this, new Crashlytics());
+    }
+
+    @Override
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        Log.d("cumulus:leanback", "Got " + requestCode + " " + resultCode + " from activity");
+        ActivityUtils.onActivityResult(this, lbf.gapi, requestCode, resultCode, data);
+
+        Handler h = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                lbf.refreshUI();
+            }
+        };
+        h.sendEmptyMessageDelayed(0, 4000);
     }
 }

@@ -70,7 +70,7 @@ public class ChannelDatabase {
             ci.name = channel.getName();
             if(ci.name != null)
                 ci.originalNetworkId = ci.name.hashCode();
-            Log.d(TAG, "Hash "+ci.originalNetworkId+" for "+ci.name);
+//            Log.d(TAG, "Hash "+ci.originalNetworkId+" for "+ci.name);
 //            ci.originalNetworkId = i+1;
             ci.transportStreamId = 1;
             ci.serviceId = i+2;

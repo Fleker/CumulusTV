@@ -73,10 +73,10 @@ public class CardPresenter extends Presenter {
     @Override
     public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object item) {
         Movie movie = (Movie) item;
-        Log.d(TAG, movie+"");
+//        Log.d(TAG, movie+"");
         ImageCardView cardView = (ImageCardView) viewHolder.view;
 
-        Log.d(TAG, "onBindViewHolder");
+//        Log.d(TAG, "onBindViewHolder");
         if (movie.getCardImageUrl() != null) {
             cardView.setTitleText(movie.getTitle());
             cardView.setContentText(movie.getStudio());
@@ -118,7 +118,7 @@ public class CardPresenter extends Presenter {
 
             mCardView = (ImageCardView) view;
             mImageCardViewTarget = new PicassoImageCardViewTarget(mCardView, mContext);
-            mDefaultCardImage = mContext.getResources().getDrawable(R.drawable.movie);
+            mDefaultCardImage = mContext.getResources().getDrawable(R.drawable.ic_launcher);
         }
 
         public ImageCardView getCardView() {

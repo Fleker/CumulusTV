@@ -177,11 +177,11 @@ public class PlaybackOverlayActivity extends Activity implements
             public boolean onError(MediaPlayer mp, int what, int extra) {
                 String msg = "";
                 if (extra == MediaPlayer.MEDIA_ERROR_TIMED_OUT) {
-                    msg = getString(R.string.video_error_media_load_timeout);
+                    msg = getString(R.string.error_fragment);
                 } else if (what == MediaPlayer.MEDIA_ERROR_SERVER_DIED) {
-                    msg = getString(R.string.video_error_server_inaccessible);
+                    msg = getString(R.string.error_fragment);
                 } else {
-                    msg = getString(R.string.video_error_unknown_error);
+                    msg = getString(R.string.error_fragment);
                 }
                 mVideoView.stopPlayback();
                 mPlaybackState = LeanbackPlaybackState.IDLE;

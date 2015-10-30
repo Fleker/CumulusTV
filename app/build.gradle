@@ -23,11 +23,11 @@ android {
         minSdkVersion 21
         targetSdkVersion 23
         versionCode 25
-        versionName "1.4.0-dev 3"
-    }
-    signingConfigs {
+        versionName "1.4.1"
     }
     buildTypes {
+        debug {
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

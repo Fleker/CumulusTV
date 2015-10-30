@@ -6,7 +6,7 @@
         jumboMode="false"
         revision="22.0.1"
         sha1="068f6603ce77d2f2308d3998a790b9f064cd5dc0">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\debug\classes-7af977733f21f22c8eec4a74502fef2e76b06fbc.jar" />
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\pre-dexed\release\classes-7af977733f21f22c8eec4a74502fef2e76b06fbc.jar" />
     </item>
 
 </items>
