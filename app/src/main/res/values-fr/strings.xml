@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<resources>
+
+    <string name="title_activity_main">"Activité principale"</string>
+
+    <string name="hello_world">"Bonjour le monde!"</string>
+
+    <string name="action_settings">"Paramètres"</string>
+
+    <string name="intro_title_1">"Bienvenue à CumulusTV"</string>
+
+    <string name="intro_msg_1">"CumulusTV est une application qui vous permet de créer des canaux personnalisés qui peuvent être lus à travers les canaux en direct de l'application. Je ne sais pas quoi regarder? Choisissez un canal suggéré."</string>
+
+    <string name="intro_title_2">"Utilisez Google Drive"</string>
+
+    <string name="intro_msg_2">"Vous pouvez créer un fichier JSON sur Google Drive et avoir vos canaux synchronisés sur tous vos appareils. Modifications sur votre PC seront également les modifier sur ce dispositif, aussi longtemps que vous changez l'attribut `modified`."</string>
+
+    <string name="intro_title_3">"Problèmes Rapport"</string>
+
+    <string name="intro_msg_3">"Vous pouvez parcourir le code source sur GitHub et signaler tous les problèmes que vous trouvez ou suggérer une fonctionnalité. Vous avez un problème avec le JSON? Vous pouvez parcourir le format là."</string>
+
+    <string name="intro_title_4">"Commencer"</string>
+
+    <string name="intro_msg_4">"Après la création de canaux, aller à la télévision en direct de l'application. Vous devez vous assurer que vos chaînes sont configurés. Puis, choisissez les canaux que vous voulez visible."</string>
+
+    <!--<string name="browse_title"><![CDATA[Videos by Your Company]]></string>-->
+
+
+    <!--<string name="vertical_grid_title"><![CDATA[Vertical Video Grid]]></string>-->
+
+
+    <string name="about_app_description">"%1$s \ nBackground l'art par Marcelo Franceschini \ n \ nLe application est open source et disponible sur GitHub."</string>
+
+    <string name="grid_view">"Grille Voir"</string>
+
+    <string name="error_fragment">"Erreur Fragment"</string>
+
+    <string name="should_start">"devraient commencer"</string>
+
+    <string name="start_position">"startPosition"</string>
+
+    <string name="search_results">"Résultats de la recherche"</string>
+
+    <!--Leanback Menu Items-->
+
+
+    <string name="manage_livechannels">"Ouvrez Chaînes TV en direct"</string>
+
+    <string name="manage_add_suggested">"Ajouter Chaînes proposées"</string>
+
+    <string name="manage_add_new">"Ajouter un nouveau canal"</string>
+
+    <string name="settings_sync_file">"File Sync avec Google Drive"</string>
+
+    <string name="settings_browse_plugins">"Parcourir Plugins"</string>
+
+    <string name="settings_switch_google_drive">"Mettez fichier Google Drive"</string>
+
+    <string name="settings_refresh_cloud_local">"Actualiser les données - Cloud locale"</string>
+
+    <string name="settings_view_licenses">"Licences de logiciels Voir"</string>
+
+    <string name="settings_reset_channel_data">"Réinitialiser Data Channel"</string>
+
+    <string name="settings_about">"A propos de Cumulus TV"</string>
+
+    <string name="settings_read_xmltv">"Lire XMLTV (expérimentale)"</string>
+
+    <string name="more_actions">"Plus d'actions"</string>
+
+    <string name="create_syncable_file">"Créez un fichier synchronisable"</string>
+
+    <string name="create_syncable_file_description">"Enregistrer les infos du canal dans Google Drive de sorte que vous pouvez toujours y accéder"</string>
+
+    <string name="ok">"D'accord"</string>
+
+    <string name="no">"Non"</string>
+
+    <string name="no_live_channels">"Chaînes TV en direct est installé? Email felker.tech@gmail.com"</string>
+
+    <string name="downloaded">"Téléchargement complet"</string>
+
+    <string name="uploaded">"Téléchargez complète"</string>
+
+    <string name="invalid_file">"Fichier de lecteur non valide. S'il vous plaît choisir un fichier différent."</string>
+
+    <string name="sync_initial">"Choisir une action initiale"</string>
+
+    <string name="sync_cloud_local">"Écrire des données de nuages ​​à locale"</string>
+
+    <string name="sync_local_cloud">"Écrire des données locales vers le cloud"</string>
+
+    <string name="my_channels">"Mes Chaînes"</string>
+
+    <string name="no_channels">"Vous avez pas de flux"</string>
+
+    <string name="channel_dupe">"Chaîne déjà ajouté"</string>
+
+    <string name="channel_added">"%1$s a été ajoutée"</string>
+
+    <string name="suggested_channels">"Voici quelques chaînes proposées"</string>
+
+    <string name="no_channels_find">"Trouver quelques ruisseaux à ajouter"</string>
+
+    <string name="version">"%1$s"</string>
+
+</resources>

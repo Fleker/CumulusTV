@@ -1,13 +1,13 @@
 <resources>
-    <string name="app_name">Cumulus TV</string>
-    <string name="sample_tv_input_name">Cumulus TV</string>
+    <string name="app_name" translatable="false">Cumulus TV</string>
+    <string name="sample_tv_input_name" translatable="false">Cumulus TV</string>
     <string name="title_activity_main">MainActivity</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
-    <string name="sm_google_drive_id">GDRIVE_FILE</string>
-    <string name="sm_last_version">VERSION</string>
+    <string name="sm_google_drive_id" translatable="false">GDRIVE_FILE</string>
+    <string name="sm_last_version" translatable="false">VERSION</string>
 
     <string name="intro_title_1">Welcome to CumulusTV</string>
     <string name="intro_msg_1">"CumulusTV is an app that lets you create custom channels that can be played through the Live Channels app. Don't know what to watch? Pick a suggested channel."</string>
@@ -20,7 +20,8 @@
 
     <!--<string name="browse_title"><![CDATA[Videos by Your Company]]></string>-->
     <!--<string name="vertical_grid_title"><![CDATA[Vertical Video Grid]]></string>-->
-    <string name="about_app">@string/settings_about</string>
+    <string name="about_app" translatable="false">@string/settings_about</string>
+    <string name="about_app_description">%1$s\nBackground art by to Marcelo Franceschini\n\nThe app is open source and available on GitHub.</string>
     <string name="grid_view">Grid View</string>
     <string name="error_fragment">Error Fragment</string>
     <string name="should_start">shouldStart</string>
@@ -40,5 +41,27 @@
     <string name="settings_reset_channel_data">Reset Channel Data</string>
     <string name="settings_about">About Cumulus TV</string>
     <string name="settings_read_xmltv">Read XMLTV (Experimental)</string>
+
+    <string name="more_actions">More Actions</string>
+    <string name="create_syncable_file">"Create a syncable file"</string>
+    <string name="create_syncable_file_description">"Save channel info in Google Drive so you can always access it"</string>
+    <string name="ok">OK</string>
+    <string name="no">No</string>
+    <string name="no_live_channels">"Is Live Channels installed? Email felker.tech@gmail.com"</string>
+
+    <string name="downloaded">"Download complete"</string>
+    <string name="uploaded">"Upload complete"</string>
+    <string name="invalid_file">"Invalid drive file. Please choose a different file."</string>
+    <string name="sync_initial">"Choose Initial Action"</string>
+    <string name="sync_cloud_local">"Write cloud data to local"</string>
+    <string name="sync_local_cloud">"Write local data to cloud"</string>
+
+    <string name="my_channels">"My Channels"</string>
+    <string name="no_channels">"You have no streams"</string>
+    <string name="channel_dupe">Channel already added</string>
+    <string name="channel_added">%1$s has been added</string>
+    <string name="suggested_channels">"Here are some suggested channels"</string>
+    <string name="no_channels_find">"Find a few streams to add"</string>
+    <string name="version">Version %1$s</string>
 </resources>
 

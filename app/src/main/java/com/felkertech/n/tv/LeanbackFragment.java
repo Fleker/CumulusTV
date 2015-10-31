@@ -245,13 +245,17 @@ public class LeanbackFragment extends BrowseFragment
     }
 
     private void prepareBackgroundManager() {
-
-        mBackgroundManager = BackgroundManager.getInstance(getActivity());
-        mBackgroundManager.attach(getActivity().getWindow());
-        mDefaultBackground = getResources().getDrawable(R.drawable.c_background5);
-        mBackgroundManager.setDrawable(getResources().getDrawable(R.drawable.c_background5));
-        mMetrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
+        try {
+            mBackgroundManager = BackgroundManager.getInstance(getActivity());
+            mBackgroundManager.attach(getActivity().getWindow());
+            mDefaultBackground = getResources().getDrawable(R.drawable.c_background5);
+            mBackgroundManager.setDrawable(getResources().getDrawable(R.drawable.c_background5));
+            mMetrics = new DisplayMetrics();
+            getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
+        } catch(Exception e) {
+            e.printStackTrace();
+            //Do nothing
+        }
     }
 
     private void setupUIElements() {
@@ -299,7 +303,7 @@ public class LeanbackFragment extends BrowseFragment
                 }
             }
         }); //Enable GDrive
-        Log.d(TAG, sm.getString(R.string.sm_google_drive_id)+"<< for onConnected");
+        Log.d(TAG, sm.getString(R.string.sm_google_drive_id) + "<< for onConnected");
         if(sm.getString(R.string.sm_google_drive_id).isEmpty()) {
             //We need a new file
             new MaterialDialog.Builder(getActivity())

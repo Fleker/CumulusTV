@@ -94,10 +94,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 String[] channelnames = cdn.getChannelNames();
                 if(channelnames.length == 0) {
                     new MaterialDialog.Builder(MainActivity.this)
-                            .title("You have no streams")
-                            .content("Find a few streams to add")
-                            .positiveText("OK")
-                            .negativeText("No")
+                            .title(R.string.no_channels)
+                            .content(R.string.no_channels_find)
+                            .positiveText(R.string.ok)
+                            .negativeText(R.string.no)
                             .callback(new MaterialDialog.ButtonCallback() {
                                 @Override
                                 public void onPositive(MaterialDialog dialog) {
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             .show();
                 } else {
                     new MaterialDialog.Builder(MainActivity.this)
-                            .title("My Streams")
+                            .title(R.string.my_channels)
                             .items(channelnames)
                             .itemsCallback(new MaterialDialog.ListCallback() {
                                 @Override
@@ -168,9 +168,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
                 SyncUtils.requestSync(info);
                 if (cloudToLocal) {
-                    Toast.makeText(MainActivity.this, "Download complete", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, R.string.downloaded, Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(MainActivity.this, "Upload complete", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, R.string.uploaded, Toast.LENGTH_SHORT).show();
                 }
             }
         }); //Enable GDrive
@@ -178,10 +178,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         if(sm.getString(R.string.sm_google_drive_id).isEmpty()) {
             //We need a new file
             new MaterialDialog.Builder(MainActivity.this)
-                    .title("Create a syncable file")
-                    .content("Save channel info in Google Drive so you can always access it")
-                    .positiveText("OK")
-                    .negativeText("No")
+                    .title(R.string.create_syncable_file)
+                    .content(R.string.create_syncable_file_description)
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.no)
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.d(TAG, "onStart");
         try {
             PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            ((TextView) findViewById(R.id.version)).setText("Version "+pInfo.versionName);
+            ((TextView) findViewById(R.id.version)).setText(getString(R.string.version, pInfo.versionName));
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -291,11 +291,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 getString(R.string.settings_refresh_cloud_local),
                 getString(R.string.settings_view_licenses),
                 getString(R.string.settings_reset_channel_data),
-                getString(R.string.settings_about),
-                getString(R.string.settings_read_xmltv
-            )};
-        new MaterialDialog.Builder(MainActivity.this)
-                .title("More Actions")
+                getString(R.string.settings_about)
+            };
+        new MaterialDialog.Builder(this)
+                .title(R.string.more_actions)
                 .items(actions)
                 .itemsCallback(new MaterialDialog.ListCallback() {
                     @Override

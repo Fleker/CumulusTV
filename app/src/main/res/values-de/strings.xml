@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="title_activity_main">"Hauptaktivität"</string>
+
+    <string name="hello_world">"Hallo Welt!"</string>
+
+    <string name="action_settings">"Einstellungen"</string>
+
+    <string name="intro_title_1">"Willkommen in CumulusTV"</string>
+
+    <string name="intro_msg_1">"CumulusTV ist eine App, die Sie benutzerdefinierte Kanäle, die durch die Live-Kanäle App gespielt werden kann erstellen können. Sie wissen nicht, was zu sehen? Wählen Sie einen Kanal vorgeschlagen."</string>
+
+    <string name="intro_title_2">"Verwenden Sie Google Drive"</string>
+
+    <string name="intro_msg_2">"Sie können eine JSON-Datei auf Google Drive erstellen und Ihre Kanäle auf allen Ihren Geräten synchronisiert. Edits auf Ihrem PC wird sie auf diesem Gerät ebenfalls zu ändern, so lange wie Sie die `modified` Attribut ändern."</string>
+
+    <string name="intro_title_3">"Nachrichten verfügbar"</string>
+
+    <string name="intro_msg_3">"Sie können den Quellcode auf GitHub durchsuchen und melden Sie alle Probleme, die Sie finden, oder deuten auf eine Funktion. Haben Sie ein Problem mit dem JSON? Sie können das Format es zu durchsuchen."</string>
+
+    <string name="intro_title_4">"Erste Schritte"</string>
+
+    <string name="intro_msg_4">"Nach dem Erstellen Kanäle, gehen Sie zum Live-Kanäle App. Sie müssen sicherstellen, dass Ihre Kanäle Setup. Dann wählen Sie die Kanäle, die Sie sichtbar werden soll."</string>
+
+    <!--<string name="browse_title"><![CDATA[Videos by Your Company]]></string>-->
+
+
+    <!--<string name="vertical_grid_title"><![CDATA[Vertical Video Grid]]></string>-->
+
+
+    <string name="about_app_description">"%1$s \ nBackground Kunst durch Marcelo Franceschini \ n \ nDie App ist Open Source und auf GitHub verfügbar."</string>
+
+    <string name="grid_view">"Rasteransicht"</string>
+
+    <string name="error_fragment">"Fehler Fragment"</string>
+
+    <string name="should_start">"shouldStart"</string>
+
+    <string name="start_position">"start"</string>
+
+    <string name="search_results">"Suchergebnisse"</string>
+
+    <!--Leanback Menu Items-->
+
+
+    <string name="manage_livechannels">"Öffnen Sie Live-Kanäle"</string>
+
+    <string name="manage_add_suggested">"In Empfohlene Kanäle"</string>
+
+    <string name="manage_add_new">"In New-Kanal"</string>
+
+    <string name="settings_sync_file">"Sync-Datei mit Google Drive"</string>
+
+    <string name="settings_browse_plugins">"Durchsuchen Plugins"</string>
+
+    <string name="settings_switch_google_drive">"Schalten Sie Google Drive Datei-"</string>
+
+    <string name="settings_refresh_cloud_local">"Daten aktualisieren - Cloud, um Local"</string>
+
+    <string name="settings_view_licenses">"View Software-Lizenzen"</string>
+
+    <string name="settings_reset_channel_data">"Zurücksetzen Kanaldaten"</string>
+
+    <string name="settings_about">"Über Cumulus TV"</string>
+
+    <string name="settings_read_xmltv">"XMLTV (experimentell) Lesen"</string>
+
+    <string name="more_actions">"Mehr Aktionen"</string>
+
+    <string name="create_syncable_file">"Erstellen Sie eine Datei synchronisierbar"</string>
+
+    <string name="create_syncable_file_description">"Sparen Kanalinformationen in Google Drive, so dass Sie immer darauf zugreifen können"</string>
+
+    <string name="ok">"Ok"</string>
+
+    <string name="no">"Nein"</string>
+
+    <string name="no_live_channels">"Ist Live-Kanäle installiert? Email felker.tech@gmail.com"</string>
+
+    <string name="downloaded">"Download abgeschlossen"</string>
+
+    <string name="uploaded">"Upload abgeschlossen"</string>
+
+    <string name="invalid_file">"Ungültige Laufwerkdatei. Bitte wähle eine andere Datei."</string>
+
+    <string name="sync_initial">"Wählen Sie Initial Action-"</string>
+
+    <string name="sync_cloud_local">"Schreiben Wolkendaten, lokale"</string>
+
+    <string name="sync_local_cloud">"Schreiben Sie lokale Daten zu Wolke"</string>
+
+    <string name="my_channels">"Meine Channels"</string>
+
+    <string name="no_channels">"Sie haben keine Bäche"</string>
+
+    <string name="channel_dupe">"Kanal bereits hinzugefügt"</string>
+
+    <string name="channel_added">"%1$s wurde hinzugefügt"</string>
+
+    <string name="suggested_channels">"Hier einige Vorschläge Kanäle"</string>
+
+    <string name="no_channels_find">"Finden Sie ein paar Bäche hinzufügen"</string>
+
+    <string name="version">"%1$s"</string>
+</resources>

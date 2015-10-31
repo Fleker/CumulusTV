@@ -109,7 +109,7 @@ public class ActivityUtils {
         }
         final String[] channelList = channeltext.toArray(new String[channeltext.size()]);
         new MaterialDialog.Builder(mActivity)
-                .title("Here are some suggested streams:")
+                .title(R.string.suggested_channels)
                 .items(channelList)
                 .itemsCallback(new MaterialDialog.ListCallback() {
                     @Override
@@ -123,11 +123,11 @@ public class ActivityUtils {
         Log.d(TAG, "I've been told to add "+j.toString());
         ChannelDatabase cd = new ChannelDatabase(mActivity);
         if(cd.channelExists(j)) {
-            Toast.makeText(mActivity, "Channel already added", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, R.string.channel_dupe, Toast.LENGTH_SHORT).show();
         } else {
             try {
                 if(name != null)
-                    Toast.makeText(mActivity, name+" has been added", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, mActivity.getString(R.string.channel_added, name), Toast.LENGTH_SHORT).show();
                 cd.add(j);
                 ActivityUtils.writeDriveData(mActivity, gapi);
                 Log.d(TAG, "Added");
@@ -209,17 +209,19 @@ public class ActivityUtils {
         } catch(Exception e) {
             //Probably invalid drive id. No worries, just let someone know
             Log.e(TAG, e.getMessage() + "");
-            Toast.makeText(context, "Invalid drive file. Please choose a different file.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.invalid_file, Toast.LENGTH_SHORT).show();
         }
     }
     public static void readDriveData(Context mContext, GoogleApiClient gapi) {
+        if(mContext == null)
+            return;
         SettingsManager sm = new SettingsManager(mContext);
         sm.setGoogleDriveSyncable(gapi, null);
         DriveId did;
         try {
             did = DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id));
         } catch (Exception e) {
-            Toast.makeText(mContext, "Invalid drive file. Please choose a different file.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, R.string.invalid_file, Toast.LENGTH_SHORT).show();
             return;
         }
         sm.readFromGoogleDrive(did, ChannelDatabase.KEY);
@@ -446,7 +448,7 @@ public class ActivityUtils {
     public static void launchLiveChannels(Activity mActivity) {
         Intent i = mActivity.getPackageManager().getLaunchIntentForPackage("com.google.android.tv");
         if (i == null) {
-            Toast.makeText(mActivity, "Is Live Channels installed? Email felker.tech@gmail.com", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, R.string.no_live_channels, Toast.LENGTH_SHORT).show();
         } else {
             mActivity.startActivity(i);
         }
@@ -494,9 +496,9 @@ public class ActivityUtils {
                 Log.d(TAG, driveId.encodeToString() + ", " + driveId.getResourceId() + ", " + driveId.toInvariantString());
                 sm.setString(R.string.sm_google_drive_id, driveId.encodeToString());
                 new MaterialDialog.Builder(mActivity)
-                        .title("Choose Initial Action")
-                        .positiveText("Write cloud data to local")
-                        .negativeText("Write local data to cloud")
+                        .title(R.string.sync_initial)
+                        .positiveText(R.string.sync_cloud_local)
+                        .negativeText(R.string.sync_local_cloud)
                         .callback(new MaterialDialog.ButtonCallback() {
                             @Override
                             public void onPositive(MaterialDialog dialog) {
@@ -520,8 +522,7 @@ public class ActivityUtils {
             PackageInfo pInfo = mActivity.getPackageManager().getPackageInfo(mActivity.getPackageName(), 0);
             new MaterialDialog.Builder(mActivity)
                     .title(R.string.app_name)
-                    .content(pInfo.versionName+"\n\nBackground art by to Marcelo Franceschini\n\n" +
-                            "The app is open source and available on GitHub.")
+                    .content(mActivity.getString(R.string.about_app_description, pInfo.versionName))
                     .positiveText("GitHub")
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
