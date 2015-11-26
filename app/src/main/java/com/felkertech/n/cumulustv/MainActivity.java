@@ -47,6 +47,8 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.Manifest;
+
 import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -54,7 +56,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     GoogleApiClient gapi;
     private static final int RESOLVE_CONNECTION_REQUEST_CODE = 100;
     private static final int REQUEST_CODE_CREATOR = 102;
-    public static final int LAST_GOOD_BUILD = 25;
     SettingsManager sm;
     MaterialDialog md;
 
@@ -71,11 +72,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .addOnConnectionFailedListener(this)
                 .build();
         sm = new SettingsManager(this);
-        if(sm.getInt(R.string.sm_last_version) < LAST_GOOD_BUILD) {
-            startActivity(new Intent(this, Intro.class));
-            finish();
-            return;
-        }
+        ActivityUtils.openIntroIfNeeded(this);
         Fabric.with(this, new Crashlytics());
 
         if(!AppUtils.isTV(this)) {
@@ -114,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             .itemsCallback(new MaterialDialog.ListCallback() {
                                 @Override
                                 public void onSelection(MaterialDialog materialDialog, View view, final int i, CharSequence charSequence) {
-                                    Toast.makeText(getApplicationContext(), charSequence + " selected", Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(getApplicationContext(), charSequence + " selected", Toast.LENGTH_SHORT).show();
                                     try {
                                         JSONChannel jsonChannel = new JSONChannel(cdn.getJSONChannels().getJSONObject(i));
                                         ActivityUtils.editChannel(MainActivity.this, jsonChannel.getNumber());
@@ -316,9 +313,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                 ActivityUtils.deleteChannelData(MainActivity.this, gapi);
                                 break;
                             case 5:
-                                Intent gi = new Intent(Intent.ACTION_VIEW);
-                                gi.setData(Uri.parse("http://github.com/fleker/cumulustv"));
-                                startActivity(gi);
+                                ActivityUtils.openAbout(MainActivity.this);
                                 break;
                             case 6:
                                 final OkHttpClient client = new OkHttpClient();

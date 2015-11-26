@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.tv.TvContentRating;
 import android.media.tv.TvContract;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -87,6 +88,8 @@ public class ChannelDatabase {
         List<TvManager.ProgramInfo> infoList = new ArrayList<>();
 //        String streamUrl = channelInfo.programs.get(0).videoUrl;
         JSONChannel jsonChannel = findChannel(channelInfo.number);
+        if(jsonChannel == null)
+            return null;
         infoList.add(new TvManager.ProgramInfo(channelInfo.name+" Live", channelInfo.logoUrl,
                 "Currently streaming", 60*60, new TvContentRating[] {rating}, jsonChannel.getGenres(), streamUrl, TvInputPlayer.SOURCE_TYPE_HTTP_PROGRESSIVE, 0));
         return infoList;
@@ -220,7 +223,7 @@ public class ChannelDatabase {
                 JSONArray jsonArray = getJSONChannels();
                 for(int i = 0;i<jsonArray.length();i++) {
                     JSONChannel jsonChannel = new JSONChannel(jsonArray.getJSONObject(i));
-                    if(jsonChannel.getUrl().equals(n00b.getUrl())) {
+                    if(jsonChannel.getUrl() != null && jsonChannel.getUrl().equals(n00b.getUrl())) {
                         jsonArray.remove(i);
                         save();
                     }
@@ -265,44 +268,83 @@ public class ChannelDatabase {
     public void resetPossibleGenres() throws JSONException {
         JSONArray genres = new JSONArray();
         genres.put(TvContract.Programs.Genres.ANIMAL_WILDLIFE);
-        genres.put(TvContract.Programs.Genres.ARTS);
-        genres.put(TvContract.Programs.Genres.COMEDY);
-        genres.put(TvContract.Programs.Genres.DRAMA);
-        genres.put(TvContract.Programs.Genres.EDUCATION);
-        genres.put(TvContract.Programs.Genres.ENTERTAINMENT);
-        genres.put(TvContract.Programs.Genres.FAMILY_KIDS);
-        genres.put(TvContract.Programs.Genres.GAMING);
-        genres.put(TvContract.Programs.Genres.LIFE_STYLE);
-        genres.put(TvContract.Programs.Genres.MOVIES);
-        genres.put(TvContract.Programs.Genres.MUSIC);
-        genres.put(TvContract.Programs.Genres.NEWS);
-        genres.put(TvContract.Programs.Genres.PREMIER);
-        genres.put(TvContract.Programs.Genres.SHOPPING);
-        genres.put(TvContract.Programs.Genres.SPORTS);
-        genres.put(TvContract.Programs.Genres.TECH_SCIENCE);
-        genres.put(TvContract.Programs.Genres.TRAVEL);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            genres.put(TvContract.Programs.Genres.ANIMAL_WILDLIFE);
+            genres.put(TvContract.Programs.Genres.ARTS);
+            genres.put(TvContract.Programs.Genres.COMEDY);
+            genres.put(TvContract.Programs.Genres.DRAMA);
+            genres.put(TvContract.Programs.Genres.EDUCATION);
+            genres.put(TvContract.Programs.Genres.ENTERTAINMENT);
+            genres.put(TvContract.Programs.Genres.FAMILY_KIDS);
+            genres.put(TvContract.Programs.Genres.GAMING);
+            genres.put(TvContract.Programs.Genres.LIFE_STYLE);
+            genres.put(TvContract.Programs.Genres.MOVIES);
+            genres.put(TvContract.Programs.Genres.MUSIC);
+            genres.put(TvContract.Programs.Genres.NEWS);
+            genres.put(TvContract.Programs.Genres.PREMIER);
+            genres.put(TvContract.Programs.Genres.SHOPPING);
+            genres.put(TvContract.Programs.Genres.SPORTS);
+            genres.put(TvContract.Programs.Genres.TECH_SCIENCE);
+            genres.put(TvContract.Programs.Genres.TRAVEL);
+        } else {
+            genres.put(TvContract.Programs.Genres.ANIMAL_WILDLIFE);
+            genres.put(TvContract.Programs.Genres.COMEDY);
+            genres.put(TvContract.Programs.Genres.DRAMA);
+            genres.put(TvContract.Programs.Genres.EDUCATION);
+            genres.put(TvContract.Programs.Genres.FAMILY_KIDS);
+            genres.put(TvContract.Programs.Genres.GAMING);
+            genres.put(TvContract.Programs.Genres.MOVIES);
+            genres.put(TvContract.Programs.Genres.NEWS);
+            genres.put(TvContract.Programs.Genres.SHOPPING);
+            genres.put(TvContract.Programs.Genres.SPORTS);
+            genres.put(TvContract.Programs.Genres.TRAVEL);
+        }
         obj.put("possibleGenres", genres);
     }
 
     public static String[] getAllGenres() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            return new String[] {
+                    TvContract.Programs.Genres.ANIMAL_WILDLIFE,
+                    TvContract.Programs.Genres.ARTS,
+                    TvContract.Programs.Genres.COMEDY,
+                    TvContract.Programs.Genres.DRAMA,
+                    TvContract.Programs.Genres.EDUCATION,
+                    TvContract.Programs.Genres.ENTERTAINMENT,
+                    TvContract.Programs.Genres.FAMILY_KIDS,
+                    TvContract.Programs.Genres.GAMING,
+                    TvContract.Programs.Genres.LIFE_STYLE,
+                    TvContract.Programs.Genres.MOVIES,
+                    TvContract.Programs.Genres.MUSIC,
+                    TvContract.Programs.Genres.NEWS,
+                    TvContract.Programs.Genres.PREMIER,
+                    TvContract.Programs.Genres.SHOPPING,
+                    TvContract.Programs.Genres.SPORTS,
+                    TvContract.Programs.Genres.TECH_SCIENCE,
+                    TvContract.Programs.Genres.TRAVEL,
+            };
+        }
         return new String[] {
             TvContract.Programs.Genres.ANIMAL_WILDLIFE,
-            TvContract.Programs.Genres.ARTS,
             TvContract.Programs.Genres.COMEDY,
             TvContract.Programs.Genres.DRAMA,
             TvContract.Programs.Genres.EDUCATION,
-            TvContract.Programs.Genres.ENTERTAINMENT,
             TvContract.Programs.Genres.FAMILY_KIDS,
             TvContract.Programs.Genres.GAMING,
-            TvContract.Programs.Genres.LIFE_STYLE,
             TvContract.Programs.Genres.MOVIES,
-            TvContract.Programs.Genres.MUSIC,
             TvContract.Programs.Genres.NEWS,
-            TvContract.Programs.Genres.PREMIER,
             TvContract.Programs.Genres.SHOPPING,
             TvContract.Programs.Genres.SPORTS,
-            TvContract.Programs.Genres.TECH_SCIENCE,
             TvContract.Programs.Genres.TRAVEL,
         };
+    }
+
+    public static int getAvailableChannelNumber(Context mContext) {
+        ChannelDatabase cd = new ChannelDatabase(mContext);
+        int i = 1;
+        while(cd.channelNumberExists(i+"")) {
+            i++;
+        }
+        return i;
     }
 }

@@ -17,6 +17,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,7 @@ import com.felkertech.n.cumulustv.R;
 /*
  * BrowseErrorActivity shows how to use ErrorFragment
  */
-public class BrowseErrorActivity extends Activity {
+public class BrowseErrorActivity extends AppCompatActivity {
     private static int TIMER_DELAY = 3000;
     private static int SPINNER_WIDTH = 100;
     private static int SPINNER_HEIGHT = 100;

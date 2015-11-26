@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -34,7 +35,7 @@ import io.fabric.sdk.android.Fabric;
 /*
  * MainActivity class that loads MainFragment
  */
-public class LeanbackActivity extends Activity {
+public class LeanbackActivity extends AppCompatActivity {
     /**
      * Called when the activity is first created.
      */
@@ -46,12 +47,7 @@ public class LeanbackActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leanback);
         lbf = (LeanbackFragment) getFragmentManager().findFragmentById(R.id.main_browse_fragment);
-        SettingsManager sm = new SettingsManager(this);
-        if(sm.getInt(R.string.sm_last_version) < MainActivity.LAST_GOOD_BUILD) {
-            startActivity(new Intent(this, Intro.class));
-            finish();
-            return;
-        }
+        ActivityUtils.openIntroIfNeeded(this);
         Fabric.with(this, new Crashlytics());
     }
 

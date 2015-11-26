@@ -10,6 +10,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.media.tv.TvContract;
 import android.net.Uri;
+import android.provider.Settings;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -17,16 +19,22 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.android.sampletvinput.syncadapter.SyncUtils;
+import com.felkertech.n.boilerplate.Utils.AppUtils;
+import com.felkertech.n.boilerplate.Utils.PermissionUtils;
 import com.felkertech.n.boilerplate.Utils.SettingsManager;
 import com.felkertech.n.cumulustv.ChannelDatabase;
+import com.felkertech.n.cumulustv.Intro.Intro;
 import com.felkertech.n.cumulustv.JSONChannel;
 import com.felkertech.n.cumulustv.MainActivity;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.SamplePlayer;
 import com.felkertech.n.plugins.CumulusTvPlugin;
+import com.felkertech.n.tv.LeanbackActivity;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveApi;
 import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
@@ -36,11 +44,13 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.jar.Manifest;
 
 /**
  * Created by guest1 on 10/29/2015.
  */
 public class ActivityUtils {
+    public final static int LAST_GOOD_BUILD = 27;
     private static final String TAG = "cumulus:ActivityUtils";
     /* SUGGESTED CHANNELS */
     public static JSONChannel[] getSuggestedChannels() {
@@ -101,7 +111,7 @@ public class ActivityUtils {
         };
         return channels;
     }
-    public static void openSuggestedChannels(final Activity mActivity, final GoogleApiClient gapi) {
+    public static void openSuggestedChannels(final AppCompatActivity mActivity, final GoogleApiClient gapi) {
         final JSONChannel[] channels = getSuggestedChannels();
         ArrayList<String> channeltext = new ArrayList<String>();
         for(JSONChannel j: channels) {
@@ -119,7 +129,7 @@ public class ActivityUtils {
                     }
                 }).show();
     }
-    public static void addChannel(Activity mActivity, GoogleApiClient gapi, JSONChannel j, String name) {
+    public static void addChannel(AppCompatActivity mActivity, GoogleApiClient gapi, JSONChannel j, String name) {
         Log.d(TAG, "I've been told to add "+j.toString());
         ChannelDatabase cd = new ChannelDatabase(mActivity);
         if(cd.channelExists(j)) {
@@ -140,6 +150,10 @@ public class ActivityUtils {
     public static void editChannel(final Activity mActivity, final String channel) {
         ChannelDatabase cdn = new ChannelDatabase(mActivity);
         JSONChannel jsonChannel = cdn.findChannel(channel); //Find by number
+        if(channel == null) {
+            Toast.makeText(mActivity, "Channel is invalid", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if(jsonChannel.hasSource()) {
             //Search through all plugins for one of a given source
             PackageManager pm = mActivity.getPackageManager();
@@ -193,7 +207,34 @@ public class ActivityUtils {
     }
 
     /* DRIVE */
-    public static void writeDriveData(Context context, GoogleApiClient gapi) {
+    public static void writeDriveData(final AppCompatActivity context, GoogleApiClient gapi) {
+        //Ask here for permission to storage
+        PermissionUtils.requestPermissionIfDisabled(context, android.Manifest.permission_group.STORAGE, context.getString(R.string.permission_storage_rationale));
+        if(PermissionUtils.isDisabled(context, android.Manifest.permission_group.STORAGE)) {
+            new MaterialDialog.Builder(context)
+                    .title(R.string.permission_not_allowed_error)
+                    .content(R.string.permission_not_allowed_text)
+                    .positiveText(R.string.permission_action_settings)
+                    .negativeText(R.string.ok)
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
+                            super.onPositive(dialog);
+                            Intent intent = new Intent();
+                            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", context.getPackageName(), null);
+                            intent.setData(uri);
+                        }
+                    })
+                    .build();
+        }
+        actuallyWriteData(context, gapi);
+    }
+    public static void writeDriveData(final Context context, GoogleApiClient gapi) {
+        //This can crash
+        actuallyWriteData(context, gapi);
+    }
+    private static void actuallyWriteData(final Context context, GoogleApiClient gapi) {
         SettingsManager sm = new SettingsManager(context);
         sm.setGoogleDriveSyncable(gapi, new SettingsManager.GoogleDriveListener() {
             @Override
@@ -228,6 +269,22 @@ public class ActivityUtils {
 
         final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
         SyncUtils.requestSync(info);
+    }
+    public static void createDriveData(AppCompatActivity activity, final GoogleApiClient gapi, final ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback) {
+        new MaterialDialog.Builder(activity)
+                .title("Create a syncable file")
+                .content("Save channel info in Google Drive so you can always access it")
+                .positiveText("OK")
+                .negativeText("No")
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        super.onPositive(dialog);
+                        Drive.DriveApi.newDriveContents(gapi)
+                                .setResultCallback(driveContentsCallback);
+                    }
+                })
+                .show();
     }
     public static void switchGoogleDrive(Activity mActivity, GoogleApiClient gapi) {
         /*if (gapi.isConnected()) {
@@ -367,7 +424,7 @@ public class ActivityUtils {
                     .itemsCallback(new MaterialDialog.ListCallback() {
                         @Override
                         public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                            Toast.makeText(activity, "Pick " + i, Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(activity, "Pick " + i, Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent();
                             if (newChannel) {
                                 Log.d(TAG, "Try to start ");
@@ -453,7 +510,7 @@ public class ActivityUtils {
             mActivity.startActivity(i);
         }
     }
-    public static void onActivityResult(final Activity mActivity, final GoogleApiClient gapi, final int requestCode, final int resultCode, final Intent data) {
+    public static void onActivityResult(final AppCompatActivity mActivity, final GoogleApiClient gapi, final int requestCode, final int resultCode, final Intent data) {
         SettingsManager sm = new SettingsManager(mActivity);
         switch (requestCode) {
             case RESOLVE_CONNECTION_REQUEST_CODE:
@@ -523,7 +580,8 @@ public class ActivityUtils {
             new MaterialDialog.Builder(mActivity)
                     .title(R.string.app_name)
                     .content(mActivity.getString(R.string.about_app_description, pInfo.versionName))
-                    .positiveText("GitHub")
+                    .positiveText(R.string.github)
+                    .negativeText(R.string.help)
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
@@ -531,6 +589,12 @@ public class ActivityUtils {
                             Intent gi = new Intent(Intent.ACTION_VIEW);
                             gi.setData(Uri.parse("http://github.com/fleker/cumulustv"));
                             mActivity.startActivity(gi);
+                        }
+
+                        @Override
+                        public void onNegative(MaterialDialog dialog) {
+                            super.onNegative(dialog);
+                            ActivityUtils.openIntroVoluntarily(mActivity);
                         }
                     })
                     .show();
@@ -542,5 +606,23 @@ public class ActivityUtils {
         Intent i = new Intent(mActivity, SamplePlayer.class);
         i.putExtra(SamplePlayer.KEY_VIDEO_URL, url);
         mActivity.startActivity(i);
+    }
+    public static void openIntroIfNeeded(Activity mActivity) {
+        SettingsManager sm = new SettingsManager(mActivity);
+        if(sm.getInt(R.string.sm_last_version) < LAST_GOOD_BUILD) {
+            mActivity.startActivity(new Intent(mActivity, Intro.class));
+            mActivity.finish();
+            return;
+        }
+    }
+    public static void openIntroVoluntarily(Activity mActivity) {
+        mActivity.startActivity(new Intent(mActivity, Intro.class));
+        mActivity.finish();
+    }
+    public static Class getMainActivity(Activity mActivity) {
+        if(AppUtils.isTV(mActivity)) {
+            return LeanbackActivity.class;
+        }
+        return MainActivity.class;
     }
 }

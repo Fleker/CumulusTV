@@ -49,6 +49,7 @@ import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -259,17 +260,21 @@ public class LeanbackFragment extends BrowseFragment
     }
 
     private void setupUIElements() {
-        // setBadgeDrawable(getActivity().getResources().getDrawable(
-        // R.drawable.videos_by_google_banner));
-        setTitle(getString(R.string.app_name)); // Badge, when set, takes precedent
-        // over title
-        setHeadersState(HEADERS_ENABLED);
-        setHeadersTransitionOnBackEnabled(true);
+        try {
+            // setBadgeDrawable(getActivity().getResources().getDrawable(
+            // R.drawable.videos_by_google_banner));
+            setTitle(getString(R.string.app_name)); // Badge, when set, takes precedent
+            // over title
+            setHeadersState(HEADERS_ENABLED);
+            setHeadersTransitionOnBackEnabled(true);
 
-        // set fastLane (or headers) background color
-        setBrandColor(getResources().getColor(R.color.colorPrimary));
-        // set search icon color
+            // set fastLane (or headers) background color
+            setBrandColor(getResources().getColor(R.color.colorPrimary));
+            // set search icon color
 //        setSearchAffordanceColor(getResources().getColor(R.color.search_opaque));
+        } catch(Exception e) {
+            //Shrug.gif
+        }
     }
 
     private void setupEventListeners() {
@@ -306,20 +311,7 @@ public class LeanbackFragment extends BrowseFragment
         Log.d(TAG, sm.getString(R.string.sm_google_drive_id) + "<< for onConnected");
         if(sm.getString(R.string.sm_google_drive_id).isEmpty()) {
             //We need a new file
-            new MaterialDialog.Builder(getActivity())
-                    .title("Create a syncable file")
-                    .content("Save channel info in Google Drive so you can always access it")
-                    .positiveText("OK")
-                    .negativeText("No")
-                    .callback(new MaterialDialog.ButtonCallback() {
-                        @Override
-                        public void onPositive(MaterialDialog dialog) {
-                            super.onPositive(dialog);
-                            Drive.DriveApi.newDriveContents(gapi)
-                                    .setResultCallback(driveContentsCallback);
-                        }
-                    })
-                    .show();
+            ActivityUtils.createDriveData((AppCompatActivity) getActivity(), gapi, driveContentsCallback);
         } else {
             //Great, user already has sync enabled, let's resync
             ActivityUtils.readDriveData(getActivity(), gapi);
@@ -402,7 +394,7 @@ public class LeanbackFragment extends BrowseFragment
                 } else if(title.equals(getString(R.string.manage_livechannels))) {
                     ActivityUtils.launchLiveChannels(getActivity());
                 } else if(title.equals(getString(R.string.manage_add_suggested))) {
-                   ActivityUtils.openSuggestedChannels(getActivity(), gapi);
+                   ActivityUtils.openSuggestedChannels((AppCompatActivity) getActivity(), gapi);
                 } else if(title.equals(getString(R.string.manage_add_new))) {
                     ActivityUtils.openPluginPicker(true, getActivity());
                 } else if(title.equals(getString(R.string.settings_sync_file))) {

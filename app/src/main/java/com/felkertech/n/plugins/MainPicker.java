@@ -1,9 +1,17 @@
 package com.felkertech.n.plugins;
 
+import android.Manifest;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.media.tv.TvContract;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceView;
@@ -18,11 +26,17 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 import com.example.android.sampletvinput.player.TvInputPlayer;
 import com.felkertech.n.boilerplate.Utils.CommaArray;
+import com.felkertech.n.boilerplate.Utils.PermissionUtils;
 import com.felkertech.n.cumulustv.ChannelDatabase;
 import com.felkertech.n.cumulustv.JSONChannel;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.SamplePlayer;
+import com.felkertech.n.fileio.M3UParser;
 
+import org.json.JSONException;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import io.fabric.sdk.android.Fabric;
@@ -44,19 +58,152 @@ public class MainPicker extends CumulusTvPlugin {
         setProprietaryEditing(false);
         setContentView(R.layout.fullphoto);
         Log.d(TAG, areEditing() + "<");
-        if(getChannel() != null)
-            Log.d(TAG, getChannel().getName() + "<<");
-        loadDialogs();
+        Intent i = getIntent();
+        Log.d(TAG, i.getAction()+"<<");
+        if(i.getAction() != null && (i.getAction().equals(Intent.ACTION_SEND) || i.getAction().equals(Intent.ACTION_VIEW))) {
+            Log.d(TAG, "User shared to this");
+            final Uri uri = getIntent().getData();
+            //At this point we need to check for the storage
+            if(PermissionUtils.isDisabled(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                Toast.makeText(this, R.string.permission_not_allowed_error, Toast.LENGTH_SHORT).show();
+                finish();
+                return;
+            }
+            try {
+                Log.d(TAG, uri.toString());
+                if(uri.toString().contains("http")) { //Import a channel
+                    //Copy from `loadDialogs()` in edit mode
+                    final MaterialDialog md = new MaterialDialog.Builder(MainPicker.this)
+                            .title(R.string.add_new_channel)
+                            .positiveText(R.string.create)
+                            .neutralText(R.string.cancel)
+                            .dismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    finish();
+                                }
+                            })
+                            .customView(R.layout.dialog_channel_new, true)
+                            .callback(new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog dialog) {
+                                    super.onPositive(dialog);
+                                    RelativeLayout l = (RelativeLayout) dialog.getCustomView();
+                                    String number = ((EditText) l.findViewById(R.id.number)).getText().toString();
+                                    Log.d(TAG, "Channel " + number);
+                                    String name = ((EditText) l.findViewById(R.id.name)).getText().toString();
+                                    String logo = ((EditText) l.findViewById(R.id.logo)).getText().toString();
+                                    String stream = ((EditText) l.findViewById(R.id.stream)).getText().toString();
+                                    String splash = ((EditText) l.findViewById(R.id.splash)).getText().toString();
+                                    String genres = ((Button) l.findViewById(R.id.genres)).getText().toString();
 
-
+                                    JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, genres);
+                                    saveChannel(jsch);
+                                }
+                            })
+                            .show();
+                    md.setOnShowListener(new DialogInterface.OnShowListener() {
+                        @Override
+                        public void onShow(DialogInterface dialog) {
+                            RelativeLayout l = (RelativeLayout) md.getCustomView();
+                           ((EditText) l.findViewById(R.id.stream)).setText(uri.toString());
+                            loadStream(md, uri.toString());
+                        }
+                    });
+                    includeGenrePicker(md, "");
+                    ((EditText) md.getCustomView().findViewById(R.id.stream)).setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                        @Override
+                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                            loadStream(md, uri.toString());
+                            return false;
+                        }
+                    });
+                    loadStream(md, uri.toString());
+                    md.findViewById(R.id.stream_open).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent i = new Intent(MainPicker.this, SamplePlayer.class);
+                            i.putExtra(SamplePlayer.KEY_VIDEO_URL, uri.toString());
+                            startActivity(i);
+                        }
+                    });
+                } else {
+                    ContentResolver resolver = getContentResolver();
+                    InputStream input = resolver.openInputStream(uri);
+                    final M3UParser.TvListing listings = M3UParser.parse(input, getApplicationContext());
+                    new MaterialDialog.Builder(MainPicker.this)
+                            .title(getString(R.string.import_bulk_title, listings.channels.size()))
+                            .content(listings.getChannelList())
+                            .positiveText(R.string.ok)
+                            .negativeText(R.string.no)
+                            .callback(new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog dialog) {
+                                    super.onPositive(dialog);
+                                    Toast.makeText(MainPicker.this, R.string.import_bulk_wait, Toast.LENGTH_SHORT).show();
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            ChannelDatabase channelDatabase = new ChannelDatabase(MainPicker.this);
+                                            for (M3UParser.XmlTvChannel channel : listings.channels) {
+                                                JSONChannel jsonChannel = new JSONChannel(
+                                                        channel.displayNumber,
+                                                        channel.displayName,
+                                                        channel.url,
+                                                        null,
+                                                        null,
+                                                        TvContract.Programs.Genres.MOVIES
+                                                );
+                                                try {
+                                                    channelDatabase.add(jsonChannel);
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                            channelDatabase.save();
+                                            Handler finishedImporting = new Handler(Looper.getMainLooper()) {
+                                                @Override
+                                                public void handleMessage(Message msg) {
+                                                    super.handleMessage(msg);
+                                                    Toast.makeText(MainPicker.this, R.string.import_bulk_success, Toast.LENGTH_SHORT).show();
+                                                    saveDatabase();
+                                                }
+                                            };
+                                            finishedImporting.sendEmptyMessage(0);
+                                        }
+                                    }).start();
+                                }
+                            })
+                            .show();
+                }
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            if (getChannel() != null)
+                Log.d(TAG, getChannel().getName() + "<<");
+            loadDialogs();
+        }
     }
+
+    private String getContentName(ContentResolver resolver, Uri uri){
+        Cursor cursor = resolver.query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int nameIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
+        if (nameIndex >= 0) {
+            return cursor.getString(nameIndex);
+        } else {
+            return null;
+        }
+    }
+
     public void loadDialogs() {
         if(!areEditing() && !areReadingAll()) {
             final MaterialDialog add = new MaterialDialog.Builder(MainPicker.this)
-                    .title("Create a new channel")
+                    .title(R.string.add_new_channel)
                     .customView(R.layout.dialog_channel_new, true)
-                    .positiveText("Create")
-                    .negativeText("Cancel")
+                    .positiveText(R.string.create)
+                    .negativeText(R.string.cancel)
                     .dismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
@@ -102,10 +249,10 @@ public class MainPicker extends CumulusTvPlugin {
         } else if(!areReadingAll()) {
             final ChannelDatabase cdn = new ChannelDatabase(getApplicationContext());
             final MaterialDialog md = new MaterialDialog.Builder(MainPicker.this)
-                    .title("Edit Stream")
-                    .positiveText("Update")
-                    .negativeText("Delete")
-                    .neutralText("Cancel")
+                    .title(R.string.edit_new_channel)
+                    .positiveText(R.string.update)
+                    .negativeText(R.string.delete)
+                    .neutralText(R.string.cancel)
                     .dismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
@@ -145,27 +292,7 @@ public class MainPicker extends CumulusTvPlugin {
                             String genres = ((Button) l.findViewById(R.id.genres)).getText().toString();
 
                             final JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, genres);
-//                            dialog.dismiss();
                             deleteChannel(jsch);
-                            /*Handler h = new Handler(Looper.getMainLooper()) {
-                                @Override
-                                public void handleMessage(Message msg) {
-                                    super.handleMessage(msg);
-                                    new MaterialDialog.Builder(MainPicker.this)
-                                            .title("Delete?")
-                                            .positiveText("Yes")
-                                            .negativeText("No")
-                                            .callback(new MaterialDialog.ButtonCallback() {
-                                                @Override
-                                                public void onPositive(MaterialDialog dialog) {
-                                                    super.onPositive(dialog);
-
-                                                }
-                                            })
-                                            .show();
-                                }
-                            };
-                            h.sendEmptyMessageDelayed(0, 2);*/
                         }
                     })
                     .show();
@@ -180,6 +307,7 @@ public class MainPicker extends CumulusTvPlugin {
                     ((EditText) l.findViewById(R.id.logo)).setText(jsonChannel.getLogo());
                     ((EditText) l.findViewById(R.id.stream)).setText(jsonChannel.getUrl());
                     ((Button) l.findViewById(R.id.genres)).setText(jsonChannel.getGenresString());
+                    loadStream(md);
                 }
             });
             includeGenrePicker(md, getChannel().getGenresString());
@@ -219,7 +347,7 @@ public class MainPicker extends CumulusTvPlugin {
                 }
 
                 new MaterialDialog.Builder(MainPicker.this)
-                        .title("Select Genres")
+                        .title(R.string.select_genres)
                         .items(ChannelDatabase.getAllGenres())
                         .itemsCallbackMultiChoice(selections.toArray(new Integer[selections.size()]), new MaterialDialog.ListCallbackMultiChoice() {
                             @Override
@@ -232,7 +360,7 @@ public class MainPicker extends CumulusTvPlugin {
                                 return false;
                             }
                         })
-                        .positiveText("Done")
+                        .positiveText(R.string.done)
                         .show();
             }
         });
@@ -242,6 +370,14 @@ public class MainPicker extends CumulusTvPlugin {
         String url = getUrl();
         if(url.isEmpty())
             return;
+        SurfaceView sv = (SurfaceView) viewHolder.getCustomView().findViewById(R.id.surface);
+        TvInputPlayer exoPlayer;
+        exoPlayer = new TvInputPlayer();
+        exoPlayer.setSurface(sv.getHolder().getSurface());
+        exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
+        exoPlayer.setPlayWhenReady(true);
+    }
+    public void loadStream(MaterialDialog viewHolder, String url) {
         SurfaceView sv = (SurfaceView) viewHolder.getCustomView().findViewById(R.id.surface);
         TvInputPlayer exoPlayer;
         exoPlayer = new TvInputPlayer();

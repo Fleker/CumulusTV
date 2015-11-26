@@ -208,7 +208,7 @@ public class SampleTvInput extends TvInputService {
                                     }
                                 };
                                 try {
-                                    if(jsonChannel.getLogo() != null) {
+                                    if(jsonChannel.getLogo() != null && !jsonChannel.getLogo().isEmpty()) {
                                         bitmap[0] = Picasso.with(getApplicationContext())
                                                 .load(jsonChannel.getLogo())
                                                 .placeholder(R.drawable.ic_launcher)
@@ -248,7 +248,7 @@ public class SampleTvInput extends TvInputService {
             notifyVideoUnavailable(TvInputManager.VIDEO_UNAVAILABLE_REASON_TUNING);
             setOverlayViewEnabled(true);
             String[] projection = {TvContract.Channels.COLUMN_SERVICE_ID, TvContract.Channels.COLUMN_INPUT_ID, TvContract.Channels.COLUMN_DISPLAY_NUMBER};
-            String stream = "http://abclive.abcnews.com/i/abc_live4@136330/index_1200_av-b.m3u8";
+            String stream = "";
             Log.d(TAG, "Tuning to "+channelUri.toString());
             Cursor cursor = null;
             //Now look up this channel in the DB

@@ -29,6 +29,7 @@ public class DataReceiver extends BroadcastReceiver
     public static String INTENT_EXTRA_ACTION = "Dowhat";
     public static String INTENT_EXTRA_ACTION_WRITE = "Write";
     public static String INTENT_EXTRA_ACTION_DELETE = "Delete";
+    public static String INTENT_EXTRA_ACTION_DATABASE_WRITE = "SaveDatabase";
     public static String INTENT_EXTRA_SOURCE = "Source";
     public static String TAG = "cumulus:DataReceiver";
 
@@ -49,9 +50,15 @@ public class DataReceiver extends BroadcastReceiver
 
         Log.d(TAG, "Heard");
         if(intent != null) {
-            String jsonString = intent.getStringExtra(INTENT_EXTRA_JSON);
             String action = intent.getStringExtra(INTENT_EXTRA_ACTION);
-            if(action.equals(INTENT_EXTRA_ACTION_WRITE)) {
+            String jsonString = "";
+            if(intent.hasExtra(INTENT_EXTRA_JSON))
+                jsonString = intent.getStringExtra(INTENT_EXTRA_JSON);
+
+            if(action.equals(INTENT_EXTRA_ACTION_DATABASE_WRITE)) {
+                Log.d(TAG, "Received write command");
+                gapi.connect();
+            } else if(action.equals(INTENT_EXTRA_ACTION_WRITE)) {
                 Log.d(TAG, "Received " + jsonString);
                 SettingsManager sm = new SettingsManager(context);
                 ChannelDatabase cdn = new ChannelDatabase(context);
@@ -81,9 +88,6 @@ public class DataReceiver extends BroadcastReceiver
                         Log.d(TAG, "Channel added");
                     }
                     gapi.connect();
-                    //Now sync
-                    final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
-                    SyncUtils.requestSync(info);
                 } catch (JSONException e) {
                     Log.e(TAG, e.getMessage() + "; Error while adding");
                     e.printStackTrace();
@@ -97,8 +101,6 @@ public class DataReceiver extends BroadcastReceiver
                     Log.d(TAG, "Channel successfully deleted");
                     //Now sync
                     gapi.connect();
-                    final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
-                    SyncUtils.requestSync(info);
                 } catch (JSONException e) {
                     Log.e(TAG, e.getMessage() + "; Error while adding");
                     e.printStackTrace();
@@ -113,6 +115,9 @@ public class DataReceiver extends BroadcastReceiver
         //Let's sync with GDrive
         ActivityUtils.writeDriveData(mContext, gapi);
         Log.d(TAG, "Sync w/ drive");
+
+        final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
+        SyncUtils.requestSync(info);
     }
 
     @Override

@@ -14,12 +14,14 @@
     <uses-permission android:name="com.android.providers.tv.permission.READ_EPG_DATA" />
     <!-- Required to update channel and program information in TvProvider. -->
     <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" />
-
-    <!-- Seems to be a workaround for a bug -->
+    <!-- Required to do some Google Drive stuff and open files -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-feature
         android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.screen.landscape"
         android:required="false" />
     <uses-feature
         android:name="android.software.leanback"
@@ -42,7 +44,6 @@
         android:label="@string/app_name"
         android:logo="@drawable/c_banner_3_2" >
 
-        <!-- android:theme="@style/Theme.Leanback" -->
         <service
             android:name=".SampleTvInput"
             android:enabled="true"
@@ -63,19 +64,6 @@
             android:exported="true"
             android:label="Test Stream"
             android:theme="@style/Theme.AppCompat" >
-
-            <!--
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
-            </intent-filter>
-            -->
         </activity>
         <activity
             android:name=".MainActivity"
@@ -152,15 +140,44 @@
             android:label="Create a Channel"
             android:theme="@style/CompatTheme" >
             <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <!-- Can be a shortcut -->
+            <intent-filter>
                 <action android:name="com.felkertech.cumulustv.ADD_CHANNEL" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <!-- Can read .m3u8 files -->
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <!-- Can be a shortcut -->
+                <data android:scheme="file" />
+                <data android:host="*" />
+                <data android:pathPattern=".*\\.m3u8" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="http" />
+                <data android:host="*" />
+                <data android:pathPattern=".*\\.m3u8.*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:pathPattern=".*\\.m3u8" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
         <activity

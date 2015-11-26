@@ -10,9 +10,12 @@
     <string name="sm_last_version" translatable="false">VERSION</string>
 
     <string name="intro_title_1">Welcome to CumulusTV</string>
-    <string name="intro_msg_1">"CumulusTV is an app that lets you create custom channels that can be played through the Live Channels app. Don't know what to watch? Pick a suggested channel."</string>
+    <string name="intro_msg_1">"CumulusTV lets you create custom channels that can be played through the Live Channels app. Don't know what to watch? Pick a suggested channel."</string>
     <string name="intro_title_2">Use Google Drive</string>
-    <string name="intro_msg_2">You can create a JSON file on Google Drive and have your channels synced across all your devices. Edits on your PC will also change them on this device, as long as you change the `modified` attribute.</string>
+    <string name="intro_msg_2">You can create a JSON file on Google Drive and have your channels synced across all your devices.</string>
+    <string name="intro_title_21">How to Sync</string>
+    <string name="intro_msg_21">"-Create Syncable JSON File in Google Drive\n-Create a Channel\n-On your computer the file should show up.\n    You can add more channels here.\n-Edit the names, or add a splashscreen url to be fancy.\n-Change the modified attribute. Make it larger than before.\n-Save the file.\n-Return to the app and choose the option 'Refresh Data - Cloud to Local'\n    Data will automatically sync periodically."</string>
+        <!--Edits on your PC will also change them on this device, as long as you change the `modified` attribute.</string>-->
     <string name="intro_title_3">Report Problems</string>
     <string name="intro_msg_3">You can browse the source code on GitHub and report any issues you find or suggest a feature. Have a problem with the JSON? You can browse the format there.</string>
     <string name="intro_title_4">Get Started</string>
@@ -21,7 +24,7 @@
     <!--<string name="browse_title"><![CDATA[Videos by Your Company]]></string>-->
     <!--<string name="vertical_grid_title"><![CDATA[Vertical Video Grid]]></string>-->
     <string name="about_app" translatable="false">@string/settings_about</string>
-    <string name="about_app_description">%1$s\nBackground art by to Marcelo Franceschini\n\nThe app is open source and available on GitHub.</string>
+    <string name="about_app_description">%1$s\nBackground art by to Marcelo Franceschini\nFrench Translations by @mcmjau\n\nThe app is open source and available on GitHub.</string>
     <string name="grid_view">Grid View</string>
     <string name="error_fragment">Error Fragment</string>
     <string name="should_start">shouldStart</string>
@@ -48,6 +51,14 @@
     <string name="ok">OK</string>
     <string name="no">No</string>
     <string name="no_live_channels">"Is Live Channels installed? Email felker.tech@gmail.com"</string>
+    <string name="update">Update</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="create">Create</string>
+    <string name="done">Done</string>
+    <string name="select_genres">Select Genres</string>
+    <string name="add_new_channel" translatable="false">@string/manage_add_new</string>
+    <string name="edit_new_channel">Edit Channel</string>
 
     <string name="downloaded">"Download complete"</string>
     <string name="uploaded">"Upload complete"</string>
@@ -63,5 +74,17 @@
     <string name="suggested_channels">"Here are some suggested channels"</string>
     <string name="no_channels_find">"Find a few streams to add"</string>
     <string name="version">Version %1$s</string>
+    
+    <string name="permission_storage_rationale">Your channel data is backed up automatically through Google Drive.</string>
+    <string name="permission_not_allowed_error">"You can\'t do that"</string>
+    <string name="permission_not_allowed_text">CumulusTV is not allowed to access your storage, so syncing is disabled. The app will continue to work by itself.</string>
+    <string name="permission_action_settings">View Permissions</string>
+    
+    <string name="import_bulk_title">Import %1$d Channels?</string>
+    <string name="import_bulk_wait">Hold on a second</string>
+    <string name="import_bulk_success">"You're good to go!"</string>
+
+    <string name="github" translatable="false">GitHub</string>
+    <string name="help">Help</string>
 </resources>
 

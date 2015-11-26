@@ -38,6 +38,7 @@ import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -234,7 +235,7 @@ public class VideoDetailsFragment extends DetailsFragment
                     for(JSONChannel channel: jsonChannels) {
                         if(channel.getNumber().equals(mSelectedMovie.getStudio())) {
                             Log.d(TAG, "Adding " + channel.toString());
-                            ActivityUtils.addChannel(getActivity(), gapi, channel, channel.getName());
+                            ActivityUtils.addChannel((AppCompatActivity) getActivity(), gapi, channel, channel.getName());
                             getActivity().finish();
                         }
                     }

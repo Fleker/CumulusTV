@@ -8,10 +8,13 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 
+import com.felkertech.n.ActivityUtils;
+import com.felkertech.n.boilerplate.Utils.PermissionUtils;
 import com.felkertech.n.boilerplate.Utils.SettingsManager;
 import com.felkertech.n.cumulustv.MainActivity;
 import com.felkertech.n.cumulustv.R;
 import com.github.paolorotolo.appintro.AppIntro2;
+import com.github.paolorotolo.appintro.AppIntroFragment;
 
 /**
  * Created by N on 7/1/2015.
@@ -21,6 +24,7 @@ public class Intro extends AppIntro2 {
     public void init(Bundle savedInstanceState) {
         addSlide(new FirstSlide());
         addSlide(new SecondSlide());
+        addSlide(new SecondOneSlide());
         addSlide(new ThirdSlide());
         addSlide(new FourthSlide());
         setFadeAnimation();
@@ -33,8 +37,8 @@ public class Intro extends AppIntro2 {
 
     private void loadMainActivity(){
         SettingsManager sm = new SettingsManager(this);
-        sm.setInt(R.string.sm_last_version, MainActivity.LAST_GOOD_BUILD);
-        Intent intent = new Intent(this, MainActivity.class);
+        sm.setInt(R.string.sm_last_version, ActivityUtils.LAST_GOOD_BUILD);
+        Intent intent = new Intent(this, ActivityUtils.getMainActivity(this));
         startActivity(intent);
     }
 
@@ -59,5 +63,12 @@ public class Intro extends AppIntro2 {
             return false;
         }
         return super.onKeyDown(code, kvent);
+    }
+
+    @Override
+    public void onDotSelected(int index) {
+        if(index == 3) {
+            PermissionUtils.requestPermissionIfDisabled(this, Manifest.permission_group.STORAGE, getString(R.string.permission_storage_rationale));
+        }
     }
 }

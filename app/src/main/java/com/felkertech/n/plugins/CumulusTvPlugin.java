@@ -133,7 +133,19 @@ public class CumulusTvPlugin extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * You made special modifications to the database and you're requesting a sync
+     */
+    public void saveDatabase() {
+        Intent i = new Intent("com.felkertech.cumulustv.RECEIVER");
+        i.putExtra(DataReceiver.INTENT_EXTRA_ACTION, DataReceiver.INTENT_EXTRA_ACTION_DATABASE_WRITE);
+        sendBroadcast(i);
+        finish();
+    }
+
     public JSONChannel getChannel() {
+        if(!telegram.hasExtra(INTENT_EXTRA_ACTION))
+            return null;
         if(telegram.getStringExtra(INTENT_EXTRA_ACTION).equals(INTENT_ADD))
             return null;
         String number = telegram.getStringExtra(INTENT_EXTRA_NUMBER);

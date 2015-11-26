@@ -103,4 +103,21 @@
     <string name="no_channels_find">"Finden Sie ein paar Bäche hinzufügen"</string>
 
     <string name="version">"%1$s"</string>
+    <string name="cancel">Absagen</string>
+    <string name="create">Schaffen</string>
+    <string name="delete">Effacer</string>
+    <string name="done">Fertig</string>
+    <string name="edit_new_channel">Kanal bearbeiten</string>
+    <string name="help">Hilfe</string>
+    <string name="import_bulk_success">Sie sind gut zu gehen!</string>
+    <string name="import_bulk_title">Importieren %1$d Kanäle?</string>
+    <string name="import_bulk_wait">Warte eine Sekunde</string>
+    <string name="intro_msg_21">"-Erstellen Synchronisierbar JSON-Datei in Google Drive \n-Kanal erstellen \n-Sie auf Ihrem Computer die Datei angezeigt. \n Sie können mehr Kanäle hier hinzufügen. \n-Bearbeiten Sie die Namen, oder fügen Sie einen Splashscreen-URL zu sein ... Phantasie \n-ändern Sie den modifizierten Attribut Machen Sie es größer als vor der \n-speichern Sie die Datei \n-Zurück zur App und wählen Sie die Option. \'Daten aktualisieren - Cloud, um Local\' \n Daten automatisch synchron in regelmäßigen Abständen. "</string>
+    <string name="intro_title_21">Wie synchronisieren</string>
+    <string name="permission_action_settings">Berechtigungen anzeigen</string>
+    <string name="permission_not_allowed_error">Sie können nicht tun</string>
+    <string name="permission_not_allowed_text">CumulusTV ist nicht erlaubt, Ihre Speicher zugreifen, so dass die Synchronisierung ist deaktiviert. Die App wird weiterhin von selbst funktionieren.</string>
+    <string name="permission_storage_rationale">Ihre Kanaldaten wird automatisch durch Google Drive unterstützt.</string>
+    <string name="select_genres">Wählen Genres</string>
+    <string name="update">Aktualisieren</string>
 </resources>
