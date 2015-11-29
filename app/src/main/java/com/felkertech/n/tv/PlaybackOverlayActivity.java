@@ -34,7 +34,7 @@ import com.felkertech.n.cumulustv.R;
 /**
  * PlaybackOverlayActivity for video playback that loads PlaybackOverlayFragment
  */
-public class PlaybackOverlayActivity extends AppCompatActivity implements
+public class PlaybackOverlayActivity extends Activity implements
         PlaybackOverlayFragment.OnPlayPauseClickedListener {
     private static final String TAG = "PlaybackOverlayActivity";
 

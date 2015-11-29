@@ -30,7 +30,7 @@ import com.felkertech.n.cumulustv.R;
 /*
  * BrowseErrorActivity shows how to use ErrorFragment
  */
-public class BrowseErrorActivity extends AppCompatActivity {
+public class BrowseErrorActivity extends Activity {
     private static int TIMER_DELAY = 3000;
     private static int SPINNER_WIDTH = 100;
     private static int SPINNER_HEIGHT = 100;

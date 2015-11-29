@@ -27,7 +27,39 @@ public class PermissionUtils {
     public static void requestPermissionIfDisabled(AppCompatActivity mActivity, String permission) {
         requestPermissionIfDisabled(mActivity, permission, "");
     }
+    public static void requestPermissionIfDisabled(Activity mActivity, String permission) {
+        requestPermissionIfDisabled(mActivity, permission, "");
+    }
     public static void requestPermissionIfDisabled(final AppCompatActivity mActivity, final String permission, String rationale) {
+        Log.d(TAG, Build.VERSION.CODENAME);
+        Log.d(TAG, "Is "+permission+" enabled? "+isEnabled(mActivity, permission));
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(isDisabled(mActivity, permission)) {
+                Log.d(TAG, "Show rationale? "+mActivity.shouldShowRequestPermissionRationale(permission)+" "+rationale);
+                if(mActivity.shouldShowRequestPermissionRationale(permission)
+                        && !rationale.isEmpty()) {
+                    new MaterialDialog.Builder(mActivity)
+                            .title("Request Permission")
+                            .content(rationale)
+                            .positiveText("OK")
+                            .dismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                        mActivity.requestPermissions(new String[]{permission},
+                                                MY_PERMISSIONS_RETURN);
+                                    }
+                                }
+                            })
+                            .show();
+                } else {
+                    Log.d(TAG, "Make a request");
+                    mActivity.requestPermissions(new String[]{permission},
+                            MY_PERMISSIONS_RETURN);
+                }
+            }
+        }
+    }public static void requestPermissionIfDisabled(final Activity mActivity, final String permission, String rationale) {
         Log.d(TAG, Build.VERSION.CODENAME);
         Log.d(TAG, "Is "+permission+" enabled? "+isEnabled(mActivity, permission));
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

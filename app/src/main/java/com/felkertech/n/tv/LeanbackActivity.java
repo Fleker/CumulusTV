@@ -35,7 +35,7 @@ import io.fabric.sdk.android.Fabric;
 /*
  * MainActivity class that loads MainFragment
  */
-public class LeanbackActivity extends AppCompatActivity {
+public class LeanbackActivity extends Activity {
     /**
      * Called when the activity is first created.
      */

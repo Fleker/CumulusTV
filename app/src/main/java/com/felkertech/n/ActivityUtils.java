@@ -111,7 +111,7 @@ public class ActivityUtils {
         };
         return channels;
     }
-    public static void openSuggestedChannels(final AppCompatActivity mActivity, final GoogleApiClient gapi) {
+    public static void openSuggestedChannels(final Activity mActivity, final GoogleApiClient gapi) {
         final JSONChannel[] channels = getSuggestedChannels();
         ArrayList<String> channeltext = new ArrayList<String>();
         for(JSONChannel j: channels) {
@@ -129,7 +129,7 @@ public class ActivityUtils {
                     }
                 }).show();
     }
-    public static void addChannel(AppCompatActivity mActivity, GoogleApiClient gapi, JSONChannel j, String name) {
+    public static void addChannel(Activity mActivity, GoogleApiClient gapi, JSONChannel j, String name) {
         Log.d(TAG, "I've been told to add "+j.toString());
         ChannelDatabase cd = new ChannelDatabase(mActivity);
         if(cd.channelExists(j)) {
@@ -207,7 +207,7 @@ public class ActivityUtils {
     }
 
     /* DRIVE */
-    public static void writeDriveData(final AppCompatActivity context, GoogleApiClient gapi) {
+    public static void writeDriveData(final Activity context, GoogleApiClient gapi) {
         //Ask here for permission to storage
         PermissionUtils.requestPermissionIfDisabled(context, android.Manifest.permission_group.STORAGE, context.getString(R.string.permission_storage_rationale));
         if(PermissionUtils.isDisabled(context, android.Manifest.permission_group.STORAGE)) {
@@ -270,7 +270,7 @@ public class ActivityUtils {
         final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
         SyncUtils.requestSync(info);
     }
-    public static void createDriveData(AppCompatActivity activity, final GoogleApiClient gapi, final ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback) {
+    public static void createDriveData(Activity activity, final GoogleApiClient gapi, final ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback) {
         new MaterialDialog.Builder(activity)
                 .title("Create a syncable file")
                 .content("Save channel info in Google Drive so you can always access it")
@@ -510,7 +510,7 @@ public class ActivityUtils {
             mActivity.startActivity(i);
         }
     }
-    public static void onActivityResult(final AppCompatActivity mActivity, final GoogleApiClient gapi, final int requestCode, final int resultCode, final Intent data) {
+    public static void onActivityResult(final Activity mActivity, final GoogleApiClient gapi, final int requestCode, final int resultCode, final Intent data) {
         SettingsManager sm = new SettingsManager(mActivity);
         switch (requestCode) {
             case RESOLVE_CONNECTION_REQUEST_CODE:
