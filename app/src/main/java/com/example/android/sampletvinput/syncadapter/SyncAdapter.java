@@ -31,6 +31,9 @@ import android.media.tv.TvContentRating;
 import android.media.tv.TvContract;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
@@ -156,7 +159,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
                 mContext.getContentResolver(), inputId, channels);
         if(channelMap == null) {
             Log.d(TAG, "?");
-            Toast.makeText(getContext(), "Couldn't find any channels. Uh-oh.", Toast.LENGTH_SHORT).show();
+            Handler h = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                    Toast.makeText(getContext(), "Couldn't find any channels. Uh-oh.", Toast.LENGTH_SHORT).show();
+                }
+            };
+            h.sendEmptyMessage(0);
             //Let's not continue running
             return;
         }

@@ -6,6 +6,9 @@ import android.content.SharedPreferences;
 import android.media.tv.TvContentRating;
 import android.media.tv.TvContract;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -31,7 +34,7 @@ public class ChannelDatabase {
     Context mContext;
     String TAG = "cumulus:ChannelDatabase";
     public static final String KEY = "JSONDATA";
-    public ChannelDatabase(Context mContext) {
+    public ChannelDatabase(final Context mContext) {
         this.mContext = mContext;
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
         String spData = sp.getString(KEY, "{'channels':[], 'modified':0}");
@@ -42,9 +45,16 @@ public class ChannelDatabase {
                 save();
             }
             resetPossibleGenres(); //This will try to use the newest API data
-        } catch (JSONException e) {
-            Toast.makeText(mContext, "Please report this error with your JSON file: "+e.getMessage(), Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
+        } catch (final JSONException e) {
+            Handler h = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                    Toast.makeText(mContext, "Please report this error with your JSON file: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+            };
+            h.sendEmptyMessage(0);
         }
         rating = TvContentRating.createRating(
                 "com.android.tv",

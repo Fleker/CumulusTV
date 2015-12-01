@@ -126,10 +126,12 @@ public class TvContractUtils {
             Long rowId = mExistingChannelsMap.get(channel.originalNetworkId);
             if(rowId == null) {
                 values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, channel.originalNetworkId);
-                rowId = mExistingChannelsMap.get(channel.number.toString().hashCode());
-                Log.d(TAG, "Tried "+rowId+" as rowid");
-                if(rowId != null)
-                    values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, rowId);
+                if(channel.number != null) {
+                    rowId = mExistingChannelsMap.get(channel.number.toString().hashCode());
+                    Log.d(TAG, "Tried " + rowId + " as rowid");
+                    if (rowId != null)
+                        values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, rowId);
+                }
             } else
                 values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, rowId);
 //            values.put(Channels.COLUMN_TRANSPORT_STREAM_ID, channel.transportStreamId);

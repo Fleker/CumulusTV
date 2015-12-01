@@ -70,6 +70,11 @@ public class MainPicker extends CumulusTvPlugin {
                 return;
             }
             try {
+                if(uri == null) {
+                    Toast.makeText(MainPicker.this, "Uri is null", Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
                 Log.d(TAG, uri.toString());
                 if(uri.toString().contains("http")) { //Import a channel
                     //Copy from `loadDialogs()` in edit mode

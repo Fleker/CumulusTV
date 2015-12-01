@@ -227,8 +227,8 @@ public class LeanbackFragment extends BrowseFragment
         gridRowAdapter.add(getString(R.string.manage_livechannels));
 //        gridRowAdapter.add(getString(R.string.manage_add_suggested));
         gridRowAdapter.add(getString(R.string.manage_add_new));
-        gridRowAdapter.add("Empty Plugin");
-        gridRowAdapter.add("Settings");
+//        gridRowAdapter.add("Empty Plugin");
+//        gridRowAdapter.add("Settings");
         mRowsAdapter.add(new ListRow(gridHeader, gridRowAdapter));
 
         //Settings will become its own activity
@@ -311,7 +311,7 @@ public class LeanbackFragment extends BrowseFragment
         Log.d(TAG, sm.getString(R.string.sm_google_drive_id) + "<< for onConnected");
         if(sm.getString(R.string.sm_google_drive_id).isEmpty()) {
             //We need a new file
-            ActivityUtils.createDriveData((AppCompatActivity) getActivity(), gapi, driveContentsCallback);
+            ActivityUtils.createDriveData(getActivity(), gapi, driveContentsCallback);
         } else {
             //Great, user already has sync enabled, let's resync
             ActivityUtils.readDriveData(getActivity(), gapi);
@@ -361,7 +361,7 @@ public class LeanbackFragment extends BrowseFragment
         Log.d(TAG, "oCF " + connectionResult.toString());
         if (connectionResult.hasResolution()) {
             try {
-                connectionResult.startResolutionForResult(getActivity(), 900);
+                connectionResult.startResolutionForResult(getActivity(), ActivityUtils.RESOLVE_CONNECTION_REQUEST_CODE);
             } catch (IntentSender.SendIntentException e) {
                 // Unable to resolve, message user appropriately
             }

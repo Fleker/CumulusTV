@@ -209,7 +209,7 @@ public class ActivityUtils {
     /* DRIVE */
     public static void writeDriveData(final Activity context, GoogleApiClient gapi) {
         //Ask here for permission to storage
-        PermissionUtils.requestPermissionIfDisabled(context, android.Manifest.permission_group.STORAGE, context.getString(R.string.permission_storage_rationale));
+        PermissionUtils.requestPermissionIfDisabled(context, android.Manifest.permission.WRITE_EXTERNAL_STORAGE, context.getString(R.string.permission_storage_rationale));
         if(PermissionUtils.isDisabled(context, android.Manifest.permission_group.STORAGE)) {
             new MaterialDialog.Builder(context)
                     .title(R.string.permission_not_allowed_error)
@@ -274,8 +274,8 @@ public class ActivityUtils {
         new MaterialDialog.Builder(activity)
                 .title("Create a syncable file")
                 .content("Save channel info in Google Drive so you can always access it")
-                .positiveText("OK")
-                .negativeText("No")
+                .positiveText(R.string.ok)
+                .negativeText(R.string.no)
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
@@ -307,8 +307,8 @@ public class ActivityUtils {
         sm.setGoogleDriveSyncable(gapi, null);
         new MaterialDialog.Builder(mActivity)
                 .title("Delete all your channel data?")
-                .positiveText("Yes")
-                .negativeText("NO")
+                .positiveText(R.string.yes)
+                .negativeText(R.string.no)
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
@@ -522,8 +522,8 @@ public class ActivityUtils {
                     new MaterialDialog.Builder(mActivity)
                             .title("Connection Issue")
                             .content("Cannot connect to Google Drive at this moment.")
-                            .positiveText("OK")
-                            .negativeText("Try Again")
+                            .positiveText(R.string.ok)
+                            .negativeText(R.string.try_again)
                             .callback(new MaterialDialog.ButtonCallback() {
                                 @Override
                                 public void onNegative(MaterialDialog dialog) {

@@ -120,4 +120,6 @@
     <string name="permission_storage_rationale">Ihre Kanaldaten wird automatisch durch Google Drive unterstützt.</string>
     <string name="select_genres">Wählen Genres</string>
     <string name="update">Aktualisieren</string>
+    <string name="try_again">Try Again</string>
+    <string name="yes">Si</string>
 </resources>

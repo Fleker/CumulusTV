@@ -235,7 +235,7 @@ public class VideoDetailsFragment extends DetailsFragment
                     for(JSONChannel channel: jsonChannels) {
                         if(channel.getNumber().equals(mSelectedMovie.getStudio())) {
                             Log.d(TAG, "Adding " + channel.toString());
-                            ActivityUtils.addChannel((AppCompatActivity) getActivity(), gapi, channel, channel.getName());
+                            ActivityUtils.addChannel(getActivity(), gapi, channel, channel.getName());
                             getActivity().finish();
                         }
                     }

@@ -49,6 +49,7 @@
     <string name="create_syncable_file">"Create a syncable file"</string>
     <string name="create_syncable_file_description">"Save channel info in Google Drive so you can always access it"</string>
     <string name="ok">OK</string>
+    <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="no_live_channels">"Is Live Channels installed? Email felker.tech@gmail.com"</string>
     <string name="update">Update</string>
@@ -59,6 +60,7 @@
     <string name="select_genres">Select Genres</string>
     <string name="add_new_channel" translatable="false">@string/manage_add_new</string>
     <string name="edit_new_channel">Edit Channel</string>
+    <string name="try_again">Try Again</string>
 
     <string name="downloaded">"Download complete"</string>
     <string name="uploaded">"Upload complete"</string>
