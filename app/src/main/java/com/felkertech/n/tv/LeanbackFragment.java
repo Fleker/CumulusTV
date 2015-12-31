@@ -112,6 +112,7 @@ public class LeanbackFragment extends BrowseFragment
 
     private SettingsManager sm;
     public GoogleApiClient gapi;
+    public Activity mActivity;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -162,7 +163,7 @@ public class LeanbackFragment extends BrowseFragment
             int index = 0;
             for(TvManager.ChannelInfo channelInfo: cd.getChannels()) {
                 Log.d(TAG, "Got channels " + channelInfo.name);
-                Log.d(TAG, channelInfo.logoUrl);
+                Log.d(TAG, channelInfo.logoUrl+"");
                 Log.d(TAG, new JSONChannel(cd.getJSONChannels().getJSONObject(index)).toString()+"");
                 channelRowAdapter.add(MovieList.buildMovieInfo(
                         "channel",
@@ -311,11 +312,11 @@ public class LeanbackFragment extends BrowseFragment
         Log.d(TAG, sm.getString(R.string.sm_google_drive_id) + "<< for onConnected");
         if(sm.getString(R.string.sm_google_drive_id).isEmpty()) {
             //We need a new file
-            ActivityUtils.createDriveData(getActivity(), gapi, driveContentsCallback);
+            ActivityUtils.createDriveData(mActivity, gapi, driveContentsCallback);
         } else {
             //Great, user already has sync enabled, let's resync
-            ActivityUtils.readDriveData(getActivity(), gapi);
-            Handler h = new Handler(Looper.myLooper()){
+            ActivityUtils.readDriveData(mActivity, gapi);
+            Handler h = new Handler(Looper.getMainLooper()){
                 @Override
                 public void handleMessage(Message msg) {
                     super.handleMessage(msg);
@@ -361,7 +362,7 @@ public class LeanbackFragment extends BrowseFragment
         Log.d(TAG, "oCF " + connectionResult.toString());
         if (connectionResult.hasResolution()) {
             try {
-                connectionResult.startResolutionForResult(getActivity(), ActivityUtils.RESOLVE_CONNECTION_REQUEST_CODE);
+                connectionResult.startResolutionForResult(mActivity, ActivityUtils.RESOLVE_CONNECTION_REQUEST_CODE);
             } catch (IntentSender.SendIntentException e) {
                 // Unable to resolve, message user appropriately
             }

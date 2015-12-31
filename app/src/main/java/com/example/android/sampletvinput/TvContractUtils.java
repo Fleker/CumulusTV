@@ -146,7 +146,9 @@ public class TvContractUtils {
 
             Uri uri;
             if (rowId == null) {
-                values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, channel.number.toString().hashCode());
+                if(channel.number == null)
+                    channel.number = "0";
+                values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, channel.number.hashCode());
                 Log.d(TAG, "Insert "+values.toString());
                 uri = resolver.insert(TvContract.Channels.CONTENT_URI, values);
                 if(uri != null) {

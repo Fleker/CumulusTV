@@ -150,7 +150,7 @@ public class ActivityUtils {
     public static void editChannel(final Activity mActivity, final String channel) {
         ChannelDatabase cdn = new ChannelDatabase(mActivity);
         JSONChannel jsonChannel = cdn.findChannel(channel); //Find by number
-        if(channel == null) {
+        if(channel == null || jsonChannel == null) {
             Toast.makeText(mActivity, "Channel is invalid", Toast.LENGTH_SHORT).show();
             return;
         }

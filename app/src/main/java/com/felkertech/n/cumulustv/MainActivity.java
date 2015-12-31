@@ -155,7 +155,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.d(TAG, "onConnected");
         if(md != null) {
             if(md.isShowing()) {
-                md.dismiss();
+                try {
+                    md.dismiss();
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
         sm.setGoogleDriveSyncable(gapi, new SettingsManager.GoogleDriveListener() {

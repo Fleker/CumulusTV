@@ -36,9 +36,9 @@ public class ChannelDatabase {
     public static final String KEY = "JSONDATA";
     public ChannelDatabase(final Context mContext) {
         this.mContext = mContext;
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
-        String spData = sp.getString(KEY, "{'channels':[], 'modified':0}");
         try {
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
+            String spData = sp.getString(KEY, "{'channels':[], 'modified':0}");
             obj = new JSONObject(spData);
             if(!obj.has("modified")) {
                 obj.put("modified", 0l);
@@ -184,7 +184,14 @@ public class ChannelDatabase {
             channels.put(n00b.toJSON());
             save();
         } else {
-            Toast.makeText(mContext, "Error adding: object is undefined", Toast.LENGTH_SHORT).show();
+            Handler toasty = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                    Toast.makeText(mContext, "Error adding: object is undefined", Toast.LENGTH_SHORT).show();
+                }
+            };
+            toasty.sendEmptyMessage(0);
         }
 
     }

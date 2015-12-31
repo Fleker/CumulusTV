@@ -47,6 +47,7 @@ public class LeanbackActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leanback);
         lbf = (LeanbackFragment) getFragmentManager().findFragmentById(R.id.main_browse_fragment);
+        lbf.mActivity = LeanbackActivity.this;
         ActivityUtils.openIntroIfNeeded(this);
         Fabric.with(this, new Crashlytics());
     }
