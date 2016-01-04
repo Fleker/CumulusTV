@@ -40,6 +40,7 @@ import java.io.IOException;
  * view are missing here. So, to check the example codes for them, see {@link }.
  * </p>
  */
+@Deprecated
 public class SampleTvInput3 extends TvInputService {
     @Override
     public Session onCreateSession(String inputId) {

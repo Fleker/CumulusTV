@@ -31,6 +31,7 @@ import java.util.List;
 /**
  * Created by N on 7/12/2015.
  */
+@Deprecated
 public class SampleTvInput2 extends TvInputService {
     HandlerThread mHandlerThread;
     BroadcastReceiver mBroadcastReceiver;
@@ -217,7 +218,7 @@ public class SampleTvInput2 extends TvInputService {
                 exoPlayer.setSurface(mSurface);
                 exoPlayer.setVolume(mVolume);
             }
-            exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
+//            exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
             exoPlayer.setPlayWhenReady(true);
             return true;
         }

@@ -26,6 +26,7 @@ import android.view.Surface;
 import android.view.View;
 import android.view.accessibility.CaptioningManager;
 import android.view.animation.AnimationUtils;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -34,6 +35,7 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.example.android.sampletvinput.TvContractUtils;
 import com.example.android.sampletvinput.player.TvInputPlayer;
+import com.example.android.sampletvinput.player.WebTvPlayer;
 import com.google.android.exoplayer.ExoPlaybackException;
 import com.pnikosis.materialishprogress.ProgressWheel;
 import com.squareup.picasso.Picasso;
@@ -110,7 +112,8 @@ public class SampleTvInput extends TvInputService {
         private float mVolume;
         private Surface mSurface;
         private String TAG = "cumulus:TIS.S";
-        JSONChannel jsonChannel;
+        private boolean isWeb = false;
+        private JSONChannel jsonChannel;
         SimpleSessionImpl(Context context) {
             super(context);
         }
@@ -147,88 +150,95 @@ public class SampleTvInput extends TvInputService {
         @Override
         public View onCreateOverlayView() {
             LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            try {
-                final View v = inflater.inflate(R.layout.loading, null);
+            if(!isWeb) {
+                try {
+                    final View v = inflater.inflate(R.layout.loading, null);
 //            v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_in_left));
-                if (jsonChannel == null) {
-                    ((TextView) v.findViewById(R.id.channel)).setText("");
-                    ((TextView) v.findViewById(R.id.title)).setText("");
-                } else if (jsonChannel.hasSplashscreen()) {
-                    ImageView iv = new ImageView(getApplicationContext());
-                    Picasso.with(getApplicationContext()).load(jsonChannel.getSplashscreen()).into(iv);
-                    return iv;
-                } else {
-                    ((TextView) v.findViewById(R.id.channel)).setText(jsonChannel.getNumber());
-                    ((TextView) v.findViewById(R.id.title)).setText(jsonChannel.getName());
-                    if (!jsonChannel.getLogo().isEmpty()) {
-                        final Bitmap[] bitmap = {null};
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Handler h = new Handler(Looper.getMainLooper()) {
-                                    @Override
-                                    public void handleMessage(Message msg) {
-                                        super.handleMessage(msg);
-                                        ((ImageView) v.findViewById(R.id.thumnail)).setImageBitmap(bitmap[0]);
+                    if (jsonChannel == null) {
+                        ((TextView) v.findViewById(R.id.channel)).setText("");
+                        ((TextView) v.findViewById(R.id.title)).setText("");
+                    } else if (jsonChannel.hasSplashscreen()) {
+                        ImageView iv = new ImageView(getApplicationContext());
+                        Picasso.with(getApplicationContext()).load(jsonChannel.getSplashscreen()).into(iv);
+                        return iv;
+                    } else {
+                        ((TextView) v.findViewById(R.id.channel)).setText(jsonChannel.getNumber());
+                        ((TextView) v.findViewById(R.id.title)).setText(jsonChannel.getName());
+                        if (!jsonChannel.getLogo().isEmpty()) {
+                            final Bitmap[] bitmap = {null};
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Handler h = new Handler(Looper.getMainLooper()) {
+                                        @Override
+                                        public void handleMessage(Message msg) {
+                                            super.handleMessage(msg);
+                                            ((ImageView) v.findViewById(R.id.thumnail)).setImageBitmap(bitmap[0]);
 
-                                        //Use Palette to grab colors
-                                        Palette p = Palette.from(bitmap[0])
-                                                .generate();
-                                        if (p.getVibrantSwatch() != null) {
-                                            Log.d(TAG, "Use vibrant");
-                                            Palette.Swatch s = p.getVibrantSwatch();
-                                            v.setBackgroundColor(s.getRgb());
-                                            ((TextView) v.findViewById(R.id.channel)).setTextColor(s.getTitleTextColor());
-                                            ((TextView) v.findViewById(R.id.title)).setTextColor(s.getTitleTextColor());
-                                            ((TextView) v.findViewById(R.id.channel_msg)).setTextColor(s.getTitleTextColor());
+                                            //Use Palette to grab colors
+                                            Palette p = Palette.from(bitmap[0])
+                                                    .generate();
+                                            if (p.getVibrantSwatch() != null) {
+                                                Log.d(TAG, "Use vibrant");
+                                                Palette.Swatch s = p.getVibrantSwatch();
+                                                v.setBackgroundColor(s.getRgb());
+                                                ((TextView) v.findViewById(R.id.channel)).setTextColor(s.getTitleTextColor());
+                                                ((TextView) v.findViewById(R.id.title)).setTextColor(s.getTitleTextColor());
+                                                ((TextView) v.findViewById(R.id.channel_msg)).setTextColor(s.getTitleTextColor());
 
-                                            //Now style the progress bar
-                                            if (p.getDarkVibrantSwatch() != null) {
-                                                Palette.Swatch dvs = p.getDarkVibrantSwatch();
-                                                ((ProgressWheel) v.findViewById(R.id.indeterminate_progress_large_library)).setBarColor(dvs.getRgb());
+                                                //Now style the progress bar
+                                                if (p.getDarkVibrantSwatch() != null) {
+                                                    Palette.Swatch dvs = p.getDarkVibrantSwatch();
+                                                    ((ProgressWheel) v.findViewById(R.id.indeterminate_progress_large_library)).setBarColor(dvs.getRgb());
+                                                }
+                                            } else if (p.getDarkVibrantSwatch() != null) {
+                                                Log.d(TAG, "Use dark vibrant");
+                                                Palette.Swatch s = p.getDarkVibrantSwatch();
+                                                v.setBackgroundColor(s.getRgb());
+                                                ((TextView) v.findViewById(R.id.channel)).setTextColor(s.getTitleTextColor());
+                                                ((TextView) v.findViewById(R.id.title)).setTextColor(s.getTitleTextColor());
+                                                ((TextView) v.findViewById(R.id.channel_msg)).setTextColor(s.getTitleTextColor());
+                                                ((ProgressWheel) v.findViewById(R.id.indeterminate_progress_large_library)).setBarColor(s.getRgb());
+                                            } else if (p.getSwatches().size() > 0) {
+                                                //Go with default if no vibrant swatch exists
+                                                Log.d(TAG, "No vibrant swatch, " + p.getSwatches().size() + " others");
+                                                Palette.Swatch s = p.getSwatches().get(0);
+                                                v.setBackgroundColor(s.getRgb());
+                                                ((TextView) v.findViewById(R.id.channel)).setTextColor(s.getTitleTextColor());
+                                                ((TextView) v.findViewById(R.id.title)).setTextColor(s.getTitleTextColor());
+                                                ((TextView) v.findViewById(R.id.channel_msg)).setTextColor(s.getTitleTextColor());
+                                                ((ProgressWheel) v.findViewById(R.id.indeterminate_progress_large_library)).setBarColor(s.getBodyTextColor());
                                             }
-                                        } else if (p.getDarkVibrantSwatch() != null) {
-                                            Log.d(TAG, "Use dark vibrant");
-                                            Palette.Swatch s = p.getDarkVibrantSwatch();
-                                            v.setBackgroundColor(s.getRgb());
-                                            ((TextView) v.findViewById(R.id.channel)).setTextColor(s.getTitleTextColor());
-                                            ((TextView) v.findViewById(R.id.title)).setTextColor(s.getTitleTextColor());
-                                            ((TextView) v.findViewById(R.id.channel_msg)).setTextColor(s.getTitleTextColor());
-                                            ((ProgressWheel) v.findViewById(R.id.indeterminate_progress_large_library)).setBarColor(s.getRgb());
-                                        } else if (p.getSwatches().size() > 0) {
-                                            //Go with default if no vibrant swatch exists
-                                            Log.d(TAG, "No vibrant swatch, " + p.getSwatches().size() + " others");
-                                            Palette.Swatch s = p.getSwatches().get(0);
-                                            v.setBackgroundColor(s.getRgb());
-                                            ((TextView) v.findViewById(R.id.channel)).setTextColor(s.getTitleTextColor());
-                                            ((TextView) v.findViewById(R.id.title)).setTextColor(s.getTitleTextColor());
-                                            ((TextView) v.findViewById(R.id.channel_msg)).setTextColor(s.getTitleTextColor());
-                                            ((ProgressWheel) v.findViewById(R.id.indeterminate_progress_large_library)).setBarColor(s.getBodyTextColor());
                                         }
+                                    };
+                                    try {
+                                        if (jsonChannel.getLogo() != null && !jsonChannel.getLogo().isEmpty()) {
+                                            bitmap[0] = Picasso.with(getApplicationContext())
+                                                    .load(jsonChannel.getLogo())
+                                                    .placeholder(R.drawable.ic_launcher)
+                                                    .get();
+                                            h.sendEmptyMessage(0);
+                                        } //Else we have no set logo
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
                                     }
-                                };
-                                try {
-                                    if(jsonChannel.getLogo() != null && !jsonChannel.getLogo().isEmpty()) {
-                                        bitmap[0] = Picasso.with(getApplicationContext())
-                                                .load(jsonChannel.getLogo())
-                                                .placeholder(R.drawable.ic_launcher)
-                                                .get();
-                                        h.sendEmptyMessage(0);
-                                    } //Else we have no set logo
-                                } catch (IOException e) {
-                                    e.printStackTrace();
                                 }
-                            }
-                        }).start();
+                            }).start();
 //                            .into((ImageView) v.findViewById(R.id.thumnail));
+                        }
                     }
+                    Log.d(TAG, "Overlay");
+                    return v;
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "The loading screen can't seem to open, but the channel is loading.", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Failure to open: " + e.getMessage());
+                    return null;
                 }
-                Log.d(TAG, "Overlay");
-                return v;
-            } catch(Exception e) {
-                Toast.makeText(getApplicationContext(), "The loading screen can't seem to open, but the channel is loading.", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "Failure to open: "+e.getMessage());
-                return null;
+            } else {
+                //Website
+                WebTvPlayer webView = new WebTvPlayer(getApplicationContext());
+                webView.load(jsonChannel.getUrl());
+                return webView;
             }
         }
         public boolean tuneTo(String channel_no) {
@@ -391,6 +401,44 @@ public class SampleTvInput extends TvInputService {
                 exoPlayer.setSurface(mSurface);
                 exoPlayer.setVolume(mVolume);
             }
+            exoPlayer.addCallback(new TvInputPlayer.Callback() {
+                @Override
+                public void onPrepared() {
+
+                }
+
+                @Override
+                public void onPlayerStateChanged(boolean playWhenReady, int state) {
+
+                }
+
+                @Override
+                public void onPlayWhenReadyCommitted() {
+
+                }
+
+                @Override
+                public void onPlayerError(ExoPlaybackException e) {
+                    Log.e(TAG, "Error preparing player: "+e.getLocalizedMessage());
+                    if(e.getMessage().contains("Extractor")) {
+                        Log.d(TAG, "Cannot play the stream, try loading it as a website");
+                        //Pretend this is a website
+                        setOverlayViewEnabled(true);
+                        notifyVideoAvailable();
+                        isWeb = true;
+                    }
+                }
+
+                @Override
+                public void onDrawnToSurface(Surface surface) {
+
+                }
+
+                @Override
+                public void onText(String text) {
+
+                }
+            });
             exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
             exoPlayer.setPlayWhenReady(true);
             return true;

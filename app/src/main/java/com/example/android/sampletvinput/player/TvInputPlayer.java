@@ -27,6 +27,7 @@ import android.util.Log;
 import android.view.Surface;
 import android.widget.Toast;
 
+import com.felkertech.n.cumulustv.NotValidExoPlayerStream;
 import com.google.android.exoplayer.DefaultLoadControl;
 import com.google.android.exoplayer.DummyTrackRenderer;
 import com.google.android.exoplayer.ExoPlaybackException;
@@ -70,6 +71,7 @@ import com.google.android.exoplayer.util.MimeTypes;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.IllegalFormatCodePointException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -205,7 +207,7 @@ public class TvInputPlayer implements TextRenderer {
                             BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE);
             audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
             videoRenderer = new MediaCodecVideoTrackRenderer(context, sampleSource,
-                    MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 0, mHandler,
+                    MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING, 0, mHandler,
                     mVideoRendererEventListener, 50);
             textRenderer = new DummyTrackRenderer();
             try {
@@ -240,7 +242,7 @@ public class TvInputPlayer implements TextRenderer {
                             HlsSampleSource sampleSource = new HlsSampleSource(chunkSource, lhc, BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE);
                             audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
                             videoRenderer = new MediaCodecVideoTrackRenderer(context, sampleSource,
-                                    MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000, mHandler,
+                                    MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING, 5000, mHandler,
                                     mVideoRendererEventListener, 50);
                             textRenderer = new Eia608TrackRenderer(sampleSource,
                                     TvInputPlayer.this, mHandler.getLooper());
@@ -258,7 +260,11 @@ public class TvInputPlayer implements TextRenderer {
                             Log.e(TAG, e.getMessage() + "");
                             e.printStackTrace();
 //                            Toast.makeText(context, e.getMessage()+"", Toast.LENGTH_SHORT).show();
-                            prepare(context, originalUri, SOURCE_TYPE_MPEG_DASH);
+                            try {
+                                prepare(context, originalUri, SOURCE_TYPE_MPEG_DASH);
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+                            }
                             for (Callback callback : mCallbacks) {
                                 callback.onPlayerError(new ExoPlaybackException(e));
                             }
@@ -321,7 +327,7 @@ public class TvInputPlayer implements TextRenderer {
                                         videoChunkSource, loadControl,
                                         VIDEO_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE);
                                 videoRenderer = new MediaCodecVideoTrackRenderer(context, videoSampleSource,
-                                        MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 0, mHandler,
+                                        MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING, 0, mHandler,
                                         mVideoRendererEventListener, 50);
                             }
 
@@ -378,7 +384,10 @@ public class TvInputPlayer implements TextRenderer {
                         public void onSingleManifestError(IOException e) {
                             Log.e(TAG, "MPEG-DASH IOException");
                             Log.e(TAG, e.getMessage());
-                            prepare(context, originalUri, SOURCE_TYPE_EXTRACTOR);
+                            try {
+                                prepare(context, originalUri, SOURCE_TYPE_EXTRACTOR);
+                            } catch (Exception e1) {
+                            }
                             for (Callback callback : callbacks) {
                                 callback.onPlayerError(new ExoPlaybackException(e));
                             }
@@ -387,6 +396,8 @@ public class TvInputPlayer implements TextRenderer {
         } else if(sourceType == SOURCE_TYPE_EXTRACTOR) {
             Log.d(TAG, "Prep Extractor");
             Log.d(TAG, "Maybe? Fingers crossed.");
+           /* throw new NotValidExoPlayerStream();
+        } else {*/
             Log.d(TAG, originalUri.toString());
             Log.d(TAG, uri.toString());
             int BUFFER_SEGMENT_SIZE = 64 * 1024;
@@ -394,29 +405,33 @@ public class TvInputPlayer implements TextRenderer {
             Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
 
             // Build the video and audio renderers.
-            DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter(mHandler,
-                    null);
-            DataSource extractorDataSource = new DefaultUriDataSource(context, bandwidthMeter, userAgent);
-            ExtractorSampleSource sampleSource = new ExtractorSampleSource(originalUri, extractorDataSource, allocator,
-                    BUFFER_SEGMENT_COUNT * BUFFER_SEGMENT_SIZE);
-            MediaCodecVideoTrackRenderer videoRenderer = new MediaCodecVideoTrackRenderer(context,
-                    sampleSource, MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000, mHandler,
-                    mVideoRendererEventListener, 50);
-            MediaCodecAudioTrackRenderer audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
-            TrackRenderer textRenderer = new DummyTrackRenderer();
-            // Invoke the callback.
+            try {
+                DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter(mHandler,
+                        null);
+                DataSource extractorDataSource = new DefaultUriDataSource(context, bandwidthMeter, userAgent);
+                ExtractorSampleSource sampleSource = new ExtractorSampleSource(originalUri, extractorDataSource, allocator,
+                        BUFFER_SEGMENT_COUNT * BUFFER_SEGMENT_SIZE);
+                MediaCodecVideoTrackRenderer videoRenderer = new MediaCodecVideoTrackRenderer(context,
+                        sampleSource, MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING, 5000, mHandler,
+                        mVideoRendererEventListener, 50);
+                MediaCodecAudioTrackRenderer audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
+                TrackRenderer textRenderer = new DummyTrackRenderer();
+                // Invoke the callback.
             /*TrackRenderer[] renderers = new TrackRenderer[DemoPlayer.RENDERER_COUNT];
             renderers[DemoPlayer.TYPE_VIDEO] = videoRenderer;
             renderers[DemoPlayer.TYPE_AUDIO] = audioRenderer;
             renderers[DemoPlayer.TYPE_TEXT] = textRenderer;*/
 //            mPlayer.onRenderers(renderers, bandwidthMeter);
-            this.videoRenderer = videoRenderer;
-            this.audioRenderer = audioRenderer;
-            this.textRenderer = textRenderer;
-            prepareInternal();
-        } else {
+                this.videoRenderer = videoRenderer;
+                this.audioRenderer = audioRenderer;
+                this.textRenderer = textRenderer;
+                prepareInternal();
+            } catch(Exception e) {
+
+            }
+        } /*else {
             throw new IllegalArgumentException("Unknown source type: " + sourceType);
-        }
+        }*/
     }
 
     public TvTrackInfo[] getTracks(int trackType) {
@@ -492,18 +507,23 @@ public class TvInputPlayer implements TextRenderer {
         Log.d(TAG, "Prepare internal");
         try {
             mPlayer.prepare(audioRenderer, videoRenderer, textRenderer);
+            mPlayer.sendMessage(audioRenderer, MediaCodecAudioTrackRenderer.MSG_SET_VOLUME,
+                    mVolume);
+            mPlayer.sendMessage(videoRenderer, MediaCodecVideoTrackRenderer.MSG_SET_SURFACE,
+                    mSurface);
+            // Disable text track by default.
+            mPlayer.setRendererEnabled(TvTrackInfo.TYPE_SUBTITLE, false);
+            for (Callback callback : mCallbacks) {
+                callback.onPrepared();
+            }
         } catch(Exception E) {
-            Log.e(TAG, E.getMessage()+"");
-            E.printStackTrace();
-        }
-        mPlayer.sendMessage(audioRenderer, MediaCodecAudioTrackRenderer.MSG_SET_VOLUME,
-                mVolume);
-        mPlayer.sendMessage(videoRenderer, MediaCodecVideoTrackRenderer.MSG_SET_SURFACE,
-                mSurface);
-        // Disable text track by default.
-        mPlayer.setRendererEnabled(TvTrackInfo.TYPE_SUBTITLE, false);
-        for (Callback callback : mCallbacks) {
-            callback.onPrepared();
+            Log.e(TAG, E.getMessage() + "<(o.o<)");
+            Log.e(TAG, E.getClass().getSimpleName());
+            if(E.getClass().getName().contains("ExoPlaybackException")) {
+                throw new IllegalArgumentException(E.getMessage()+"");
+            } else {
+//                E.printStackTrace();
+            }
         }
     }
 

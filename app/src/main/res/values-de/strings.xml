@@ -122,4 +122,6 @@
     <string name="update">Aktualisieren</string>
     <string name="try_again">Try Again</string>
     <string name="yes">Si</string>
+    <string name="daydream_select_channel">Wählen Sie Kanal</string>
+    <string name="daydream_success">Daydream erfolgreich aktualisiert wurde</string>
 </resources>

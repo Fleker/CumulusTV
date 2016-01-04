@@ -379,7 +379,12 @@ public class MainPicker extends CumulusTvPlugin {
         TvInputPlayer exoPlayer;
         exoPlayer = new TvInputPlayer();
         exoPlayer.setSurface(sv.getHolder().getSurface());
-        exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
+        try {
+            exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
+        } catch(Exception e) {
+            //Do nothing
+            Log.d(TAG, "IllegalArgumentException");
+        }
         exoPlayer.setPlayWhenReady(true);
     }
     public void loadStream(MaterialDialog viewHolder, String url) {
@@ -387,7 +392,11 @@ public class MainPicker extends CumulusTvPlugin {
         TvInputPlayer exoPlayer;
         exoPlayer = new TvInputPlayer();
         exoPlayer.setSurface(sv.getHolder().getSurface());
-        exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
+        try {
+            exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
+        } catch (Exception e) {
+                e.printStackTrace();
+        }
         exoPlayer.setPlayWhenReady(true);
     }
     public String getUrl() {

@@ -13,6 +13,7 @@ import android.view.accessibility.CaptioningManager;
 /**
  * Created by N on 7/16/2015.
  */
+@Deprecated
 public class SampleTvInput4 extends TvInputService {
     public static String TAG = "cumulus:TvInput";
 

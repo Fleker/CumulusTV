@@ -48,6 +48,8 @@ public class M3UParser {
 //                            Log.d(TAG, "Display Number: "+displayNumber);
                             if(displayNumber.isEmpty())
                                 displayNumber = ChannelDatabase.getAvailableChannelNumber(mContext)+"";
+                            if(displayNumber.equals("-1"))
+                                displayNumber = ChannelDatabase.getAvailableChannelNumber(mContext)+"";
                             originalNetworkId = Integer.parseInt(displayNumber);
                         } else if (part.startsWith("tvg-id=")) {
                             int end = part.indexOf("\"", 8);

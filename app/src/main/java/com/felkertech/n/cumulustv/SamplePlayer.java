@@ -5,13 +5,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.MediaController;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.example.android.sampletvinput.player.TvInputPlayer;
+import com.example.android.sampletvinput.player.WebTvPlayer;
+import com.google.android.exoplayer.ExoPlaybackException;
 
 import java.net.URL;
 
@@ -52,7 +56,7 @@ public class SamplePlayer extends AppCompatActivity {
         } else {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             getSupportActionBar().hide();
-            String url = parameters.getStringExtra(KEY_VIDEO_URL);
+            final String url = parameters.getStringExtra(KEY_VIDEO_URL);
             if(!url.isEmpty()) {
                 setContentView(R.layout.full_surfaceview);
                 SurfaceView sv = (SurfaceView) findViewById(R.id.surface);
@@ -60,7 +64,50 @@ public class SamplePlayer extends AppCompatActivity {
                 exoPlayer = new TvInputPlayer();
                 exoPlayer.setSurface(sv.getHolder().getSurface());
                 exoPlayer.setVolume(1);
-                exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
+                exoPlayer.addCallback(new TvInputPlayer.Callback() {
+                    @Override
+                    public void onPrepared() {
+
+                    }
+
+                    @Override
+                    public void onPlayerStateChanged(boolean playWhenReady, int state) {
+
+                    }
+
+                    @Override
+                    public void onPlayWhenReadyCommitted() {
+
+                    }
+
+                    @Override
+                    public void onPlayerError(ExoPlaybackException e) {
+                        Log.e(TAG, "Callback2");
+                        Log.e(TAG, e.getMessage()+"");
+                        if(e.getMessage().contains("Extractor")) {
+                            Log.d(TAG, "Cannot play the stream, try loading it as a website");
+                            Toast.makeText(SamplePlayer.this, "This is not a valid stream.", Toast.LENGTH_SHORT).show();
+                            WebTvPlayer wv = new WebTvPlayer(SamplePlayer.this);
+                            wv.load(url);
+                            setContentView(wv);
+                        }
+                    }
+
+                    @Override
+                    public void onDrawnToSurface(Surface surface) {
+
+                    }
+
+                    @Override
+                    public void onText(String text) {
+
+                    }
+                });
+                try {
+                    exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
+                } catch(Exception e) {
+
+                }
                 exoPlayer.setPlayWhenReady(true);
             }
         }

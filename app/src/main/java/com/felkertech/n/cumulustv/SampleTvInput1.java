@@ -31,6 +31,7 @@ import java.io.IOException;
 /**
  * Created by N on 7/12/2015.
  */
+@Deprecated
 public class SampleTvInput1 extends TvInputService {
     HandlerThread mHandlerThread;
     BroadcastReceiver mBroadcastReceiver;
@@ -193,7 +194,11 @@ public class SampleTvInput1 extends TvInputService {
                 exoPlayer.setVolume(mVolume);
             }
             Log.d(TAG, "Start playing "+url);
-            exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
+            try {
+                exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             exoPlayer.setPlayWhenReady(true);
             return true;
         }

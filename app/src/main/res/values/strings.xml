@@ -15,7 +15,7 @@
     <string name="intro_msg_2">You can create a JSON file on Google Drive and have your channels synced across all your devices.</string>
     <string name="intro_title_21">How to Sync</string>
     <string name="intro_msg_21">"-Create Syncable JSON File in Google Drive\n-Create a Channel\n-On your computer the file should show up.\n    You can add more channels here.\n-Edit the names, or add a splashscreen url to be fancy.\n-Change the modified attribute. Make it larger than before.\n-Save the file.\n-Return to the app and choose the option 'Refresh Data - Cloud to Local'\n    Data will automatically sync periodically."</string>
-        <!--Edits on your PC will also change them on this device, as long as you change the `modified` attribute.</string>-->
+    <!--Edits on your PC will also change them on this device, as long as you change the `modified` attribute.</string>-->
     <string name="intro_title_3">Report Problems</string>
     <string name="intro_msg_3">You can browse the source code on GitHub and report any issues you find or suggest a feature. Have a problem with the JSON? You can browse the format there.</string>
     <string name="intro_title_4">Get Started</string>
@@ -76,17 +76,23 @@
     <string name="suggested_channels">"Here are some suggested channels"</string>
     <string name="no_channels_find">"Find a few streams to add"</string>
     <string name="version">Version %1$s</string>
-    
+
     <string name="permission_storage_rationale">Your channel data is backed up automatically through Google Drive.</string>
     <string name="permission_not_allowed_error">"You can\'t do that"</string>
     <string name="permission_not_allowed_text">CumulusTV is not allowed to access your storage, so syncing is disabled. The app will continue to work by itself.</string>
     <string name="permission_action_settings">View Permissions</string>
-    
+
     <string name="import_bulk_title">Import %1$d Channels?</string>
     <string name="import_bulk_wait">Hold on a second</string>
     <string name="import_bulk_success">"You're good to go!"</string>
 
     <string name="github" translatable="false">GitHub</string>
     <string name="help">Help</string>
+    <string name="pref_dream_text_key" translatable="false">pref_dream_text</string>
+    <string name="pref_dream_text_default" translatable="false">zzzZZZzzz</string>
+    <string name="pref_dream_text_title" translatable="false">Ticker text</string>
+    <string name="daydream_url" translatable="false">STREAM_TO_BE_PLAYED_IN_DAYDREAM</string>
+    <string name="daydream_select_channel">Select Channel</string>
+    <string name="daydream_success">Daydream was updated successfully</string>
 </resources>
 

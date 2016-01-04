@@ -122,5 +122,7 @@
     <string name="update">Mettre à jour</string>
     <string name="try_again">Try Again</string>
     <string name="yes">Oui</string>
+    <string name="daydream_select_channel">Sélectionnez Chaîne</string>
+    <string name="daydream_success">Daydream été mis à jour</string>
 
 </resources>
