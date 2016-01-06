@@ -94,5 +94,10 @@
     <string name="daydream_url" translatable="false">STREAM_TO_BE_PLAYED_IN_DAYDREAM</string>
     <string name="daydream_select_channel">Select Channel</string>
     <string name="daydream_success">Daydream was updated successfully</string>
+
+    <!-- MLC - Music Live Channels -->
+    <string name="about_mlc" translatable="false">About MLC</string>
+    <string name="about_mlc_summary" translatable="false">MLC is an experimental, web-based, leanback, musical experience.</string>
+    <string name="about_mlc_issues" translatable="false">Visit Issue Tracker</string>
 </resources>
 

@@ -65,6 +65,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.channels.Channel;
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -507,7 +508,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
                             || newProgramsIndex >= fetchedProgramsCount) {
                         try {
                             mContext.getContentResolver().applyBatch(TvContract.AUTHORITY, ops);
-                        } catch (RemoteException | OperationApplicationException e) {
+                        } catch (SecurityException | RemoteException | OperationApplicationException e) {
                             Log.e(TAG, "Failed to insert programs.", e);
                             return;
                         }
@@ -570,7 +571,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
                                         if(jsonObject.has("modified")) {
                                             long cloudModified = jsonObject.getLong("modified");
                                             long localModified = new ChannelDatabase(getContext()).getLastModified();
-                                            if(cloudModified > localModified) {
+                                            if(cloudModified >= localModified) {
                                                 //Read in
                                                 Log.d(TAG, "Cloud newer, read in");
                                                 operations[0]++;

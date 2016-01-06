@@ -143,6 +143,8 @@ public class JSONChannel {
     }
 
     public boolean hasService() {
+        if(service == null)
+            return false;
         return !service.isEmpty();
     }
 

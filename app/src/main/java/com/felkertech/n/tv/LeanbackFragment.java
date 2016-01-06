@@ -155,7 +155,7 @@ public class LeanbackFragment extends BrowseFragment
         mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 
         //ROW 1: MY CHANNELS
-        ChannelDatabase cd = new ChannelDatabase(getActivity());
+        ChannelDatabase cd = new ChannelDatabase(mActivity);
         try {
             CardPresenter channelCardPresenter = new CardPresenter();
 //            GridItemPresenter channelCardPresenter = new GridItemPresenter();
@@ -341,7 +341,7 @@ public class LeanbackFragment extends BrowseFragment
                             .setInitialDriveContents(result.getDriveContents())
                             .build(gapi);
                     try {
-                        getActivity().startIntentSenderForResult(
+                        mActivity.startIntentSenderForResult(
                                 intentSender, REQUEST_CODE_CREATOR, null, 0, 0, 0);
                     } catch (IntentSender.SendIntentException e) {
                         Log.w(TAG, "Unable to send intent", e);
@@ -367,7 +367,7 @@ public class LeanbackFragment extends BrowseFragment
                 // Unable to resolve, message user appropriately
             }
         } else {
-            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), getActivity(), 0).show();
+            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), mActivity, 0).show();
         }
     }
 
@@ -379,33 +379,33 @@ public class LeanbackFragment extends BrowseFragment
             if (item instanceof Movie) {
                 Movie movie = (Movie) item;
                 Log.d(TAG, "Item: " + item.toString());
-                Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                Intent intent = new Intent(mActivity, DetailsActivity.class);
                 intent.putExtra(DetailsActivity.MOVIE, movie);
 
                 Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        getActivity(),
+                        mActivity,
                         ((ImageCardView) itemViewHolder.view).getMainImageView(),
                         DetailsActivity.SHARED_ELEMENT_NAME).toBundle();
-                getActivity().startActivity(intent, bundle);
+                mActivity.startActivity(intent, bundle);
             } else if (item instanceof String) {
                 String title = (String) item;
                 if (((String) item).indexOf(getString(R.string.error_fragment)) >= 0) {
-                    Intent intent = new Intent(getActivity(), BrowseErrorActivity.class);
+                    Intent intent = new Intent(mActivity, BrowseErrorActivity.class);
                     startActivity(intent);
                 } else if(title.equals(getString(R.string.manage_livechannels))) {
-                    ActivityUtils.launchLiveChannels(getActivity());
+                    ActivityUtils.launchLiveChannels(mActivity);
                 } else if(title.equals(getString(R.string.manage_add_suggested))) {
-                   ActivityUtils.openSuggestedChannels((AppCompatActivity) getActivity(), gapi);
+                   ActivityUtils.openSuggestedChannels(mActivity, gapi);
                 } else if(title.equals(getString(R.string.manage_add_new))) {
-                    ActivityUtils.openPluginPicker(true, getActivity());
+                    ActivityUtils.openPluginPicker(true, mActivity);
                 } else if(title.equals(getString(R.string.settings_sync_file))) {
-                    ActivityUtils.syncFile(getActivity(), gapi);
+                    ActivityUtils.syncFile(mActivity, gapi);
                 } else if(title.equals(getString(R.string.settings_browse_plugins))) {
-                    ActivityUtils.browsePlugins(getActivity());
+                    ActivityUtils.browsePlugins(mActivity);
                 } else if(title.equals(getString(R.string.settings_switch_google_drive))) {
-                    ActivityUtils.switchGoogleDrive(getActivity(), gapi);
+                    ActivityUtils.switchGoogleDrive(mActivity, gapi);
                 } else if(title.equals(getString(R.string.settings_refresh_cloud_local))) {
-                    ActivityUtils.readDriveData(getActivity(), gapi);
+                    ActivityUtils.readDriveData(mActivity, gapi);
                     Handler h = new Handler(Looper.myLooper()) {
                         @Override
                         public void handleMessage(Message msg) {
@@ -415,11 +415,11 @@ public class LeanbackFragment extends BrowseFragment
                     };
                     h.sendEmptyMessageDelayed(0, 4000);
                 } else if(title.equals(getString(R.string.settings_view_licenses))) {
-                    ActivityUtils.oslClick(getActivity());
+                    ActivityUtils.oslClick(mActivity);
                 } else if(title.equals(getString(R.string.settings_reset_channel_data))) {
-                    ActivityUtils.deleteChannelData(getActivity(), gapi);
+                    ActivityUtils.deleteChannelData(mActivity, gapi);
                 } else if(title.equals(getString(R.string.about_app))) {
-                    ActivityUtils.openAbout(getActivity());
+                    ActivityUtils.openAbout(mActivity);
                 } else if(title.equals(getString(R.string.settings_read_xmltv))) {
                     final OkHttpClient client = new OkHttpClient();
                     new Thread(new Runnable() {
@@ -446,7 +446,7 @@ public class LeanbackFragment extends BrowseFragment
                         }
                     }).start();
                 } else {
-                    Toast.makeText(getActivity(), ((String) item), Toast.LENGTH_SHORT)
+                    Toast.makeText(mActivity, ((String) item), Toast.LENGTH_SHORT)
                             .show();
                 }
             }

@@ -108,6 +108,7 @@
         -->
         <service
             android:name="com.example.android.sampletvinput.syncadapter.SyncService"
+            android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
@@ -124,6 +125,7 @@
         -->
         <service
             android:name="com.example.android.sampletvinput.syncadapter.DummyAccountService"
+            android:exported="true"
             android:icon="@drawable/high_res_icon2">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
@@ -159,6 +161,15 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:scheme="file" />
+                <data android:host="*" />
+                <data android:pathPattern=".*\\.m3u" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="http" />
                 <data android:host="*" />
                 <data android:pathPattern=".*\\.m3u" />
             </intent-filter>
@@ -235,6 +246,7 @@
         <activity
             android:name="com.felkertech.n.tv.LeanbackActivity"
             android:label="@string/app_name"
+            android:exported="true"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.Leanback">
             <intent-filter>

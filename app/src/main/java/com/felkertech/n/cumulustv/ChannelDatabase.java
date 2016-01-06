@@ -116,7 +116,7 @@ public class ChannelDatabase {
             JSONArray jsonArray = getJSONChannels();
             for(int i = 0;i<jsonArray.length();i++) {
                 JSONChannel jsonChannel = new JSONChannel(jsonArray.getJSONObject(i));
-                if(jsonChannel.getNumber().equals(number))
+                if(jsonChannel != null && jsonChannel.getNumber().equals(number))
                     return true;
             }
         } catch (JSONException e) {
@@ -207,7 +207,7 @@ public class ChannelDatabase {
                     JSONChannel jsonChannel = new JSONChannel(jsonArray.getJSONObject(i));
                     if(finalindex >= 0) {
 //                        jsonArray.put(finalindex, ch.toJSON());
-                    } else if(jsonChannel.getUrl().equals(ch.getUrl())) {
+                    } else if(jsonChannel != null && jsonChannel.getUrl().equals(ch.getUrl())) {
                         Log.d(TAG, "Remove "+i+" and put at "+i+": "+ch.toJSON().toString());
                         jsonArray.put(i, ch.toJSON());
 //                        jsonArray.remove(i);

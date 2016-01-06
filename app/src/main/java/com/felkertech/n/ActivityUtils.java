@@ -227,8 +227,8 @@ public class ActivityUtils {
                         }
                     })
                     .build();
-        }
-        actuallyWriteData(context, gapi);
+        } else
+            actuallyWriteData(context, gapi);
     }
     public static void writeDriveData(final Context context, GoogleApiClient gapi) {
         //This can crash
@@ -271,6 +271,8 @@ public class ActivityUtils {
         SyncUtils.requestSync(info);
     }
     public static void createDriveData(Activity activity, final GoogleApiClient gapi, final ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback) {
+        PermissionUtils.requestPermissionIfDisabled(activity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE, activity.getString(R.string.permission_storage_rationale));
+
         new MaterialDialog.Builder(activity)
                 .title("Create a syncable file")
                 .content("Save channel info in Google Drive so you can always access it")
@@ -287,19 +289,6 @@ public class ActivityUtils {
                 .show();
     }
     public static void switchGoogleDrive(Activity mActivity, GoogleApiClient gapi) {
-        /*if (gapi.isConnected()) {
-            IntentSender intentSender = Drive.DriveApi
-                    .newOpenFileActivityBuilder()
-                    .setMimeType(new String[]{"application/json", "text*//*"})
-                    .build(gapi);
-            try {
-                mActivity.startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0, 0);
-            } catch (IntentSender.SendIntentException e) {
-                Log.w(TAG, "Unable to send intent", e);
-            }
-        } else {
-            Toast.makeText(mActivity, "Please wait until Drive Service is active", Toast.LENGTH_SHORT).show();
-        }*/
         syncFile(mActivity, gapi);
     }
     public static void deleteChannelData(final Activity mActivity, GoogleApiClient gapi) {

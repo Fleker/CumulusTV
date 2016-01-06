@@ -30,7 +30,7 @@ import android.util.Log;
 public class SyncUtils {
     private static final String TAG = "cumulus:SyncUtils";
     private static final String CONTENT_AUTHORITY = TvContract.AUTHORITY;
-    public static final String ACCOUNT_TYPE = "com.example.android.sampletvinput.account";
+    public static final String ACCOUNT_TYPE = "com.felkertech.cumulustv";
 
     public static void setUpPeriodicSync(Context context, String inputId) {
         Account account = DummyAccountService.getAccount(ACCOUNT_TYPE);

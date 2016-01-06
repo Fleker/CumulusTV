@@ -246,15 +246,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 ((TextView) md.getCustomView().findViewById(R.id.message)).setText("Error connecting: " + connectionResult.toString());
             }
         }
+        Toast.makeText(MainActivity.this, "Connection issue ("+connectionResult.getErrorCode()+"): "+connectionResult.toString(), Toast.LENGTH_SHORT).show();
         Log.d(TAG, "oCF " + connectionResult.toString());
         if (connectionResult.hasResolution()) {
             try {
                 connectionResult.startResolutionForResult(this, RESOLVE_CONNECTION_REQUEST_CODE);
             } catch (IntentSender.SendIntentException e) {
                 // Unable to resolve, message user appropriately
+                Toast.makeText(MainActivity.this, "Cannot resolve issue", Toast.LENGTH_SHORT).show();
             }
         } else {
-            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), this, 0).show();
+            try {
+                GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), MainActivity.this, 0).show();
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
         }
     }
     @Override
@@ -292,7 +298,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 getString(R.string.settings_refresh_cloud_local),
                 getString(R.string.settings_view_licenses),
                 getString(R.string.settings_reset_channel_data),
-                getString(R.string.settings_about)
+                getString(R.string.settings_about),
+                getString(R.string.about_mlc)
             };
         new MaterialDialog.Builder(this)
                 .title(R.string.more_actions)
@@ -320,6 +327,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                 ActivityUtils.openAbout(MainActivity.this);
                                 break;
                             case 6:
+                                new MaterialDialog.Builder(MainActivity.this)
+                                        .title(R.string.about_mlc)
+                                        .content(R.string.about_mlc_summary)
+                                        .positiveText(R.string.about_mlc_issues)
+                                        .callback(new MaterialDialog.ButtonCallback() {
+                                            @Override
+                                            public void onPositive(MaterialDialog dialog) {
+                                                super.onPositive(dialog);
+                                                Intent gi = new Intent(Intent.ACTION_VIEW);
+                                                gi.setData(Uri.parse("https://bitbucket.org/fleker/mlc-music-live-channels"));
+                                                startActivity(gi);
+                                            }
+                                        })
+                                        .show();
+                            case 13:
                                 final OkHttpClient client = new OkHttpClient();
                                 new Thread(new Runnable() {
                                     @Override
