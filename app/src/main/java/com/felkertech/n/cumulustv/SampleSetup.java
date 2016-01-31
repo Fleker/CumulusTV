@@ -1,35 +1,21 @@
 package com.felkertech.n.cumulustv;
 
-import android.content.ComponentName;
-import android.content.ContentProviderOperation;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.OperationApplicationException;
-import android.database.Cursor;
-import android.media.tv.TvContentRating;
-import android.media.tv.TvContract;
 import android.media.tv.TvInputInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-import com.example.android.sampletvinput.TvContractUtils;
 import com.example.android.sampletvinput.data.Program;
 import com.example.android.sampletvinput.player.TvInputPlayer;
 import com.example.android.sampletvinput.syncadapter.SyncAdapter;
 import com.example.android.sampletvinput.syncadapter.SyncUtils;
 
-import java.sql.Blob;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
