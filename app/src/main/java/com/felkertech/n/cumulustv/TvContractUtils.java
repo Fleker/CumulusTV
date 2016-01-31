@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.sampletvinput;
+package com.felkertech.n.cumulustv;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;

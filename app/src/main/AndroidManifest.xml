@@ -57,7 +57,7 @@
 
             <meta-data
                 android:name="android.media.tv.input"
-                android:resource="@xml/sample_tv_input" />
+                android:resource="@xml/channel_surfer_tv_input" />
         </service>
 
         <activity
@@ -75,13 +75,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <!--
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
-            </intent-filter>
-            -->
         </activity>
         <activity
             android:name=".SampleSetup"
@@ -92,49 +85,10 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".SampleSettings"
-            android:exported="true"
-            android:label="Settings"
-            android:theme="@style/CompatTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
 
-        <!--
-        This service implements the SyncAdapter for updating program information regularly in
-        the background. It needs to be exported, so that the sync framework can access it.
-        -->
-        <service
-            android:name="com.example.android.sampletvinput.syncadapter.SyncService"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.content.SyncAdapter" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.content.SyncAdapter"
-                android:resource="@xml/syncadapter" />
-        </service>
-
-        <!--
-        Since the channel/program feed here does not require any authentication, we use a dummy
-        account used for SyncAdapter.
-        -->
-        <service
-            android:name="com.example.android.sampletvinput.syncadapter.DummyAccountService"
-            android:exported="true"
-            android:icon="@drawable/high_res_icon2">
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
-        </service>
+        <meta-data
+            android:name="TvInputService"
+            android:value="com.felkertech.n.cumulustv.SampleTvInput" />
 
         <!-- Plugin -->
         <activity
@@ -160,7 +114,7 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:scheme="file" />
+                <data android:scheme="*" />
                 <data android:host="*" />
                 <data android:pathPattern=".*\\.m3u" />
             </intent-filter>
@@ -169,25 +123,7 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:scheme="http" />
-                <data android:host="*" />
-                <data android:pathPattern=".*\\.m3u" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:scheme="file" />
-                <data android:host="*" />
-                <data android:pathPattern=".*\\.m3u8" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:scheme="http" />
+                <data android:scheme="*" />
                 <data android:host="*" />
                 <data android:pathPattern=".*\\.m3u8" />
             </intent-filter>
@@ -224,7 +160,6 @@
             android:name="com.felkertech.n.plugins.CumulusTvPlugin"
             android:enabled="true"
             android:exported="true"
-            android:label="Ignore.me"
             android:theme="@style/CompatTheme"></activity>
 
         <receiver

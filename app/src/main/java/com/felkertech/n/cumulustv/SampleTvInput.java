@@ -5,15 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.media.MediaPlayer;
 import android.media.tv.TvContract;
 import android.media.tv.TvInputManager;
-import android.media.tv.TvInputService;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -25,20 +21,23 @@ import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
 import android.view.accessibility.CaptioningManager;
-import android.view.animation.AnimationUtils;
-import android.webkit.WebView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-import com.example.android.sampletvinput.TvContractUtils;
 import com.example.android.sampletvinput.player.TvInputPlayer;
 import com.example.android.sampletvinput.player.WebTvPlayer;
+import com.felkertech.channelsurfer.model.Channel;
+import com.felkertech.channelsurfer.model.Program;
+import com.felkertech.channelsurfer.service.MultimediaInputProvider;
+import com.felkertech.channelsurfer.service.SimpleSessionImpl;
+import com.felkertech.channelsurfer.service.TvInputProvider;
 import com.google.android.exoplayer.ExoPlaybackException;
 import com.pnikosis.materialishprogress.ProgressWheel;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.List;
@@ -48,14 +47,11 @@ import io.fabric.sdk.android.Fabric;
 /**
  * Created by N on 7/12/2015.
  */
-public class SampleTvInput extends TvInputService {
+public class SampleTvInput extends MultimediaInputProvider {
     HandlerThread mHandlerThread;
     BroadcastReceiver mBroadcastReceiver;
-//    ArrayList<BaseTvInputSessionImpl> mSessions;
     Handler mDbHandler;
-    Handler mHandler;
     CaptioningManager mCaptioningManager;
-    String VIDEO_URL = "VIDEOURL";
     SimpleSessionImpl session;
     String TAG = "cumulus:TvInputService";
     @Override
@@ -67,18 +63,6 @@ public class SampleTvInput extends TvInputService {
         Fabric.with(this, new Crashlytics());
         mHandlerThread.start();
         mDbHandler = new Handler(mHandlerThread.getLooper());
-        /*mHandler = new Handler(Looper.myLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                Bundle b = msg.getData();
-                String src = b.getString(VIDEO_URL);
-                Log.d(TAG, "Got data: "+src+", "+(session != null));
-                if(session != null) {
-                    session.startPlayback(src);
-                }
-            }
-        };*/
         mCaptioningManager = (CaptioningManager)
                 getSystemService(Context.CAPTIONING_SERVICE);
 
@@ -93,11 +77,51 @@ public class SampleTvInput extends TvInputService {
         registerReceiver(mBroadcastReceiver, intentFilter);
     }
 
+    @Override
+    public List<Channel> getAllChannels() {
+        ChannelDatabase cdn = new ChannelDatabase(this);
+        try {
+            return cdn.getChannels();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<Program> getProgramsForChannel(Uri channelUri, Channel channelInfo, long startTimeMs, long endTimeMs) {
+        return null;
+    }
+
+    @Override
+    public boolean onSetSurface(Surface surface) {
+        return false;
+    }
+
+    @Override
+    public void onSetStreamVolume(float volume) {
+
+    }
+
+    @Override
+    public void onRelease() {
+
+    }
+
+    @Override
+    public View onCreateVideoView() {
+        return null;
+    }
+
+    @Override
+    public boolean onTune(Channel channel) {
+        return false;
+    }
+
     @Nullable
     @Override
     public Session onCreateSession(String inputId) {
-//        return new SimpleSessionImpl(this);
-        session = new SimpleSessionImpl(this);
+        session = new CumulusSession(this, this);
         Log.d(TAG, "Start session "+inputId);
         session.setOverlayViewEnabled(true);
         return session;
@@ -106,46 +130,13 @@ public class SampleTvInput extends TvInputService {
     /**
      * Simple session implementation which plays local videos on the application's tune request.
      */
-    private class SimpleSessionImpl extends TvInputService.Session {
-        private MediaPlayer mPlayer;
+    private class CumulusSession extends SimpleSessionImpl {
         TvInputPlayer exoPlayer;
-        private float mVolume;
-        private Surface mSurface;
         private String TAG = "cumulus:TIS.S";
         private boolean isWeb = false;
         private JSONChannel jsonChannel;
-        SimpleSessionImpl(Context context) {
-            super(context);
-        }
-        @Override
-        public void onRelease() {
-            if (exoPlayer != null) {
-                Log.d(TAG, "Released from surface");
-                exoPlayer.release();
-            }
-        }
-        @Override
-        public boolean onSetSurface(Surface surface) {
-            if (exoPlayer != null) {
-                Log.d(TAG, "Set to surface");
-                exoPlayer.setSurface(surface);
-            }
-            mSurface = surface;
-            return true;
-        }
-        @Override
-        public void onSetStreamVolume(float volume) {
-            if (exoPlayer != null) {
-                exoPlayer.setVolume(volume);
-            }
-            mVolume = volume;
-        }
-        @Override
-        public void onSetCaptionEnabled(boolean enabled) {
-            // The sample content does not have caption. Nothing to do in this sample input.
-            // NOTE: If the channel has caption, the implementation should turn on/off the caption
-            // based on {@code enabled}.
-            // For the example implementation for the case, please see {@link RichTvInputService}.
+        CumulusSession(Context context, TvInputProvider tvInputProvider) {
+            super(context, tvInputProvider);
         }
         @Override
         public View onCreateOverlayView() {
@@ -442,90 +433,6 @@ public class SampleTvInput extends TvInputService {
             exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
             exoPlayer.setPlayWhenReady(true);
             return true;
-        }
-        private boolean startPlayback(int resource) {
-            if (mPlayer == null) {
-                mPlayer = new MediaPlayer();
-                mPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
-                    @Override
-                    public boolean onInfo(MediaPlayer player, int what, int arg) {
-                        // NOTE: TV input should notify the video playback state by using
-                        // {@code notifyVideoAvailable()} and {@code notifyVideoUnavailable() so
-                        // that the application can display back screen or spinner properly.
-                        if (what == MediaPlayer.MEDIA_INFO_BUFFERING_START) {
-                            notifyVideoUnavailable(
-                                    TvInputManager.VIDEO_UNAVAILABLE_REASON_BUFFERING);
-                            return true;
-                        } else if (what == MediaPlayer.MEDIA_INFO_BUFFERING_END
-                                || what == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                            notifyVideoAvailable();
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-                mPlayer.setSurface(mSurface);
-                mPlayer.setVolume(mVolume, mVolume);
-            } else {
-                mPlayer.reset();
-            }
-            mPlayer.setLooping(true);
-            AssetFileDescriptor afd = getResources().openRawResourceFd(resource);
-            if (afd == null) {
-                return false;
-            }
-            try {
-                mPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(),
-                        afd.getDeclaredLength());
-                mPlayer.prepare();
-                mPlayer.start();
-            } catch (IOException e) {
-                return false;
-            } finally {
-                try {
-                    afd.close();
-                } catch (IOException e) {
-                    // Do nothing.
-                }
-            }
-            // The sample content does not have rating information. Just allow the content here.
-            // NOTE: If the content might include problematic scenes, it should not be allowed.
-            // Also, if the content has rating information, the implementation should allow the
-            // content based on the current rating settings by using
-            // {@link android.media.tv.TvInputManager#isRatingBlocked()}.
-            // For the example implementation for the case, please see {@link RichTvInputService}.
-            notifyContentAllowed();
-            return true;
-        }
-    }
-    private class PlayCurrentProgramRunnable implements Runnable {
-        private static final int RETRY_DELAY_MS = 2000;
-        private final Uri mChannelUri;
-        private Context mContext;
-        private String TAG = "cumulus:SampleTVIpnut2";
-        public PlayCurrentProgramRunnable(Uri channelUri) {
-            mChannelUri = channelUri;
-            mContext = getApplicationContext();
-        }
-
-        @Override
-        public void run() {
-            long nowMs = System.currentTimeMillis();
-            List<TvManager.PlaybackInfo> programs = TvContractUtils.getProgramPlaybackInfo(
-                    mContext.getContentResolver(), mChannelUri, nowMs, nowMs + 1, 1);
-            if (!programs.isEmpty()) {
-//                mHandler.removeMessages(MSG_PLAY_PROGRAM);
-//                mHandler.obtainMessage(MSG_PLAY_PROGRAM, programs.get(0)).sendToTarget();
-                Bundle b = new Bundle();
-                b.putString(VIDEO_URL, programs.get(0).videoUrl);
-                Message m = new Message();
-                m.setData(b);
-                mHandler.sendMessage(m);
-            } else {
-                Log.w(TAG, "Failed to get program info for " + mChannelUri + ". Retry in " +
-                        RETRY_DELAY_MS + "ms.");
-//                mDbHandler.postDelayed(mPlayCurrentProgramRunnable, RETRY_DELAY_MS);
-            }
         }
     }
 }

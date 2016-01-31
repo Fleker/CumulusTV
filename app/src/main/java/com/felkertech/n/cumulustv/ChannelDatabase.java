@@ -14,6 +14,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.android.sampletvinput.player.TvInputPlayer;
+import com.felkertech.channelsurfer.model.Channel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -71,16 +72,16 @@ public class ChannelDatabase {
         }
         return new JSONArray();
     }
-    public ArrayList<TvManager.ChannelInfo> getChannels() throws JSONException {
+    public ArrayList<Channel> getChannels() throws JSONException {
         JSONArray channels = getJSONChannels();
-        ArrayList<TvManager.ChannelInfo> channelInfos = new ArrayList<>();
+        ArrayList<Channel> channelInfos = new ArrayList<>();
         for(int i = 0; i<channels.length();i++) {
             JSONChannel channel = new JSONChannel(channels.getJSONObject(i));
-            TvManager.ChannelInfo ci = new TvManager.ChannelInfo();
-            ci.number = channel.getNumber();
-            ci.name = channel.getName();
-            if(ci.name != null)
-                ci.originalNetworkId = ci.name.hashCode();
+            Channel ci = new Channel();
+            ci.setNumber(channel.getNumber());
+            ci.setName(channel.getName());
+            if(ci.getName() != null)
+                ci.setOriginalNetworkId(ci.getName().hashCode());
 //            Log.d(TAG, "Hash "+ci.originalNetworkId+" for "+ci.name);
 //            ci.originalNetworkId = i+1;
             ci.transportStreamId = 1;
@@ -94,7 +95,7 @@ public class ChannelDatabase {
         }
         return channelInfos;
     }
-    public List<TvManager.ProgramInfo> getPrograms(TvManager.ChannelInfo channelInfo, String streamUrl) {
+/*    public List<TvManager.ProgramInfo> getPrograms(TvManager.ChannelInfo channelInfo, String streamUrl) {
         List<TvManager.ProgramInfo> infoList = new ArrayList<>();
 //        String streamUrl = channelInfo.programs.get(0).videoUrl;
         JSONChannel jsonChannel = findChannel(channelInfo.number);
@@ -103,14 +104,7 @@ public class ChannelDatabase {
         infoList.add(new TvManager.ProgramInfo(channelInfo.name+" Live", channelInfo.logoUrl,
                 "Currently streaming", 60*60, new TvContentRating[] {rating}, jsonChannel.getGenres(), streamUrl, TvInputPlayer.SOURCE_TYPE_HTTP_PROGRESSIVE, 0));
         return infoList;
-    }
-    public List<TvManager.ProgramInfo> getPrograms(JSONChannel jsonChannel) {
-        List<TvManager.ProgramInfo> infoList = new ArrayList<>();
-        String streamUrl = jsonChannel.getUrl();
-        infoList.add(new TvManager.ProgramInfo(jsonChannel.getName()+" Live", jsonChannel.getLogo(),
-                "Currently streaming", 60*60, new TvContentRating[] {rating}, jsonChannel.getGenres(), streamUrl, TvInputPlayer.SOURCE_TYPE_HTTP_PROGRESSIVE, 0));
-        return infoList;
-    }
+    }*/
     public boolean channelNumberExists(String number) {
         try {
             JSONArray jsonArray = getJSONChannels();
