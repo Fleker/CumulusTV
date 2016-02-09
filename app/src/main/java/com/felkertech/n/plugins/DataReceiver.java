@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.example.android.sampletvinput.syncadapter.SyncUtils;
+import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.boilerplate.Utils.SettingsManager;
 import com.felkertech.n.cumulustv.ChannelDatabase;
@@ -117,7 +117,7 @@ public class DataReceiver extends BroadcastReceiver
         Log.d(TAG, "Sync w/ drive");
 
         final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
-        SyncUtils.requestSync(info);
+        SyncUtils.requestSync(mContext, info);
     }
 
     @Override

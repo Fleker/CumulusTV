@@ -13,8 +13,7 @@ import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.example.android.sampletvinput.player.TvInputPlayer;
-import com.example.android.sampletvinput.player.WebTvPlayer;
+import com.felkertech.channelsurfer.players.TvInputPlayer;
 import com.google.android.exoplayer.ExoPlaybackException;
 
 import java.net.URL;
@@ -64,7 +63,7 @@ public class SamplePlayer extends AppCompatActivity {
                 exoPlayer = new TvInputPlayer();
                 exoPlayer.setSurface(sv.getHolder().getSurface());
                 exoPlayer.setVolume(1);
-                exoPlayer.addCallback(new TvInputPlayer.Callback() {
+                /*exoPlayer.addCallback(new TvInputPlayer.Callback() {
                     @Override
                     public void onPrepared() {
 
@@ -102,7 +101,7 @@ public class SamplePlayer extends AppCompatActivity {
                     public void onText(String text) {
 
                     }
-                });
+                });*/
                 try {
                     exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
                 } catch(Exception e) {

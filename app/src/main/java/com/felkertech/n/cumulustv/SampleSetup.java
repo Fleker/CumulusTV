@@ -11,10 +11,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-import com.example.android.sampletvinput.data.Program;
-import com.example.android.sampletvinput.player.TvInputPlayer;
-import com.example.android.sampletvinput.syncadapter.SyncAdapter;
-import com.example.android.sampletvinput.syncadapter.SyncUtils;
+import com.felkertech.channelsurfer.model.Channel;
+import com.felkertech.channelsurfer.sync.SyncAdapter;
+import com.felkertech.channelsurfer.sync.SyncUtils;
+
+import org.json.JSONException;
 
 import java.util.List;
 
@@ -43,11 +44,17 @@ public class SampleSetup extends AppCompatActivity {
         }
 
 
-        List<TvManager.ChannelInfo> list = SyncAdapter.getChannels(this);
+        ChannelDatabase cd = new ChannelDatabase(this);
+        List<Channel> list = null;
+        try {
+            list = cd.getChannels();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         TvContractUtils.updateChannels(this, info, list);
         SyncUtils.setUpPeriodicSync(this, info);
-        SyncUtils.requestSync(info);
+        SyncUtils.requestSync(this, info);
         boolean mSyncRequested = true;
         Log.d(TAG, "Everything happened");
 
@@ -70,7 +77,6 @@ public class SampleSetup extends AppCompatActivity {
 
         //This is a neat little UI thing for people who have channels
         final int[] channelIndex = new int[]{0};
-        ChannelDatabase cd = new ChannelDatabase(getApplicationContext());
         final String[] channels = cd.getChannelNames();
         Log.d(TAG, "Run for "+channels.length+" times");
         if(channels.length <= 0) {

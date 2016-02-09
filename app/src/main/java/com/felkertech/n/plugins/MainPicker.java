@@ -24,7 +24,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
-import com.example.android.sampletvinput.player.TvInputPlayer;
+import com.felkertech.channelsurfer.players.TvInputPlayer;
 import com.felkertech.n.boilerplate.Utils.CommaArray;
 import com.felkertech.n.boilerplate.Utils.PermissionUtils;
 import com.felkertech.n.cumulustv.ChannelDatabase;

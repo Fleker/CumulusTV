@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
-import com.example.android.sampletvinput.syncadapter.SyncUtils;
+import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.boilerplate.Utils.AppUtils;
 import com.felkertech.n.boilerplate.Utils.SettingsManager;
@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void onActionFinished(boolean cloudToLocal) {
                 Log.d(TAG, "Sync req after drive action");
                 final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
-                SyncUtils.requestSync(info);
+                SyncUtils.requestSync(MainActivity.this, info);
                 if (cloudToLocal) {
                     Toast.makeText(MainActivity.this, R.string.downloaded, Toast.LENGTH_SHORT).show();
                 } else {

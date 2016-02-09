@@ -26,10 +26,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-import com.example.android.sampletvinput.player.TvInputPlayer;
-import com.example.android.sampletvinput.player.WebTvPlayer;
 import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.channelsurfer.model.Program;
+import com.felkertech.channelsurfer.players.TvInputPlayer;
 import com.felkertech.channelsurfer.service.MultimediaInputProvider;
 import com.felkertech.channelsurfer.service.SimpleSessionImpl;
 import com.felkertech.channelsurfer.service.TvInputProvider;

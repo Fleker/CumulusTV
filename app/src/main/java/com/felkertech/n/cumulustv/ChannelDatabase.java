@@ -13,7 +13,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.android.sampletvinput.player.TvInputPlayer;
 import com.felkertech.channelsurfer.model.Channel;
 
 import org.json.JSONArray;
@@ -84,13 +83,11 @@ public class ChannelDatabase {
                 ci.setOriginalNetworkId(ci.getName().hashCode());
 //            Log.d(TAG, "Hash "+ci.originalNetworkId+" for "+ci.name);
 //            ci.originalNetworkId = i+1;
-            ci.transportStreamId = 1;
-            ci.serviceId = i+2;
-//            ci.serviceId = 2;
-            ci.videoHeight = 1080;
-            ci.videoWidth = 1920;
-            ci.logoUrl = channel.getLogo();
-            ci.programs = getPrograms(ci, channel.getUrl());
+            ci.setTransportStreamId(1);
+            ci.setServiceId(i+2);
+            ci.setVideoHeight(1080);
+            ci.setVideoWidth(1920);
+            ci.setLogoUrl(channel.getLogo());
             channelInfos.add(ci);
         }
         return channelInfos;

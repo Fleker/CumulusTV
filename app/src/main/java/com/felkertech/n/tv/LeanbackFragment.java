@@ -14,24 +14,13 @@
 
 package com.felkertech.n.tv;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.tv.TvContract;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -49,47 +38,41 @@ import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.example.android.sampletvinput.syncadapter.SyncUtils;
+import com.felkertech.channelsurfer.model.Channel;
+import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.boilerplate.Utils.SettingsManager;
 import com.felkertech.n.cumulustv.ChannelDatabase;
 import com.felkertech.n.cumulustv.JSONChannel;
-import com.felkertech.n.cumulustv.MainActivity;
 import com.felkertech.n.cumulustv.R;
-import com.felkertech.n.cumulustv.TvManager;
 import com.felkertech.n.cumulustv.xmltv.Program;
 import com.felkertech.n.cumulustv.xmltv.XMLTVParser;
-import com.felkertech.n.plugins.CumulusTvPlugin;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi;
-import com.google.android.gms.drive.DriveFile;
-import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.MetadataChangeSet;
-import com.google.android.gms.drive.OpenFileActivityBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import org.json.JSONException;
 import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LeanbackFragment extends BrowseFragment
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -161,26 +144,26 @@ public class LeanbackFragment extends BrowseFragment
 //            GridItemPresenter channelCardPresenter = new GridItemPresenter();
             ArrayObjectAdapter channelRowAdapter = new ArrayObjectAdapter(channelCardPresenter);
             int index = 0;
-            for(TvManager.ChannelInfo channelInfo: cd.getChannels()) {
-                Log.d(TAG, "Got channels " + channelInfo.name);
-                Log.d(TAG, channelInfo.logoUrl+"");
+            for(Channel channelInfo: cd.getChannels()) {
+                Log.d(TAG, "Got channels " + channelInfo.getName());
+                Log.d(TAG, channelInfo.getLogoUrl()+"");
                 Log.d(TAG, new JSONChannel(cd.getJSONChannels().getJSONObject(index)).toString()+"");
                 channelRowAdapter.add(MovieList.buildMovieInfo(
                         "channel",
-                        channelInfo.name,
+                        channelInfo.getName(),
                         "",
-                        channelInfo.number,
+                        channelInfo.getNumber(),
                         new JSONChannel(cd.getJSONChannels().getJSONObject(index)).getUrl(),
-                        channelInfo.logoUrl,
+                        channelInfo.getLogoUrl(),
                         "android.resource://com.felkertech.n.tv/drawable/c_background5"
                 ));
                 Log.d(TAG, MovieList.buildMovieInfo(
                         "channel",
-                        channelInfo.name,
+                        channelInfo.getName(),
                         "",
-                        channelInfo.number,
+                        channelInfo.getNumber(),
                         new JSONChannel(cd.getJSONChannels().getJSONObject(index)).getUrl(),
-                        channelInfo.logoUrl,
+                        channelInfo.getLogoUrl(),
                         "android.resource://com.felkertech.n.tv/drawable/c_background5"
                 ).toString());
 //                channelRowAdapter.add(channelInfo.name);
@@ -301,7 +284,7 @@ public class LeanbackFragment extends BrowseFragment
             public void onActionFinished(boolean cloudToLocal) {
                 Log.d(TAG, "Sync req after drive action");
                 final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
-                SyncUtils.requestSync(info);
+                SyncUtils.requestSync(mActivity, info);
                 if (cloudToLocal) {
                     Toast.makeText(getActivity(), "Download complete", Toast.LENGTH_SHORT).show();
                 } else {

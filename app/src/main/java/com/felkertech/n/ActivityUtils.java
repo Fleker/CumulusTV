@@ -18,7 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.example.android.sampletvinput.syncadapter.SyncUtils;
+import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.n.boilerplate.Utils.AppUtils;
 import com.felkertech.n.boilerplate.Utils.PermissionUtils;
 import com.felkertech.n.boilerplate.Utils.SettingsManager;
@@ -246,7 +246,7 @@ public class ActivityUtils {
             sm.writeToGoogleDrive(DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id)), new ChannelDatabase(context).toString());
 
             final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
-            SyncUtils.requestSync(info);
+            SyncUtils.requestSync(context, info);
         } catch(Exception e) {
             //Probably invalid drive id. No worries, just let someone know
             Log.e(TAG, e.getMessage() + "");
@@ -268,7 +268,7 @@ public class ActivityUtils {
         sm.readFromGoogleDrive(did, ChannelDatabase.KEY);
 
         final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
-        SyncUtils.requestSync(info);
+        SyncUtils.requestSync(mContext, info);
     }
     public static void createDriveData(Activity activity, final GoogleApiClient gapi, final ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback) {
         PermissionUtils.requestPermissionIfDisabled(activity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE, activity.getString(R.string.permission_storage_rationale));
