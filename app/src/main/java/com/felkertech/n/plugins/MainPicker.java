@@ -102,8 +102,13 @@ public class MainPicker extends CumulusTvPlugin {
                                     String splash = ((EditText) l.findViewById(R.id.splash)).getText().toString();
                                     String genres = ((Button) l.findViewById(R.id.genres)).getText().toString();
 
-                                    JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, genres);
-                                    saveChannel(jsch);
+                                    if(number == null || number.length() == 0) {
+                                        Toast.makeText(MainPicker.this, "Your channel must have a number!", Toast.LENGTH_SHORT).show();
+                                        ((EditText) l.findViewById(R.id.number)).setBackgroundColor(getResources().getColor(android.R.color.holo_red_dark));
+                                    } else {
+                                        JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, genres);
+                                        saveChannel(jsch);
+                                    }
                                 }
                             })
                             .show();

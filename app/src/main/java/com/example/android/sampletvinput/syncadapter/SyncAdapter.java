@@ -137,6 +137,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
 
     public void doLocalSync() {
         Log.d(TAG, "onPerformSync(" + account + ", " + authority + ", " + extras + ")");
+        if(extras == null)
+            throw new NullPointerException("Extras is null");
         String inputId = extras.getString(SyncAdapter.BUNDLE_KEY_INPUT_ID);
         if (inputId == null) {
             return;

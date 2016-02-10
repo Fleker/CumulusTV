@@ -131,6 +131,8 @@ public class TvContractUtils {
                     Log.d(TAG, "Tried " + rowId + " as rowid");
                     if (rowId != null)
                         values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, rowId);
+                } else {
+                    throw new NullPointerException("Channel number must exist!");
                 }
             } else
                 values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, rowId);
