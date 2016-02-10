@@ -357,8 +357,12 @@ public class ActivityUtils {
     public static void openPluginPicker(final boolean newChannel, final int index, final Activity activity) {
         try {
             ChannelDatabase cdn = new ChannelDatabase(activity);
-            JSONChannel jsonChannel = new JSONChannel(cdn.getJSONChannels().getJSONObject(index));
-            openPluginPicker(newChannel, jsonChannel, activity);
+            if(cdn.getJSONChannels().length() == 0) {
+                openPluginPicker(newChannel, new JSONChannel(null), activity);
+            } else {
+                JSONChannel jsonChannel = new JSONChannel(cdn.getJSONChannels().getJSONObject(index));
+                openPluginPicker(newChannel, jsonChannel, activity);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

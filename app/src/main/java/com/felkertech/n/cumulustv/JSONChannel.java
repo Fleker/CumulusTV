@@ -20,10 +20,21 @@ public class JSONChannel {
     private String source;
     private String service;
     public JSONChannel(JSONObject jsonObject) {
+        if(jsonObject == null)
+            jsonObject = new JSONObject();
         try {
-            number = jsonObject.getString("number");
-            name = jsonObject.getString("name");
-            url = jsonObject.getString("url");
+            if(jsonObject.has("number"))
+                number = jsonObject.getString("number");
+            else
+                number = "";
+            if(jsonObject.has("name"))
+                name = jsonObject.getString("name");
+            else
+                name = "";
+            if(jsonObject.has("url"))
+                url = jsonObject.getString("url");
+            else
+                url = "";
             if(jsonObject.has("logo"))
                 logo = jsonObject.getString("logo");
             else
