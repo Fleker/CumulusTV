@@ -78,7 +78,7 @@
     <string name="version">Version %1$s</string>
 
     <string name="permission_storage_rationale">Your channel data is backed up automatically through Google Drive.</string>
-    <string name="permission_not_allowed_error">"You can\'t do that"</string>
+    <string name="permission_not_allowed_error">"You don't have permission"</string>
     <string name="permission_not_allowed_text">CumulusTV is not allowed to access your storage, so syncing is disabled. The app will continue to work by itself.</string>
     <string name="permission_action_settings">View Permissions</string>
 

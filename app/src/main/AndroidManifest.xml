@@ -158,42 +158,23 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
+                <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:scheme="file" />
-                <data android:host="*" />
-                <data android:pathPattern=".*\\.m3u" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:scheme="http" />
+                <data android:scheme="https" />
                 <data android:host="*" />
-                <data android:pathPattern=".*\\.m3u" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:scheme="file" />
-                <data android:host="*" />
+                <!--<data android:pathPattern=".*\\.m3u" />-->
                 <data android:pathPattern=".*\\.m3u8" />
+                <!--<data android:pathPattern=".*\\.M3U" />-->
+                <data android:pathPattern=".*\\.M3U8" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:scheme="http" />
-                <data android:host="*" />
-                <data android:pathPattern=".*\\.m3u8" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
+                <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="text/plain" />
@@ -204,19 +185,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:pathPattern=".*\\.m3u" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:pathPattern=".*\\.m3u8" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
