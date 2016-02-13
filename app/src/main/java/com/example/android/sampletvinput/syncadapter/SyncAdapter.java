@@ -460,7 +460,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
                 }
                 // Compare the new programs with old programs one by one and update/delete the old one or
                 // insert new program if there is no matching program in the database.
-                ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+                final ArrayList<ContentProviderOperation> ops = new ArrayList<>();
                 while (newProgramsIndex < fetchedProgramsCount) {
                     Program oldProgram = oldProgramsIndex < oldPrograms.size()
                             ? oldPrograms.get(oldProgramsIndex) : null;
@@ -505,17 +505,25 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter implements GoogleAp
                                 .withValues(newProgram.toContentValues())
                                 .build());
                     }
-                    // Throttle the batch operation not to cause TransactionTooLargeException.
-                    if (ops.size() > BATCH_OPERATION_COUNT
-                            || newProgramsIndex >= fetchedProgramsCount) {
-                        try {
-                            mContext.getContentResolver().applyBatch(TvContract.AUTHORITY, ops);
-                        } catch (SecurityException | RemoteException | OperationApplicationException e) {
-                            Log.e(TAG, "Failed to insert programs.", e);
-                            return;
+                    final int finalNewProgramsIndex = newProgramsIndex;
+                    Handler h = new Handler(Looper.getMainLooper()) {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            super.handleMessage(msg);
+                            // Throttle the batch operation not to cause TransactionTooLargeException.
+                            if (ops.size() > BATCH_OPERATION_COUNT
+                                    || finalNewProgramsIndex >= fetchedProgramsCount) {
+                                try {
+                                    mContext.getContentResolver().applyBatch(TvContract.AUTHORITY, ops);
+                                } catch (SecurityException | RemoteException | OperationApplicationException e) {
+                                    Log.e(TAG, "Failed to insert programs.", e);
+                                    return;
+                                }
+                                ops.clear();
+                            }
                         }
-                        ops.clear();
-                    }
+                    };
+                    h.sendEmptyMessageDelayed(0, 2);
                 }
             }
         }).start();

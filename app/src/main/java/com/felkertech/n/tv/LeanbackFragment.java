@@ -118,7 +118,6 @@ public class LeanbackFragment extends BrowseFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         Log.i(TAG, "onCreate");
         super.onActivityCreated(savedInstanceState);
-        //TODO Get the slides set up
         sm = new SettingsManager(getActivity());
         gapi = new GoogleApiClient.Builder(getActivity())
                 .addApi(Drive.API)
