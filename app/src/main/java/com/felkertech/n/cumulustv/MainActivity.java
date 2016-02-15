@@ -298,8 +298,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 getString(R.string.settings_refresh_cloud_local),
                 getString(R.string.settings_view_licenses),
                 getString(R.string.settings_reset_channel_data),
-                getString(R.string.settings_about),
-                getString(R.string.about_mlc)
+                getString(R.string.settings_about)/*,
+                getString(R.string.about_mlc)*/
             };
         new MaterialDialog.Builder(this)
                 .title(R.string.more_actions)

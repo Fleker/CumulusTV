@@ -32,6 +32,7 @@ import com.felkertech.channelsurfer.players.TvInputPlayer;
 import com.felkertech.channelsurfer.service.MultimediaInputProvider;
 import com.felkertech.channelsurfer.service.SimpleSessionImpl;
 import com.felkertech.channelsurfer.service.TvInputProvider;
+import com.felkertech.channelsurfer.utils.LiveChannelsUtils;
 import com.google.android.exoplayer.ExoPlaybackException;
 import com.pnikosis.materialishprogress.ProgressWheel;
 import com.squareup.picasso.Picasso;
@@ -75,7 +76,7 @@ public class SampleTvInput extends MultimediaInputProvider {
 
     @Override
     public List<Channel> getAllChannels() {
-        ChannelDatabase cdn = new ChannelDatabase(this);
+        ChannelDatabase cdn = new ChannelDatabase(getBaseContext());
         try {
             return cdn.getChannels();
         } catch (JSONException e) {
@@ -91,6 +92,7 @@ public class SampleTvInput extends MultimediaInputProvider {
         List<Program> programList = new ArrayList<>();
         for(int i=0;i<programs;i++) {
             programList.add(new Program.Builder(getGenericProgram(channelInfo))
+                    .setInternalProviderData(channelInfo.getInternalProviderData())
                     .setStartTimeUtcMillis((getNearestHour() + SEGMENT * i))
                     .setEndTimeUtcMillis((getNearestHour() + SEGMENT * (i + 1)))
                     .build()

@@ -70,7 +70,7 @@ public class SampleSetup extends SimpleTvSetup {
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 Toast.makeText(getApplicationContext(), "Setup complete. Make sure you enable these channels in the channel list.", Toast.LENGTH_SHORT).show();
-                super.setupTvInputProvider();
+                finishSetup();
                 killer.sendEmptyMessageDelayed(0, 10);
             }
         };
@@ -97,5 +97,9 @@ public class SampleSetup extends SimpleTvSetup {
             }
         };
         i.sendEmptyMessageDelayed(0, (SETUP_DURATION-SETUP_UI_LAST)/channels.length);
+    }
+
+    public void finishSetup() {
+        super.setupTvInputProvider();
     }
 }
