@@ -61,6 +61,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi;
 import com.google.android.gms.drive.MetadataChangeSet;
+import com.hitherejoe.leanbackcards.IconCardView;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -197,6 +198,11 @@ public class LeanbackFragment extends BrowseFragment
         HeaderItem driveHeader = new HeaderItem(1, "Google Drive Sync");
         GridItemPresenter drivePresenter = new GridItemPresenter();
         ArrayObjectAdapter driveAdapter = new ArrayObjectAdapter(drivePresenter);
+
+/*        IconCardView iconCardView = new IconCardView(mActivity);
+        iconCardView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        iconCardView.setTitleText("Redownload");
+        driveAdapter.add(iconCardView);*/
 //        driveAdapter.add("Connect to Google Drive");
         driveAdapter.add(getString(R.string.settings_refresh_cloud_local));
 //        driveAdapter.add("Upload to cloud");

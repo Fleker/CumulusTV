@@ -63,7 +63,7 @@ public class SamplePlayer extends AppCompatActivity {
                 exoPlayer = new TvInputPlayer();
                 exoPlayer.setSurface(sv.getHolder().getSurface());
                 exoPlayer.setVolume(1);
-                /*exoPlayer.addCallback(new TvInputPlayer.Callback() {
+                exoPlayer.addCallback(new TvInputPlayer.Callback() {
                     @Override
                     public void onPrepared() {
 
@@ -86,9 +86,9 @@ public class SamplePlayer extends AppCompatActivity {
                         if(e.getMessage().contains("Extractor")) {
                             Log.d(TAG, "Cannot play the stream, try loading it as a website");
                             Toast.makeText(SamplePlayer.this, "This is not a valid stream.", Toast.LENGTH_SHORT).show();
-                            WebTvPlayer wv = new WebTvPlayer(SamplePlayer.this);
+                            /*WebTvPlayer wv = new WebTvPlayer(SamplePlayer.this);
                             wv.load(url);
-                            setContentView(wv);
+                            setContentView(wv);*/
                         }
                     }
 
@@ -101,7 +101,7 @@ public class SamplePlayer extends AppCompatActivity {
                     public void onText(String text) {
 
                     }
-                });*/
+                });
                 try {
                     exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
                 } catch(Exception e) {

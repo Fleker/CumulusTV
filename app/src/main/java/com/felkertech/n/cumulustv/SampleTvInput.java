@@ -75,8 +75,8 @@ public class SampleTvInput extends MultimediaInputProvider {
     }
 
     @Override
-    public List<Channel> getAllChannels() {
-        ChannelDatabase cdn = new ChannelDatabase(getBaseContext());
+    public List<Channel> getAllChannels(Context mContext) {
+        ChannelDatabase cdn = new ChannelDatabase(mContext);
         try {
             return cdn.getChannels();
         } catch (JSONException e) {
@@ -86,7 +86,7 @@ public class SampleTvInput extends MultimediaInputProvider {
     }
 
     @Override
-    public List<Program> getProgramsForChannel(Uri channelUri, Channel channelInfo, long startTimeMs, long endTimeMs) {
+    public List<Program> getProgramsForChannel(Context mContext, Uri channelUri, Channel channelInfo, long startTimeMs, long endTimeMs) {
         int programs = (int) ((endTimeMs-startTimeMs)/1000/60/60); //Hour long segments
         int SEGMENT = 1000*60*60; //Hour long segments
         List<Program> programList = new ArrayList<>();

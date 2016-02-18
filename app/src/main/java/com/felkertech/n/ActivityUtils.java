@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.felkertech.channelsurfer.sync.SyncUtils;
+import com.felkertech.channelsurfer.utils.LiveChannelsUtils;
 import com.felkertech.n.boilerplate.Utils.AppUtils;
 import com.felkertech.n.boilerplate.Utils.PermissionUtils;
 import com.felkertech.n.boilerplate.Utils.SettingsManager;
@@ -492,7 +493,7 @@ public class ActivityUtils {
 
     /* ACTIVITY CLONES */
     public static void launchLiveChannels(Activity mActivity) {
-        Intent i = mActivity.getPackageManager().getLaunchIntentForPackage("com.google.android.tv");
+        Intent i = LiveChannelsUtils.getLiveChannels(mActivity);
         if (i == null) {
             Toast.makeText(mActivity, R.string.no_live_channels, Toast.LENGTH_SHORT).show();
         } else {
