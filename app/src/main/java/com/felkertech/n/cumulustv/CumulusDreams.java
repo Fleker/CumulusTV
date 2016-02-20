@@ -1,28 +1,15 @@
 package com.felkertech.n.cumulustv;
 
-import java.util.Random;
-
-import android.animation.Animator;
-import android.animation.Animator.AnimatorListener;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.TimeInterpolator;
 import android.annotation.TargetApi;
-import android.content.SharedPreferences;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.service.dreams.DreamService;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceView;
-import android.view.ViewPropertyAnimator;
-import android.view.animation.LinearInterpolator;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.android.sampletvinput.player.TvInputPlayer;
-import com.example.android.sampletvinput.player.WebTvPlayer;
+import com.felkertech.channelsurfer.players.TvInputPlayer;
 import com.felkertech.n.boilerplate.Utils.SettingsManager;
 import com.google.android.exoplayer.ExoPlaybackException;
 
@@ -68,7 +55,7 @@ public class CumulusDreams extends DreamService {
             exoPlayer = new TvInputPlayer();
             exoPlayer.setSurface(sv.getHolder().getSurface());
             exoPlayer.setVolume(0); //No volume for daydream
-            exoPlayer.addCallback(new TvInputPlayer.Callback() {
+            /*exoPlayer.addCallback(new TvInputPlayer.Callback() {
                 @Override
                 public void onPrepared() {
 
@@ -105,7 +92,7 @@ public class CumulusDreams extends DreamService {
                 public void onText(String text) {
 
                 }
-            });
+            });*/
             try {
                 exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
             } catch(Exception e) {

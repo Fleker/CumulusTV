@@ -14,6 +14,7 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
@@ -24,7 +25,8 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
-import com.example.android.sampletvinput.player.TvInputPlayer;
+import com.felkertech.channelsurfer.players.TvInputPlayer;
+import com.felkertech.channelsurfer.players.WebInputPlayer;
 import com.felkertech.n.boilerplate.Utils.CommaArray;
 import com.felkertech.n.boilerplate.Utils.PermissionUtils;
 import com.felkertech.n.cumulustv.ChannelDatabase;
@@ -32,6 +34,7 @@ import com.felkertech.n.cumulustv.JSONChannel;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.SamplePlayer;
 import com.felkertech.n.fileio.M3UParser;
+import com.google.android.exoplayer.ExoPlaybackException;
 
 import org.json.JSONException;
 
@@ -48,6 +51,7 @@ import io.fabric.sdk.android.Fabric;
 public class MainPicker extends CumulusTvPlugin {
     public String label = "";
     private String TAG = "cumulus:MainPicker";
+    private MaterialDialog pickerDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "Start a");
@@ -80,7 +84,7 @@ public class MainPicker extends CumulusTvPlugin {
                 Log.d(TAG, uri.toString());
                 if(uri.toString().contains("http")) { //Import a channel
                     //Copy from `loadDialogs()` in edit mode
-                    final MaterialDialog md = new MaterialDialog.Builder(MainPicker.this)
+                    pickerDialog = new MaterialDialog.Builder(MainPicker.this)
                             .title(R.string.add_new_channel)
                             .positiveText(R.string.create)
                             .neutralText(R.string.cancel)
@@ -114,24 +118,24 @@ public class MainPicker extends CumulusTvPlugin {
                                 }
                             })
                             .show();
-                    md.setOnShowListener(new DialogInterface.OnShowListener() {
+                    pickerDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                         @Override
                         public void onShow(DialogInterface dialog) {
-                            RelativeLayout l = (RelativeLayout) md.getCustomView();
+                            RelativeLayout l = (RelativeLayout) pickerDialog.getCustomView();
                            ((EditText) l.findViewById(R.id.stream)).setText(uri.toString());
-                            loadStream(md, uri.toString());
+                            loadStream(pickerDialog, uri.toString());
                         }
                     });
-                    includeGenrePicker(md, "");
-                    ((EditText) md.getCustomView().findViewById(R.id.stream)).setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    includeGenrePicker(pickerDialog, "");
+                    ((EditText) pickerDialog.getCustomView().findViewById(R.id.stream)).setOnEditorActionListener(new TextView.OnEditorActionListener() {
                         @Override
                         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                            loadStream(md, uri.toString());
+                            loadStream(pickerDialog, uri.toString());
                             return false;
                         }
                     });
-                    loadStream(md, uri.toString());
-                    md.findViewById(R.id.stream_open).setOnClickListener(new View.OnClickListener() {
+                    loadStream(pickerDialog, uri.toString());
+                    pickerDialog.findViewById(R.id.stream_open).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent i = new Intent(MainPicker.this, SamplePlayer.class);
@@ -211,7 +215,7 @@ public class MainPicker extends CumulusTvPlugin {
 
     public void loadDialogs() {
         if(!areEditing() && !areReadingAll()) {
-            final MaterialDialog add = new MaterialDialog.Builder(MainPicker.this)
+            pickerDialog = new MaterialDialog.Builder(MainPicker.this)
                     .title(R.string.add_new_channel)
                     .customView(R.layout.dialog_channel_new, true)
                     .positiveText(R.string.create)
@@ -241,16 +245,16 @@ public class MainPicker extends CumulusTvPlugin {
                         }
                     })
                     .show();
-            ((EditText) add.getCustomView().findViewById(R.id.stream)).setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            ((EditText) pickerDialog.getCustomView().findViewById(R.id.stream)).setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    loadStream(add);
+                    loadStream(pickerDialog);
                     return false;
                 }
             });
-            includeGenrePicker(add, "");
-            loadStream(add);
-            add.findViewById(R.id.stream_open).setOnClickListener(new View.OnClickListener() {
+            includeGenrePicker(pickerDialog, "");
+            loadStream(pickerDialog);
+            pickerDialog.findViewById(R.id.stream_open).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent i = new Intent(MainPicker.this, SamplePlayer.class);
@@ -260,7 +264,7 @@ public class MainPicker extends CumulusTvPlugin {
             });
         } else if(!areReadingAll()) {
             final ChannelDatabase cdn = new ChannelDatabase(getApplicationContext());
-            final MaterialDialog md = new MaterialDialog.Builder(MainPicker.this)
+            pickerDialog = new MaterialDialog.Builder(MainPicker.this)
                     .title(R.string.edit_new_channel)
                     .positiveText(R.string.update)
                     .negativeText(R.string.delete)
@@ -308,30 +312,30 @@ public class MainPicker extends CumulusTvPlugin {
                         }
                     })
                     .show();
-            md.setOnShowListener(new DialogInterface.OnShowListener() {
+            pickerDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface dialog) {
                     JSONChannel jsonChannel = getChannel();
-                    RelativeLayout l = (RelativeLayout) md.getCustomView();
+                    RelativeLayout l = (RelativeLayout) pickerDialog.getCustomView();
                     ((EditText) l.findViewById(R.id.number)).setText(jsonChannel.getNumber());
                     Log.d(TAG, "Channel " + jsonChannel.getNumber());
                     ((EditText) l.findViewById(R.id.name)).setText(jsonChannel.getName());
                     ((EditText) l.findViewById(R.id.logo)).setText(jsonChannel.getLogo());
                     ((EditText) l.findViewById(R.id.stream)).setText(jsonChannel.getUrl());
                     ((Button) l.findViewById(R.id.genres)).setText(jsonChannel.getGenresString());
-                    loadStream(md);
+                    loadStream(pickerDialog);
                 }
             });
-            includeGenrePicker(md, getChannel().getGenresString());
-            ((EditText) md.getCustomView().findViewById(R.id.stream)).setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            includeGenrePicker(pickerDialog, getChannel().getGenresString());
+            ((EditText) pickerDialog.getCustomView().findViewById(R.id.stream)).setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    loadStream(md);
+                    loadStream(pickerDialog);
                     return false;
                 }
             });
-            loadStream(md);
-            md.findViewById(R.id.stream_open).setOnClickListener(new View.OnClickListener() {
+            loadStream(pickerDialog);
+            pickerDialog.findViewById(R.id.stream_open).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent i = new Intent(MainPicker.this, SamplePlayer.class);
@@ -380,8 +384,10 @@ public class MainPicker extends CumulusTvPlugin {
 
     public void loadStream(MaterialDialog viewHolder) {
         String url = getUrl();
-        if(url == null || url.isEmpty())
+        if(url == null || url.isEmpty()) {
+            Log.d(TAG, "Ignoring null or empty string");
             return;
+        }
         SurfaceView sv = (SurfaceView) viewHolder.getCustomView().findViewById(R.id.surface);
         TvInputPlayer exoPlayer;
         exoPlayer = new TvInputPlayer();
@@ -394,7 +400,7 @@ public class MainPicker extends CumulusTvPlugin {
         }
         exoPlayer.setPlayWhenReady(true);
     }
-    public void loadStream(MaterialDialog viewHolder, String url) {
+    public void loadStream(MaterialDialog viewHolder, final String url) {
         SurfaceView sv = (SurfaceView) viewHolder.getCustomView().findViewById(R.id.surface);
         TvInputPlayer exoPlayer;
         exoPlayer = new TvInputPlayer();
@@ -410,8 +416,9 @@ public class MainPicker extends CumulusTvPlugin {
         String url = "";
         if(getChannel() != null) {
             url = getChannel().getUrl();
-        } if(findViewById(R.id.stream) != null)
-            url = ((EditText) findViewById(R.id.stream)).getText().toString();
+        } if(pickerDialog.getCustomView().findViewById(R.id.stream) != null)
+            url = ((EditText) pickerDialog.getCustomView().findViewById(R.id.stream)).getText().toString();
+        Log.d(TAG, "Found '"+url+"'");
         return url;
     }
 }

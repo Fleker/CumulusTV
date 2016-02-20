@@ -2,6 +2,7 @@
     <string name="app_name" translatable="false">Cumulus TV</string>
     <string name="sample_tv_input_name" translatable="false">Cumulus TV</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="tv_input_activity" translatable="false">com.felkertech.n.cumulustv.SampleSetup</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>

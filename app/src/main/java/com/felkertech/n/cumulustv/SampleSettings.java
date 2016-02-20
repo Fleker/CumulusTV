@@ -11,6 +11,7 @@ import io.fabric.sdk.android.Fabric;
 /**
  * Created by N on 7/12/2015.
  */
+@Deprecated
 public class SampleSettings extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

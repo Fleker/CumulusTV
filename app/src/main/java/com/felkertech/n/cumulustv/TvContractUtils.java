@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.sampletvinput;
+package com.felkertech.n.cumulustv;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -34,8 +34,8 @@ import android.util.LongSparseArray;
 import android.util.Pair;
 import android.util.SparseArray;
 
-import com.example.android.sampletvinput.data.Program;
-import com.felkertech.n.cumulustv.TvManager;
+import com.felkertech.channelsurfer.model.Channel;
+import com.felkertech.channelsurfer.model.Program;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,7 +67,7 @@ public class TvContractUtils {
     }
 
     public static void updateChannels(
-            Context context, String inputId, List<TvManager.ChannelInfo> channels) {
+            Context context, String inputId, List<Channel> channels) {
         // Create a map from original network ID to channel row ID for existing channels.
         SparseArray<Long> mExistingChannelsMap = new SparseArray<Long>();
         Uri channelsUri = TvContract.buildChannelsUriForInput(inputId);
@@ -119,15 +119,15 @@ public class TvContractUtils {
         ContentValues values = new ContentValues();
         values.put(Channels.COLUMN_INPUT_ID, inputId);
         Map<Uri, String> logos = new HashMap<Uri, String>();
-        for (TvManager.ChannelInfo channel : channels) {
-            Log.d(TAG, "Trying oni "+channel.originalNetworkId+" "+mExistingChannelsMap.get(channel.originalNetworkId)+" "+channel.serviceId);
-            values.put(Channels.COLUMN_DISPLAY_NUMBER, channel.number);
-            values.put(Channels.COLUMN_DISPLAY_NAME, channel.name);
-            Long rowId = mExistingChannelsMap.get(channel.originalNetworkId);
+        for (Channel channel : channels) {
+            Log.d(TAG, "Trying oni "+channel.getOriginalNetworkId()+" "+mExistingChannelsMap.get(channel.getOriginalNetworkId())+" "+channel.getServiceId());
+            values.put(Channels.COLUMN_DISPLAY_NUMBER, channel.getNumber());
+            values.put(Channels.COLUMN_DISPLAY_NAME, channel.getName());
+            Long rowId = mExistingChannelsMap.get(channel.getOriginalNetworkId());
             if(rowId == null) {
-                values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, channel.originalNetworkId);
-                if(channel.number != null) {
-                    rowId = mExistingChannelsMap.get(channel.number.toString().hashCode());
+                values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, channel.getOriginalNetworkId());
+                if(channel.getNumber() != null) {
+                    rowId = mExistingChannelsMap.get(channel.getNumber().toString().hashCode());
                     Log.d(TAG, "Tried " + rowId + " as rowid");
                     if (rowId != null)
                         values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, rowId);
@@ -138,8 +138,8 @@ public class TvContractUtils {
                 values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, rowId);
 //            values.put(Channels.COLUMN_TRANSPORT_STREAM_ID, channel.transportStreamId);
             values.put(Channels.COLUMN_TRANSPORT_STREAM_ID, 1); //FIXME Hack; can't get ChannelDatabase to output correctly
-            values.put(Channels.COLUMN_SERVICE_ID, channel.serviceId);
-            String videoFormat = getVideoFormat(channel.videoHeight);
+            values.put(Channels.COLUMN_SERVICE_ID, channel.getServiceId());
+            String videoFormat = getVideoFormat(channel.getVideoHeight());
             if (videoFormat != null) {
                 values.put(Channels.COLUMN_VIDEO_FORMAT, videoFormat);
             } else {
@@ -148,9 +148,9 @@ public class TvContractUtils {
 
             Uri uri;
             if (rowId == null) {
-                if(channel.number == null)
-                    channel.number = "0";
-                values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, channel.number.hashCode());
+                if(channel.getNumber() == null)
+                    channel.setNumber("0");
+                values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, channel.getNumber().hashCode());
                 Log.d(TAG, "Insert "+values.toString());
                 uri = resolver.insert(TvContract.Channels.CONTENT_URI, values);
                 if(uri != null) {
@@ -166,14 +166,14 @@ public class TvContractUtils {
                 Log.d(TAG, "Update " + values.toString());
                 Log.d(TAG, uri.toString()+"");
                 resolver.update(uri, values, null, null);
-                mExistingChannelsMap.remove(channel.originalNetworkId);
+                mExistingChannelsMap.remove(channel.getOriginalNetworkId());
                 mExistingChannelsMap.remove(Math.round(rowId));
-                mExistingChannelsMap.remove(channel.number.hashCode());
+                mExistingChannelsMap.remove(channel.getNumber().hashCode());
             }
-            if (!TextUtils.isEmpty(channel.logoUrl) && false) { //FIXME Hack to show title
+            if (!TextUtils.isEmpty(channel.getLogoUrl()) && false) { //FIXME Hack to show title
 //                logos.put(TvContract.buildChannelLogoUri(uri), channel.logoUrl);
-                Log.d(TAG, "LOGO "+uri.toString()+" "+channel.logoUrl);
-                logos.put(TvContract.buildChannelLogoUri(uri), channel.logoUrl);
+                Log.d(TAG, "LOGO "+uri.toString()+" "+channel.getLogoUrl());
+                logos.put(TvContract.buildChannelLogoUri(uri), channel.getLogoUrl());
             }
             Log.d(TAG, mExistingChannelsMap.toString());
         }
@@ -196,15 +196,15 @@ public class TvContractUtils {
         return VIDEO_HEIGHT_TO_FORMAT_MAP.get(videoHeight);
     }
 
-    public static LongSparseArray<TvManager.ChannelInfo> buildChannelMap(ContentResolver resolver,
-                                                               String inputId, List<TvManager.ChannelInfo> channels) {
+    public static LongSparseArray<Channel> buildChannelMap(ContentResolver resolver,
+                                                               String inputId, List<Channel> channels) {
         Uri uri = TvContract.buildChannelsUriForInput(inputId);
         String[] projection = {
                 TvContract.Channels._ID,
                 TvContract.Channels.COLUMN_DISPLAY_NUMBER
         };
 
-        LongSparseArray<TvManager.ChannelInfo> channelMap = new LongSparseArray<>();
+        LongSparseArray<Channel> channelMap = new LongSparseArray<>();
         Cursor cursor = null;
         try {
             cursor = resolver.query(uri, projection, null, null, null);
@@ -273,7 +273,7 @@ public class TvContractUtils {
         return 0;
     }
 
-    public static List<TvManager.PlaybackInfo> getProgramPlaybackInfo(
+    /*public static List<TvManager.PlaybackInfo> getProgramPlaybackInfo(
             ContentResolver resolver, Uri channelUri, long startTimeMs, long endTimeMs,
             int maxProgramInReturn) {
         Uri uri = TvContract.buildProgramsUriForChannel(channelUri, startTimeMs,
@@ -308,13 +308,15 @@ public class TvContractUtils {
             }
         }
         return list;
-    }
+    }*/
 
+    @Deprecated
     public static String convertVideoInfoToInternalProviderData(int videotype, String videoUrl) {
         return videotype + "," + videoUrl;
     }
 
     //TODO Use this for urls
+    @Deprecated
     public static Pair<Integer, String> parseInternalProviderData(String internalData) {
         String[] values = internalData.split(",", 2);
         if (values.length != 2) {
@@ -396,10 +398,10 @@ public class TvContractUtils {
         return ratings.toString();
     }
 
-    private static TvManager.ChannelInfo getChannelByNumber(String channelNumber,
-                                                  List<TvManager.ChannelInfo> channels) {
-        for (TvManager.ChannelInfo info : channels) {
-            if (info.number.equals(channelNumber)) {
+    private static Channel getChannelByNumber(String channelNumber,
+                                                  List<Channel> channels) {
+        for (Channel info : channels) {
+            if (info.getNumber().equals(channelNumber)) {
                 return info;
             }
         }

@@ -1,35 +1,23 @@
 package com.felkertech.n.cumulustv;
 
-import android.content.ComponentName;
-import android.content.ContentProviderOperation;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.OperationApplicationException;
-import android.database.Cursor;
-import android.media.tv.TvContentRating;
-import android.media.tv.TvContract;
 import android.media.tv.TvInputInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-import com.example.android.sampletvinput.TvContractUtils;
-import com.example.android.sampletvinput.data.Program;
-import com.example.android.sampletvinput.player.TvInputPlayer;
-import com.example.android.sampletvinput.syncadapter.SyncAdapter;
-import com.example.android.sampletvinput.syncadapter.SyncUtils;
+import com.felkertech.channelsurfer.model.Channel;
+import com.felkertech.channelsurfer.setup.SimpleTvSetup;
+import com.felkertech.channelsurfer.sync.SyncAdapter;
+import com.felkertech.channelsurfer.sync.SyncUtils;
 
-import java.sql.Blob;
-import java.util.ArrayList;
-import java.util.Date;
+import org.json.JSONException;
+
 import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
@@ -37,32 +25,37 @@ import io.fabric.sdk.android.Fabric;
 /**
  * Created by N on 7/12/2015.
  */
-public class SampleSetup extends AppCompatActivity {
+public class SampleSetup extends SimpleTvSetup {
     private String TAG = "cumulus:SampleSetup";
     private String ABCNews = "http://abclive.abcnews.com/i/abc_live4@136330/index_1200_av-b.m3u8";
     public static String COLUMN_CHANNEL_URL = "CHANNEL_URL";
-    private static int SETUP_DURATION = 30*1000;
+    private static int SETUP_DURATION = 10*1000;
     private static int SETUP_UI_LAST = 5*1000; //DURATION - UI_LAST seconds is the last time UI list runs
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void setupTvInputProvider() {
         setContentView(R.layout.activity_setup);
         Log.d(TAG, "Created me");
 
         Fabric.with(this, new Crashlytics());
         String info = "";
         if(getIntent() != null) {
-             info = getIntent().getStringExtra(TvInputInfo.EXTRA_INPUT_ID);
+            info = getIntent().getStringExtra(TvInputInfo.EXTRA_INPUT_ID);
             Log.d(TAG, info);
         }
 
 
-        List<TvManager.ChannelInfo> list = SyncAdapter.getChannels(this);
+        ChannelDatabase cd = new ChannelDatabase(this);
+        List<Channel> list = null;
+        try {
+            list = cd.getChannels();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         TvContractUtils.updateChannels(this, info, list);
         SyncUtils.setUpPeriodicSync(this, info);
-        SyncUtils.requestSync(info);
-        boolean mSyncRequested = true;
+        SyncUtils.requestSync(this, info);
         Log.d(TAG, "Everything happened");
 
         final Handler killer = new Handler(Looper.getMainLooper()) {
@@ -77,6 +70,7 @@ public class SampleSetup extends AppCompatActivity {
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 Toast.makeText(getApplicationContext(), "Setup complete. Make sure you enable these channels in the channel list.", Toast.LENGTH_SHORT).show();
+                finishSetup();
                 killer.sendEmptyMessageDelayed(0, 10);
             }
         };
@@ -84,7 +78,6 @@ public class SampleSetup extends AppCompatActivity {
 
         //This is a neat little UI thing for people who have channels
         final int[] channelIndex = new int[]{0};
-        ChannelDatabase cd = new ChannelDatabase(getApplicationContext());
         final String[] channels = cd.getChannelNames();
         Log.d(TAG, "Run for "+channels.length+" times");
         if(channels.length <= 0) {
@@ -104,5 +97,9 @@ public class SampleSetup extends AppCompatActivity {
             }
         };
         i.sendEmptyMessageDelayed(0, (SETUP_DURATION-SETUP_UI_LAST)/channels.length);
+    }
+
+    public void finishSetup() {
+        super.setupTvInputProvider();
     }
 }
