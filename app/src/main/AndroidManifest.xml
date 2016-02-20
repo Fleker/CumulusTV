@@ -28,6 +28,9 @@
     <uses-feature
         android:name="android.software.leanback"
         android:required="false" />
+    <uses-feature
+        android:name="android.software.LEANBACK"
+        android:required="false" />
 
     <!--
     Required to expose this app in the store only when the device has TV input framework
@@ -57,7 +60,7 @@
 
             <meta-data
                 android:name="android.media.tv.input"
-                android:resource="@xml/sample_tv_input" />
+                android:resource="@xml/channel_surfer_tv_input" />
         </service>
 
         <activity
@@ -75,13 +78,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <!--
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
-            </intent-filter>
-            -->
         </activity>
         <activity
             android:name=".SampleSetup"
@@ -92,49 +88,10 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".SampleSettings"
-            android:exported="true"
-            android:label="Settings"
-            android:theme="@style/CompatTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
 
-        <!--
-        This service implements the SyncAdapter for updating program information regularly in
-        the background. It needs to be exported, so that the sync framework can access it.
-        -->
-        <service
-            android:name="com.example.android.sampletvinput.syncadapter.SyncService"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.content.SyncAdapter" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.content.SyncAdapter"
-                android:resource="@xml/syncadapter" />
-        </service>
-
-        <!--
-        Since the channel/program feed here does not require any authentication, we use a dummy
-        account used for SyncAdapter.
-        -->
-        <service
-            android:name="com.example.android.sampletvinput.syncadapter.DummyAccountService"
-            android:exported="true"
-            android:icon="@drawable/high_res_icon2">
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
-        </service>
+        <meta-data
+            android:name="TvInputService"
+            android:value="com.felkertech.n.cumulustv.SampleTvInput" />
 
         <!-- Plugin -->
         <activity
@@ -158,23 +115,24 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:scheme="file" />
-                <data android:scheme="http" />
-                <data android:scheme="https" />
+                <data android:scheme="*" />
                 <data android:host="*" />
-
-                <!--<data android:pathPattern=".*\\.m3u" />-->
-                <data android:pathPattern=".*\\.m3u8" />
-                <!--<data android:pathPattern=".*\\.M3U" />-->
-                <data android:pathPattern=".*\\.M3U8" />
+                <data android:pathPattern=".*\\.m3u" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="*" />
+                <data android:host="*" />
+                <data android:pathPattern=".*\\.m3u8" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="text/plain" />
@@ -185,7 +143,19 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:pathPattern=".*\\.m3u" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:pathPattern=".*\\.m3u8" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
@@ -193,7 +163,6 @@
             android:name="com.felkertech.n.plugins.CumulusTvPlugin"
             android:enabled="true"
             android:exported="true"
-            android:label="Ignore.me"
             android:theme="@style/CompatTheme"></activity>
 
         <receiver
