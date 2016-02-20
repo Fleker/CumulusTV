@@ -14,6 +14,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.felkertech.channelsurfer.players.TvInputPlayer;
+import com.felkertech.channelsurfer.players.WebInputPlayer;
 import com.google.android.exoplayer.ExoPlaybackException;
 
 import java.net.URL;
@@ -85,10 +86,10 @@ public class SamplePlayer extends AppCompatActivity {
                         Log.e(TAG, e.getMessage()+"");
                         if(e.getMessage().contains("Extractor")) {
                             Log.d(TAG, "Cannot play the stream, try loading it as a website");
-                            Toast.makeText(SamplePlayer.this, "This is not a valid stream.", Toast.LENGTH_SHORT).show();
-                            /*WebTvPlayer wv = new WebTvPlayer(SamplePlayer.this);
+                            Toast.makeText(SamplePlayer.this, "This is not a video stream, interpreting as a website", Toast.LENGTH_SHORT).show();
+                            WebInputPlayer wv = new WebInputPlayer(SamplePlayer.this);
                             wv.load(url);
-                            setContentView(wv);*/
+                            setContentView(wv);
                         }
                     }
 

@@ -14,6 +14,7 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 import com.felkertech.channelsurfer.players.TvInputPlayer;
+import com.felkertech.channelsurfer.players.WebInputPlayer;
 import com.felkertech.n.boilerplate.Utils.CommaArray;
 import com.felkertech.n.boilerplate.Utils.PermissionUtils;
 import com.felkertech.n.cumulustv.ChannelDatabase;
@@ -32,6 +34,7 @@ import com.felkertech.n.cumulustv.JSONChannel;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.SamplePlayer;
 import com.felkertech.n.fileio.M3UParser;
+import com.google.android.exoplayer.ExoPlaybackException;
 
 import org.json.JSONException;
 
@@ -390,7 +393,7 @@ public class MainPicker extends CumulusTvPlugin {
         }
         exoPlayer.setPlayWhenReady(true);
     }
-    public void loadStream(MaterialDialog viewHolder, String url) {
+    public void loadStream(MaterialDialog viewHolder, final String url) {
         SurfaceView sv = (SurfaceView) viewHolder.getCustomView().findViewById(R.id.surface);
         TvInputPlayer exoPlayer;
         exoPlayer = new TvInputPlayer();
