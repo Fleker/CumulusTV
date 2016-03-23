@@ -21,7 +21,7 @@ import com.crashlytics.android.Crashlytics;
 import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.boilerplate.Utils.AppUtils;
-import com.felkertech.n.boilerplate.Utils.SettingsManager;
+import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.Intro.Intro;
 import com.felkertech.n.cumulustv.xmltv.Program;
 import com.felkertech.n.cumulustv.xmltv.XMLTVParser;
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     GoogleApiClient gapi;
     private static final int RESOLVE_CONNECTION_REQUEST_CODE = 100;
     private static final int REQUEST_CODE_CREATOR = 102;
-    SettingsManager sm;
+    DriveSettingsManager sm;
     MaterialDialog md;
 
     @Override
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
-        sm = new SettingsManager(this);
+        sm = new DriveSettingsManager(this);
         ActivityUtils.openIntroIfNeeded(this);
         Fabric.with(this, new Crashlytics());
 
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
             }
         }
-        sm.setGoogleDriveSyncable(gapi, new SettingsManager.GoogleDriveListener() {
+        sm.setGoogleDriveSyncable(gapi, new DriveSettingsManager.GoogleDriveListener() {
             @Override
             public void onActionFinished(boolean cloudToLocal) {
                 Log.d(TAG, "Sync req after drive action");
@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     protected void onStart() {
         super.onStart();
-        if(!new SettingsManager(this).getString(R.string.sm_google_drive_id).isEmpty()) {
+        if(!new DriveSettingsManager(this).getString(R.string.sm_google_drive_id).isEmpty()) {
             if(!gapi.isConnected()) {
                 md = new MaterialDialog.Builder(this)
                         .customView(R.layout.load_dialog, false)

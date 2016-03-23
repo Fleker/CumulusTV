@@ -14,7 +14,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.felkertech.channelsurfer.model.Channel;
-import com.felkertech.n.boilerplate.Utils.SettingsManager;
+import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,7 +38,7 @@ public class ChannelDatabase {
     public ChannelDatabase(final Context mContext) {
         this.mContext = mContext;
         try {
-            SettingsManager sp = new SettingsManager(mContext);
+            DriveSettingsManager sp = new DriveSettingsManager(mContext);
             String spData = sp.getString(KEY, "{'channels':[], 'modified':0}");
             obj = new JSONObject(spData);
             if(!obj.has("modified")) {
@@ -89,6 +89,7 @@ public class ChannelDatabase {
             ci.setVideoHeight(1080);
             ci.setVideoWidth(1920);
             ci.setLogoUrl(channel.getLogo());
+            Log.d(TAG, "Channel getUrl in GC = "+channel.getUrl());
             ci.setInternalProviderData(channel.getUrl());
             channelInfos.add(ci);
         }

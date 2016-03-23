@@ -20,14 +20,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.felkertech.n.ActivityUtils;
-import com.felkertech.n.boilerplate.Utils.SettingsManager;
-import com.felkertech.n.cumulustv.Intro.Intro;
-import com.felkertech.n.cumulustv.MainActivity;
 import com.felkertech.n.cumulustv.R;
 
 import io.fabric.sdk.android.Fabric;

@@ -48,7 +48,7 @@ import android.widget.Toast;
 import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.n.ActivityUtils;
-import com.felkertech.n.boilerplate.Utils.SettingsManager;
+import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.ChannelDatabase;
 import com.felkertech.n.cumulustv.JSONChannel;
 import com.felkertech.n.cumulustv.R;
@@ -94,7 +94,7 @@ public class LeanbackFragment extends BrowseFragment
     private URI mBackgroundURI;
     private BackgroundManager mBackgroundManager;
 
-    private SettingsManager sm;
+    private DriveSettingsManager sm;
     public GoogleApiClient gapi;
     public Activity mActivity;
 
@@ -102,7 +102,7 @@ public class LeanbackFragment extends BrowseFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         Log.i(TAG, "onCreate");
         super.onActivityCreated(savedInstanceState);
-        sm = new SettingsManager(getActivity());
+        sm = new DriveSettingsManager(getActivity());
         gapi = new GoogleApiClient.Builder(getActivity())
                 .addApi(Drive.API)
                 .addScope(Drive.SCOPE_FILE)
@@ -284,7 +284,7 @@ public class LeanbackFragment extends BrowseFragment
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "onConnected");
 
-        sm.setGoogleDriveSyncable(gapi, new SettingsManager.GoogleDriveListener() {
+        sm.setGoogleDriveSyncable(gapi, new DriveSettingsManager.GoogleDriveListener() {
             @Override
             public void onActionFinished(boolean cloudToLocal) {
                 Log.d(TAG, "Sync req after drive action");

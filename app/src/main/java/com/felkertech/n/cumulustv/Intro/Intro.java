@@ -4,17 +4,14 @@ import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 
 import com.felkertech.n.ActivityUtils;
+import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.boilerplate.Utils.PermissionUtils;
-import com.felkertech.n.boilerplate.Utils.SettingsManager;
-import com.felkertech.n.cumulustv.MainActivity;
 import com.felkertech.n.cumulustv.R;
 import com.github.paolorotolo.appintro.AppIntro2;
-import com.github.paolorotolo.appintro.AppIntroFragment;
 
 /**
  * Created by N on 7/1/2015.
@@ -36,7 +33,7 @@ public class Intro extends AppIntro2 {
     }
 
     private void loadMainActivity(){
-        SettingsManager sm = new SettingsManager(this);
+        DriveSettingsManager sm = new DriveSettingsManager(this);
         sm.setInt(R.string.sm_last_version, ActivityUtils.LAST_GOOD_BUILD);
         Intent intent = new Intent(this, ActivityUtils.getMainActivity(this));
         startActivity(intent);

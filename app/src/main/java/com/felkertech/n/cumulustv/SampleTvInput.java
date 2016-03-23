@@ -91,6 +91,7 @@ public class SampleTvInput extends MultimediaInputProvider {
         int SEGMENT = 1000*60*60; //Hour long segments
         List<Program> programList = new ArrayList<>();
         for(int i=0;i<programs;i++) {
+            Log.d(TAG, "Get program "+channelInfo.getName()+" "+channelInfo.getInternalProviderData());
             programList.add(new Program.Builder(getGenericProgram(channelInfo))
                     .setInternalProviderData(channelInfo.getInternalProviderData())
                     .setStartTimeUtcMillis((getNearestHour() + SEGMENT * i))
@@ -192,7 +193,9 @@ public class SampleTvInput extends MultimediaInputProvider {
     public boolean onTune(Channel channel) {
         ChannelDatabase cd = new ChannelDatabase(this);
         jsonChannel = cd.findChannel(channel.getNumber());
-
+        Log.d(TAG, channel.getName());
+        Log.d(TAG, channel.getInternalProviderData()+"");
+        Log.d(TAG, getProgramRightNow(channel).getInternalProviderData());
         play(getProgramRightNow(channel).getInternalProviderData());
         notifyVideoAvailable();
         return true;

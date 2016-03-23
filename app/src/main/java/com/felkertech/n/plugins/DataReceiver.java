@@ -12,7 +12,7 @@ import android.util.Log;
 
 import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.n.ActivityUtils;
-import com.felkertech.n.boilerplate.Utils.SettingsManager;
+import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.ChannelDatabase;
 import com.felkertech.n.cumulustv.JSONChannel;
 import com.google.android.gms.common.ConnectionResult;
@@ -60,7 +60,7 @@ public class DataReceiver extends BroadcastReceiver
                 gapi.connect();
             } else if(action.equals(INTENT_EXTRA_ACTION_WRITE)) {
                 Log.d(TAG, "Received " + jsonString);
-                SettingsManager sm = new SettingsManager(context);
+                DriveSettingsManager sm = new DriveSettingsManager(context);
                 ChannelDatabase cdn = new ChannelDatabase(context);
                 try {
                     JSONObject jo = new JSONObject(jsonString);

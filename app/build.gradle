@@ -22,8 +22,8 @@ android {
         applicationId "com.felkertech.n.cumulustv"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 36
-        versionName "1.5.1"
+        versionCode 37
+        versionName "1.5.2"
     }
     signingConfigs {
         debug {
@@ -58,7 +58,7 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'com.google.android.gms:play-services-drive:8.4.0'
     compile 'com.github.bumptech.glide:glide:3.4.+'
-    compile 'com.github.fleker:channelsurfer:0.2.6'
+    compile 'com.github.fleker:channelsurfer:0.2.11'
     compile 'com.hitherejoe.leanback:leanbackcards:0.1.0'
-//    compile 'com.github.fleker:settingsmanager:1.1.0'
+    compile 'com.github.fleker:settingsmanager:1.2.2'
 }

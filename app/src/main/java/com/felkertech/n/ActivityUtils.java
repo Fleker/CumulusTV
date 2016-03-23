@@ -11,18 +11,16 @@ import android.content.pm.ResolveInfo;
 import android.media.tv.TvContract;
 import android.net.Uri;
 import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.channelsurfer.utils.LiveChannelsUtils;
 import com.felkertech.n.boilerplate.Utils.AppUtils;
+import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.boilerplate.Utils.PermissionUtils;
-import com.felkertech.n.boilerplate.Utils.SettingsManager;
 import com.felkertech.n.cumulustv.ChannelDatabase;
 import com.felkertech.n.cumulustv.Intro.Intro;
 import com.felkertech.n.cumulustv.JSONChannel;
@@ -31,6 +29,7 @@ import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.SamplePlayer;
 import com.felkertech.n.plugins.CumulusTvPlugin;
 import com.felkertech.n.tv.LeanbackActivity;
+import com.felkertech.settingsmanager.SettingsManager;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -44,8 +43,6 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.jar.Manifest;
 
 /**
  * Created by guest1 on 10/29/2015.
@@ -236,8 +233,8 @@ public class ActivityUtils {
         actuallyWriteData(context, gapi);
     }
     private static void actuallyWriteData(final Context context, GoogleApiClient gapi) {
-        SettingsManager sm = new SettingsManager(context);
-        sm.setGoogleDriveSyncable(gapi, new SettingsManager.GoogleDriveListener() {
+        DriveSettingsManager sm = new DriveSettingsManager(context);
+        sm.setGoogleDriveSyncable(gapi, new DriveSettingsManager.GoogleDriveListener() {
             @Override
             public void onActionFinished(boolean cloudToLocal) {
                 Log.d(TAG, "Action finished " + cloudToLocal);
@@ -257,7 +254,7 @@ public class ActivityUtils {
     public static void readDriveData(Context mContext, GoogleApiClient gapi) {
         if(mContext == null)
             return;
-        SettingsManager sm = new SettingsManager(mContext);
+        DriveSettingsManager sm = new DriveSettingsManager(mContext);
         sm.setGoogleDriveSyncable(gapi, null);
         DriveId did;
         try {
@@ -273,27 +270,28 @@ public class ActivityUtils {
     }
     public static void createDriveData(Activity activity, final GoogleApiClient gapi, final ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback) {
         PermissionUtils.requestPermissionIfDisabled(activity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE, activity.getString(R.string.permission_storage_rationale));
-
-        new MaterialDialog.Builder(activity)
-                .title("Create a syncable file")
-                .content("Save channel info in Google Drive so you can always access it")
-                .positiveText(R.string.ok)
-                .negativeText(R.string.no)
-                .callback(new MaterialDialog.ButtonCallback() {
-                    @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        super.onPositive(dialog);
-                        Drive.DriveApi.newDriveContents(gapi)
-                                .setResultCallback(driveContentsCallback);
-                    }
-                })
-                .show();
+        try {
+            new MaterialDialog.Builder(activity)
+                    .title("Create a syncable file")
+                    .content("Save channel info in Google Drive so you can always access it")
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.no)
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
+                            super.onPositive(dialog);
+                            Drive.DriveApi.newDriveContents(gapi)
+                                    .setResultCallback(driveContentsCallback);
+                        }
+                    })
+                    .show();
+        } catch(Exception ignored) {}
     }
     public static void switchGoogleDrive(Activity mActivity, GoogleApiClient gapi) {
         syncFile(mActivity, gapi);
     }
     public static void deleteChannelData(final Activity mActivity, GoogleApiClient gapi) {
-        final SettingsManager sm = new SettingsManager(mActivity);
+        final DriveSettingsManager sm = new DriveSettingsManager(mActivity);
         sm.setGoogleDriveSyncable(gapi, null);
         new MaterialDialog.Builder(mActivity)
                 .title("Delete all your channel data?")

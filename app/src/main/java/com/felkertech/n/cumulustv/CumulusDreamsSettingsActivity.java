@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.felkertech.n.boilerplate.Utils.SettingsManager;
+import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,7 +44,7 @@ public class CumulusDreamsSettingsActivity extends PreferenceActivity {
                     .itemsCallback(new MaterialDialog.ListCallback() {
                         @Override
                         public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                            SettingsManager sm = new SettingsManager(getActivity());
+                            DriveSettingsManager sm = new DriveSettingsManager(getActivity());
                             try {
                                 sm.setString(R.string.daydream_url, new JSONChannel((JSONObject) cdn.getJSONChannels().get(which)).getUrl());
                                 Toast.makeText(getActivity(), R.string.daydream_success, Toast.LENGTH_SHORT).show();

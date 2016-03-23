@@ -2,7 +2,8 @@ package com.felkertech.n.cumulustv;
 
 import android.media.tv.TvContract;
 
-import com.felkertech.n.boilerplate.Utils.CommaArray;
+
+import com.felkertech.settingsmanager.common.CommaArray;
 
 import org.json.JSONException;
 import org.json.JSONObject;

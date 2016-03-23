@@ -10,7 +10,7 @@ import android.view.SurfaceView;
 import android.widget.TextView;
 
 import com.felkertech.channelsurfer.players.TvInputPlayer;
-import com.felkertech.n.boilerplate.Utils.SettingsManager;
+import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.google.android.exoplayer.ExoPlaybackException;
 
 /**
@@ -45,7 +45,7 @@ public class CumulusDreams extends DreamService {
     public void onDreamingStarted() {
         super.onDreamingStarted();
         Log.d(TAG, "Dream starting");
-        SettingsManager sm = new SettingsManager(getApplicationContext());
+        DriveSettingsManager sm = new DriveSettingsManager(getApplicationContext());
         final String url = sm.getString(R.string.daydream_url);
         if(!url.isEmpty()) {
             Log.d(TAG, "Play "+url);
