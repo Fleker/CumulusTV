@@ -195,10 +195,15 @@ public class SampleTvInput extends MultimediaInputProvider {
         jsonChannel = cd.findChannel(channel.getNumber());
         Log.d(TAG, channel.getName());
         Log.d(TAG, channel.getInternalProviderData()+"");
-        Log.d(TAG, getProgramRightNow(channel).getInternalProviderData());
-        play(getProgramRightNow(channel).getInternalProviderData());
-        notifyVideoAvailable();
-        return true;
+        if(getProgramRightNow(channel) != null) {
+            Log.d(TAG, getProgramRightNow(channel).getInternalProviderData());
+            play(getProgramRightNow(channel).getInternalProviderData());
+            notifyVideoAvailable();
+            return true;
+        } else {
+            Toast.makeText(SampleTvInput.this, "Something's wrong.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
     }
 
 /*    @Nullable
