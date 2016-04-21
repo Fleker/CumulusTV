@@ -23,7 +23,13 @@
         android:name="android.hardware.touchscreen"
         android:required="false" />
     <uses-feature
+        android:name="android.hardware.TOUCHSCREEN"
+        android:required="false" />
+    <uses-feature
         android:name="android.hardware.screen.landscape"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.screen.LANDSCAPE"
         android:required="false" />
     <uses-feature
         android:name="android.software.leanback"
@@ -38,6 +44,9 @@
     -->
     <uses-feature
         android:name="android.software.live_tv"
+        android:required="false" />
+    <uses-feature
+        android:name="android.software.LIVE_TV"
         android:required="false" />
 
     <!-- <uses-permission android:name="android.permission.RECORD_AUDIO" /> -->

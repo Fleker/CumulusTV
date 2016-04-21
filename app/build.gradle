@@ -22,8 +22,8 @@ android {
         applicationId "com.felkertech.n.cumulustv"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 38
-        versionName "1.5.2"
+        versionCode 39
+        versionName "1.5.3"
     }
     signingConfigs {
         debug {
@@ -53,7 +53,7 @@ dependencies {
     compile 'com.afollestad:material-dialogs:0.7.9.1'
     compile 'com.pnikosis:materialish-progress:1.5'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.android.support:palette-v7:23.1.1'
+    compile 'com.android.support:palette-v7:23.3.0'
     compile 'com.github.paolorotolo:appintro:3.2.0'
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'com.google.android.gms:play-services-drive:8.4.0'
