@@ -33,6 +33,7 @@ import android.util.Log;
 import android.util.LongSparseArray;
 import android.util.Pair;
 import android.util.SparseArray;
+import android.widget.Toast;
 
 import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.channelsurfer.model.Program;
@@ -119,6 +120,10 @@ public class TvContractUtils {
         ContentValues values = new ContentValues();
         values.put(Channels.COLUMN_INPUT_ID, inputId);
         Map<Uri, String> logos = new HashMap<Uri, String>();
+        if(channels == null) {
+            Toast.makeText(context, "You have no channels set!", Toast.LENGTH_SHORT).show();
+            return; //You have NO channels
+        }
         for (Channel channel : channels) {
             Log.d(TAG, "Trying oni "+channel.getOriginalNetworkId()+" "+mExistingChannelsMap.get(channel.getOriginalNetworkId())+" "+channel.getServiceId());
             values.put(Channels.COLUMN_DISPLAY_NUMBER, channel.getNumber());

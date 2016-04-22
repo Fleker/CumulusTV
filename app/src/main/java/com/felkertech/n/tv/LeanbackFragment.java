@@ -21,6 +21,7 @@ import android.content.IntentSender;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.tv.TvContract;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -138,6 +139,12 @@ public class LeanbackFragment extends BrowseFragment
         mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 
         //ROW 1: MY CHANNELS
+        if(mActivity == null && Build.VERSION.SDK_INT >= 23) {
+            Toast.makeText(getContext(), "Uh-oh, something isn't working: loadRows has no activity", Toast.LENGTH_SHORT).show();
+            return;
+        } else if(mActivity == null) {
+            return;
+        }
         ChannelDatabase cd = new ChannelDatabase(mActivity);
         try {
             CardPresenter channelCardPresenter = new CardPresenter();

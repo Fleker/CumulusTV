@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
+import android.view.accessibility.AccessibilityManager;
 import android.view.accessibility.CaptioningManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -165,7 +166,7 @@ public class SampleTvInput extends MultimediaInputProvider {
                                 }
                             };
                             try {
-                                if (jsonChannel.getLogo() != null && !jsonChannel.getLogo().isEmpty()) {
+                                if (jsonChannel != null && jsonChannel.getLogo() != null && !jsonChannel.getLogo().isEmpty() && jsonChannel.getLogo().length() > 8) {
                                     bitmap[0] = Picasso.with(getApplicationContext())
                                             .load(jsonChannel.getLogo())
                                             .placeholder(R.drawable.ic_launcher)
@@ -201,12 +202,19 @@ public class SampleTvInput extends MultimediaInputProvider {
             notifyVideoAvailable();
             return true;
         } else {
-            Toast.makeText(SampleTvInput.this, "Something's wrong.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SampleTvInput.this, "Something's wrong. Cannot tune to this channel.", Toast.LENGTH_SHORT).show();
+            notifyVideoUnavailable(REASON_UNKNOWN);
             return false;
         }
     }
 
-/*    @Nullable
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        Toast.makeText(SampleTvInput.this, "You're running low on system memory. Things may not work as expected.", Toast.LENGTH_SHORT).show();
+    }
+
+    /*    @Nullable
     @Override
     public Session onCreateSession(String inputId) {
         session = new SimpleSessionImpl(this, this);

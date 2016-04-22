@@ -69,6 +69,11 @@ public class MainPicker extends CumulusTvPlugin {
             final Uri uri = getIntent().getData();
             Log.d(TAG, "Uri "+uri);
             //At this point we need to check for the storage
+            if(uri == null) {
+                Toast.makeText(this, R.string.import_null, Toast.LENGTH_SHORT).show();
+                finish();
+                return;
+            }
             if(uri.getScheme().contains("file") && PermissionUtils.isDisabled(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 PermissionUtils.requestPermissionIfDisabled(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 Toast.makeText(this, R.string.permission_not_allowed_error, Toast.LENGTH_SHORT).show();
