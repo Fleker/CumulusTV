@@ -273,7 +273,8 @@ public class ChannelDatabase {
         }
     }
     public void setLastModified() throws JSONException {
-        obj.put("modified", new Date().getTime());
+        if(obj != null)
+            obj.put("modified", new Date().getTime());
     }
 
     public void resetPossibleGenres() throws JSONException {

@@ -85,7 +85,7 @@
 
     <string name="import_bulk_title">Import %1$d Channels?</string>
     <string name="import_bulk_wait">Hold on a second</string>
-    <string name="import_null">Found a null Uri</string>
+    <string name="import_null" translatable="false">Found a null Uri</string>
     <string name="import_bulk_success">"You're good to go!"</string>
 
     <string name="github" translatable="false">GitHub</string>

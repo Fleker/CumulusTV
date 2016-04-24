@@ -526,7 +526,7 @@ public class ActivityUtils {
                 }
                 break;
             case REQUEST_CODE_CREATOR:
-                if (data == null) //If op was canceled
+                if (data == null || !gapi.isConnected()) //If op was canceled
                     return;
                 DriveId driveId = (DriveId) data.getParcelableExtra(
                         OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
