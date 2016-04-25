@@ -2,6 +2,13 @@
 <items version="2" >
 
     <item
+        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.google.android.exoplayer\exoplayer\r1.5.7\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="f156a33c2991564977dc8514b709d8cbd1d43adc">
+        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\com.google.android.exoplayer-exoplayer-r1.5.7_62dfe11cce3469db9d00319cd980a7c10a1187ec.jar" />
+    </item>
+    <item
         jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.pnikosis\materialish-progress\1.5\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
@@ -21,13 +28,6 @@
         revision="22.0.1"
         sha1="8e673cdfadd8f2d98fdb2fda2285c30f6e449782">
         <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\com.google.android.gms-play-services-basement-8.4.0_4ce7c9d9b4998b629ea5a5920ded49ad10f27a25.jar" />
-    </item>
-    <item
-        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.google.android.exoplayer\exoplayer\r1.5.3\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="c50baf72335934948f286c350e9db5c476939588">
-        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\com.google.android.exoplayer-exoplayer-r1.5.3_0de8dcdc0a27c0e0753f78b834561ed9e8075f58.jar" />
     </item>
     <item
         jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.crashlytics.sdk.android\beta\1.1.3\jars\classes.jar"
@@ -100,6 +100,13 @@
         <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\com.github.paolorotolo-appintro-3.2.0_d447834dc2b952059609f09b7fbd055741afbd4c.jar" />
     </item>
     <item
+        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.github.fleker\channelsurfer\0.2.16\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="eceb08f51f90eeb1468034d41b9e66ffe449089c">
+        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\com.github.fleker-channelsurfer-0.2.16_d6f0567366be7a5a6e660a8738dd2449e6439b82.jar" />
+    </item>
+    <item
         jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.afollestad\material-dialogs\0.7.9.1\jars\classes.jar"
         jumboMode="false"
         revision="22.0.1"
@@ -112,13 +119,6 @@
         revision="22.0.1"
         sha1="ca75c062ed024385befef143a03e158bcdf86f59">
         <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\com.github.fleker-settingsmanager-common-1.2.1_5b091d7fa902d4e8ec53acd85718d41c31e20011.jar" />
-    </item>
-    <item
-        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.github.fleker\channelsurfer\0.2.12\jars\classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="79ed0bf19c8c6ef3cbfd4c935dfd51529e1bb89d">
-        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\com.github.fleker-channelsurfer-0.2.12_1ffcca8e513f3119c00a063bda35bf776e7da20e.jar" />
     </item>
     <item
         jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\23.3.0\jars\classes.jar"
