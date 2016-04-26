@@ -12,6 +12,7 @@ apply plugin: 'io.fabric'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
+    maven { url "https://jitpack.io" }
 }
 
 android {
@@ -22,8 +23,8 @@ android {
         applicationId "com.felkertech.n.cumulustv"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 39
-        versionName "1.5.3"
+        versionCode 40
+        versionName "1.5.3b"
     }
     signingConfigs {
         debug {
@@ -50,7 +51,7 @@ dependencies {
     compile 'com.android.support:leanback-v17:23.3.0'
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.google.android.exoplayer:exoplayer:r1.5.3'
-    compile 'com.afollestad:material-dialogs:0.7.9.1'
+
     compile 'com.pnikosis:materialish-progress:1.5'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:palette-v7:23.3.0'
@@ -58,7 +59,14 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'com.google.android.gms:play-services-drive:8.4.0'
     compile 'com.github.bumptech.glide:glide:3.4.0'
-    compile 'com.github.fleker:channelsurfer:0.2.16'
     compile 'com.hitherejoe.leanback:leanbackcards:0.1.0'
+    compile 'com.github.fleker:channelsurfer:0.2.12'
     compile 'com.github.fleker:settingsmanager:1.2.2'
+
+    compile('com.github.afollestad.material-dialogs:core:0.8.5.8@aar') {
+        transitive = true
+    }
+    compile('com.github.afollestad.material-dialogs:commons:0.8.5.8@aar') {
+        transitive = true
+    }
 }

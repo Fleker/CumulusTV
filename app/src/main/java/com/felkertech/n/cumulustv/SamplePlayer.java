@@ -87,12 +87,12 @@ public class SamplePlayer extends AppCompatActivity {
                         if(e.getMessage().contains("Extractor")) {
                             Log.d(TAG, "Cannot play the stream, try loading it as a website");
                             Toast.makeText(SamplePlayer.this, "This is not a video stream, interpreting as a website", Toast.LENGTH_SHORT).show();
-                            WebInputPlayer wv = new WebInputPlayer(SamplePlayer.this, new WebInputPlayer.WebViewListener() {
+                            WebInputPlayer wv = new WebInputPlayer(SamplePlayer.this/*, new WebInputPlayer.WebViewListener() {
                                 @Override
                                 public void onPageFinished() {
                                     //Don't do anything
                                 }
-                            });
+                            }*/);
                             wv.load(url);
                             setContentView(wv);
                         }
