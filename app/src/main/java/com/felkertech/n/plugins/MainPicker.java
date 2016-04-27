@@ -14,7 +14,6 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
@@ -26,19 +25,16 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 import com.felkertech.channelsurfer.players.TvInputPlayer;
-import com.felkertech.channelsurfer.players.WebInputPlayer;
 import com.felkertech.n.boilerplate.Utils.PermissionUtils;
-import com.felkertech.n.cumulustv.ChannelDatabase;
-import com.felkertech.n.cumulustv.JSONChannel;
+import com.felkertech.n.cumulustv.model.ChannelDatabase;
+import com.felkertech.n.cumulustv.activities.CumulusTvPlayer;
+import com.felkertech.n.cumulustv.model.JSONChannel;
 import com.felkertech.n.cumulustv.R;
-import com.felkertech.n.cumulustv.SamplePlayer;
 import com.felkertech.n.fileio.M3UParser;
 import com.felkertech.settingsmanager.common.CommaArray;
-import com.google.android.exoplayer.ExoPlaybackException;
 
 import org.json.JSONException;
 
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -143,8 +139,8 @@ public class MainPicker extends CumulusTvPlugin {
                     pickerDialog.findViewById(R.id.stream_open).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent i = new Intent(MainPicker.this, SamplePlayer.class);
-                            i.putExtra(SamplePlayer.KEY_VIDEO_URL, uri.toString());
+                            Intent i = new Intent(MainPicker.this, CumulusTvPlayer.class);
+                            i.putExtra(CumulusTvPlayer.KEY_VIDEO_URL, uri.toString());
                             startActivity(i);
                         }
                     });
@@ -262,8 +258,8 @@ public class MainPicker extends CumulusTvPlugin {
             pickerDialog.findViewById(R.id.stream_open).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent i = new Intent(MainPicker.this, SamplePlayer.class);
-                    i.putExtra(SamplePlayer.KEY_VIDEO_URL, getUrl());
+                    Intent i = new Intent(MainPicker.this, CumulusTvPlayer.class);
+                    i.putExtra(CumulusTvPlayer.KEY_VIDEO_URL, getUrl());
                     startActivity(i);
                 }
             });
@@ -343,8 +339,8 @@ public class MainPicker extends CumulusTvPlugin {
             pickerDialog.findViewById(R.id.stream_open).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent i = new Intent(MainPicker.this, SamplePlayer.class);
-                    i.putExtra(SamplePlayer.KEY_VIDEO_URL, getUrl());
+                    Intent i = new Intent(MainPicker.this, CumulusTvPlayer.class);
+                    i.putExtra(CumulusTvPlayer.KEY_VIDEO_URL, getUrl());
                     startActivity(i);
                 }
             });

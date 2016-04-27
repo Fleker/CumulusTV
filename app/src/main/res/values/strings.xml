@@ -101,5 +101,6 @@
     <string name="about_mlc" translatable="false">About MLC</string>
     <string name="about_mlc_summary" translatable="false">MLC is an experimental, web-based, leanback, musical experience.</string>
     <string name="about_mlc_issues" translatable="false">Visit Issue Tracker</string>
+    <string name="connect_drive">Connect to Google Drive</string>
 </resources>
 

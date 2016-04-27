@@ -1,6 +1,5 @@
-package com.felkertech.n.cumulustv;
+package com.felkertech.n.cumulustv.model;
 
-import android.bluetooth.le.AdvertiseData;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.tv.TvContentRating;
@@ -20,10 +19,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by N on 7/14/2015.

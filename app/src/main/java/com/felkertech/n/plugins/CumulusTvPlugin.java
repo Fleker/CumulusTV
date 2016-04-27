@@ -1,16 +1,11 @@
 package com.felkertech.n.plugins;
 
-import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.PersistableBundle;
-import android.provider.ContactsContract;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.felkertech.n.cumulustv.JSONChannel;
+import com.felkertech.n.cumulustv.model.JSONChannel;
 import com.felkertech.n.cumulustv.R;
 
 /**

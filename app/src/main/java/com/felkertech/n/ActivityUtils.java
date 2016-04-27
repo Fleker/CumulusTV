@@ -21,12 +21,12 @@ import com.felkertech.channelsurfer.utils.LiveChannelsUtils;
 import com.felkertech.n.boilerplate.Utils.AppUtils;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.boilerplate.Utils.PermissionUtils;
-import com.felkertech.n.cumulustv.ChannelDatabase;
+import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.Intro.Intro;
-import com.felkertech.n.cumulustv.JSONChannel;
-import com.felkertech.n.cumulustv.MainActivity;
+import com.felkertech.n.cumulustv.model.JSONChannel;
+import com.felkertech.n.cumulustv.activities.MainActivity;
 import com.felkertech.n.cumulustv.R;
-import com.felkertech.n.cumulustv.SamplePlayer;
+import com.felkertech.n.cumulustv.activities.CumulusTvPlayer;
 import com.felkertech.n.plugins.CumulusTvPlugin;
 import com.felkertech.n.tv.LeanbackActivity;
 import com.felkertech.settingsmanager.SettingsManager;
@@ -243,7 +243,7 @@ public class ActivityUtils {
         try {
             sm.writeToGoogleDrive(DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id)), new ChannelDatabase(context).toString());
 
-            final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
+            final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".CumulusTvService"));
             SyncUtils.requestSync(context, info);
         } catch(Exception e) {
             //Probably invalid drive id. No worries, just let someone know
@@ -265,7 +265,7 @@ public class ActivityUtils {
         }
         sm.readFromGoogleDrive(did, ChannelDatabase.KEY);
 
-        final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
+        final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".CumulusTvService"));
         SyncUtils.requestSync(mContext, info);
     }
     public static void createDriveData(Activity activity, final GoogleApiClient gapi, final ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback) {
@@ -595,8 +595,8 @@ public class ActivityUtils {
         }
     }
     public static void openStream(Activity mActivity, String url) {
-        Intent i = new Intent(mActivity, SamplePlayer.class);
-        i.putExtra(SamplePlayer.KEY_VIDEO_URL, url);
+        Intent i = new Intent(mActivity, CumulusTvPlayer.class);
+        i.putExtra(CumulusTvPlayer.KEY_VIDEO_URL, url);
         mActivity.startActivity(i);
     }
     public static void openIntroIfNeeded(Activity mActivity) {
@@ -616,5 +616,28 @@ public class ActivityUtils {
             return LeanbackActivity.class;
         }
         return MainActivity.class;
+    }
+
+    public static class GoogleDrive {
+        private static GoogleApiClient gapi;
+        public static void connect(Activity mActivity) {
+            gapi = new GoogleApiClient.Builder(mActivity)
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks((GoogleApiClient.ConnectionCallbacks) mActivity)
+                    .addOnConnectionFailedListener((GoogleApiClient.OnConnectionFailedListener) mActivity)
+                    .build();
+            gapi.connect();
+        }
+        public static boolean autoConnect(Activity mActivity) {
+            if(isDriveEnabled(mActivity)) {
+                connect(mActivity);
+                return true;
+            }
+            return false;
+        }
+        public static boolean isDriveEnabled(Activity mActivity) {
+            return new SettingsManager(mActivity).getString(R.string.sm_google_drive_id).isEmpty();
+        }
     }
 }

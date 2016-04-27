@@ -1,20 +1,18 @@
 package com.felkertech.n.plugins;
 
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.media.tv.TvContract;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 
 import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
-import com.felkertech.n.cumulustv.ChannelDatabase;
-import com.felkertech.n.cumulustv.JSONChannel;
+import com.felkertech.n.cumulustv.model.ChannelDatabase;
+import com.felkertech.n.cumulustv.model.JSONChannel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
@@ -116,7 +114,7 @@ public class DataReceiver extends BroadcastReceiver
         ActivityUtils.writeDriveData(mContext, gapi);
         Log.d(TAG, "Sync w/ drive");
 
-        final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
+        final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".CumulusTvService"));
         SyncUtils.requestSync(mContext, info);
     }
 

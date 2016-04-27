@@ -50,8 +50,8 @@ import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
-import com.felkertech.n.cumulustv.ChannelDatabase;
-import com.felkertech.n.cumulustv.JSONChannel;
+import com.felkertech.n.cumulustv.model.ChannelDatabase;
+import com.felkertech.n.cumulustv.model.JSONChannel;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.xmltv.Program;
 import com.felkertech.n.cumulustv.xmltv.XMLTVParser;
@@ -62,7 +62,6 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi;
 import com.google.android.gms.drive.MetadataChangeSet;
-import com.hitherejoe.leanbackcards.IconCardView;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -104,13 +103,7 @@ public class LeanbackFragment extends BrowseFragment
         Log.i(TAG, "onCreate");
         super.onActivityCreated(savedInstanceState);
         sm = new DriveSettingsManager(getActivity());
-        gapi = new GoogleApiClient.Builder(getActivity())
-                .addApi(Drive.API)
-                .addScope(Drive.SCOPE_FILE)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-        gapi.connect();
+        ActivityUtils.GoogleDrive.autoConnect(getActivity());
     }
 
     @Override
@@ -209,7 +202,7 @@ public class LeanbackFragment extends BrowseFragment
         iconCardView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         iconCardView.setTitleText("Redownload");
         driveAdapter.add(iconCardView);*/
-//        driveAdapter.add("Connect to Google Drive");
+        driveAdapter.add(R.string.connect_drive);
         driveAdapter.add(getString(R.string.settings_refresh_cloud_local));
 //        driveAdapter.add("Upload to cloud");
         driveAdapter.add(getString(R.string.settings_switch_google_drive));
@@ -295,7 +288,7 @@ public class LeanbackFragment extends BrowseFragment
             @Override
             public void onActionFinished(boolean cloudToLocal) {
                 Log.d(TAG, "Sync req after drive action");
-                final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
+                final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".CumulusTvService"));
                 SyncUtils.requestSync(mActivity, info);
                 if (cloudToLocal) {
                     Toast.makeText(getActivity(), "Download complete", Toast.LENGTH_SHORT).show();
@@ -393,6 +386,8 @@ public class LeanbackFragment extends BrowseFragment
                    ActivityUtils.openSuggestedChannels(mActivity, gapi);
                 } else if(title.equals(getString(R.string.manage_add_new))) {
                     ActivityUtils.openPluginPicker(true, mActivity);
+                } else if(title.equals(getString(R.string.connect_drive))) {
+                    ActivityUtils.GoogleDrive.connect(mActivity);
                 } else if(title.equals(getString(R.string.settings_sync_file))) {
                     ActivityUtils.syncFile(mActivity, gapi);
                 } else if(title.equals(getString(R.string.settings_browse_plugins))) {

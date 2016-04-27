@@ -2,10 +2,8 @@ package com.felkertech.n.fileio;
 
 import android.content.Context;
 import android.util.Log;
-import android.util.Xml;
 
-import com.felkertech.n.cumulustv.ChannelDatabase;
-import com.felkertech.n.cumulustv.xmltv.Channel;
+import com.felkertech.n.cumulustv.model.ChannelDatabase;
 
 import java.io.BufferedReader;
 import java.io.IOException;

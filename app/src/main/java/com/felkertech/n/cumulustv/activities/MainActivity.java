@@ -1,12 +1,10 @@
-package com.felkertech.n.cumulustv;
+package com.felkertech.n.cumulustv.activities;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.media.tv.TvContract;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,21 +20,18 @@ import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.boilerplate.Utils.AppUtils;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
-import com.felkertech.n.cumulustv.Intro.Intro;
+import com.felkertech.n.cumulustv.R;
+import com.felkertech.n.cumulustv.model.ChannelDatabase;
+import com.felkertech.n.cumulustv.model.JSONChannel;
 import com.felkertech.n.cumulustv.xmltv.Program;
 import com.felkertech.n.cumulustv.xmltv.XMLTVParser;
-import com.felkertech.n.plugins.CumulusTvPlugin;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi;
-import com.google.android.gms.drive.DriveFile;
-import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.MetadataChangeSet;
-import com.google.android.gms.drive.OpenFileActivityBuilder;
-import com.google.android.gms.*;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -45,9 +40,7 @@ import org.json.JSONException;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.jar.Manifest;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -64,13 +57,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d(TAG, "onCreate");
-        final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
-        gapi = new GoogleApiClient.Builder(this)
-                .addApi(Drive.API)
-                .addScope(Drive.SCOPE_FILE)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
+        //final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".CumulusTvService"));
         sm = new DriveSettingsManager(this);
         ActivityUtils.openIntroIfNeeded(this);
         Fabric.with(this, new Crashlytics());
@@ -166,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onActionFinished(boolean cloudToLocal) {
                 Log.d(TAG, "Sync req after drive action");
-                final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".SampleTvInput"));
+                final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".CumulusTvService"));
                 SyncUtils.requestSync(MainActivity.this, info);
                 if (cloudToLocal) {
                     Toast.makeText(MainActivity.this, R.string.downloaded, Toast.LENGTH_SHORT).show();
@@ -201,13 +188,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     protected void onStart() {
         super.onStart();
-        if(!new DriveSettingsManager(this).getString(R.string.sm_google_drive_id).isEmpty()) {
+        /*if(!new DriveSettingsManager(this).getString(R.string.sm_google_drive_id).isEmpty()) {
             if(!gapi.isConnected()) {
                 md = new MaterialDialog.Builder(this)
                         .customView(R.layout.load_dialog, false)
                         .show();
-
-                gapi.connect();
                 findViewById(R.id.gdrive).setVisibility(View.GONE);
                 findViewById(R.id.gdrive).setEnabled(false);
                 Log.d(TAG, "Need to connect");
@@ -219,7 +204,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
 
         } else {
-        }
+        }*/
+        ActivityUtils.GoogleDrive.autoConnect(this);
         /*md = new MaterialDialog.Builder(this)
                 .customView(R.layout.load_dialog, false)
                 .show();*/

@@ -1,4 +1,4 @@
-package com.felkertech.n.cumulustv;
+package com.felkertech.n.cumulustv.activities;
 
 import android.annotation.TargetApi;
 import android.os.Build;
@@ -10,6 +10,10 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
+import com.felkertech.n.cumulustv.CumulusDreams;
+import com.felkertech.n.cumulustv.R;
+import com.felkertech.n.cumulustv.model.ChannelDatabase;
+import com.felkertech.n.cumulustv.model.JSONChannel;
 
 import org.json.JSONException;
 import org.json.JSONObject;

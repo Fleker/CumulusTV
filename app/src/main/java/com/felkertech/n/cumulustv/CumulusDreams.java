@@ -5,13 +5,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.service.dreams.DreamService;
 import android.util.Log;
-import android.view.Surface;
 import android.view.SurfaceView;
 import android.widget.TextView;
 
 import com.felkertech.channelsurfer.players.TvInputPlayer;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
-import com.google.android.exoplayer.ExoPlaybackException;
+import com.felkertech.n.cumulustv.activities.CumulusDreamsSettingsActivity;
 
 /**
  * This class is a sample implementation of a DreamService. When activated, a

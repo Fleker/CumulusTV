@@ -2,25 +2,18 @@ package com.felkertech.n.cumulustv;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.media.tv.TvContract;
 import android.media.tv.TvInputManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.support.v7.graphics.Palette;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Surface;
 import android.view.View;
-import android.view.accessibility.AccessibilityManager;
 import android.view.accessibility.CaptioningManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,12 +22,9 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.channelsurfer.model.Program;
-import com.felkertech.channelsurfer.players.TvInputPlayer;
 import com.felkertech.channelsurfer.service.MultimediaInputProvider;
-import com.felkertech.channelsurfer.service.SimpleSessionImpl;
-import com.felkertech.channelsurfer.service.TvInputProvider;
-import com.felkertech.channelsurfer.utils.LiveChannelsUtils;
-import com.google.android.exoplayer.ExoPlaybackException;
+import com.felkertech.n.cumulustv.model.ChannelDatabase;
+import com.felkertech.n.cumulustv.model.JSONChannel;
 import com.pnikosis.materialishprogress.ProgressWheel;
 import com.squareup.picasso.Picasso;
 
@@ -49,7 +39,7 @@ import io.fabric.sdk.android.Fabric;
 /**
  * Created by N on 7/12/2015.
  */
-public class SampleTvInput extends MultimediaInputProvider {
+public class CumulusTvService extends MultimediaInputProvider {
     HandlerThread mHandlerThread;
     BroadcastReceiver mBroadcastReceiver;
     Handler mDbHandler;
@@ -202,7 +192,7 @@ public class SampleTvInput extends MultimediaInputProvider {
             notifyVideoAvailable();
             return true;
         } else {
-            Toast.makeText(SampleTvInput.this, "Something's wrong. Cannot tune to this channel.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(CumulusTvService.this, "Something's wrong. Cannot tune to this channel.", Toast.LENGTH_SHORT).show();
             notifyVideoUnavailable(REASON_UNKNOWN);
             return false;
         }
@@ -211,7 +201,7 @@ public class SampleTvInput extends MultimediaInputProvider {
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        Toast.makeText(SampleTvInput.this, "You're running low on system memory. Things may not work as expected.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(CumulusTvService.this, "You're running low on system memory. Things may not work as expected.", Toast.LENGTH_SHORT).show();
     }
 
     /*    @Nullable

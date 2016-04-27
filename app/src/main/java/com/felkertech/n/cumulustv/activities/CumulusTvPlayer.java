@@ -1,4 +1,4 @@
-package com.felkertech.n.cumulustv;
+package com.felkertech.n.cumulustv.activities;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -8,25 +8,25 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.WindowManager;
-import android.webkit.WebView;
 import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.felkertech.channelsurfer.players.TvInputPlayer;
 import com.felkertech.channelsurfer.players.WebInputPlayer;
+import com.felkertech.n.cumulustv.R;
 import com.google.android.exoplayer.ExoPlaybackException;
 
 import java.net.URL;
 
 /**
- * Created by N on 7/12/2015.
+ * Created by Nick on 7/12/2015.
  */
-public class SamplePlayer extends AppCompatActivity {
+public class CumulusTvPlayer extends AppCompatActivity {
     private String urlStream;
     private VideoView myVideoView;
     private URL url;
-    private String TAG = "cumulus:SamplePlayer";
+    private String TAG = "cumulus:CumulusTvPlayer";
     public static final String KEY_VIDEO_URL = "VIDEO_URL";
 
     @Override
@@ -86,13 +86,13 @@ public class SamplePlayer extends AppCompatActivity {
                         Log.e(TAG, e.getMessage()+"");
                         if(e.getMessage().contains("Extractor")) {
                             Log.d(TAG, "Cannot play the stream, try loading it as a website");
-                            Toast.makeText(SamplePlayer.this, "This is not a video stream, interpreting as a website", Toast.LENGTH_SHORT).show();
-                            WebInputPlayer wv = new WebInputPlayer(SamplePlayer.this/*, new WebInputPlayer.WebViewListener() {
+                            Toast.makeText(CumulusTvPlayer.this, "This is not a video stream, interpreting as a website", Toast.LENGTH_SHORT).show();
+                            WebInputPlayer wv = new WebInputPlayer(CumulusTvPlayer.this, new WebInputPlayer.WebViewListener() {
                                 @Override
                                 public void onPageFinished() {
                                     //Don't do anything
                                 }
-                            }*/);
+                            });
                             wv.load(url);
                             setContentView(wv);
                         }

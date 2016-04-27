@@ -1,11 +1,9 @@
-package com.felkertech.n.cumulustv;
+package com.felkertech.n.cumulustv.activities;
 
 import android.media.tv.TvInputInfo;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,8 +11,10 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.channelsurfer.setup.SimpleTvSetup;
-import com.felkertech.channelsurfer.sync.SyncAdapter;
 import com.felkertech.channelsurfer.sync.SyncUtils;
+import com.felkertech.n.cumulustv.R;
+import com.felkertech.n.cumulustv.TvContractUtils;
+import com.felkertech.n.cumulustv.model.ChannelDatabase;
 
 import org.json.JSONException;
 
@@ -25,8 +25,8 @@ import io.fabric.sdk.android.Fabric;
 /**
  * Created by N on 7/12/2015.
  */
-public class SampleSetup extends SimpleTvSetup {
-    private String TAG = "cumulus:SampleSetup";
+public class CumulusChannelsSetup extends SimpleTvSetup {
+    private String TAG = "cumulus:CumulusChannelsSetup";
     private String ABCNews = "http://abclive.abcnews.com/i/abc_live4@136330/index_1200_av-b.m3u8";
     public static String COLUMN_CHANNEL_URL = "CHANNEL_URL";
     private static int SETUP_DURATION = 10*1000;

@@ -1,4 +1,4 @@
-package com.felkertech.n.cumulustv;
+package com.felkertech.n.cumulustv.model;
 
 import android.media.tv.TvContract;
 

@@ -1,8 +1,9 @@
-package com.felkertech.n.cumulustv;
+package com.felkertech.n.cumulustv.exceptions;
 
 /**
- * Created by guest1 on 1/3/2016.
+ * Created by Nick on 1/3/2016.
  */
+@Deprecated
 public class NotValidExoPlayerStream extends Exception {
     public NotValidExoPlayerStream() {
         super("Not a valid ExoPlayer Stream");
