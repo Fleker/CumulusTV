@@ -393,19 +393,18 @@ public class ActivityUtils {
                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
             } else {
                 ChannelDatabase cdn = new ChannelDatabase(activity);
-                JSONChannel jsonChannel = queriedChannel;
                 ResolveInfo plugin_info = plugins.get(0);
                 Log.d(TAG, plugin_info.activityInfo.applicationInfo.packageName + " " +
                         plugin_info.activityInfo.name);
                 intent.setClassName(plugin_info.activityInfo.applicationInfo.packageName,
                         plugin_info.activityInfo.name);
                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_EDIT);
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NUMBER, jsonChannel.getNumber());
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NAME, jsonChannel.getName());
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_URL, jsonChannel.getUrl());
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ICON, jsonChannel.getLogo());
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_SPLASH, jsonChannel.getSplashscreen());
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_GENRES, jsonChannel.getGenresString());
+                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NUMBER, queriedChannel.getNumber());
+                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NAME, queriedChannel.getName());
+                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_URL, queriedChannel.getUrl());
+                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ICON, queriedChannel.getLogo());
+                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_SPLASH, queriedChannel.getSplashscreen());
+                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_GENRES, queriedChannel.getGenresString());
             }
             activity.startActivity(intent);
         } else {
@@ -430,17 +429,16 @@ public class ActivityUtils {
                                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
                             } else {
                                 ChannelDatabase cdn = new ChannelDatabase(activity);
-                                JSONChannel jsonChannel = queriedChannel;
                                 ResolveInfo plugin_info = plugins.get(i);
                                 intent.setClassName(plugin_info.activityInfo.applicationInfo.packageName,
                                         plugin_info.activityInfo.name);
                                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_EDIT);
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NUMBER, jsonChannel.getNumber());
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NAME, jsonChannel.getName());
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_URL, jsonChannel.getUrl());
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ICON, jsonChannel.getLogo());
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_SPLASH, jsonChannel.getSplashscreen());
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_GENRES, jsonChannel.getGenresString());
+                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NUMBER, queriedChannel.getNumber());
+                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NAME, queriedChannel.getName());
+                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_URL, queriedChannel.getUrl());
+                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ICON, queriedChannel.getLogo());
+                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_SPLASH, queriedChannel.getSplashscreen());
+                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_GENRES, queriedChannel.getGenresString());
                             }
                             activity.startActivity(intent);
                         }
@@ -506,7 +504,7 @@ public class ActivityUtils {
         SettingsManager sm = new SettingsManager(mActivity);
         switch (requestCode) {
             case RESOLVE_CONNECTION_REQUEST_CODE:
-                if (resultCode == mActivity.RESULT_OK) {
+                if (resultCode == Activity.RESULT_OK) {
                     Log.d(TAG, "App connect +1");
                     gapi.connect();
                 } else {
@@ -528,7 +526,7 @@ public class ActivityUtils {
             case REQUEST_CODE_CREATOR:
                 if (data == null || !gapi.isConnected()) //If op was canceled
                     return;
-                DriveId driveId = (DriveId) data.getParcelableExtra(
+                DriveId driveId = data.getParcelableExtra(
                         OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
                 Log.d(TAG, driveId.encodeToString() + ", " + driveId.getResourceId() + ", " + driveId.toInvariantString());
                 sm.setString(R.string.sm_google_drive_id, driveId.encodeToString());
@@ -540,7 +538,7 @@ public class ActivityUtils {
             case ActivityUtils.REQUEST_CODE_OPENER:
                 if (data == null) //If op was canceled
                     return;
-                driveId = (DriveId) data.getParcelableExtra(
+                driveId = data.getParcelableExtra(
                         OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
                 Log.d(TAG, driveId.encodeToString() + ", " + driveId.getResourceId() + ", " + driveId.toInvariantString());
                 sm.setString(R.string.sm_google_drive_id, driveId.encodeToString());
@@ -604,7 +602,6 @@ public class ActivityUtils {
         if(sm.getInt(R.string.sm_last_version) < LAST_GOOD_BUILD) {
             mActivity.startActivity(new Intent(mActivity, Intro.class));
             mActivity.finish();
-            return;
         }
     }
     public static void openIntroVoluntarily(Activity mActivity) {
@@ -638,6 +635,9 @@ public class ActivityUtils {
         }
         public static boolean isDriveEnabled(Activity mActivity) {
             return new SettingsManager(mActivity).getString(R.string.sm_google_drive_id).isEmpty();
+        }
+        public static boolean isDriveConnected() {
+            return gapi.isConnected();
         }
     }
 }
