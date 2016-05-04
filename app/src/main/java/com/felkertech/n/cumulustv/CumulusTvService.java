@@ -98,14 +98,18 @@ public class CumulusTvService extends MultimediaInputProvider {
         LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         try {
             final View v = inflater.inflate(R.layout.loading, null);
+            Log.d(TAG, "Trying to load some visual display");
             if (jsonChannel == null) {
+                Log.d(TAG, "Cannot find channel");
                 ((TextView) v.findViewById(R.id.channel)).setText("");
                 ((TextView) v.findViewById(R.id.title)).setText("");
             } else if (jsonChannel.hasSplashscreen()) {
+                Log.d(TAG, "User supplied splashscreen");
                 ImageView iv = new ImageView(getApplicationContext());
                 Picasso.with(getApplicationContext()).load(jsonChannel.getSplashscreen()).into(iv);
                 return iv;
             } else {
+                Log.d(TAG, "Manually create a splashscreen");
                 ((TextView) v.findViewById(R.id.channel)).setText(jsonChannel.getNumber());
                 ((TextView) v.findViewById(R.id.title)).setText(jsonChannel.getName());
                 if (!jsonChannel.getLogo().isEmpty()) {
@@ -184,8 +188,10 @@ public class CumulusTvService extends MultimediaInputProvider {
     public boolean onTune(Channel channel) {
         ChannelDatabase cd = new ChannelDatabase(this);
         jsonChannel = cd.findChannel(channel.getNumber());
-        Log.d(TAG, channel.getName());
-        Log.d(TAG, channel.getInternalProviderData()+"");
+
+        Log.d(TAG, "Tune request to go to "+channel.getName());
+        Log.d(TAG, "Has IPD of "+channel.getInternalProviderData());
+        Log.d(TAG, "Convert to "+jsonChannel.toString());
         if(getProgramRightNow(channel) != null) {
             Log.d(TAG, getProgramRightNow(channel).getInternalProviderData());
             play(getProgramRightNow(channel).getInternalProviderData());
@@ -196,6 +202,11 @@ public class CumulusTvService extends MultimediaInputProvider {
             notifyVideoUnavailable(REASON_UNKNOWN);
             return false;
         }
+    }
+
+    public void onPreTune(Uri channelUri) {
+        Log.d(TAG, "Pre-tune to "+channelUri);
+        //TODO Implement
     }
 
     @Override

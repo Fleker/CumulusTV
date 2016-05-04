@@ -20,18 +20,23 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.cumulustv.R;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import io.fabric.sdk.android.Fabric;
 
 /*
  * MainActivity class that loads MainFragment
  */
-public class LeanbackActivity extends Activity {
+public class LeanbackActivity extends Activity
+        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     /**
      * Called when the activity is first created.
      */
@@ -61,5 +66,20 @@ public class LeanbackActivity extends Activity {
             }
         };
         h.sendEmptyMessageDelayed(0, 4000);
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        lbf.onConnected(bundle);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        lbf.onConnectionSuspended(i);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        lbf.onConnectionFailed(connectionResult);
     }
 }

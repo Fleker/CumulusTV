@@ -628,13 +628,18 @@ public class ActivityUtils {
         }
         public static boolean autoConnect(Activity mActivity) {
             if(isDriveEnabled(mActivity)) {
+                Log.d(TAG, "Drive is enabled, automatically connect");
+                Log.d(TAG, ">"+new SettingsManager(mActivity).getString(R.string.sm_google_drive_id).length());
+                Log.d(TAG,  new SettingsManager(mActivity).getString(R.string.sm_google_drive_id)+"<");
                 connect(mActivity);
                 return true;
             }
+            Log.d(TAG, "Drive is not enabled, don't connect yet.");
             return false;
         }
         public static boolean isDriveEnabled(Activity mActivity) {
-            return new SettingsManager(mActivity).getString(R.string.sm_google_drive_id).isEmpty();
+            String gdriveId = new SettingsManager(mActivity).getString(R.string.sm_google_drive_id);
+            return gdriveId.isEmpty() && gdriveId.length() > 0;
         }
         public static boolean isDriveConnected() {
             return gapi.isConnected();

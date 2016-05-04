@@ -202,7 +202,7 @@ public class LeanbackFragment extends BrowseFragment
         iconCardView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         iconCardView.setTitleText("Redownload");
         driveAdapter.add(iconCardView);*/
-        driveAdapter.add(R.string.connect_drive);
+        driveAdapter.add(getString(R.string.connect_drive));
         driveAdapter.add(getString(R.string.settings_refresh_cloud_local));
 //        driveAdapter.add("Upload to cloud");
         driveAdapter.add(getString(R.string.settings_switch_google_drive));
@@ -512,7 +512,8 @@ public class LeanbackFragment extends BrowseFragment
 
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, Object item) {
-            ((TextView) viewHolder.view).setText((String) item);
+            Log.d(TAG, item.toString());
+            ((TextView) viewHolder.view).setText(item.toString());
         }
 
         @Override
