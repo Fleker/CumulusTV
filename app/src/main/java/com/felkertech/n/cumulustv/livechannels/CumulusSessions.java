@@ -30,19 +30,20 @@ import java.util.Date;
 /**
  * Created by Nick on 5/4/2016.
  */
+@Deprecated
 public class CumulusSessions extends TvInputService.Session {
     private String TAG = "SimpleSession";
     private Channel currentChannel;
     private TvInputProvider tvInputProvider;
     private TvInputManager inputManager;
-    CumulusSessions(TvInputProvider tvInputProvider) {
+    public CumulusSessions(TvInputProvider tvInputProvider) {
         super(tvInputProvider);
         this.tvInputProvider = tvInputProvider;
         Log.d(TAG, "Time shiftable? "+tvInputProvider.getClass().getSimpleName());
         Log.d(TAG, "Time shiftable? "+(tvInputProvider instanceof TimeShiftable) + " && "+ (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && tvInputProvider instanceof TimeShiftable) {
             Log.d(TAG, "Notifying that we can time shift");
-            notifyTimeShiftStatusChanged(TvInputManager.TIME_SHIFT_STATUS_AVAILABLE);
+            notifyTimeShiftStatusChanged(TvInputManager.TIME_SHIFT_STATUS_UNSUPPORTED);
         }
     }
     @Override
@@ -75,8 +76,8 @@ public class CumulusSessions extends TvInputService.Session {
     public boolean onTune(Uri channelUri) {
         lastTune = new Date();
 //        notifyVideoUnavailable(TvInputManager.VIDEO_UNAVAILABLE_REASON_TUNING);
-        notifyVideoUnavailable(TvInputManager.VIDEO_UNAVAILABLE_REASON_BUFFERING);
-        setOverlayViewEnabled(true);
+//        notifyVideoUnavailable(TvInputManager.VIDEO_UNAVAILABLE_REASON_BUFFERING);
+        notifyVideoAvailable();
         ((CumulusTvService) tvInputProvider).onPreTune(channelUri);
         new TuningTask().execute(channelUri, this);
         return true;
@@ -187,7 +188,7 @@ public class CumulusSessions extends TvInputService.Session {
                 }
                 cursor.moveToNext();
                 Log.d(TAG, "Tune to "+cursor.getInt(cursor.getColumnIndex(TvContract.Channels._ID)));
-                Log.d(TAG, "And toon 2 "+channelUri);
+                Log.d(TAG, "And tune 2 "+channelUri);
                 channel = new Channel()
                         .setNumber(cursor.getString(cursor.getColumnIndex(TvContract.Channels.COLUMN_DISPLAY_NUMBER)))
                         .setName(cursor.getString(cursor.getColumnIndex(TvContract.Channels.COLUMN_DISPLAY_NAME)))

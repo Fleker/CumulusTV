@@ -3,14 +3,20 @@ package com.felkertech.n.cumulustv;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.media.tv.TvContentRating;
+import android.media.tv.TvContract;
 import android.media.tv.TvInputManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +29,11 @@ import com.crashlytics.android.Crashlytics;
 import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.channelsurfer.model.Program;
 import com.felkertech.channelsurfer.service.MultimediaInputProvider;
+import com.felkertech.channelsurfer.service.SimpleSessionImpl;
+import com.felkertech.n.cumulustv.livechannels.CumulusSessions;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JSONChannel;
+import com.felkertech.settingsmanager.SettingsManager;
 import com.pnikosis.materialishprogress.ProgressWheel;
 import com.squareup.picasso.Picasso;
 
@@ -204,9 +213,14 @@ public class CumulusTvService extends MultimediaInputProvider {
         }
     }
 
+    @Deprecated
     public void onPreTune(Uri channelUri) {
-        Log.d(TAG, "Pre-tune to "+channelUri);
-        //TODO Implement
+        Log.d(TAG, "Pre-tune to "+channelUri.getLastPathSegment()+"<");
+        Log.d(TAG, new SettingsManager(this).getString("URI"+channelUri.getLastPathSegment())+"<<");
+        jsonChannel = new ChannelDatabase(this).findChannel(new SettingsManager(this).getString("URI"+channelUri.getLastPathSegment()));
+        simpleSession.setOverlayViewEnabled(false);
+        simpleSession.setOverlayViewEnabled(true); //Redo splash
+        simpleSession.notifyVideoAvailable();
     }
 
     @Override
@@ -223,4 +237,56 @@ public class CumulusTvService extends MultimediaInputProvider {
         session.setOverlayViewEnabled(true);
         return session;
     }*/
+
+    /** FIXME these methods will need to move later **/
+    CumulusSessions simpleSession;
+    @Nullable
+    @Override
+    @Deprecated
+    public Session onCreateSession(String inputId) {
+        simpleSession = new CumulusSessions(this);
+        Log.d(TAG, "Start session "+inputId);
+        simpleSession.setOverlayViewEnabled(true);
+        return simpleSession;
+    }
+    @Override
+    @Deprecated
+    public void notifyVideoUnavailable(int reason) {
+        simpleSession.notifyVideoUnavailable(reason);
+    }
+    @Override
+    @Deprecated
+    public void notifyVideoAvailable() {
+        simpleSession.notifyVideoAvailable();
+    }
+
+    /**
+     * You can notify Live Channels that this content is allowed to be displayed within the
+     * confines of the parental controls
+     */
+    @Override
+    @Deprecated
+    public void notifyVideoAllowed() {
+        simpleSession.notifyContentAllowed();
+    }
+
+    /**
+     * You can notify Live Channels that the content about to be played is disallowed due to
+     * parental settings and will not be displayed
+     */
+    @Override
+    @Deprecated
+    public void notifyVideoBlocked() {
+//        simpleSession.notifyContentBlocked(getProgramRightNow());
+    }
+
+    /**
+     * When your video is available, should an overlay be displayed on top of the stream
+     * @param enable true if you want your overlay to be drawn on top
+     */
+    @Override
+    @Deprecated
+    public void setOverlayEnabled(boolean enable) {
+        simpleSession.setOverlayViewEnabled(enable);
+    }
 }

@@ -1,5 +1,7 @@
 package com.felkertech.n.cumulustv.activities;
 
+import android.database.Cursor;
+import android.media.tv.TvContract;
 import android.media.tv.TvInputInfo;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,6 +17,8 @@ import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.TvContractUtils;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
+import com.felkertech.n.cumulustv.model.JSONChannel;
+import com.felkertech.settingsmanager.SettingsManager;
 
 import org.json.JSONException;
 
@@ -97,6 +101,26 @@ public class CumulusChannelsSetup extends SimpleTvSetup {
             }
         };
         i.sendEmptyMessageDelayed(0, (SETUP_DURATION-SETUP_UI_LAST)/channels.length);
+
+        String[] projection = {TvContract.Channels.COLUMN_DISPLAY_NUMBER, TvContract.Channels.COLUMN_DISPLAY_NAME, TvContract.Channels._ID};
+        //Now look up this channel in the DB
+        try (Cursor cursor = getContentResolver().query(TvContract.buildChannelsUriForInput(null), projection, null, null, null)) {
+            if (cursor == null || cursor.getCount() == 0) {
+                return;
+            }
+            while(cursor.moveToNext()) {
+                //cursor.moveToNext();
+                Log.d(TAG, "Tune to " + cursor.getString(cursor.getColumnIndex(TvContract.Channels.COLUMN_DISPLAY_NAME)));
+                JSONChannel jsonChannel = new ChannelDatabase(this).findChannel(cursor.getString(cursor.getColumnIndex(TvContract.Channels.COLUMN_DISPLAY_NUMBER)));
+                Log.d(TAG, jsonChannel.toString());
+                Log.d(TAG, cursor.getInt(cursor.getColumnIndex(TvContract.Channels._ID)) + "");
+                new SettingsManager(this).setString("URI" + cursor.getInt(cursor.getColumnIndex(TvContract.Channels._ID)), jsonChannel.getNumber());
+                Log.d(TAG, new SettingsManager(this).getString("URI" + cursor.getInt(cursor.getColumnIndex(TvContract.Channels._ID))));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Tuning error");
+            e.printStackTrace();
+        }
     }
 
     public void finishSetup() {
