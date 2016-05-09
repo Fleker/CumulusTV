@@ -23,8 +23,8 @@ android {
         applicationId "com.felkertech.n.cumulustv"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 40
-        versionName "1.5.3b"
+        versionCode 41
+        versionName "1.5.4"
     }
     signingConfigs {
         debug {

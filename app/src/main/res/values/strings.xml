@@ -39,8 +39,8 @@
 
     <string name="settings_sync_file">Sync File with Google Drive</string>
     <string name="settings_browse_plugins">Browse Plugins</string>
-    <string name="settings_switch_google_drive">Switch Google Drive File</string>
-    <string name="settings_refresh_cloud_local">Refresh Data - Cloud to Local</string>
+    <string name="settings_switch_google_drive">Import from Google Drive</string>
+    <string name="settings_refresh_cloud_local">Redownload File</string>
     <string name="settings_view_licenses">View Software Licenses</string>
     <string name="settings_reset_channel_data">Reset Channel Data</string>
     <string name="settings_about">About Cumulus TV</string>
@@ -101,6 +101,6 @@
     <string name="about_mlc" translatable="false">About MLC</string>
     <string name="about_mlc_summary" translatable="false">MLC is an experimental, web-based, leanback, musical experience.</string>
     <string name="about_mlc_issues" translatable="false">Visit Issue Tracker</string>
-    <string name="connect_drive">Connect to Google Drive</string>
+    <string name="connect_drive" translatable="false">Connect to Google Drive</string>
 </resources>
 
