@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.media.MediaDrm;
 import android.media.tv.TvContentRating;
 import android.media.tv.TvContract;
 import android.media.tv.TvInputManager;
@@ -213,7 +214,6 @@ public class CumulusTvService extends MultimediaInputProvider {
         }
     }
 
-    @Deprecated
     public void onPreTune(Uri channelUri) {
         Log.d(TAG, "Pre-tune to "+channelUri.getLastPathSegment()+"<");
         Log.d(TAG, new SettingsManager(this).getString("URI"+channelUri.getLastPathSegment())+"<<");
@@ -229,64 +229,13 @@ public class CumulusTvService extends MultimediaInputProvider {
         Toast.makeText(CumulusTvService.this, "You're running low on system memory. Things may not work as expected.", Toast.LENGTH_SHORT).show();
     }
 
-    /*    @Nullable
-    @Override
-    public Session onCreateSession(String inputId) {
-        session = new SimpleSessionImpl(this, this);
-        Log.d(TAG, "Start session "+inputId);
-        session.setOverlayViewEnabled(true);
-        return session;
-    }*/
-
-    /** FIXME these methods will need to move later **/
-    CumulusSessions simpleSession;
     @Nullable
     @Override
-    @Deprecated
     public Session onCreateSession(String inputId) {
         simpleSession = new CumulusSessions(this);
         Log.d(TAG, "Start session "+inputId);
         simpleSession.setOverlayViewEnabled(true);
         return simpleSession;
     }
-    @Override
-    @Deprecated
-    public void notifyVideoUnavailable(int reason) {
-        simpleSession.notifyVideoUnavailable(reason);
-    }
-    @Override
-    @Deprecated
-    public void notifyVideoAvailable() {
-        simpleSession.notifyVideoAvailable();
-    }
 
-    /**
-     * You can notify Live Channels that this content is allowed to be displayed within the
-     * confines of the parental controls
-     */
-    @Override
-    @Deprecated
-    public void notifyVideoAllowed() {
-        simpleSession.notifyContentAllowed();
-    }
-
-    /**
-     * You can notify Live Channels that the content about to be played is disallowed due to
-     * parental settings and will not be displayed
-     */
-    @Override
-    @Deprecated
-    public void notifyVideoBlocked() {
-//        simpleSession.notifyContentBlocked(getProgramRightNow());
-    }
-
-    /**
-     * When your video is available, should an overlay be displayed on top of the stream
-     * @param enable true if you want your overlay to be drawn on top
-     */
-    @Override
-    @Deprecated
-    public void setOverlayEnabled(boolean enable) {
-        simpleSession.setOverlayViewEnabled(enable);
-    }
 }

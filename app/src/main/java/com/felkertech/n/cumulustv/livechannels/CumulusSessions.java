@@ -30,137 +30,20 @@ import java.util.Date;
 /**
  * Created by Nick on 5/4/2016.
  */
-@Deprecated
-public class CumulusSessions extends TvInputService.Session {
-    private String TAG = "SimpleSession";
-    private Channel currentChannel;
+public class CumulusSessions extends SimpleSessionImpl {
+    private String TAG = "CSession";
     private TvInputProvider tvInputProvider;
-    private TvInputManager inputManager;
     public CumulusSessions(TvInputProvider tvInputProvider) {
         super(tvInputProvider);
         this.tvInputProvider = tvInputProvider;
-        Log.d(TAG, "Time shiftable? "+tvInputProvider.getClass().getSimpleName());
-        Log.d(TAG, "Time shiftable? "+(tvInputProvider instanceof TimeShiftable) + " && "+ (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && tvInputProvider instanceof TimeShiftable) {
-            Log.d(TAG, "Notifying that we can time shift");
-            notifyTimeShiftStatusChanged(TvInputManager.TIME_SHIFT_STATUS_UNSUPPORTED);
-        }
-    }
-    @Override
-    public void onRelease() {
-        tvInputProvider.onRelease();
-    }
-    @Override
-    public boolean onSetSurface(Surface surface) {
-        return tvInputProvider.onSetSurface(surface);
-    }
-    @Override
-    public void onSetStreamVolume(float volume) {
-        tvInputProvider.onSetStreamVolume(volume);
     }
 
-    @Override
-    public void onSetCaptionEnabled(boolean enabled) {
-        // The sample content does not have caption. Nothing to do in this sample input.
-        // NOTE: If the channel has caption, the implementation should turn on/off the caption
-        // based on {@code enabled}.
-        // For the example implementation for the case, please see {@link RichTvInputService}.
-    }
-    @Override
-    public View onCreateOverlayView() {
-        return tvInputProvider.onCreateOverlayView();
-    }
-
-    protected Date lastTune;
     @Override
     public boolean onTune(Uri channelUri) {
-        lastTune = new Date();
-//        notifyVideoUnavailable(TvInputManager.VIDEO_UNAVAILABLE_REASON_TUNING);
-//        notifyVideoUnavailable(TvInputManager.VIDEO_UNAVAILABLE_REASON_BUFFERING);
         notifyVideoAvailable();
         ((CumulusTvService) tvInputProvider).onPreTune(channelUri);
         new TuningTask().execute(channelUri, this);
         return true;
-    }
-
-    @Override
-    public void onUnblockContent(TvContentRating unblockedRating) {
-        super.onUnblockContent(unblockedRating);
-        if(tvInputProvider.getApplicationContext().getResources().getBoolean(com.felkertech.channelsurfer.R.bool.channel_surfer_lifecycle_toasts))
-            Toast.makeText(tvInputProvider.getApplicationContext(), "Unblocked "+unblockedRating.flattenToString(), Toast.LENGTH_SHORT).show();
-        notifyContentAllowed();
-    }
-
-    @Override
-    public void layoutSurface(final int left, final int top, final int right,
-                              final int bottom) {
-        int[] surfaceDimensions = tvInputProvider.getLayoutDimensions();
-        if(surfaceDimensions == null)
-            super.layoutSurface(left, top, right, bottom);
-        else
-            super.layoutSurface(surfaceDimensions[0], surfaceDimensions[1], surfaceDimensions[2], surfaceDimensions[3]);
-    }
-
-    @Override
-    public void onTimeShiftPause() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (tvInputProvider instanceof TimeShiftable) {
-                ((TimeShiftable) tvInputProvider).onMediaPause();
-            }
-        }
-    }
-
-    @Override
-    public void onTimeShiftResume() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (tvInputProvider instanceof TimeShiftable) {
-                ((TimeShiftable) tvInputProvider).onMediaResume();
-            }
-        }
-    }
-
-    @Override
-    public void onTimeShiftSeekTo(long timeMs) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (tvInputProvider instanceof TimeShiftable) {
-                ((TimeShiftable) tvInputProvider).onMediaSeekTo(timeMs);
-            }
-        }
-    }
-
-    @Override
-    public void onTimeShiftSetPlaybackParams(PlaybackParams params) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (tvInputProvider instanceof TimeShiftable) {
-                ((TimeShiftable) tvInputProvider).onMediaSetPlaybackParams(params);
-            }
-        }
-    }
-
-    @Override
-    public long onTimeShiftGetStartPosition() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (tvInputProvider instanceof TimeShiftable) {
-                return ((TimeShiftable) tvInputProvider).mediaGetStartMs();
-            } else {
-                return TvInputManager.TIME_SHIFT_INVALID_TIME;
-            }
-        } else {
-            return -1;
-        }
-    }
-
-    @Override
-    public long onTimeShiftGetCurrentPosition() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (tvInputProvider instanceof TimeShiftable) {
-                return ((TimeShiftable) tvInputProvider).mediaGetCurrentMs();
-            } else {
-                return TvInputManager.TIME_SHIFT_INVALID_TIME;
-            }
-        } else {
-            return -1;
-        }
     }
 
     /**

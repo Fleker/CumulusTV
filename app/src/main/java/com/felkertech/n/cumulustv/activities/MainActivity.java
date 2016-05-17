@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         findViewById(R.id.gdrive).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gapi.connect();
+                gapi = ActivityUtils.GoogleDrive.connect(MainActivity.this);
             }
         });
         findViewById(R.id.more_actions).setOnClickListener(new View.OnClickListener() {

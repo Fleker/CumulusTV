@@ -327,7 +327,7 @@ public class LeanbackFragment extends BrowseFragment
                             .setActivityTitle("cumulustv_channels.json")
                             .setInitialMetadata(metadataChangeSet)
                             .setInitialDriveContents(result.getDriveContents())
-                            .build(gapi);
+                            .build(ActivityUtils.GoogleDrive.gapi);
                     try {
                         mActivity.startIntentSenderForResult(
                                 intentSender, REQUEST_CODE_CREATOR, null, 0, 0, 0);
@@ -389,7 +389,7 @@ public class LeanbackFragment extends BrowseFragment
                 } else if(title.equals(getString(R.string.connect_drive))) {
                     ActivityUtils.GoogleDrive.connect(mActivity);
                 } else if(title.equals(getString(R.string.settings_sync_file))) {
-                    ActivityUtils.syncFile(mActivity, gapi);
+                    ActivityUtils.GoogleDrive.pickDriveFile(mActivity);
                 } else if(title.equals(getString(R.string.settings_browse_plugins))) {
                     ActivityUtils.browsePlugins(mActivity);
                 } else if(title.equals(getString(R.string.settings_switch_google_drive))) {

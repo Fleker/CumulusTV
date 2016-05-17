@@ -268,9 +268,12 @@ public class ActivityUtils {
         final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".CumulusTvService"));
         SyncUtils.requestSync(mContext, info);
     }
-    public static void createDriveData(Activity activity, final GoogleApiClient gapi, final ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback) {
+    public static void createDriveData(Activity activity, GoogleApiClient gapi, final ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback) {
         PermissionUtils.requestPermissionIfDisabled(activity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE, activity.getString(R.string.permission_storage_rationale));
+        if(gapi == null)
+            gapi = GoogleDrive.gapi;
         try {
+            final GoogleApiClient finalGapi = gapi;
             new MaterialDialog.Builder(activity)
                     .title("Create a syncable file")
                     .content("Save channel info in Google Drive so you can always access it")
@@ -280,7 +283,7 @@ public class ActivityUtils {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
                             super.onPositive(dialog);
-                            Drive.DriveApi.newDriveContents(gapi)
+                            Drive.DriveApi.newDriveContents(finalGapi)
                                     .setResultCallback(driveContentsCallback);
                         }
                     })
@@ -323,6 +326,12 @@ public class ActivityUtils {
     public static final int REQUEST_CODE_OPENER = 104;
     public static void syncFile(Activity mActivity, GoogleApiClient gapi) {
         Log.d(TAG, "About to sync a file");
+        if(gapi == null && GoogleDrive.gapi != null)
+            gapi = GoogleDrive.gapi;
+        else if(GoogleDrive.gapi == null) {
+            //Is not existant
+            return;
+        }
         if (gapi.isConnected()) {
             IntentSender intentSender = Drive.DriveApi
                     .newOpenFileActivityBuilder()
@@ -500,8 +509,10 @@ public class ActivityUtils {
             mActivity.startActivity(i);
         }
     }
-    public static void onActivityResult(final Activity mActivity, final GoogleApiClient gapi, final int requestCode, final int resultCode, final Intent data) {
+    public static void onActivityResult(final Activity mActivity, GoogleApiClient gapi, final int requestCode, final int resultCode, final Intent data) {
         SettingsManager sm = new SettingsManager(mActivity);
+        if(gapi == null)
+            gapi = GoogleDrive.gapi;
         switch (requestCode) {
             case RESOLVE_CONNECTION_REQUEST_CODE:
                 if (resultCode == Activity.RESULT_OK) {
@@ -509,6 +520,7 @@ public class ActivityUtils {
                     gapi.connect();
                 } else {
                     Log.d(TAG, "App cannot connect");
+                    final GoogleApiClient finalGapi = gapi;
                     new MaterialDialog.Builder(mActivity)
                             .title("Connection Issue")
                             .content("Cannot connect to Google Drive at this moment.")
@@ -518,7 +530,7 @@ public class ActivityUtils {
                                 @Override
                                 public void onNegative(MaterialDialog dialog) {
                                     super.onNegative(dialog);
-                                    gapi.connect();
+                                    finalGapi.connect();
                                 }
                             }).show();
                 }
@@ -542,6 +554,7 @@ public class ActivityUtils {
                         OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
                 Log.d(TAG, driveId.encodeToString() + ", " + driveId.getResourceId() + ", " + driveId.toInvariantString());
                 sm.setString(R.string.sm_google_drive_id, driveId.encodeToString());
+                final GoogleApiClient finalGapi1 = gapi;
                 new MaterialDialog.Builder(mActivity)
                         .title(R.string.sync_initial)
                         .positiveText(R.string.sync_cloud_local)
@@ -550,13 +563,13 @@ public class ActivityUtils {
                             @Override
                             public void onPositive(MaterialDialog dialog) {
                                 super.onPositive(dialog);
-                                ActivityUtils.readDriveData(mActivity, gapi);
+                                ActivityUtils.readDriveData(mActivity, finalGapi1);
                             }
 
                             @Override
                             public void onNegative(MaterialDialog dialog) {
                                 super.onNegative(dialog);
-                                ActivityUtils.writeDriveData(mActivity, gapi);
+                                ActivityUtils.writeDriveData(mActivity, finalGapi1);
                             }
                         })
                         .show();
@@ -616,8 +629,8 @@ public class ActivityUtils {
     }
 
     public static class GoogleDrive {
-        private static GoogleApiClient gapi;
-        public static void connect(Activity mActivity) {
+        public static GoogleApiClient gapi;
+        public static GoogleApiClient connect(Activity mActivity) {
             gapi = new GoogleApiClient.Builder(mActivity)
                     .addApi(Drive.API)
                     .addScope(Drive.SCOPE_FILE)
@@ -625,6 +638,7 @@ public class ActivityUtils {
                     .addOnConnectionFailedListener((GoogleApiClient.OnConnectionFailedListener) mActivity)
                     .build();
             gapi.connect();
+            return gapi;
         }
         public static boolean autoConnect(Activity mActivity) {
             if(isDriveEnabled(mActivity)) {
@@ -643,6 +657,10 @@ public class ActivityUtils {
         }
         public static boolean isDriveConnected() {
             return gapi.isConnected();
+        }
+
+        public static void pickDriveFile(Activity mActivity) {
+            ActivityUtils.syncFile(mActivity, gapi);
         }
     }
 }
