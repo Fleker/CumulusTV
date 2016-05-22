@@ -20,6 +20,7 @@ public class JSONChannel {
     private String genres;
     private String source;
     private String service;
+    private boolean audioOnly;
     public JSONChannel(JSONObject jsonObject) {
         if(jsonObject == null)
             jsonObject = new JSONObject();
@@ -56,6 +57,10 @@ public class JSONChannel {
                 service = jsonObject.getString("service");
             else
                 service = "";
+            if(jsonObject.has("audioOnly"))
+                audioOnly = jsonObject.getBoolean("audioOnly");
+            else
+                audioOnly = false;
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -109,6 +114,14 @@ public class JSONChannel {
         this.source = source;
     }
 
+    public boolean isAudioOnly() {
+        return audioOnly;
+    }
+    public JSONChannel setAudioOnly(boolean isAudioOnly) {
+        this.audioOnly = isAudioOnly;
+        return this;
+    }
+
     public JSONObject toJSON() throws JSONException {
         JSONObject object = new JSONObject();
         object.put("number", getNumber());
@@ -118,6 +131,7 @@ public class JSONChannel {
         object.put("splashscreen", getSplashscreen());
         object.put("genres", getGenresString());
         object.put("source", getSource());
+        object.put("audioOnly", isAudioOnly());
         return object;
     }
     public String toString() {

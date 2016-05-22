@@ -95,6 +95,7 @@ public class CumulusTvService extends MultimediaInputProvider {
             Log.d(TAG, "Get program "+channelInfo.getName()+" "+channelInfo.getInternalProviderData());
             programList.add(new Program.Builder(getGenericProgram(channelInfo))
                     .setInternalProviderData(channelInfo.getInternalProviderData())
+                    .setCanonicalGenres(new ChannelDatabase(mContext).findChannel(channelInfo.getNumber()).getGenres())
                     .setStartTimeUtcMillis((getNearestHour() + SEGMENT * i))
                     .setEndTimeUtcMillis((getNearestHour() + SEGMENT * (i + 1)))
                     .build()
@@ -108,6 +109,9 @@ public class CumulusTvService extends MultimediaInputProvider {
         LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         try {
             final View v = inflater.inflate(R.layout.loading, null);
+            if(!stillTuning && jsonChannel.isAudioOnly()) {
+                ((TextView) v.findViewById(R.id.channel_msg)).setText("Playing Radio");
+            }
             Log.d(TAG, "Trying to load some visual display");
             if (jsonChannel == null) {
                 Log.d(TAG, "Cannot find channel");
@@ -194,6 +198,7 @@ public class CumulusTvService extends MultimediaInputProvider {
     }
 
     private JSONChannel jsonChannel;
+    private boolean stillTuning;
     @Override
     public boolean onTune(Channel channel) {
         ChannelDatabase cd = new ChannelDatabase(this);
@@ -205,6 +210,18 @@ public class CumulusTvService extends MultimediaInputProvider {
         if(getProgramRightNow(channel) != null) {
             Log.d(TAG, getProgramRightNow(channel).getInternalProviderData());
             play(getProgramRightNow(channel).getInternalProviderData());
+            stillTuning = false;
+            if(jsonChannel.isAudioOnly() || jsonChannel.getName().equals("Beats One Radio")) { //Hacky for now
+                Log.d(TAG, "Audio only stream");
+                new Handler(Looper.getMainLooper()) {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        super.handleMessage(msg);
+                        simpleSession.setOverlayViewEnabled(false);
+                        simpleSession.setOverlayViewEnabled(true); //Redo splash
+                    }
+                }.sendEmptyMessageDelayed(0, 150);
+            }
             notifyVideoAvailable();
             return true;
         } else {
@@ -215,6 +232,7 @@ public class CumulusTvService extends MultimediaInputProvider {
     }
 
     public void onPreTune(Uri channelUri) {
+        stillTuning = true;
         Log.d(TAG, "Pre-tune to "+channelUri.getLastPathSegment()+"<");
         Log.d(TAG, new SettingsManager(this).getString("URI"+channelUri.getLastPathSegment())+"<<");
         jsonChannel = new ChannelDatabase(this).findChannel(new SettingsManager(this).getString("URI"+channelUri.getLastPathSegment()));

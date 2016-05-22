@@ -206,7 +206,7 @@ public class LeanbackFragment extends BrowseFragment
         driveAdapter.add(getString(R.string.settings_refresh_cloud_local));
 //        driveAdapter.add("Upload to cloud");
         driveAdapter.add(getString(R.string.settings_switch_google_drive));
-        driveAdapter.add(getString(R.string.settings_sync_file));
+//        driveAdapter.add(getString(R.string.settings_sync_file));
         mRowsAdapter.add(new ListRow(driveHeader, driveAdapter));
 
         //Fourth row are actions
@@ -388,7 +388,7 @@ public class LeanbackFragment extends BrowseFragment
                     ActivityUtils.openPluginPicker(true, mActivity);
                 } else if(title.equals(getString(R.string.connect_drive))) {
                     ActivityUtils.GoogleDrive.connect(mActivity);
-                } else if(title.equals(getString(R.string.settings_sync_file))) {
+                } else if(title.equals(getString(R.string.settings_switch_google_drive))) {
                     ActivityUtils.GoogleDrive.pickDriveFile(mActivity);
                 } else if(title.equals(getString(R.string.settings_browse_plugins))) {
                     ActivityUtils.browsePlugins(mActivity);

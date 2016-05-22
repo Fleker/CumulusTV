@@ -64,6 +64,16 @@ public class ActivityUtils {
                 9xx MISC
                  */
         final JSONChannel[] channels = { /* Some via http://rgw.ustream.tv/json.php/Ustream.searchBroadcast/ */
+               /* new JSONChannel("001",
+                        "Sky News",
+                        "https://www.youtube.com/embed/y60wDzZt8yg?autoplay=1",
+                        "http://news.sky.com/images/33dc2677.sky-news-logo.png", "",
+                        TvContract.Programs.Genres.NEWS),
+                new JSONChannel("002",
+                        "Taiwan Formosa Live News",
+                        "https://www.youtube.com/embed/XxJKnDLYZz4?autoplay=1",
+                        "https://i.ytimg.com/vi/XxJKnDLYZz4/maxresdefault_live.jpg", "",
+                        TvContract.Programs.Genres.NEWS),*/
                 new JSONChannel("100",
                         "NASA Public",
                         "http://iphone-streaming.ustream.tv/uhls/6540154/streams/live/iphone/playlist.m3u8",
@@ -75,30 +85,52 @@ public class ActivityUtils {
                         "http://static-cdn1.ustream.tv/i/channel/picture/9/4/0/8/9408562/9408562_iss_hr_1330361780,256x144,r:1.jpg", "",
                         TvContract.Programs.Genres.TECH_SCIENCE),
                 new JSONChannel("133",
-                        "TWiT (This Week in Tech)",
+                        "TWiT.tv",
                         "http://twit.live-s.cdn.bitgravity.com/cdn-live-s1/_definst_/twit/live/high/playlist.m3u8",
-                        "http://wiki.twit.tv/w/images/thumb/TWiT_Logo.svg.png/487px-TWiT_Logo.svg.png",
-                        TvContract.Programs.Genres.TECH_SCIENCE, TvContract.Programs.Genres.NEWS),
+                        "http://wiki.twit.tv//w//images//TWiT-horizontal.png", "",
+                        TvContract.Programs.Genres.TECH_SCIENCE+","+TvContract.Programs.Genres.NEWS),
                 new JSONChannel("167",
                         "Montery Bay Aquarium",
                         "http://iphone-streaming.ustream.tv/uhls/9600798/streams/live/iphone/playlist.m3u8",
                         "http://static-cdn1.ustream.tv/i/channel/live/1_9600798,256x144,b:2015071514.jpg", "",
                         TvContract.Programs.Genres.ANIMAL_WILDLIFE),
-                new JSONChannel("168",
+                /*new JSONChannel("168",
                         "Audubon Osprey Cam",
                         "http://iphone-streaming.ustream.tv/uhls/11378037/streams/live/iphone/playlist.m3u8",
                         "http://static-cdn1.ustream.tv/i/channel/live/1_11378037,256x144,b:2015071514.jpg", "",
-                        TvContract.Programs.Genres.ANIMAL_WILDLIFE),
+                        TvContract.Programs.Genres.ANIMAL_WILDLIFE),*/
 //                        new JSONChannel("400", "Beats One", "http://stream.connectcast.tv:1935/live/CC-EC1245DB-5C6A-CF57-D13A-BB36B3CBB488-34313/playlist.m3u8", "")
                 new JSONChannel("401",
                         "OutOfFocus.TV",
                         "http://pablogott.videocdn.scaleengine.net/pablogott-iphone/play/ooftv1/playlist.m3u8",
                         "http://i.imgur.com/QRCIhN4.png", "",
                         TvContract.Programs.Genres.MUSIC),
+                new JSONChannel("402",
+                        "Vevo Live 1",
+                        "http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch1/appleman.m3u8",
+                        "http://musically.com/wp-content/uploads/2013/05/vevo-logo.jpg", "",
+                        TvContract.Programs.Genres.MUSIC),
+                new JSONChannel("403",
+                        "Vevo Live 2",
+                        "http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch2/appleman.m3u8",
+                        "http://musically.com/wp-content/uploads/2013/05/vevo-logo.jpg", "",
+                        TvContract.Programs.Genres.MUSIC),
+                new JSONChannel("404",
+                        "Vevo Live 3",
+                        "http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch3/appleman.m3u8",
+                        "http://musically.com/wp-content/uploads/2013/05/vevo-logo.jpg", "",
+                        TvContract.Programs.Genres.MUSIC),
+                new JSONChannel("405",
+                        "Beats One Radio",
+                        "http://itsliveradio.apple.com/streams/master_session01_hub01_hub02.m3u8",
+                        "https://ottleyboothr.files.wordpress.com/2015/06/beats-1.jpg", "",
+                        TvContract.Programs.Genres.MUSIC+","+TvContract.Programs.Genres.ENTERTAINMENT)
+                        .setAudioOnly(true),
                 new JSONChannel("900",
                         "Artbeats Demo",
-                        "http://cdn-fms.rbs.com.br/hls-vod/sample1_1500kbps.f4v.m3u8", "", "",
-                        TvContract.Programs.Genres.ARTS),
+                        "http://cdn-fms.rbs.com.br/hls-vod/sample1_1500kbps.f4v.m3u8",
+                        "http://content.provideocoalition.com/uploads/ArtbeatsLogo_blackbox.jpg", "",
+                        TvContract.Programs.Genres.ARTS+","+TvContract.Programs.Genres.ENTERTAINMENT),
 /*
                         new JSONChannel("900", "Euronews De", "http://fr-par-iphone-2.cdn.hexaglobe.net/streaming/euronews_ewns/14-live.m3u8", ""),
                         new JSONChannel("901", "TVI (Portugal)", "http://noscdn1.connectedviews.com:1935/live/smil:tvi.smil/playlist.m3u8", ""),
@@ -583,14 +615,14 @@ public class ActivityUtils {
             new MaterialDialog.Builder(mActivity)
                     .title(R.string.app_name)
                     .content(mActivity.getString(R.string.about_app_description, pInfo.versionName))
-                    .positiveText(R.string.github)
+                    .positiveText(R.string.website)
                     .negativeText(R.string.help)
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
                             super.onPositive(dialog);
                             Intent gi = new Intent(Intent.ACTION_VIEW);
-                            gi.setData(Uri.parse("http://github.com/fleker/cumulustv"));
+                            gi.setData(Uri.parse("http://cumulustv.herokuapp.com"));
                             mActivity.startActivity(gi);
                         }
 

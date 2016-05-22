@@ -25,6 +25,7 @@ import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JSONChannel;
 import com.felkertech.n.cumulustv.xmltv.Program;
 import com.felkertech.n.cumulustv.xmltv.XMLTVParser;
+import com.felkertech.n.tv.LeanbackActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -64,6 +65,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         if(!AppUtils.isTV(this)) {
             findViewById(R.id.gotoapp).setVisibility(View.GONE);
+        } else {
+            //Go to tv activity
+            startActivity(new Intent(this, LeanbackActivity.class));
         }
         findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
             @Override

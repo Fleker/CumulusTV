@@ -28,6 +28,7 @@ public class CumulusTvPlayer extends AppCompatActivity {
     private URL url;
     private String TAG = "cumulus:CumulusTvPlayer";
     public static final String KEY_VIDEO_URL = "VIDEO_URL";
+    private TvInputPlayer exoPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +61,6 @@ public class CumulusTvPlayer extends AppCompatActivity {
             if(!url.isEmpty()) {
                 setContentView(R.layout.full_surfaceview);
                 SurfaceView sv = (SurfaceView) findViewById(R.id.surface);
-                TvInputPlayer exoPlayer;
                 exoPlayer = new TvInputPlayer();
                 exoPlayer.setSurface(sv.getHolder().getSurface());
                 exoPlayer.setVolume(1);
@@ -116,5 +116,12 @@ public class CumulusTvPlayer extends AppCompatActivity {
                 exoPlayer.setPlayWhenReady(true);
             }
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        exoPlayer.stop();
+        exoPlayer.release();
     }
 }
