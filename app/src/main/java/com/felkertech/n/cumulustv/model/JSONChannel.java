@@ -1,6 +1,8 @@
 package com.felkertech.n.cumulustv.model;
 
+import android.content.ComponentName;
 import android.media.tv.TvContract;
+import android.support.annotation.NonNull;
 
 
 import com.felkertech.settingsmanager.common.CommaArray;
@@ -12,143 +14,36 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
 
-public class JSONChannel {
-    private String number;
-    private String name;
-    private String url;
-    private String logo;
-    private String splashscreen;
-    private String genres;
-    private String source;
-    private String service;
+public class JsonChannel {
+    private static final String KEY_AUDIO_ONLY = "audioOnly";
+    private static final String KEY_EPG_URL = "epgUrl";
+    private static final String KEY_GENRES = "genres";
+    private static final String KEY_LOGO = "logo";
+    private static final String KEY_MEDIA_URL = "url";
+    private static final String KEY_NAME = "name";
+    private static final String KEY_NUMBER = "number";
+    private static final String KEY_PLUGIN_SOURCE = "service";
+    private static final String KEY_SPLASHSCREEN = "splashscreen";
+
     private boolean audioOnly;
+    private String epgUrl;
+    private String genres;
+    private String logo;
+    private String mediaUrl;
+    private String name;
+    private String number;
+    private String pluginSource;
+    private String splashscreen;
 
-    public JSONChannel(JSONObject jsonObject) {
-        if(jsonObject == null)
-            jsonObject = new JSONObject();
-        try {
-            if(jsonObject.has("number"))
-                number = jsonObject.getString("number");
-            else
-                number = "";
-            if(jsonObject.has("name"))
-                name = jsonObject.getString("name");
-            else
-                name = "";
-            if(jsonObject.has("url"))
-                url = jsonObject.getString("url");
-            else
-                url = "";
-            if(jsonObject.has("logo"))
-                logo = jsonObject.getString("logo");
-            else
-                logo = "";
-            if(jsonObject.has("splashscreen"))
-                splashscreen = jsonObject.getString("splashscreen");
-            else
-                splashscreen = "";
-            if(jsonObject.has("genres"))
-                genres = jsonObject.getString("genres");
-            else
-                genres = TvContract.Programs.Genres.MOVIES;
-            if(jsonObject.has("source"))
-                source = jsonObject.getString("source");
-            else
-                source = "";
-            if(jsonObject.has("service"))
-                service = jsonObject.getString("service");
-            else
-                service = "";
-            if(jsonObject.has("audioOnly"))
-                audioOnly = jsonObject.getBoolean("audioOnly");
-            else
-                audioOnly = false;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public JSONChannel(String number, String name, String url, String logo, String splash,
-            String genres) {
-        this.number = number;
-        this.name = name;
-        this.url = url;
-        this.logo = logo;
-        this.splashscreen = splash;
-        this.genres = genres;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public String getLogo() {
-        return logo;
-    }
-
-    public String getSplashscreen() {
-        return splashscreen;
-    }
-
-    public boolean hasLogo() {
-        return !getLogo().isEmpty();
-    }
-
-    public boolean hasSplashscreen() {
-        return !getSplashscreen().isEmpty();
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public boolean hasSource() {
-        if(getSource() == null)
-            return false;
-        return !getSource().isEmpty();
-    }
-
-    public void setSource(String source) {
-        this.source = source;
+    private JsonChannel() {
     }
 
     public boolean isAudioOnly() {
         return audioOnly;
     }
 
-    public JSONChannel setAudioOnly(boolean isAudioOnly) {
-        this.audioOnly = isAudioOnly;
-        return this;
-    }
-
-    public JSONObject toJSON() throws JSONException {
-        JSONObject object = new JSONObject();
-        object.put("number", getNumber());
-        object.put("name", getName());
-        object.put("logo", getLogo());
-        object.put("url", getUrl());
-        object.put("splashscreen", getSplashscreen());
-        object.put("genres", getGenresString());
-        object.put("source", getSource());
-        object.put("audioOnly", isAudioOnly());
-        return object;
-    }
-
-    public String toString() {
-        try {
-            return toJSON().toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return "";
-        }
+    public String getEpgUrl() {
+        return epgUrl;
     }
 
     public String getGenresString() {
@@ -156,10 +51,12 @@ public class JSONChannel {
     }
 
     public String[] getGenres() {
-        if(genres == null)
-            return new String[]{TvContract.Programs.Genres.LIFE_STYLE};
-        if(genres.isEmpty())
-            return new String[]{TvContract.Programs.Genres.LIFE_STYLE};
+        if(genres == null) {
+            return new String[]{TvContract.Programs.Genres.MOVIES};
+        }
+        if(genres.isEmpty()) {
+            return new String[]{TvContract.Programs.Genres.MOVIES};
+        }
         else {
             //Parse genres
             CommaArray ca = new CommaArray(genres);
@@ -173,24 +70,181 @@ public class JSONChannel {
         }
     }
 
-    public boolean equals(JSONChannel compare) {
-        return getNumber().equals(compare.getNumber()) && getName().equals(compare.getName())
-                && getLogo().equals(compare.getLogo()) && getSource().equals(compare.getSource());
+    public boolean hasLogo() {
+        return !getLogo().isEmpty();
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public String getMediaUrl() {
+        return mediaUrl;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ComponentName getPluginSource() {
+        return ComponentName.unflattenFromString(pluginSource);
+    }
+
+    public boolean hasSplashscreen() {
+        return !getSplashscreen().isEmpty();
+    }
+
+    public String getSplashscreen() {
+        return splashscreen;
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject object = new JSONObject();
+        object.put(KEY_AUDIO_ONLY, isAudioOnly());
+        object.put(KEY_EPG_URL, getEpgUrl());
+        object.put(KEY_GENRES, getGenresString());
+        object.put(KEY_LOGO, getLogo());
+        object.put(KEY_MEDIA_URL, getMediaUrl());
+        object.put(KEY_NAME, getName());
+        object.put(KEY_NUMBER, getNumber());
+        object.put(KEY_PLUGIN_SOURCE, pluginSource);
+        object.put(KEY_SPLASHSCREEN, getSplashscreen());
+        return object;
+    }
+
+    public String toString() {
+        try {
+            return toJSON().toString();
+        } catch (JSONException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof JsonChannel) {
+            JsonChannel other = (JsonChannel) o;
+            return Objects.equals(getNumber(), other.getNumber()) &&
+                    Objects.equals(getName(), other.getName()) &&
+                    Objects.equals(getLogo(), other.getLogo()) &&
+                    Objects.equals(getEpgUrl(), other.getEpgUrl()) &&
+                    Objects.equals(getSplashscreen(), other.getSplashscreen()) &&
+                    Objects.equals(getGenresString(), other.getGenresString()) &&
+                    Objects.equals(getMediaUrl(), other.getMediaUrl());
+        }
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getNumber(), getName(), getLogo(), getSource());
+        return Objects.hash(getNumber(), getName(), getLogo(), getEpgUrl(), getSplashscreen(),
+                getGenresString(), getMediaUrl());
     }
 
-    public boolean hasService() {
-        if(service == null) {
-            return false;
+    public static class Builder {
+        private JsonChannel jsonChannel;
+
+        public Builder() {
+            jsonChannel = new JsonChannel();
         }
-        return !service.isEmpty();
-    }
 
-    public String getService() {
-        return service;
+        public Builder(JSONObject jsonObject) throws JSONException {
+            jsonChannel = new JsonChannel();
+            if (jsonObject.has(KEY_AUDIO_ONLY)) {
+                setAudioOnly(jsonObject.getBoolean(KEY_AUDIO_ONLY));
+            }
+            if (jsonObject.has(KEY_EPG_URL)) {
+                setEpgUrl(jsonObject.getString(KEY_EPG_URL));
+            }
+            if (jsonObject.has(KEY_GENRES)) {
+                setGenres(jsonObject.getString(KEY_GENRES));
+            }
+            if (jsonObject.has(KEY_LOGO)) {
+                setLogo(jsonObject.getString(KEY_LOGO));
+            }
+            if (jsonObject.has(KEY_NAME)) {
+                setName(jsonObject.getString(KEY_NAME));
+            }
+            if (jsonObject.has(KEY_NUMBER)) {
+                setNumber(jsonObject.getString(KEY_NUMBER));
+            }
+            if (jsonObject.has(KEY_MEDIA_URL)) {
+                setMediaUrl(jsonObject.getString(KEY_MEDIA_URL));
+            }
+            if (jsonObject.has(KEY_SPLASHSCREEN)) {
+                setSplashscreen(jsonObject.getString(KEY_SPLASHSCREEN));
+            }
+            if (jsonObject.has(KEY_PLUGIN_SOURCE)) {
+                setPluginSource(ComponentName.unflattenFromString(
+                        jsonObject.getString(KEY_PLUGIN_SOURCE)));
+            }
+        }
+
+        public Builder setAudioOnly(boolean audioOnly) {
+            jsonChannel.audioOnly = audioOnly;
+            return this;
+        }
+
+        public Builder setEpgUrl(String epgUrl) {
+            jsonChannel.epgUrl = epgUrl;
+            return this;
+        }
+
+        public Builder setGenres(String genres) {
+            jsonChannel.genres = genres;
+            return this;
+        }
+
+        public Builder setLogo(String logo) {
+            jsonChannel.logo = logo;
+            return this;
+        }
+
+        public Builder setMediaUrl(String mediaUrl) {
+            jsonChannel.mediaUrl = mediaUrl;
+            return this;
+        }
+
+        public Builder setName(String name) {
+            jsonChannel.name = name;
+            return this;
+        }
+
+        public Builder setNumber(String number) {
+            jsonChannel.number = number;
+            return this;
+        }
+
+        public Builder setPluginSource(@NonNull ComponentName pluginComponent) {
+            jsonChannel.pluginSource = pluginComponent.flattenToString();
+            return this;
+        }
+
+        public Builder setPluginSource(String pluginComponentName) {
+            jsonChannel.pluginSource = pluginComponentName;
+            return this;
+        }
+
+        public Builder setSplashscreen(String splashscreen) {
+            jsonChannel.splashscreen = splashscreen;
+            return this;
+        }
+
+        public JsonChannel build() {
+            if (jsonChannel.name == null || jsonChannel.name.isEmpty()) {
+                throw new IllegalArgumentException("Name must be defined.");
+            }
+            if (jsonChannel.number == null || jsonChannel.number.isEmpty()) {
+                throw new IllegalArgumentException("Number must be defined.");
+            }
+            if (jsonChannel.mediaUrl == null || jsonChannel.mediaUrl.isEmpty()) {
+                throw new IllegalArgumentException("Url must be defined.");
+            }
+            return jsonChannel;
+        }
     }
 }

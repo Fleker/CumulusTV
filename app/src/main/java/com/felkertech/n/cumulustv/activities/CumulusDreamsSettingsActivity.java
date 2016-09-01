@@ -13,7 +13,7 @@ import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.CumulusDreams;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
-import com.felkertech.n.cumulustv.model.JSONChannel;
+import com.felkertech.n.cumulustv.model.JsonChannel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,17 +41,17 @@ public class CumulusDreamsSettingsActivity extends PreferenceActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 //            addPreferencesFromResource(R.xml.cumulus_dreams_prefs);
-            final ChannelDatabase cdn = ChannelDatabase.getInstance(getActivity());
+            final ChannelDatabase channelDatabase = ChannelDatabase.getInstance(getActivity());
             new MaterialDialog.Builder(getActivity())
                     .title(R.string.daydream_select_channel)
-                    .items(cdn.getChannelNames())
+                    .items(channelDatabase.getChannelNames())
                     .itemsCallback(new MaterialDialog.ListCallback() {
                         @Override
                         public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
                             DriveSettingsManager sm = new DriveSettingsManager(getActivity());
                             try {
-                                sm.setString(R.string.daydream_url, new JSONChannel((JSONObject)
-                                        cdn.getJSONChannels().get(which)).getUrl());
+                                sm.setString(R.string.daydream_url,
+                                        channelDatabase.getJsonChannels().get(which).getMediaUrl());
                                 Toast.makeText(getActivity(), R.string.daydream_success,
                                         Toast.LENGTH_SHORT).show();
                             } catch (JSONException e) {

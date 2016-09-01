@@ -27,7 +27,7 @@ import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.activities.CumulusTvPlayer;
 import com.felkertech.n.cumulustv.activities.MainActivity;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
-import com.felkertech.n.cumulustv.model.JSONChannel;
+import com.felkertech.n.cumulustv.model.JsonChannel;
 import com.felkertech.n.plugins.CumulusTvPlugin;
 import com.felkertech.n.tv.activities.LeanbackActivity;
 import com.felkertech.settingsmanager.SettingsManager;
@@ -60,7 +60,7 @@ public class ActivityUtils {
 
     public final static int LAST_GOOD_BUILD = 27;
     /* SUGGESTED CHANNELS */
-    public static JSONChannel[] getSuggestedChannels() {
+    public static JsonChannel[] getSuggestedChannels() {
                 /*
                 0xx NEWS
                 1xx SCIENCE/TECH/NATURE
@@ -72,88 +72,99 @@ public class ActivityUtils {
                 7xx GOVERNMENT/SOCIETY
                 9xx MISC
                  */
-        final JSONChannel[] channels = { /* Some via http://rgw.ustream.tv/json.php/Ustream.searchBroadcast/ */
-               /* new JSONChannel("001",
-                        "Sky News",
-                        "https://www.youtube.com/embed/y60wDzZt8yg?autoplay=1",
-                        "http://news.sky.com/images/33dc2677.sky-news-logo.png", "",
-                        TvContract.Programs.Genres.NEWS),
-                new JSONChannel("002",
-                        "Taiwan Formosa Live News",
-                        "https://www.youtube.com/embed/XxJKnDLYZz4?autoplay=1",
-                        "https://i.ytimg.com/vi/XxJKnDLYZz4/maxresdefault_live.jpg", "",
-                        TvContract.Programs.Genres.NEWS),*/
-                new JSONChannel("100",
-                        "NASA Public",
-                        "http://iphone-streaming.ustream.tv/uhls/6540154/streams/live/iphone/playlist.m3u8",
-                        "http://static-cdn1.ustream.tv/i/channel/live/1_6540154,256x144,b:2015071514.jpg", "",
-                        TvContract.Programs.Genres.TECH_SCIENCE),
-                new JSONChannel("101",
-                        "ISS Stream",
-                        "http://iphone-streaming.ustream.tv/uhls/9408562/streams/live/iphone/playlist.m3u8",
-                        "http://static-cdn1.ustream.tv/i/channel/picture/9/4/0/8/9408562/9408562_iss_hr_1330361780,256x144,r:1.jpg", "",
-                        TvContract.Programs.Genres.TECH_SCIENCE),
-                new JSONChannel("133",
-                        "TWiT.tv",
-                        "http://twit.live-s.cdn.bitgravity.com/cdn-live-s1/_definst_/twit/live/high/playlist.m3u8",
-                        "http://wiki.twit.tv//w//images//TWiT-horizontal.png", "",
-                        TvContract.Programs.Genres.TECH_SCIENCE+","+TvContract.Programs.Genres.NEWS),
-                new JSONChannel("167",
-                        "Montery Bay Aquarium",
-                        "http://iphone-streaming.ustream.tv/uhls/9600798/streams/live/iphone/playlist.m3u8",
-                        "http://static-cdn1.ustream.tv/i/channel/live/1_9600798,256x144,b:2015071514.jpg", "",
-                        TvContract.Programs.Genres.ANIMAL_WILDLIFE),
-                /*new JSONChannel("168",
-                        "Audubon Osprey Cam",
-                        "http://iphone-streaming.ustream.tv/uhls/11378037/streams/live/iphone/playlist.m3u8",
-                        "http://static-cdn1.ustream.tv/i/channel/live/1_11378037,256x144,b:2015071514.jpg", "",
-                        TvContract.Programs.Genres.ANIMAL_WILDLIFE),*/
-//                        new JSONChannel("400", "Beats One", "http://stream.connectcast.tv:1935/live/CC-EC1245DB-5C6A-CF57-D13A-BB36B3CBB488-34313/playlist.m3u8", "")
-                new JSONChannel("401",
-                        "OutOfFocus.TV",
-                        "http://pablogott.videocdn.scaleengine.net/pablogott-iphone/play/ooftv1/playlist.m3u8",
-                        "http://i.imgur.com/QRCIhN4.png", "",
-                        TvContract.Programs.Genres.MUSIC),
-                new JSONChannel("402",
-                        "Vevo Live 1",
-                        "http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch1/appleman.m3u8",
-                        "http://musically.com/wp-content/uploads/2013/05/vevo-logo.jpg", "",
-                        TvContract.Programs.Genres.MUSIC),
-                new JSONChannel("403",
-                        "Vevo Live 2",
-                        "http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch2/appleman.m3u8",
-                        "http://musically.com/wp-content/uploads/2013/05/vevo-logo.jpg", "",
-                        TvContract.Programs.Genres.MUSIC),
-                new JSONChannel("404",
-                        "Vevo Live 3",
-                        "http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch3/appleman.m3u8",
-                        "http://musically.com/wp-content/uploads/2013/05/vevo-logo.jpg", "",
-                        TvContract.Programs.Genres.MUSIC),
-                new JSONChannel("405",
-                        "Beats One Radio",
-                        "http://itsliveradio.apple.com/streams/master_session01_hub01_hub02.m3u8",
-                        "https://ottleyboothr.files.wordpress.com/2015/06/beats-1.jpg", "",
-                        TvContract.Programs.Genres.MUSIC+","+TvContract.Programs.Genres.ENTERTAINMENT)
-                        .setAudioOnly(true),
-                new JSONChannel("900",
-                        "Artbeats Demo",
-                        "http://cdn-fms.rbs.com.br/hls-vod/sample1_1500kbps.f4v.m3u8",
-                        "http://content.provideocoalition.com/uploads/ArtbeatsLogo_blackbox.jpg", "",
-                        TvContract.Programs.Genres.ARTS+","+TvContract.Programs.Genres.ENTERTAINMENT),
-/*
-                        new JSONChannel("900", "Euronews De", "http://fr-par-iphone-2.cdn.hexaglobe.net/streaming/euronews_ewns/14-live.m3u8", ""),
-                        new JSONChannel("901", "TVI (Portugal)", "http://noscdn1.connectedviews.com:1935/live/smil:tvi.smil/playlist.m3u8", ""),
-                        new JSONChannel("902", "PHOENIXHD", "http://teleboy.customers.cdn.iptv.ch/1122/index.m3u8", ""),
-                        new JSONChannel("903", "Sport 1 Germany", "http://streaming-hub.com/tv/i/sport1_1@97464/index_1300_av-p.m3u8?sd=10&rebase=on", ""),
-                        new JSONChannel("904", "RTP International", "http://rtp-pull-live.hls.adaptive.level3.net/liverepeater/rtpi_5ch120h264.stream/livestream.m3u8", "")
-*/
+        final JsonChannel[] channels = { /* Some via http://rgw.ustream.tv/json.php/Ustream.searchBroadcast/ */
+                new JsonChannel.Builder()
+                        .setGenres(TvContract.Programs.Genres.TECH_SCIENCE)
+                        .setLogo("http://static-cdn1.ustream.tv/i/channel/live/1_6540154,256x144," +
+                                "b:2015071514.jpg")
+                        .setMediaUrl("http://iphone-streaming.ustream.tv/uhls/6540154/streams/liv" +
+                                "e/iphone/playlist.m3u8")
+                        .setName("NASA Public")
+                        .setNumber("100")
+                        .build(),
+                new JsonChannel.Builder()
+                        .setGenres(TvContract.Programs.Genres.TECH_SCIENCE)
+                        .setLogo("http://static-cdn1.ustream.tv/i/channel/picture/9/4/0/8/9408562" +
+                                "/9408562_iss_hr_1330361780,256x144,r:1.jpg")
+                        .setMediaUrl("http://iphone-streaming.ustream.tv/uhls/9408562/streams/liv" +
+                                "e/iphone/playlist.m3u8")
+                        .setName("ISS Stream")
+                        .setNumber("101")
+                        .build(),
+                new JsonChannel.Builder()
+                        .setGenres(TvContract.Programs.Genres.TECH_SCIENCE + "," +
+                                TvContract.Programs.Genres.NEWS)
+                        .setLogo("http://wiki.twit.tv//w//images//TWiT-horizontal.png")
+                        .setMediaUrl("http://twit.live-s.cdn.bitgravity.com/cdn-live-s1/_definst_" +
+                                "/twit/live/high/playlist.m3u8")
+                        .setName("TWiT.tv")
+                        .setNumber("133")
+                        .build(),
+                new JsonChannel.Builder()
+                        .setLogo("http://static-cdn1.ustream.tv/i/channel/live/1_9600798,256x144," +
+                                "b:2015071514.jpg")
+                        .setMediaUrl("http://iphone-streaming.ustream.tv/uhls/9600798/streams/liv" +
+                                "e/iphone/playlist.m3u8")
+                        .setName("Monterey Bay Aquarium")
+                        .setNumber("167")
+                        .build(),
+                new JsonChannel.Builder()
+                        .setGenres(TvContract.Programs.Genres.MUSIC)
+                        .setMediaUrl("http://pablogott.videocdn.scaleengine.net/pablogott-iphone/" +
+                                "play/ooftv1/playlist.m3u8")
+                        .setNumber("400")
+                        .setName("OutOfFocus.TV")
+                        .build(),
+                new JsonChannel.Builder()
+                        .setGenres(TvContract.Programs.Genres.MUSIC)
+                        .setLogo("http://payload247.cargocollective.com/1/9/312377/7259316/hits.jpg")
+                        .setMediaUrl("http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch1/a" +
+                                "ppleman.m3u8")
+                        .setName("VEVO TV Hits")
+                        .setNumber("401")
+                        .build(),
+                new JsonChannel.Builder()
+                        .setGenres(TvContract.Programs.Genres.MUSIC)
+                        .setLogo("http://payload247.cargocollective.com/1/9/312377/7259316/flow.jpg")
+                        .setMediaUrl("http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch2/a" +
+                                "ppleman.m3u8")
+                        .setName("VEVO TV Flow")
+                        .setNumber("402")
+                        .build(),
+                new JsonChannel.Builder()
+                        .setGenres(TvContract.Programs.Genres.MUSIC)
+                        .setLogo("http://payload247.cargocollective.com/1/9/312377/7259316/nashville.jpg")
+                        .setMediaUrl("http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch3/a" +
+                                "ppleman.m3u8")
+                        .setName("VEVO TV Nashville")
+                        .setNumber("403")
+                        .build(),
+                new JsonChannel.Builder()
+                        .setAudioOnly(true)
+                        .setGenres(TvContract.Programs.Genres.MUSIC + "," +
+                                TvContract.Programs.Genres.ENTERTAINMENT)
+                        .setLogo("https://ottleyboothr.files.wordpress.com/2015/06/beats-1.jpg")
+                        .setMediaUrl("http://itsliveradio.apple.com/streams/master_session01_hub0" +
+                                "1_hub02.m3u8")
+                        .setName("Beats One Radio")
+                        .setNumber("410")
+                        .build(),
+                new JsonChannel.Builder()
+                        .setGenres(TvContract.Programs.Genres.ARTS + "," +
+                                TvContract.Programs.Genres.ENTERTAINMENT)
+                        .setLogo("http://content.provideocoalition.com/uploads/ArtbeatsLogo_black" +
+                                "box.jpg")
+                        .setMediaUrl("http://cdn-fms.rbs.com.br/hls-vod/sample1_1500kbps.f4v.m3u8")
+                        .setName("Artbeats Demo")
+                        .setNumber("900")
+                        .build()
         };
         return channels;
     }
     public static void openSuggestedChannels(final Activity mActivity, final GoogleApiClient gapi) {
-        final JSONChannel[] channels = getSuggestedChannels();
+        final JsonChannel[] channels = getSuggestedChannels();
         ArrayList<String> channeltext = new ArrayList<String>();
-        for(JSONChannel j: channels) {
+        for(JsonChannel j: channels) {
             channeltext.add(j.getName());
         }
         final String[] channelList = channeltext.toArray(new String[channeltext.size()]);
@@ -163,12 +174,12 @@ public class ActivityUtils {
                 .itemsCallback(new MaterialDialog.ListCallback() {
                     @Override
                     public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                        JSONChannel j = channels[i];
+                        JsonChannel j = channels[i];
                         addChannel(mActivity, gapi, j, charSequence+"");
                     }
                 }).show();
     }
-    public static void addChannel(Activity mActivity, GoogleApiClient gapi, JSONChannel j,
+    public static void addChannel(Activity mActivity, GoogleApiClient gapi, JsonChannel j,
             String name) {
         if (DEBUG) {
             Log.d(TAG, "I've been told to add " + j.toString());
@@ -191,65 +202,65 @@ public class ActivityUtils {
             }
         }
     }
-    public static void editChannel(final Activity mActivity, final String channel) {
-        ChannelDatabase cdn = ChannelDatabase.getInstance(mActivity);
-        JSONChannel jsonChannel = cdn.findChannel(channel); //Find by number
+    public static void editChannel(final Activity activity, final String channel) {
+        ChannelDatabase cdn = ChannelDatabase.getInstance(activity);
+        final JsonChannel jsonChannel = cdn.findChannel(channel); //Find by number
         if(channel == null || jsonChannel == null) {
-            Toast.makeText(mActivity, R.string.toast_error_channel_invalid,
+            Toast.makeText(activity, R.string.toast_error_channel_invalid,
                     Toast.LENGTH_SHORT).show();
             return;
         }
-        if(jsonChannel.hasSource()) {
+        if(jsonChannel.getPluginSource() != null) {
             //Search through all plugins for one of a given source
-            PackageManager pm = mActivity.getPackageManager();
-            final String pack = jsonChannel.getSource().split(",")[0];
-            boolean app_installed = false;
+            PackageManager pm = activity.getPackageManager();
+
             try {
-                pm.getPackageInfo(pack, PackageManager.GET_ACTIVITIES);
-                app_installed = true;
+                pm.getPackageInfo(jsonChannel.getPluginSource().getPackageName(),
+                        PackageManager.GET_ACTIVITIES);
                 //Open up this particular activity
                 Intent intent = new Intent();
-                intent.setClassName(pack,
-                        jsonChannel.getSource().split(",")[1]);
+                intent.setComponent(jsonChannel.getPluginSource());
                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_EDIT);
                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NUMBER, jsonChannel.getNumber());
                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NAME, jsonChannel.getName());
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_URL, jsonChannel.getUrl());
+                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_URL, jsonChannel.getMediaUrl());
                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ICON, jsonChannel.getLogo());
                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_SPLASH, jsonChannel.getSplashscreen());
                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_GENRES, jsonChannel.getGenresString());
-                mActivity.startActivity(intent);
+                activity.startActivity(intent);
             }
             catch (PackageManager.NameNotFoundException e) {
-                app_installed = false;
-                new MaterialDialog.Builder(mActivity)
-                        .title("Plugin " + pack + " not installed")
-                        .content("What do you want to do instead?")
-                        .positiveText("Download app")
-                        .negativeText("Open in another plugin")
+                new MaterialDialog.Builder(activity)
+                        .title(activity.getString(R.string.plugin_not_installed_title,
+                                jsonChannel.getPluginSource().getPackageName()))
+                        .content(R.string.plugin_not_installed_question)
+                        .positiveText(R.string.download_app)
+                        .negativeText(R.string.open_in_another_plugin)
                         .callback(new MaterialDialog.ButtonCallback() {
                             @Override
                             public void onPositive(MaterialDialog dialog) {
                                 super.onPositive(dialog);
                                 Intent i = new Intent(Intent.ACTION_VIEW);
                                 i.setData(Uri.parse("http://play.google.com/store/apps/details?id="
-                                        + pack));
-                                mActivity.startActivity(i);
+                                        + jsonChannel.getPluginSource().getPackageName()));
+                                activity.startActivity(i);
                             }
 
                             @Override
                             public void onNegative(MaterialDialog dialog) {
                                 super.onNegative(dialog);
-                                openPluginPicker(false, channel, mActivity);
+                                openPluginPicker(false, channel, activity);
                             }
                         }).show();
-                Toast.makeText(mActivity, mActivity.getString(R.string.toast_msg_pack_not_installed,
-                        pack), Toast.LENGTH_SHORT).show();
-                openPluginPicker(false, channel, mActivity);
+                Toast.makeText(activity, activity.getString(R.string.toast_msg_pack_not_installed,
+                        jsonChannel.getPluginSource().getPackageName()), Toast.LENGTH_SHORT).show();
+                openPluginPicker(false, channel, activity);
             }
         } else {
-            Log.d(TAG, "No specified source");
-            openPluginPicker(false, channel, mActivity);
+            if (DEBUG) {
+                Log.d(TAG, "No specified source");
+            }
+            openPluginPicker(false, channel, activity);
         }
     }
 
@@ -430,27 +441,29 @@ public class ActivityUtils {
     public static void openPluginPicker(final boolean newChannel, Activity activity) {
         openPluginPicker(newChannel, 0, activity);
     }
+
     public static void openPluginPicker(final boolean newChannel, final int index,
                                         final Activity activity) {
         try {
             ChannelDatabase cdn = ChannelDatabase.getInstance(activity);
-            if(cdn.getJSONChannels().length() == 0) {
-                openPluginPicker(newChannel, new JSONChannel(null), activity);
+            if(cdn.getJsonChannels().isEmpty()) {
+                openPluginPicker(newChannel, new JsonChannel.Builder().build(), activity);
             } else {
-                JSONChannel jsonChannel = new JSONChannel(cdn.getJSONChannels()
-                        .getJSONObject(index));
+                JsonChannel jsonChannel = cdn.getJsonChannels().get(index);
                 openPluginPicker(newChannel, jsonChannel, activity);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+
     public static void openPluginPicker(final boolean newChannel, final String channel,
             final Activity activity) {
         ChannelDatabase cdn = ChannelDatabase.getInstance(activity);
         openPluginPicker(newChannel, cdn.findChannel(channel), activity);
     }
-    public static void openPluginPicker(final boolean newChannel, final JSONChannel queriedChannel,
+
+    public static void openPluginPicker(final boolean newChannel, final JsonChannel queriedChannel,
             final Activity activity) {
         final PackageManager pm = activity.getPackageManager();
         final Intent plugin_addchannel = new Intent(CumulusTvPlugin.ACTION_ADD_CHANNEL);
@@ -479,7 +492,6 @@ public class ActivityUtils {
                         plugin_info.activityInfo.name);
                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
             } else {
-                ChannelDatabase cdn = ChannelDatabase.getInstance(activity);
                 ResolveInfo plugin_info = plugins.get(0);
                 Log.d(TAG, plugin_info.activityInfo.applicationInfo.packageName + " " +
                         plugin_info.activityInfo.name);
@@ -488,7 +500,7 @@ public class ActivityUtils {
                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_EDIT);
                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NUMBER, queriedChannel.getNumber());
                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NAME, queriedChannel.getName());
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_URL, queriedChannel.getUrl());
+                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_URL, queriedChannel.getMediaUrl());
                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ICON, queriedChannel.getLogo());
                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_SPLASH,
                         queriedChannel.getSplashscreen());
@@ -532,7 +544,7 @@ public class ActivityUtils {
                                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NAME,
                                         queriedChannel.getName());
                                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_URL,
-                                        queriedChannel.getUrl());
+                                        queriedChannel.getMediaUrl());
                                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ICON,
                                         queriedChannel.getLogo());
                                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_SPLASH,
@@ -788,3 +800,21 @@ public class ActivityUtils {
         }
     }
 }
+
+/* new JsonChannel("001",
+        "Sky News",
+        "https://www.youtube.com/embed/y60wDzZt8yg?autoplay=1",
+        "http://news.sky.com/images/33dc2677.sky-news-logo.png", "",
+        TvContract.Programs.Genres.NEWS),
+new JsonChannel("002",
+        "Taiwan Formosa Live News",
+        "https://www.youtube.com/embed/XxJKnDLYZz4?autoplay=1",
+        "https://i.ytimg.com/vi/XxJKnDLYZz4/maxresdefault_live.jpg", "",
+        TvContract.Programs.Genres.NEWS),*/
+/*
+        new JsonChannel("900", "Euronews De", "http://fr-par-iphone-2.cdn.hexaglobe.net/streaming/euronews_ewns/14-live.m3u8", ""),
+        new JsonChannel("901", "TVI (Portugal)", "http://noscdn1.connectedviews.com:1935/live/smil:tvi.smil/playlist.m3u8", ""),
+        new JsonChannel("902", "PHOENIXHD", "http://teleboy.customers.cdn.iptv.ch/1122/index.m3u8", ""),
+        new JsonChannel("903", "Sport 1 Germany", "http://streaming-hub.com/tv/i/sport1_1@97464/index_1300_av-p.m3u8?sd=10&rebase=on", ""),
+        new JsonChannel("904", "RTP International", "http://rtp-pull-live.hls.adaptive.level3.net/liverepeater/rtpi_5ch120h264.stream/livestream.m3u8", "")
+*/

@@ -28,7 +28,7 @@ import com.felkertech.channelsurfer.players.TvInputPlayer;
 import com.felkertech.n.boilerplate.Utils.PermissionUtils;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.activities.CumulusTvPlayer;
-import com.felkertech.n.cumulustv.model.JSONChannel;
+import com.felkertech.n.cumulustv.model.JsonChannel;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.fileio.M3UParser;
 import com.felkertech.settingsmanager.common.CommaArray;
@@ -113,17 +113,23 @@ public class MainPicker extends CumulusTvPlugin {
                                     String genres = ((Button) l.findViewById(R.id.genres))
                                             .getText().toString();
 
-                                    if(number == null || number.length() == 0) {
+                                    if(number.length() == 0) {
                                         Toast.makeText(MainPicker.this,
                                                 R.string.toast_error_channel_number,
                                                 Toast.LENGTH_SHORT).show();
-                                        ((EditText) l.findViewById(R.id.number))
+                                        l.findViewById(R.id.number)
                                                 .setBackgroundColor(getResources()
                                                         .getColor(android.R.color.holo_red_dark));
                                     } else {
-                                        JSONChannel jsch = new JSONChannel(number, name, stream,
-                                                logo, splash, genres);
-                                        saveChannel(jsch);
+                                        JsonChannel jsonChannel = new JsonChannel.Builder()
+                                                .setName(name)
+                                                .setNumber(number)
+                                                .setMediaUrl(stream)
+                                                .setLogo(logo)
+                                                .setSplashscreen(splash)
+                                                .setGenres(genres)
+                                                .build();
+                                        saveChannel(jsonChannel);
                                     }
                                 }
                             })
@@ -177,14 +183,12 @@ public class MainPicker extends CumulusTvPlugin {
                                                     ChannelDatabase.getInstance(MainPicker.this);
                                             for (M3UParser.XmlTvChannel channel :
                                                     listings.channels) {
-                                                JSONChannel jsonChannel = new JSONChannel(
-                                                        channel.displayNumber,
-                                                        channel.displayName,
-                                                        channel.url,
-                                                        null,
-                                                        null,
-                                                        TvContract.Programs.Genres.MOVIES
-                                                );
+                                                JsonChannel jsonChannel = new JsonChannel.Builder()
+                                                        .setName(channel.displayName)
+                                                        .setNumber(channel.displayNumber)
+                                                        .setMediaUrl(channel.url)
+                                                        .setGenres(TvContract.Programs.Genres.MOVIES)
+                                                        .build();
                                                 try {
                                                     channelDatabase.add(jsonChannel);
                                                 } catch (JSONException e) {
@@ -269,9 +273,15 @@ public class MainPicker extends CumulusTvPlugin {
                                     .toString();
                             String genres = ((Button) l.findViewById(R.id.genres)).getText()
                                     .toString();
-                            JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash,
-                                    genres);
-                            saveChannel(jsch);
+                            JsonChannel jsonChannel = new JsonChannel.Builder()
+                                    .setNumber(number)
+                                    .setName(name)
+                                    .setMediaUrl(stream)
+                                    .setLogo(logo)
+                                    .setSplashscreen(splash)
+                                    .setGenres(genres)
+                                    .build();
+                            saveChannel(jsonChannel);
                         }
                     })
                     .show();
@@ -328,9 +338,15 @@ public class MainPicker extends CumulusTvPlugin {
                             String genres = ((Button) l.findViewById(R.id.genres)).getText()
                                     .toString();
 
-                            JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash,
-                                    genres);
-                            saveChannel(jsch, getChannel());
+                            JsonChannel jsonChannel = new JsonChannel.Builder()
+                                    .setNumber(number)
+                                    .setName(name)
+                                    .setMediaUrl(stream)
+                                    .setLogo(logo)
+                                    .setSplashscreen(splash)
+                                    .setGenres(genres)
+                                    .build();
+                            saveChannel(jsonChannel);
                         }
 
                         @Override
@@ -354,22 +370,28 @@ public class MainPicker extends CumulusTvPlugin {
                             String genres = ((Button) l.findViewById(R.id.genres)).getText()
                                     .toString();
 
-                            final JSONChannel jsch = new JSONChannel(number, name, stream, logo,
-                                    splash, genres);
-                            deleteChannel(jsch);
+                            JsonChannel jsonChannel = new JsonChannel.Builder()
+                                    .setNumber(number)
+                                    .setName(name)
+                                    .setMediaUrl(stream)
+                                    .setLogo(logo)
+                                    .setSplashscreen(splash)
+                                    .setGenres(genres)
+                                    .build();
+                            deleteChannel(jsonChannel);
                         }
                     })
                     .show();
             pickerDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface dialog) {
-                    JSONChannel jsonChannel = getChannel();
+                    JsonChannel jsonChannel = getChannel();
                     RelativeLayout l = (RelativeLayout) pickerDialog.getCustomView();
                     ((EditText) l.findViewById(R.id.number)).setText(jsonChannel.getNumber());
                     Log.d(TAG, "Channel " + jsonChannel.getNumber());
                     ((EditText) l.findViewById(R.id.name)).setText(jsonChannel.getName());
                     ((EditText) l.findViewById(R.id.logo)).setText(jsonChannel.getLogo());
-                    ((EditText) l.findViewById(R.id.stream)).setText(jsonChannel.getUrl());
+                    ((EditText) l.findViewById(R.id.stream)).setText(jsonChannel.getMediaUrl());
                     ((Button) l.findViewById(R.id.genres)).setText(jsonChannel.getGenresString());
                     loadStream(pickerDialog);
                 }
@@ -473,7 +495,7 @@ public class MainPicker extends CumulusTvPlugin {
     public String getUrl() {
         String url = "";
         if(getChannel() != null) {
-            url = getChannel().getUrl();
+            url = getChannel().getMediaUrl();
         } if(pickerDialog.getCustomView().findViewById(R.id.stream) != null) {
             url = ((EditText) pickerDialog.getCustomView().findViewById(R.id.stream)).getText()
                     .toString();

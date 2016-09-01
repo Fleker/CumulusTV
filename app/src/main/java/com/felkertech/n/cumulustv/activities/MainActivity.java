@@ -21,7 +21,7 @@ import com.felkertech.n.boilerplate.Utils.AppUtils;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
-import com.felkertech.n.cumulustv.model.JSONChannel;
+import com.felkertech.n.cumulustv.model.JsonChannel;
 import com.felkertech.n.cumulustv.xmltv.Program;
 import com.felkertech.n.cumulustv.xmltv.XMLTVParser;
 import com.felkertech.n.tv.activities.LeanbackActivity;
@@ -81,8 +81,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         findViewById(R.id.view).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final ChannelDatabase cdn = ChannelDatabase.getInstance(MainActivity.this);
-                String[] channelnames = cdn.getChannelNames();
+                final ChannelDatabase channelDatabase =
+                        ChannelDatabase.getInstance(MainActivity.this);
+                String[] channelnames = channelDatabase.getChannelNames();
                 if(channelnames.length == 0) {
                     new MaterialDialog.Builder(MainActivity.this)
                             .title(R.string.no_channels)
@@ -106,8 +107,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                 @Override
                                 public void onSelection(MaterialDialog materialDialog, View view, final int i, CharSequence charSequence) {
                                     try {
-                                        JSONChannel jsonChannel = new JSONChannel(
-                                                cdn.getJSONChannels().getJSONObject(i));
+                                        JsonChannel jsonChannel =
+                                                channelDatabase.getJsonChannels().get(i);
                                         ActivityUtils.editChannel(MainActivity.this,
                                                 jsonChannel.getNumber());
                                     } catch (JSONException e) {

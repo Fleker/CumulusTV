@@ -9,12 +9,14 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.security.KeyChain;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.R;
+import com.felkertech.settingsmanager.SettingsManager;
 
 import junit.framework.Assert;
 
@@ -23,7 +25,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by N on 7/14/2015.
@@ -35,9 +36,12 @@ public class ChannelDatabase {
 
     public static final String KEY = "JSONDATA";
 
-    private JSONObject obj;
-    private TvContentRating rating;
-    private Context mContext;
+    private static final String KEY_CHANNELS = "channels";
+    private static final String KEY_MODIFIED = "modified";
+
+    protected JSONObject mJsonObject;
+    private TvContentRating mTvContentRating;
+    private SettingsManager mSettingsManager;
 
     private static ChannelDatabase mChannelDatabase;
 
@@ -48,67 +52,65 @@ public class ChannelDatabase {
         return mChannelDatabase;
     }
 
-    private ChannelDatabase(final Context context) {
+    protected ChannelDatabase(final Context context) {
         try {
             DriveSettingsManager sp = new DriveSettingsManager(context);
-            String spData = sp.getString(KEY, "{'channels':[], 'modified':0}");
-            obj = new JSONObject(spData);
-            if(!obj.has("modified")) {
-                obj.put("modified", 0l);
+            String spData = sp.getString(KEY, getDefaultJsonString());
+            if (spData.isEmpty()) {
+                spData = getDefaultJsonString();
+            }
+            mJsonObject = new JSONObject(spData);
+            if (!mJsonObject.has("modified")) {
+                mJsonObject.put("modified", 0L);
                 save();
             }
-            resetPossibleGenres(); //This will try to use the newest API data
+            resetPossibleGenres(); // This will try to use the newest API data
         } catch (final JSONException e) {
-            Handler h = new Handler(Looper.getMainLooper()) {
-                @Override
-                public void handleMessage(Message msg) {
-                    super.handleMessage(msg);
-                    Toast.makeText(context, context.getString(R.string.toast_please_report,
-                            e.getMessage()), Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }
-            };
-            h.sendEmptyMessage(0);
+            throw new RuntimeException(e.getMessage());
         }
-        rating = TvContentRating.createRating(
+        mTvContentRating = TvContentRating.createRating(
                 "com.android.tv",
                 "US_TV",
                 "US_TV_PG",
                 "US_TV_D", "US_TV_L");
+        mSettingsManager = new SettingsManager(context);
     }
 
-    public JSONArray getJSONChannels() throws JSONException {
-        Assert.assertNotNull(mContext.getString(R.string.toast_report_database_null), obj);
-        return obj.getJSONArray("channels");
+    public JSONArray getJSONArray() throws JSONException {
+        return mJsonObject.getJSONArray("channels");
     }
-    public ArrayList<Channel> getChannels() throws JSONException {
-        JSONArray channels = getJSONChannels();
-        ArrayList<Channel> channelInfos = new ArrayList<>();
-        for(int i = 0; i<channels.length();i++) {
-            JSONChannel channel = new JSONChannel(channels.getJSONObject(i));
-            Channel ci = new Channel();
-            ci.setNumber(channel.getNumber());
-            ci.setName(channel.getName());
-            if(ci.getName() != null) {
-                ci.setOriginalNetworkId(ci.getName().hashCode());
-            }
-            ci.setTransportStreamId(1);
-            ci.setServiceId(i+2);
-            ci.setVideoHeight(1080);
-            ci.setVideoWidth(1920);
-            ci.setLogoUrl(channel.getLogo());
-            Log.d(TAG, "Channel getUrl in GC = "+channel.getUrl());
-            ci.setInternalProviderData(channel.getUrl());
-            channelInfos.add(ci);
+
+    public ArrayList<JsonChannel> getJsonChannels() throws JSONException {
+        JSONArray channels = getJSONArray();
+        ArrayList<JsonChannel> channelList = new ArrayList<>();
+        for (int i = 0; i < channels.length(); i++) {
+            JsonChannel channel = new JsonChannel.Builder(channels.getJSONObject(i)).build();
+            channelList.add(channel);
         }
-        return channelInfos;
+        return channelList;
+    }
+
+    public ArrayList<Channel> getChannels() throws JSONException {
+        ArrayList<JsonChannel> jsonChannelList = getJsonChannels();
+        ArrayList<Channel> channelList = new ArrayList<>();
+        for (int i = 0; i < jsonChannelList.size(); i++) {
+            JsonChannel jsonChannel = jsonChannelList.get(i);
+            Channel channel = new Channel();
+            channel.setNumber(jsonChannel.getNumber());
+            channel.setName(jsonChannel.getName());
+            channel.setOriginalNetworkId(jsonChannel.hashCode());
+            channel.setLogoUrl(jsonChannel.getLogo());
+            Log.d(TAG, "Channel getMediaUrl in GC = " + jsonChannel.getMediaUrl());
+            channel.setInternalProviderData(jsonChannel.getMediaUrl());
+            channelList.add(channel);
+        }
+        return channelList;
     }
 
     public boolean channelNumberExists(String number) {
         try {
-            JSONArray jsonArray = getJSONChannels();
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONChannel jsonChannel = new JSONChannel(jsonArray.getJSONObject(i));
+            ArrayList<JsonChannel> jsonChannelList = getJsonChannels();
+            for (JsonChannel jsonChannel : jsonChannelList) {
                 if (jsonChannel.getNumber().equals(number)) {
                     return true;
                 }
@@ -118,14 +120,11 @@ public class ChannelDatabase {
         return false;
     }
 
-    public boolean channelExists(JSONChannel jsonChannel) {
+    public boolean channelExists(JsonChannel channel) {
         try {
-            JSONArray jsonArray = getJSONChannels();
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONChannel channel = new JSONChannel(jsonArray.getJSONObject(i));
-                if (channel.getNumber().equals(jsonChannel.getNumber()) ||
-                        channel.getName().equals(jsonChannel.getName()) ||
-                        channel.getUrl().equals(jsonChannel.getUrl())) {
+            ArrayList<JsonChannel> jsonChannelList = getJsonChannels();
+            for (JsonChannel jsonChannel : jsonChannelList) {
+                if (jsonChannel.equals(channel)) {
                     return true;
                 }
             }
@@ -134,11 +133,10 @@ public class ChannelDatabase {
         return false;
     }
 
-    public JSONChannel findChannel(String channelNumber) {
+    public JsonChannel findChannel(String channelNumber) {
         try {
-            JSONArray jsonArray = getJSONChannels();
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONChannel jsonChannel = new JSONChannel(jsonArray.getJSONObject(i));
+            ArrayList<JsonChannel> jsonChannelList = getJsonChannels();
+            for (JsonChannel jsonChannel : jsonChannelList) {
                 if (jsonChannel.getNumber() != null) {
                     if (jsonChannel.getNumber().equals(channelNumber)) {
                         return jsonChannel;
@@ -153,94 +151,62 @@ public class ChannelDatabase {
     public String[] getChannelNames() {
         ArrayList<String> strings = new ArrayList<>();
         try {
-            JSONArray jsonArray = getJSONChannels();
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONChannel jsonChannel = new JSONChannel(jsonArray.getJSONObject(i));
+            ArrayList<JsonChannel> jsonChannelList = getJsonChannels();
+            for (JsonChannel jsonChannel : jsonChannelList) {
                 strings.add(jsonChannel.getNumber() + " " + jsonChannel.getName());
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            try {
-                obj = new JSONObject("{'channels':[]}");
-                save();
-                //FIXME Seems a bit harsh
-                Log.d(TAG, "A problem occurred; resetting all your data");
-                return getChannelNames();
-            } catch (JSONException e1) {
-                e1.printStackTrace();
-            }
+        } catch (JSONException ignored) {
         }
         return strings.toArray(new String[strings.size()]);
     }
 
-    public void add(JSONChannel n00b) throws JSONException {
-        if (obj != null) {
-            JSONArray channels = obj.getJSONArray("channels");
-            channels.put(n00b.toJSON());
+    public void add(JsonChannel channel) throws JSONException {
+        if (mJsonObject != null) {
+            JSONArray channels = mJsonObject.getJSONArray("channels");
+            channels.put(channel.toJSON());
             save();
-        } else {
-            Handler toasty = new Handler(Looper.getMainLooper()) {
-                @Override
-                public void handleMessage(Message msg) {
-                    super.handleMessage(msg);
-                    Toast.makeText(mContext, R.string.toast_error_object_undefined,
-                            Toast.LENGTH_SHORT).show();
-                }
-            };
-            toasty.sendEmptyMessage(0);
         }
     }
 
-    public void update(JSONChannel ch) throws JSONException {
-        if(!channelExists(ch)) {
-            add(ch);
+    public void update(JsonChannel channel) throws JSONException {
+        if(!channelExists(channel)) {
+            add(channel);
         } else {
             try {
-                JSONArray jsonArray = getJSONChannels();
+                JSONArray jsonArray = new JSONArray();
+                ArrayList<JsonChannel> jsonChannelList = getJsonChannels();
                 int finalindex = -1;
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONChannel jsonChannel = new JSONChannel(jsonArray.getJSONObject(i));
+                for (int i = 0; i < jsonChannelList.size(); i++) {
+                    JsonChannel jsonChannel = jsonChannelList.get(i);
                     if (finalindex >= 0) {
 //                        jsonArray.put(finalindex, ch.toJSON());
-                    } else if(jsonChannel.getUrl().equals(ch.getUrl())) {
+                    } else if(jsonChannel.getMediaUrl().equals(channel.getMediaUrl())) {
                         if (DEBUG) {
                             Log.d(TAG, "Remove " + i + " and put at " + i + ": " +
-                                    ch.toJSON().toString());
+                                    channel.toJSON().toString());
                         }
-                        jsonArray.put(i, ch.toJSON());
+                        jsonArray.put(i, channel.toJSON());
                         finalindex = i;
                         save();
                     }
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } catch (JSONException ignored) {
             }
         }
     }
 
-    public void update(JSONChannel ch, int index) throws JSONException {
-        //With provided index, we can easily update that channel!
-        if(!channelExists(ch)) {
-            add(ch);
-            return;
-        }
-        JSONArray jsonArray = getJSONChannels();
-        jsonArray.remove(index);
-        jsonArray.put(index, ch.toJSON());
-        save();
-    }
-
-    public void delete(JSONChannel n00b) throws JSONException {
-        if(!channelExists(n00b)) {
-            add(n00b);
+    public void delete(JsonChannel channel) throws JSONException {
+        if(!channelExists(channel)) {
+            add(channel);
         } else {
             try {
-                JSONArray jsonArray = getJSONChannels();
-                for(int i = 0;i<jsonArray.length();i++) {
-                    JSONChannel jsonChannel = new JSONChannel(jsonArray.getJSONObject(i));
-                    if(jsonChannel.getUrl() != null && jsonChannel.getUrl().equals(n00b.getUrl())) {
-                        jsonArray.remove(i);
+                ArrayList<JsonChannel> jsonChannelList = getJsonChannels();
+                for (int i = 0; i < jsonChannelList.size(); i++) {
+                    JsonChannel jsonChannel = jsonChannelList.get(i);
+                    if(jsonChannel.getMediaUrl() != null &&
+                            jsonChannel.getMediaUrl().equals(channel.getMediaUrl())) {
                         save();
+                        mJsonObject.getJSONArray(KEY_CHANNELS).remove(i);
                     }
                 }
             } catch (JSONException e) {
@@ -252,10 +218,7 @@ public class ChannelDatabase {
     public void save() {
         try {
             setLastModified();
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
-            SharedPreferences.Editor e = sp.edit();
-            e.putString(KEY, toString());
-            e.commit();
+            mSettingsManager.setString(KEY, toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -263,18 +226,16 @@ public class ChannelDatabase {
 
     @Override
     public String toString() {
-        Assert.assertNotNull(mContext.getString(R.string.toast_report_database_null), obj);
-        return obj.toString();
+        return mJsonObject.toString();
     }
 
     public long getLastModified() throws JSONException {
-        Assert.assertNotNull(mContext.getString(R.string.toast_report_database_null), obj);
-        return obj.getLong("modified");
+        return mJsonObject.getLong("modified");
     }
 
-    public void setLastModified() throws JSONException {
-        if(obj != null) {
-            obj.put("modified", System.currentTimeMillis());
+    private void setLastModified() throws JSONException {
+        if(mJsonObject != null) {
+            mJsonObject.put("modified", System.currentTimeMillis());
         }
     }
 
@@ -312,7 +273,7 @@ public class ChannelDatabase {
             genres.put(TvContract.Programs.Genres.SPORTS);
             genres.put(TvContract.Programs.Genres.TRAVEL);
         }
-        obj.put("possibleGenres", genres);
+        mJsonObject.put("possibleGenres", genres);
     }
 
     public static String[] getAllGenres() {
@@ -359,5 +320,17 @@ public class ChannelDatabase {
             i++;
         }
         return i;
+    }
+
+    protected static String getDefaultJsonString() {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(KEY_CHANNELS, new JSONArray());
+            jsonObject.put(KEY_MODIFIED, 0);
+            return jsonObject.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        throw new RuntimeException("Default JSON String cannot be created");
     }
 }

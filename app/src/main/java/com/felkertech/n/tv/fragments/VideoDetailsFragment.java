@@ -40,7 +40,7 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
-import com.felkertech.n.cumulustv.model.JSONChannel;
+import com.felkertech.n.cumulustv.model.JsonChannel;
 import com.felkertech.n.cumulustv.activities.MainActivity;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.tv.presenters.DetailsDescriptionPresenter;
@@ -209,15 +209,15 @@ public class VideoDetailsFragment extends DetailsFragment
                     ActivityUtils.openStream(getActivity(), mSelectedMovie.getVideoUrl());
                 } else if(action.getId() == ACTION_BUY) {
                     /*ChannelDatabase cdn = new ChannelDatabase(getActivity());
-                    JSONChannel jsonChannel = cdn.findChannel(mSelectedMovie.getStudio());
+                    JsonChannel jsonChannel = cdn.findChannel(mSelectedMovie.getStudio());
                     Log.d(TAG, mSelectedMovie.getTitle());
                     Log.d(TAG, mSelectedMovie.getStudio());
                     Log.d(TAG, jsonChannel)*/
                     //Need to get it!
                     //Let's hope that it exists. (It should b/c this should only be available
                     //to suggested channels
-                    JSONChannel[] jsonChannels = ActivityUtils.getSuggestedChannels();
-                    for(JSONChannel channel: jsonChannels) {
+                    JsonChannel[] jsonChannels = ActivityUtils.getSuggestedChannels();
+                    for(JsonChannel channel: jsonChannels) {
                         if(channel.getNumber().equals(mSelectedMovie.getStudio())) {
                             Log.d(TAG, "Adding " + channel.toString());
                             ActivityUtils.addChannel(getActivity(), gapi, channel, channel.getName());

@@ -127,5 +127,9 @@
     <string name="download_more_plugins">Download More</string>
     <string name="connection_issue_title">Connection Issue</string>
     <string name="connection_issue_description">Cannot connect to Google Drive at this moment.</string>
+    <string name="plugin_not_installed_title">"Plugin %1$s not installed"</string>
+    <string name="plugin_not_installed_question">What do you want to do instead?</string>
+    <string name="download_app">Download app</string>
+    <string name="open_in_another_plugin">Open in another plugin</string>
 </resources>
 

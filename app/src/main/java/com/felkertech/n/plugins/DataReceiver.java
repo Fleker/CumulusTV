@@ -1,7 +1,6 @@
 package com.felkertech.n.plugins;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.media.tv.TvContract;
@@ -12,7 +11,7 @@ import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
-import com.felkertech.n.cumulustv.model.JSONChannel;
+import com.felkertech.n.cumulustv.model.JsonChannel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
@@ -67,20 +66,22 @@ public class DataReceiver extends BroadcastReceiver
                 ChannelDatabase cdn = ChannelDatabase.getInstance(context);
                 try {
                     JSONObject jo = new JSONObject(jsonString);
-                    JSONChannel jsonChannel = new JSONChannel(jo);
-                    jsonChannel.setSource(intent.getStringExtra(INTENT_EXTRA_SOURCE));
-                    if(intent.hasExtra(INTENT_EXTRA_ORIGINAL_JSON)) {
-                        //Clearly edited a stream
-                        JSONChannel original = new JSONChannel(
-                                new JSONObject(intent.getStringExtra(INTENT_EXTRA_ORIGINAL_JSON)));
-                        for(int i = 0; i < cdn.getJSONChannels().length(); i++) {
-                            JSONChannel item = new JSONChannel(
-                                    cdn.getJSONChannels().getJSONObject(i));
+                    JsonChannel jsonChannel;
+                    JsonChannel.Builder builder = new JsonChannel.Builder(jo)
+                            .setPluginSource(intent.getStringExtra(INTENT_EXTRA_SOURCE));
+                    if (intent.hasExtra(INTENT_EXTRA_ORIGINAL_JSON)) {
+                        // Clearly edited a stream
+                        JsonChannel original = new JsonChannel.Builder(
+                                new JSONObject(intent.getStringExtra(INTENT_EXTRA_ORIGINAL_JSON)))
+                                .build();
+                        for(int i = 0; i < cdn.getJsonChannels().size(); i++) {
+                            JsonChannel item = cdn.getJsonChannels().get(i);
                             if(original.equals(item) && DEBUG) {
                                 Log.d(TAG, "Found a match");
                             }
                         }
                     }
+                    jsonChannel = builder.build();
                     if (cdn.channelExists(jsonChannel)) {
                         //Channel exists, so let's update
                         cdn.update(jsonChannel);
@@ -104,7 +105,7 @@ public class DataReceiver extends BroadcastReceiver
                 ChannelDatabase cdn = ChannelDatabase.getInstance(context);
                 try {
                     JSONObject jo = new JSONObject(jsonString);
-                    JSONChannel jsonChannel = new JSONChannel(jo);
+                    JsonChannel jsonChannel = new JsonChannel.Builder(jo).build();
                     cdn.delete(jsonChannel);
                     if (DEBUG) {
                         Log.d(TAG, "Channel successfully deleted");

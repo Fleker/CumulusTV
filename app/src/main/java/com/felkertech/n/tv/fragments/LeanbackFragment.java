@@ -51,7 +51,7 @@ import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
-import com.felkertech.n.cumulustv.model.JSONChannel;
+import com.felkertech.n.cumulustv.model.JsonChannel;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.xmltv.Program;
 import com.felkertech.n.cumulustv.xmltv.XMLTVParser;
@@ -81,7 +81,8 @@ import java.util.TimerTask;
 
 public class LeanbackFragment extends BrowseFragment
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    private static final String TAG = "LeanbackFragment";
+    private static final String TAG = LeanbackFragment.class.getSimpleName();
+    private static final boolean DEBUG = false;
 
     private static final int BACKGROUND_UPDATE_DELAY = 300;
     private static final int GRID_ITEM_WIDTH = 200;
@@ -149,15 +150,16 @@ public class LeanbackFragment extends BrowseFragment
             ArrayObjectAdapter channelRowAdapter = new ArrayObjectAdapter(channelCardPresenter);
             int index = 0;
             for(Channel channelInfo: cd.getChannels()) {
-                Log.d(TAG, "Got channels " + channelInfo.getName());
-                Log.d(TAG, channelInfo.getLogoUrl()+"");
-                Log.d(TAG, new JSONChannel(cd.getJSONChannels().getJSONObject(index)).toString()+"");
+                if (DEBUG) {
+                    Log.d(TAG, "Got channels " + channelInfo.getName());
+                    Log.d(TAG, channelInfo.getLogoUrl());
+                }
                 channelRowAdapter.add(MovieList.buildMovieInfo(
                         "channel",
                         channelInfo.getName(),
                         "",
                         channelInfo.getNumber(),
-                        new JSONChannel(cd.getJSONChannels().getJSONObject(index)).getUrl(),
+                        cd.getJsonChannels().get(index).getMediaUrl(),
                         channelInfo.getLogoUrl(),
                         "android.resource://com.felkertech.n.tv/drawable/c_background5"
                 ));
@@ -166,7 +168,7 @@ public class LeanbackFragment extends BrowseFragment
                         channelInfo.getName(),
                         "",
                         channelInfo.getNumber(),
-                        new JSONChannel(cd.getJSONChannels().getJSONObject(index)).getUrl(),
+                        cd.getJsonChannels().get(index).getMediaUrl(),
                         channelInfo.getLogoUrl(),
                         "android.resource://com.felkertech.n.tv/drawable/c_background5"
                 ).toString());
@@ -183,14 +185,14 @@ public class LeanbackFragment extends BrowseFragment
         CardPresenter suggestedChannelPresenter = new CardPresenter();
         ArrayObjectAdapter suggestedChannelAdapter = new ArrayObjectAdapter(suggestedChannelPresenter);
         HeaderItem suggestedChannelsHeader = new HeaderItem(1, "Suggested Channels");
-        JSONChannel[] suggestedChannels = ActivityUtils.getSuggestedChannels();
-        for(JSONChannel jsonChannel: suggestedChannels) {
+        JsonChannel[] suggestedChannels = ActivityUtils.getSuggestedChannels();
+        for(JsonChannel jsonChannel: suggestedChannels) {
             suggestedChannelAdapter.add(MovieList.buildMovieInfo(
                     "channel",
                     jsonChannel.getName(),
                     "",
                     jsonChannel.getNumber(),
-                    jsonChannel.getUrl(),
+                    jsonChannel.getMediaUrl(),
                     jsonChannel.getLogo(),
                     "android.resource://com.felkertech.n.tv/drawable/c_background5"
             ));

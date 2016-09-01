@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.felkertech.n.cumulustv.model.JSONChannel;
+import com.felkertech.n.cumulustv.model.JsonChannel;
 import com.felkertech.n.cumulustv.R;
 
 /**
@@ -80,7 +80,7 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
      * Writes the data to the local file and then forces a data sync. Then the app closes.
      * @param jsonChannel The jsonchannel you wanted to create or update
      */
-    public void saveChannel(JSONChannel jsonChannel) {
+    public void saveChannel(JsonChannel jsonChannel) {
         String jsonString = jsonChannel.toString();
 //        Intent i = new Intent("com.felkertech.cumulustv.RECEIVER");
         Intent i = new Intent();
@@ -104,7 +104,7 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
         sendBroadcast(i);
         finish();
     }
-    public void saveChannel(JSONChannel newChannel, JSONChannel original) {
+    public void saveChannel(JsonChannel newChannel, JsonChannel original) {
         String jsonString = newChannel.toString();
         Intent i = new Intent();
         String ogString = original.toString();
@@ -131,7 +131,7 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
      * Deletes the provided channel and resyncs. Then the app closes.
      * @param jsonChannel The jsonchannel to delete
      */
-    public void deleteChannel(JSONChannel jsonChannel) {
+    public void deleteChannel(JsonChannel jsonChannel) {
         String jsonString = jsonChannel.toString();
         Intent i = new Intent("com.felkertech.cumulustv.RECEIVER");
         i.putExtra(DataReceiver.INTENT_EXTRA_JSON, jsonString);
@@ -151,7 +151,7 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
         finish();
     }
 
-    public JSONChannel getChannel() {
+    public JsonChannel getChannel() {
         if(!telegram.hasExtra(INTENT_EXTRA_ACTION)) {
             return null;
         }
@@ -164,7 +164,14 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
         String url = telegram.getStringExtra(INTENT_EXTRA_URL);
         String splash = telegram.getStringExtra(INTENT_EXTRA_SPLASH);
         String genres = telegram.getStringExtra(INTENT_EXTRA_GENRES);
-        return new JSONChannel(number, name, url, logo, splash, genres);
+        return new JsonChannel.Builder()
+                .setNumber(number)
+                .setName(name)
+                .setMediaUrl(url)
+                .setLogo(logo)
+                .setSplashscreen(splash)
+                .setGenres(genres)
+                .build();
     }
 
     /**

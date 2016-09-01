@@ -17,7 +17,7 @@ import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.TvContractUtils;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
-import com.felkertech.n.cumulustv.model.JSONChannel;
+import com.felkertech.n.cumulustv.model.JsonChannel;
 import com.felkertech.settingsmanager.SettingsManager;
 
 import org.json.JSONException;
@@ -129,7 +129,7 @@ public class CumulusChannelsSetup extends SimpleTvSetup {
                             cursor.getString(cursor.getColumnIndex(
                                     TvContract.Channels.COLUMN_DISPLAY_NAME)));
                 }
-                JSONChannel jsonChannel =
+                JsonChannel jsonChannel =
                         ChannelDatabase.getInstance(this).findChannel(cursor.getString(
                                 cursor.getColumnIndex(TvContract.Channels.COLUMN_DISPLAY_NUMBER)));
                 if (DEBUG) {
