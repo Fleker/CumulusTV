@@ -51,9 +51,11 @@ import java.util.Map;
 /**
  * Static helper methods for working with {@link android.media.tv.TvContract}.
  */
+@Deprecated
 public class TvContractUtils {
-    private static final String TAG = "cumulus:TvContractUtils";
-    private static final boolean DEBUG = true;
+    private static final String TAG =
+            com.felkertech.channelsurfer.utils.TvContractUtils.class.getSimpleName();
+    private static final boolean DEBUG = false;
 
     private static final SparseArray<String> VIDEO_HEIGHT_TO_FORMAT_MAP =
             new SparseArray<String>();
@@ -82,10 +84,16 @@ public class TvContractUtils {
             Log.d(TAG, "Found "+cursor.getCount()+" items in allcursor");
             while (cursor != null && cursor.moveToNext()) {
                 long rowId = cursor.getLong(cursor.getColumnIndex(Channels._ID));
-                int originalNetworkId = cursor.getInt(cursor.getColumnIndex(Channels.COLUMN_ORIGINAL_NETWORK_ID));
-                Log.d(TAG, "Seeing oni "+originalNetworkId+" to "+rowId+" "+cursor.getString(cursor.getColumnIndex(Channels.COLUMN_DISPLAY_NAME)));
-                mExistingChannelsMap.put(cursor.getInt(cursor.getColumnIndex(Channels.COLUMN_ORIGINAL_NETWORK_ID)), rowId);
-                mExistingChannelsMap.put(cursor.getString(cursor.getColumnIndex(Channels.COLUMN_DISPLAY_NUMBER)).hashCode(), rowId);
+                int originalNetworkId = cursor.getInt(cursor.getColumnIndex(Channels.
+                        COLUMN_ORIGINAL_NETWORK_ID));
+                if (DEBUG) {
+                    Log.d(TAG, "Seeing oni " + originalNetworkId + " to " + rowId + " " +
+                            cursor.getString(cursor.getColumnIndex(Channels.COLUMN_DISPLAY_NAME)));
+                }
+                mExistingChannelsMap.put(cursor.getInt(cursor.getColumnIndex(
+                        Channels.COLUMN_ORIGINAL_NETWORK_ID)), rowId);
+                mExistingChannelsMap.put(cursor.getString(cursor.getColumnIndex(
+                        Channels.COLUMN_DISPLAY_NUMBER)).hashCode(), rowId);
             }
         } catch(Exception e) {
             Log.e(TAG, e.getMessage()+"");
@@ -95,27 +103,6 @@ public class TvContractUtils {
                 cursor.close();
             }
         }
-        /*Log.d(TAG, "Now ping 2");
-        String[] projection = {Channels._ID, Channels.COLUMN_ORIGINAL_NETWORK_ID, Channels.COLUMN_SERVICE_ID, Channels.COLUMN_DISPLAY_NAME};
-        cursor = null;
-        resolver = context.getContentResolver();
-        try {
-            cursor = resolver.query(channelsUri, projection, null, null, null);
-            Log.d(TAG, "Found "+cursor.getCount()+" items in cursor");
-            while (cursor != null && cursor.moveToNext()) {
-                long rowId = cursor.getLong(0);
-                int originalNetworkId = cursor.getInt(1);
-//                Log.d(TAG, "Assigning oni "+originalNetworkId+" to "+rowId+" "+cursor.getInt(2)+", "+cursor.getString(3));
-//                mExistingChannelsMap.put(cursor.getInt(1), rowId);
-            }
-        } catch(Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }*/
-
         // If a channel exists, update it. If not, insert a new one.
         ContentValues values = new ContentValues();
         values.put(Channels.COLUMN_INPUT_ID, inputId);
@@ -125,7 +112,11 @@ public class TvContractUtils {
             return; //You have NO channels
         }
         for (Channel channel : channels) {
-            Log.d(TAG, "Trying oni "+channel.getOriginalNetworkId()+" "+mExistingChannelsMap.get(channel.getOriginalNetworkId())+" "+channel.getServiceId());
+            if (DEBUG) {
+                Log.d(TAG, "Trying oni " + channel.getOriginalNetworkId() + " " +
+                        mExistingChannelsMap.get(channel.getOriginalNetworkId()) + " " +
+                        channel.getServiceId());
+            }
             values.put(Channels.COLUMN_DISPLAY_NUMBER, channel.getNumber());
             values.put(Channels.COLUMN_DISPLAY_NAME, channel.getName());
             Long rowId = mExistingChannelsMap.get(channel.getOriginalNetworkId());
@@ -139,10 +130,10 @@ public class TvContractUtils {
                 } else {
                     throw new NullPointerException("Channel number must exist!");
                 }
-            } else
+            } else {
                 values.put(Channels.COLUMN_ORIGINAL_NETWORK_ID, rowId);
-//            values.put(Channels.COLUMN_TRANSPORT_STREAM_ID, channel.transportStreamId);
-            values.put(Channels.COLUMN_TRANSPORT_STREAM_ID, 1); //FIXME Hack; can't get ChannelDatabase to output correctly
+            }
+            values.put(Channels.COLUMN_TRANSPORT_STREAM_ID, 1);
             values.put(Channels.COLUMN_SERVICE_ID, channel.getServiceId());
             String videoFormat = getVideoFormat(channel.getVideoHeight());
             if (videoFormat != null) {
@@ -175,7 +166,7 @@ public class TvContractUtils {
                 mExistingChannelsMap.remove(Math.round(rowId));
                 mExistingChannelsMap.remove(channel.getNumber().hashCode());
             }
-            if (!TextUtils.isEmpty(channel.getLogoUrl()) && false) { //FIXME Hack to show title
+            if (!TextUtils.isEmpty(channel.getLogoUrl())) {
 //                logos.put(TvContract.buildChannelLogoUri(uri), channel.logoUrl);
                 Log.d(TAG, "LOGO "+uri.toString()+" "+channel.getLogoUrl());
                 logos.put(TvContract.buildChannelLogoUri(uri), channel.getLogoUrl());
@@ -201,8 +192,9 @@ public class TvContractUtils {
         return VIDEO_HEIGHT_TO_FORMAT_MAP.get(videoHeight);
     }
 
+    @Deprecated
     public static LongSparseArray<Channel> buildChannelMap(ContentResolver resolver,
-                                                               String inputId, List<Channel> channels) {
+            String inputId, List<Channel> channels) {
         Uri uri = TvContract.buildChannelsUriForInput(inputId);
         String[] projection = {
                 TvContract.Channels._ID,
@@ -233,6 +225,7 @@ public class TvContractUtils {
         return channelMap;
     }
 
+    @Deprecated
     public static List<Program> getPrograms(ContentResolver resolver, Uri channelUri) {
         Uri uri = TvContract.buildProgramsUriForChannel(channelUri);
         Cursor cursor = null;
@@ -256,6 +249,7 @@ public class TvContractUtils {
         return programs;
     }
 
+    @Deprecated
     public static long getLastProgramEndTimeMillis(ContentResolver resolver, Uri channelUri) {
         Uri uri = TvContract.buildProgramsUriForChannel(channelUri);
         String[] projection = {Programs.COLUMN_END_TIME_UTC_MILLIS};
@@ -277,43 +271,6 @@ public class TvContractUtils {
         }
         return 0;
     }
-
-    /*public static List<TvManager.PlaybackInfo> getProgramPlaybackInfo(
-            ContentResolver resolver, Uri channelUri, long startTimeMs, long endTimeMs,
-            int maxProgramInReturn) {
-        Uri uri = TvContract.buildProgramsUriForChannel(channelUri, startTimeMs,
-                endTimeMs);
-        String[] projection = { Programs.COLUMN_START_TIME_UTC_MILLIS,
-                Programs.COLUMN_END_TIME_UTC_MILLIS,
-                Programs.COLUMN_CONTENT_RATING,
-                Programs.COLUMN_INTERNAL_PROVIDER_DATA,
-                Programs.COLUMN_CANONICAL_GENRE };
-        Cursor cursor = null;
-        List<TvManager.PlaybackInfo> list = new ArrayList<>();
-        try {
-            cursor = resolver.query(uri, projection, null, null, null);
-            while (cursor.moveToNext()) {
-                long startMs = cursor.getLong(0);
-                long endMs = cursor.getLong(1);
-                TvContentRating[] ratings = stringToContentRatings(cursor.getString(2));
-                Pair<Integer, String> values = parseInternalProviderData(cursor.getString(3));
-                String[] genres = Programs.Genres.decode(cursor.getString(4));
-                int videoType = values.first;
-                String videoUrl = values.second;
-                list.add(new TvManager.PlaybackInfo(startMs, endMs, videoUrl, videoType, ratings));
-                if (list.size() > maxProgramInReturn) {
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to get program playback info from TvProvider.", e);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-        return list;
-    }*/
 
     @Deprecated
     public static String convertVideoInfoToInternalProviderData(int videotype, String videoUrl) {

@@ -19,9 +19,11 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
- * Created by guest1 on 8/25/2015.
- * Modeled from https://code.google.com/r/wwelles-xmltv/source/browse/src/ru/butt/xmltv/model/XMLTVParser.java
+ * Created by Nick on 8/25/2015.
+ * Modeled from https://code.google.com/r/wwelles-xmltv/source/browse/src/ru/butt/xmltv/model/XMLTVP
+ * arser.java
  */
+@Deprecated
 public class XMLTVParser {
     // We don't use namespaces
     private static final String ns = null;

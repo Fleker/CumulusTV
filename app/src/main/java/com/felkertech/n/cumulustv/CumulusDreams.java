@@ -23,7 +23,8 @@ import com.felkertech.n.cumulustv.activities.CumulusDreamsSettingsActivity;
  */
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
 public class CumulusDreams extends DreamService {
-    private String TAG = "cumulus:Dream";
+    private static final String TAG = CumulusDreams.class.getSimpleName();
+    private static final boolean DEBUG = false;
 
     @Override
     public void onAttachedToWindow() {
@@ -37,65 +38,33 @@ public class CumulusDreams extends DreamService {
 
         // Keep screen at full brightness?
         setScreenBright(false);
-        Log.d(TAG, "Going to sleep...");
+        if (DEBUG) {
+            Log.d(TAG, "Going to sleep...");
+        }
     }
 
     @Override
     public void onDreamingStarted() {
         super.onDreamingStarted();
-        Log.d(TAG, "Dream starting");
+        if (DEBUG) {
+            Log.d(TAG, "Dream starting");
+        }
         DriveSettingsManager sm = new DriveSettingsManager(getApplicationContext());
         final String url = sm.getString(R.string.daydream_url);
         if(!url.isEmpty()) {
-            Log.d(TAG, "Play "+url);
+            if (DEBUG) {
+                Log.d(TAG, "Play " + url);
+            }
             setContentView(R.layout.full_surfaceview);
             SurfaceView sv = (SurfaceView) findViewById(R.id.surface);
             TvInputPlayer exoPlayer;
             exoPlayer = new TvInputPlayer();
             exoPlayer.setSurface(sv.getHolder().getSurface());
             exoPlayer.setVolume(0); //No volume for daydream
-            /*exoPlayer.addCallback(new TvInputPlayer.Callback() {
-                @Override
-                public void onPrepared() {
 
-                }
-
-                @Override
-                public void onPlayerStateChanged(boolean playWhenReady, int state) {
-
-                }
-
-                @Override
-                public void onPlayWhenReadyCommitted() {
-
-                }
-
-                @Override
-                public void onPlayerError(ExoPlaybackException e) {
-                    Log.e(TAG, "Callback2");
-                    Log.e(TAG, e.getMessage()+"");
-                    if(e.getMessage().contains("Extractor")) {
-                        Log.d(TAG, "Cannot play the stream, try loading it as a website");
-                        WebTvPlayer wv = new WebTvPlayer(getApplication());
-                        wv.load(url);
-                        setContentView(wv);
-                    }
-                }
-
-                @Override
-                public void onDrawnToSurface(Surface surface) {
-
-                }
-
-                @Override
-                public void onText(String text) {
-
-                }
-            });*/
             try {
                 exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
-            } catch(Exception e) {
-
+            } catch(Exception ignored) {
             }
             exoPlayer.setPlayWhenReady(true);
         } else {

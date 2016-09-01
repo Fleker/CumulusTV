@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.felkertech.n.tv;
+package com.felkertech.n.tv.fragments;
 
 import android.app.Activity;
 import android.content.Context;
@@ -53,6 +53,10 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.felkertech.n.cumulustv.R;
+import com.felkertech.n.tv.presenters.CardPresenter;
+import com.felkertech.n.tv.Movie;
+import com.felkertech.n.tv.MovieList;
+import com.felkertech.n.tv.activities.DetailsActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;

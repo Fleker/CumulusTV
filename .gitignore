@@ -1,7 +1,9 @@
 .gradle
 /local.properties
-/.idea/workspace.xml
-/.idea/libraries
+/.idea
 .DS_Store
 /build
 /captures
+/app/app-release.apk
+/app/app.iml
+/build/intermediates/dex-cache/cache.xml

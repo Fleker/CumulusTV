@@ -31,6 +31,8 @@ import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.channelsurfer.model.Program;
 import com.felkertech.channelsurfer.service.MultimediaInputProvider;
 import com.felkertech.channelsurfer.service.SimpleSessionImpl;
+import com.felkertech.channelsurfer.sync.SyncUtils;
+import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.cumulustv.livechannels.CumulusSessions;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JSONChannel;
@@ -50,11 +52,16 @@ import io.fabric.sdk.android.Fabric;
  * Created by N on 7/12/2015.
  */
 public class CumulusTvService extends MultimediaInputProvider {
-    HandlerThread mHandlerThread;
-    BroadcastReceiver mBroadcastReceiver;
-    Handler mDbHandler;
-    CaptioningManager mCaptioningManager;
-    String TAG = "cumulus:TvInputService";
+    private static final String TAG = "cumulus:TvInputService";
+    private static final boolean DEBUG = false;
+
+    private HandlerThread mHandlerThread;
+    private BroadcastReceiver mBroadcastReceiver;
+    private Handler mDbHandler;
+    private CaptioningManager mCaptioningManager;
+    private JSONChannel jsonChannel;
+    private boolean stillTuning;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -87,15 +94,20 @@ public class CumulusTvService extends MultimediaInputProvider {
     }
 
     @Override
-    public List<Program> getProgramsForChannel(Context mContext, Uri channelUri, Channel channelInfo, long startTimeMs, long endTimeMs) {
-        int programs = (int) ((endTimeMs-startTimeMs)/1000/60/60); //Hour long segments
-        int SEGMENT = 1000*60*60; //Hour long segments
+    public List<Program> getProgramsForChannel(Context mContext, Uri channelUri,
+            Channel channelInfo, long startTimeMs, long endTimeMs) {
+        int programs = (int) ((endTimeMs - startTimeMs) / 1000 / 60 / 60); //Hour long segments
+        int SEGMENT = 1000 * 60 * 60; //Hour long segments
         List<Program> programList = new ArrayList<>();
-        for(int i=0;i<programs;i++) {
-            Log.d(TAG, "Get program "+channelInfo.getName()+" "+channelInfo.getInternalProviderData());
+        for(int i = 0; i < programs; i++) {
+            if (DEBUG) {
+                Log.d(TAG, "Get program " + channelInfo.getName() + " " +
+                        channelInfo.getInternalProviderData());
+            }
             programList.add(new Program.Builder(getGenericProgram(channelInfo))
                     .setInternalProviderData(channelInfo.getInternalProviderData())
-                    .setCanonicalGenres(new ChannelDatabase(mContext).findChannel(channelInfo.getNumber()).getGenres())
+                    .setCanonicalGenres(new ChannelDatabase(mContext).findChannel(
+                            channelInfo.getNumber()).getGenres())
                     .setStartTimeUtcMillis((getNearestHour() + SEGMENT * i))
                     .setEndTimeUtcMillis((getNearestHour() + SEGMENT * (i + 1)))
                     .build()
@@ -106,24 +118,33 @@ public class CumulusTvService extends MultimediaInputProvider {
 
     @Override
     public View onCreateVideoView() {
-        LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) getApplicationContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         try {
             final View v = inflater.inflate(R.layout.loading, null);
             if(!stillTuning && jsonChannel.isAudioOnly()) {
                 ((TextView) v.findViewById(R.id.channel_msg)).setText("Playing Radio");
             }
-            Log.d(TAG, "Trying to load some visual display");
+            if (DEBUG) {
+                Log.d(TAG, "Trying to load some visual display");
+            }
             if (jsonChannel == null) {
-                Log.d(TAG, "Cannot find channel");
+                if (DEBUG ) {
+                    Log.d(TAG, "Cannot find channel");
+                }
                 ((TextView) v.findViewById(R.id.channel)).setText("");
                 ((TextView) v.findViewById(R.id.title)).setText("");
             } else if (jsonChannel.hasSplashscreen()) {
-                Log.d(TAG, "User supplied splashscreen");
+                if (DEBUG) {
+                    Log.d(TAG, "User supplied splashscreen");
+                }
                 ImageView iv = new ImageView(getApplicationContext());
                 Picasso.with(getApplicationContext()).load(jsonChannel.getSplashscreen()).into(iv);
                 return iv;
             } else {
-                Log.d(TAG, "Manually create a splashscreen");
+                if (DEBUG) {
+                    Log.d(TAG, "Manually create a splashscreen");
+                }
                 ((TextView) v.findViewById(R.id.channel)).setText(jsonChannel.getNumber());
                 ((TextView) v.findViewById(R.id.title)).setText(jsonChannel.getName());
                 if (!jsonChannel.getLogo().isEmpty()) {
@@ -135,7 +156,8 @@ public class CumulusTvService extends MultimediaInputProvider {
                                 @Override
                                 public void handleMessage(Message msg) {
                                     super.handleMessage(msg);
-                                    ((ImageView) v.findViewById(R.id.thumnail)).setImageBitmap(bitmap[0]);
+                                    ((ImageView) v.findViewById(R.id.thumnail))
+                                            .setImageBitmap(bitmap[0]);
 
                                     //Use Palette to grab colors
                                     Palette p = Palette.from(bitmap[0])
@@ -144,37 +166,57 @@ public class CumulusTvService extends MultimediaInputProvider {
                                         Log.d(TAG, "Use vibrant");
                                         Palette.Swatch s = p.getVibrantSwatch();
                                         v.setBackgroundColor(s.getRgb());
-                                        ((TextView) v.findViewById(R.id.channel)).setTextColor(s.getTitleTextColor());
-                                        ((TextView) v.findViewById(R.id.title)).setTextColor(s.getTitleTextColor());
-                                        ((TextView) v.findViewById(R.id.channel_msg)).setTextColor(s.getTitleTextColor());
+                                        ((TextView) v.findViewById(R.id.channel))
+                                                .setTextColor(s.getTitleTextColor());
+                                        ((TextView) v.findViewById(R.id.title))
+                                                .setTextColor(s.getTitleTextColor());
+                                        ((TextView) v.findViewById(R.id.channel_msg))
+                                                .setTextColor(s.getTitleTextColor());
 
                                         //Now style the progress bar
                                         if (p.getDarkVibrantSwatch() != null) {
                                             Palette.Swatch dvs = p.getDarkVibrantSwatch();
-                                            ((ProgressWheel) v.findViewById(R.id.indeterminate_progress_large_library)).setBarColor(dvs.getRgb());
+                                            ((ProgressWheel) v.findViewById(
+                                                    R.id.indeterminate_progress_large_library))
+                                                    .setBarColor(dvs.getRgb());
                                         }
                                     } else if (p.getDarkVibrantSwatch() != null) {
                                         Log.d(TAG, "Use dark vibrant");
                                         Palette.Swatch s = p.getDarkVibrantSwatch();
                                         v.setBackgroundColor(s.getRgb());
-                                        ((TextView) v.findViewById(R.id.channel)).setTextColor(s.getTitleTextColor());
-                                        ((TextView) v.findViewById(R.id.title)).setTextColor(s.getTitleTextColor());
-                                        ((TextView) v.findViewById(R.id.channel_msg)).setTextColor(s.getTitleTextColor());
-                                        ((ProgressWheel) v.findViewById(R.id.indeterminate_progress_large_library)).setBarColor(s.getRgb());
+                                        ((TextView) v.findViewById(R.id.channel))
+                                                .setTextColor(s.getTitleTextColor());
+                                        ((TextView) v.findViewById(R.id.title))
+                                                .setTextColor(s.getTitleTextColor());
+                                        ((TextView) v.findViewById(R.id.channel_msg))
+                                                .setTextColor(s.getTitleTextColor());
+                                        ((ProgressWheel) v.findViewById(
+                                                R.id.indeterminate_progress_large_library))
+                                                .setBarColor(s.getRgb());
                                     } else if (p.getSwatches().size() > 0) {
                                         //Go with default if no vibrant swatch exists
-                                        Log.d(TAG, "No vibrant swatch, " + p.getSwatches().size() + " others");
+                                        if (DEBUG) {
+                                            Log.d(TAG, "No vibrant swatch, " +
+                                                    p.getSwatches().size() + " others");
+                                        }
                                         Palette.Swatch s = p.getSwatches().get(0);
                                         v.setBackgroundColor(s.getRgb());
-                                        ((TextView) v.findViewById(R.id.channel)).setTextColor(s.getTitleTextColor());
-                                        ((TextView) v.findViewById(R.id.title)).setTextColor(s.getTitleTextColor());
-                                        ((TextView) v.findViewById(R.id.channel_msg)).setTextColor(s.getTitleTextColor());
-                                        ((ProgressWheel) v.findViewById(R.id.indeterminate_progress_large_library)).setBarColor(s.getBodyTextColor());
+                                        ((TextView) v.findViewById(R.id.channel))
+                                                .setTextColor(s.getTitleTextColor());
+                                        ((TextView) v.findViewById(R.id.title))
+                                                .setTextColor(s.getTitleTextColor());
+                                        ((TextView) v.findViewById(R.id.channel_msg))
+                                                .setTextColor(s.getTitleTextColor());
+                                        ((ProgressWheel) v.findViewById(
+                                                R.id.indeterminate_progress_large_library))
+                                                .setBarColor(s.getBodyTextColor());
                                     }
                                 }
                             };
                             try {
-                                if (jsonChannel != null && jsonChannel.getLogo() != null && !jsonChannel.getLogo().isEmpty() && jsonChannel.getLogo().length() > 8) {
+                                if (jsonChannel != null && jsonChannel.getLogo() != null &&
+                                        !jsonChannel.getLogo().isEmpty() &&
+                                        jsonChannel.getLogo().length() > 8) {
                                     bitmap[0] = Picasso.with(getApplicationContext())
                                             .load(jsonChannel.getLogo())
                                             .placeholder(R.drawable.ic_launcher)
@@ -191,27 +233,30 @@ public class CumulusTvService extends MultimediaInputProvider {
             Log.d(TAG, "Overlay");
             return v;
         } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "The loading screen can't seem to open, but the channel is loading.", Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "Failure to open: " + e.getMessage());
+            Toast.makeText(getApplicationContext(), R.string.toast_error_no_loading_screen,
+                    Toast.LENGTH_SHORT).show();
+            if (DEBUG) {
+                Log.d(TAG, "Failure to open: " + e.getMessage());
+            }
             return null;
         }
     }
 
-    private JSONChannel jsonChannel;
-    private boolean stillTuning;
     @Override
     public boolean onTune(Channel channel) {
         ChannelDatabase cd = new ChannelDatabase(this);
         jsonChannel = cd.findChannel(channel.getNumber());
-
-        Log.d(TAG, "Tune request to go to "+channel.getName());
-        Log.d(TAG, "Has IPD of "+channel.getInternalProviderData());
-        Log.d(TAG, "Convert to "+jsonChannel.toString());
+        if (DEBUG) {
+            Log.d(TAG, "Tune request to go to " + channel.getName());
+            Log.d(TAG, "Has IPD of " + channel.getInternalProviderData());
+            Log.d(TAG, "Convert to " + jsonChannel.toString());
+        }
         if(getProgramRightNow(channel) != null) {
             Log.d(TAG, getProgramRightNow(channel).getInternalProviderData());
             play(getProgramRightNow(channel).getInternalProviderData());
             stillTuning = false;
-            if(jsonChannel.isAudioOnly() || jsonChannel.getName().equals("Beats One Radio")) { //Hacky for now
+            // Hacky for now
+            if(jsonChannel.isAudioOnly() || jsonChannel.getName().equals("Beats One Radio")) {
                 Log.d(TAG, "Audio only stream");
                 new Handler(Looper.getMainLooper()) {
                     @Override
@@ -225,7 +270,10 @@ public class CumulusTvService extends MultimediaInputProvider {
             notifyVideoAvailable();
             return true;
         } else {
-            Toast.makeText(CumulusTvService.this, "Something's wrong. Cannot tune to this channel.", Toast.LENGTH_SHORT).show();
+            SyncUtils.requestSync(getApplicationContext(), ActivityUtils.TV_INPUT_SERVICE
+                    .flattenToString());
+            Toast.makeText(CumulusTvService.this, R.string.toast_error_cannot_tune,
+                    Toast.LENGTH_SHORT).show();
             notifyVideoUnavailable(REASON_UNKNOWN);
             return false;
         }
@@ -233,9 +281,12 @@ public class CumulusTvService extends MultimediaInputProvider {
 
     public void onPreTune(Uri channelUri) {
         stillTuning = true;
-        Log.d(TAG, "Pre-tune to "+channelUri.getLastPathSegment()+"<");
-        Log.d(TAG, new SettingsManager(this).getString("URI"+channelUri.getLastPathSegment())+"<<");
-        jsonChannel = new ChannelDatabase(this).findChannel(new SettingsManager(this).getString("URI"+channelUri.getLastPathSegment()));
+        if (DEBUG) {
+            Log.d(TAG, "Pre-tune to " + channelUri.getLastPathSegment() + "<");
+            Log.d(TAG, new SettingsManager(this).getString("URI" + channelUri.getLastPathSegment()) + "<<");
+        }
+        jsonChannel = new ChannelDatabase(this).findChannel(new SettingsManager(this)
+                .getString("URI"+channelUri.getLastPathSegment()));
         simpleSession.setOverlayViewEnabled(false);
         simpleSession.setOverlayViewEnabled(true); //Redo splash
         simpleSession.notifyVideoAvailable();
@@ -244,14 +295,17 @@ public class CumulusTvService extends MultimediaInputProvider {
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        Toast.makeText(CumulusTvService.this, "You're running low on system memory. Things may not work as expected.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(CumulusTvService.this, R.string.toast_error_low_memory,
+                Toast.LENGTH_SHORT).show();
     }
 
     @Nullable
     @Override
     public Session onCreateSession(String inputId) {
         simpleSession = new CumulusSessions(this);
-        Log.d(TAG, "Start session "+inputId);
+        if (DEBUG) {
+            Log.d(TAG, "Start session " + inputId);
+        }
         simpleSession.setOverlayViewEnabled(true);
         return simpleSession;
     }

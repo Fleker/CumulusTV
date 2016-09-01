@@ -22,6 +22,7 @@ import java.net.URL;
 /**
  * Created by Nick on 7/12/2015.
  */
+@Deprecated
 public class CumulusTvPlayer extends AppCompatActivity {
     private String urlStream;
     private VideoView myVideoView;

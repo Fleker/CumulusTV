@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.felkertech.n.tv;
+package com.felkertech.n.tv.fragments;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -43,6 +43,10 @@ import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JSONChannel;
 import com.felkertech.n.cumulustv.activities.MainActivity;
 import com.felkertech.n.cumulustv.R;
+import com.felkertech.n.tv.presenters.DetailsDescriptionPresenter;
+import com.felkertech.n.tv.Movie;
+import com.felkertech.n.tv.Utils;
+import com.felkertech.n.tv.activities.DetailsActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;

@@ -11,24 +11,29 @@ import com.felkertech.n.cumulustv.R;
 /**
  * Created by guest1 on 8/7/2015.
  */
-public class CumulusTvPlugin extends AppCompatActivity {
-    public static String INTENT_EDIT = "Edit";
-    public static String INTENT_ADD = "Add";
-    public static String INTENT_EXTRA_ACTION = "action";
-    public static String INTENT_EXTRA_NUMBER = "Number";
-    public static String INTENT_EXTRA_NAME = "Name";
-    public static String INTENT_EXTRA_ICON = "Icon";
-    public static String INTENT_EXTRA_URL = "Url";
-    public static String INTENT_EXTRA_SPLASH = "Splash";
-    public static String INTENT_EXTRA_GENRES = "Genres";
-    public static String TAGx = "cumulus:Plugin";
-    public static String INTENT_EXTRA_READ_ALL = "Readall";
-    public static String INTENT_EXTRA_ALL_CHANNELS = "Allchannels";
+public abstract class CumulusTvPlugin extends AppCompatActivity {
+    private static final String TAG = CumulusTvPlugin.class.getSimpleName();
+    private static final boolean DEBUG = false;
 
-    private Intent telegram;
-    private boolean isEdit;
-    private String label;
+    public static final String INTENT_EDIT = "Edit";
+    public static final String INTENT_ADD = "Add";
+    public static final String INTENT_EXTRA_ACTION = "action";
+    public static final String INTENT_EXTRA_NUMBER = "Number";
+    public static final String INTENT_EXTRA_NAME = "Name";
+    public static final String INTENT_EXTRA_ICON = "Icon";
+    public static final String INTENT_EXTRA_URL = "Url";
+    public static final String INTENT_EXTRA_SPLASH = "Splash";
+    public static final String INTENT_EXTRA_GENRES = "Genres";
+    public static final String INTENT_EXTRA_READ_ALL = "Readall";
+    public static final String INTENT_EXTRA_ALL_CHANNELS = "Allchannels";
+
+    public static final String ACTION_ADD_CHANNEL = "com.felkertech.cumulustv.ADD_CHANNEL";
+    public static final String ACTION_RECEIVER = "com.felkertech.cumulustv.RECEIVER";
+
+    private boolean isEdit = false;
     private boolean proprietary = true;
+    private Intent telegram;
+    private String label;
 
     /**
      * Starts the activity. You can override this to inflate a layout and setup anything else
@@ -38,12 +43,12 @@ public class CumulusTvPlugin extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         telegram = getIntent();
-        if(telegram.hasExtra(INTENT_EXTRA_ACTION))
+        if (telegram.hasExtra(INTENT_EXTRA_ACTION)) {
             isEdit = telegram.getStringExtra(INTENT_EXTRA_ACTION).equals(INTENT_EDIT);
-        else
-            isEdit = false;
-        Log.d(TAGx, "Initialized");
-
+        }
+        if (DEBUG) {
+            Log.d(TAG, "Initialized");
+        }
         setContentView(R.layout.loading);
     }
 
@@ -84,14 +89,18 @@ public class CumulusTvPlugin extends AppCompatActivity {
          */
         i.setClassName("com.felkertech.n.cumulustv",
                 "com.felkertech.n.plugins.DataReceiver");
-        i.setAction("com.felkertech.cumulustv.RECEIVER");
+        i.setAction(ACTION_RECEIVER);
         i.putExtra(DataReceiver.INTENT_EXTRA_JSON, jsonString);
-        if(proprietary)
-            i.putExtra(DataReceiver.INTENT_EXTRA_SOURCE, getApplicationInfo().packageName+","+getApplicationInfo().name);
-        else
+        if (proprietary) {
+            i.putExtra(DataReceiver.INTENT_EXTRA_SOURCE, getApplicationInfo().packageName + "," +
+                    getApplicationInfo().name);
+        } else {
             i.putExtra(DataReceiver.INTENT_EXTRA_SOURCE, "");
+        }
         i.putExtra(DataReceiver.INTENT_EXTRA_ACTION, DataReceiver.INTENT_EXTRA_ACTION_WRITE);
-        Log.d("cumulus:plugin", "Saving changes");
+        if (DEBUG) {
+            Log.d(TAG, "Saving changes");
+        }
         sendBroadcast(i);
         finish();
     }
@@ -101,14 +110,17 @@ public class CumulusTvPlugin extends AppCompatActivity {
         String ogString = original.toString();
         i.setClassName("com.felkertech.n.cumulustv",
                 "com.felkertech.n.plugins.DataReceiver");
-        i.setAction("com.felkertech.cumulustv.RECEIVER");
+        i.setAction(ACTION_RECEIVER);
         i.putExtra(DataReceiver.INTENT_EXTRA_JSON, jsonString);
-        if(getChannel() != null)
+        if (getChannel() != null) {
             i.putExtra(DataReceiver.INTENT_EXTRA_ORIGINAL_JSON, ogString);
-        if(proprietary)
-            i.putExtra(DataReceiver.INTENT_EXTRA_SOURCE, getApplicationInfo().packageName+","+getApplicationInfo().name);
-        else
+        }
+        if (proprietary) {
+            i.putExtra(DataReceiver.INTENT_EXTRA_SOURCE, getApplicationInfo().packageName + "," +
+                    getApplicationInfo().name);
+        } else {
             i.putExtra(DataReceiver.INTENT_EXTRA_SOURCE, "");
+        }
         i.putExtra(DataReceiver.INTENT_EXTRA_ACTION, DataReceiver.INTENT_EXTRA_ACTION_WRITE);
         Log.d("cumulus:plugin", "Saving changes");
         sendBroadcast(i);
@@ -133,16 +145,19 @@ public class CumulusTvPlugin extends AppCompatActivity {
      */
     public void saveDatabase() {
         Intent i = new Intent("com.felkertech.cumulustv.RECEIVER");
-        i.putExtra(DataReceiver.INTENT_EXTRA_ACTION, DataReceiver.INTENT_EXTRA_ACTION_DATABASE_WRITE);
+        i.putExtra(DataReceiver.INTENT_EXTRA_ACTION,
+                DataReceiver.INTENT_EXTRA_ACTION_DATABASE_WRITE);
         sendBroadcast(i);
         finish();
     }
 
     public JSONChannel getChannel() {
-        if(!telegram.hasExtra(INTENT_EXTRA_ACTION))
+        if(!telegram.hasExtra(INTENT_EXTRA_ACTION)) {
             return null;
-        if(telegram.getStringExtra(INTENT_EXTRA_ACTION).equals(INTENT_ADD))
+        }
+        if(telegram.getStringExtra(INTENT_EXTRA_ACTION).equals(INTENT_ADD)) {
             return null;
+        }
         String number = telegram.getStringExtra(INTENT_EXTRA_NUMBER);
         String name = telegram.getStringExtra(INTENT_EXTRA_NAME);
         String logo = telegram.getStringExtra(INTENT_EXTRA_ICON);

@@ -167,7 +167,7 @@
             android:name=".Intro.Intro"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name="com.felkertech.n.tv.LeanbackActivity"
+            android:name="com.felkertech.n.tv.activities.LeanbackActivity"
             android:label="@string/app_name"
             android:exported="true"
             android:screenOrientation="landscape"
@@ -179,13 +179,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.felkertech.n.tv.DetailsActivity"
+            android:name="com.felkertech.n.tv.activities.DetailsActivity"
             android:theme="@style/Theme.Leanback" />
         <activity
-            android:name="com.felkertech.n.tv.PlaybackOverlayActivity"
-            android:theme="@style/Theme.Leanback" />
-        <activity
-            android:name="com.felkertech.n.tv.BrowseErrorActivity"
+            android:name="com.felkertech.n.tv.activities.PlaybackOverlayActivity"
             android:theme="@style/Theme.Leanback" />
         <activity android:name=".activities.CumulusDreamsSettingsActivity" /> <!-- This service is only used on devices with API v17+ -->
         <service

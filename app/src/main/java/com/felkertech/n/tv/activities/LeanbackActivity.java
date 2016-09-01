@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.felkertech.n.tv;
+package com.felkertech.n.tv.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -27,6 +27,7 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.cumulustv.R;
+import com.felkertech.n.tv.fragments.LeanbackFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 

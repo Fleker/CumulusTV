@@ -30,6 +30,7 @@ import java.util.Date;
 /**
  * Created by Nick on 5/4/2016.
  */
+@Deprecated
 public class CumulusSessions extends SimpleSessionImpl {
     private String TAG = "CSession";
     private TvInputProvider tvInputProvider;

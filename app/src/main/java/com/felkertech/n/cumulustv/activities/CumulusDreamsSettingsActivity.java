@@ -50,8 +50,10 @@ public class CumulusDreamsSettingsActivity extends PreferenceActivity {
                         public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
                             DriveSettingsManager sm = new DriveSettingsManager(getActivity());
                             try {
-                                sm.setString(R.string.daydream_url, new JSONChannel((JSONObject) cdn.getJSONChannels().get(which)).getUrl());
-                                Toast.makeText(getActivity(), R.string.daydream_success, Toast.LENGTH_SHORT).show();
+                                sm.setString(R.string.daydream_url, new JSONChannel((JSONObject)
+                                        cdn.getJSONChannels().get(which)).getUrl());
+                                Toast.makeText(getActivity(), R.string.daydream_success,
+                                        Toast.LENGTH_SHORT).show();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

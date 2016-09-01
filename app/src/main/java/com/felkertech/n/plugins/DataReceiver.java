@@ -66,9 +66,11 @@ public class DataReceiver extends BroadcastReceiver
                     jsonChannel.setSource(intent.getStringExtra(INTENT_EXTRA_SOURCE));
                     if(intent.hasExtra(INTENT_EXTRA_ORIGINAL_JSON)) {
                         //Clearly edited a stream
-                        JSONChannel original = new JSONChannel(new JSONObject(intent.getStringExtra(INTENT_EXTRA_ORIGINAL_JSON)));
+                        JSONChannel original = new JSONChannel(
+                                new JSONObject(intent.getStringExtra(INTENT_EXTRA_ORIGINAL_JSON)));
                         for(int i = 0; i < cdn.getJSONChannels().length(); i++) {
-                            JSONChannel item = new JSONChannel(cdn.getJSONChannels().getJSONObject(i));
+                            JSONChannel item = new JSONChannel(
+                                    cdn.getJSONChannels().getJSONObject(i));
                             if(original.equals(item)) {
                                 Log.d(TAG, "Found a match");
 
@@ -114,7 +116,7 @@ public class DataReceiver extends BroadcastReceiver
         ActivityUtils.writeDriveData(mContext, gapi);
         Log.d(TAG, "Sync w/ drive");
 
-        final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".CumulusTvService"));
+        final String info = TvContract.buildInputId(ActivityUtils.TV_INPUT_SERVICE);
         SyncUtils.requestSync(mContext, info);
     }
 

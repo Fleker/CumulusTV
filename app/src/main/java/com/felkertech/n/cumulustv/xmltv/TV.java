@@ -3,8 +3,9 @@ package com.felkertech.n.cumulustv.xmltv;
 import java.util.ArrayList;
 
 /**
- * Created by guest1 on 8/25/2015.
+ * Created by Nick on 8/25/2015.
  */
+@Deprecated
 public class TV {
     ArrayList<Channel> channels;
     ArrayList<Program> programs;

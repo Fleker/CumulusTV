@@ -12,9 +12,11 @@
  * the License.
  */
 
-package com.felkertech.n.tv;
+package com.felkertech.n.tv.presenters;
 
 import android.support.v17.leanback.widget.AbstractDetailsDescriptionPresenter;
+
+import com.felkertech.n.tv.Movie;
 
 public class DetailsDescriptionPresenter extends AbstractDetailsDescriptionPresenter {
 

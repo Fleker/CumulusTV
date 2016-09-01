@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.felkertech.n.tv;
+package com.felkertech.n.tv.fragments;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -55,6 +55,10 @@ import com.felkertech.n.cumulustv.model.JSONChannel;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.xmltv.Program;
 import com.felkertech.n.cumulustv.xmltv.XMLTVParser;
+import com.felkertech.n.tv.presenters.CardPresenter;
+import com.felkertech.n.tv.Movie;
+import com.felkertech.n.tv.MovieList;
+import com.felkertech.n.tv.activities.DetailsActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -377,10 +381,7 @@ public class LeanbackFragment extends BrowseFragment
                 mActivity.startActivity(intent, bundle);
             } else if (item instanceof String) {
                 String title = (String) item;
-                if (((String) item).indexOf(getString(R.string.error_fragment)) >= 0) {
-                    Intent intent = new Intent(mActivity, BrowseErrorActivity.class);
-                    startActivity(intent);
-                } else if(title.equals(getString(R.string.manage_livechannels))) {
+                if(title.equals(getString(R.string.manage_livechannels))) {
                     ActivityUtils.launchLiveChannels(mActivity);
                 } else if(title.equals(getString(R.string.manage_add_suggested))) {
                    ActivityUtils.openSuggestedChannels(mActivity, gapi);

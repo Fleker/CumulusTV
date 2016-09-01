@@ -43,11 +43,12 @@ public class M3UParser {
                         if (part.startsWith("#EXTINF:")) {
 //                            Log.d(TAG, "Part: "+part);
                             displayNumber = part.substring(8).replaceAll("^0+", "");
-//                            Log.d(TAG, "Display Number: "+displayNumber);
                             if(displayNumber.isEmpty())
-                                displayNumber = ChannelDatabase.getAvailableChannelNumber(mContext)+"";
+                                displayNumber = String.valueOf(
+                                        ChannelDatabase.getAvailableChannelNumber(mContext));
                             if(displayNumber.equals("-1"))
-                                displayNumber = ChannelDatabase.getAvailableChannelNumber(mContext)+"";
+                                displayNumber = String.valueOf(
+                                        ChannelDatabase.getAvailableChannelNumber(mContext));
                             originalNetworkId = Integer.parseInt(displayNumber);
                         } else if (part.startsWith("tvg-id=")) {
                             int end = part.indexOf("\"", 8);
@@ -71,17 +72,14 @@ public class M3UParser {
                                     originalNetworkId, 0, 0, false);
                     if (channelMap.containsKey(originalNetworkId)) {
                         int freeChannel = 1;
-                        while(channelMap.containsKey(new Integer(freeChannel))) {
+                        while (channelMap.containsKey(new Integer(freeChannel))) {
                             freeChannel++;
                         }
-//                        channels.set(channelMap.get(new Integer(freeChannel)), channel);
                         channelMap.put(freeChannel, channels.size());
                         channel.displayNumber = freeChannel+"";
-//                        if(channel.url != null)
-                            channels.add(channel);
+                        channels.add(channel);
                     } else {
                         channelMap.put(originalNetworkId, channels.size());
-//                        if(channel.url != null)
                             channels.add(channel);
                     }
                 } else {

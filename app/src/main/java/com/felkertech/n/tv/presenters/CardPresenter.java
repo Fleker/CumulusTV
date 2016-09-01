@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.felkertech.n.tv;
+package com.felkertech.n.tv.presenters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.felkertech.n.cumulustv.R;
+import com.felkertech.n.tv.Movie;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 

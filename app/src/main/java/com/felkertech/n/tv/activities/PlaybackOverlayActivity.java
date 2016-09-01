@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.felkertech.n.tv;
+package com.felkertech.n.tv.activities;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -22,7 +22,6 @@ import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.widget.VideoView;
 
@@ -30,6 +29,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.felkertech.n.cumulustv.R;
+import com.felkertech.n.tv.Movie;
+import com.felkertech.n.tv.fragments.PlaybackOverlayFragment;
 
 /**
  * PlaybackOverlayActivity for video playback that loads PlaybackOverlayFragment

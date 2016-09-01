@@ -1,6 +1,5 @@
 package com.felkertech.n.cumulustv.activities;
 
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageInfo;
@@ -25,7 +24,7 @@ import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JSONChannel;
 import com.felkertech.n.cumulustv.xmltv.Program;
 import com.felkertech.n.cumulustv.xmltv.XMLTVParser;
-import com.felkertech.n.tv.LeanbackActivity;
+import com.felkertech.n.tv.activities.LeanbackActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -45,13 +44,17 @@ import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    public static String TAG = "cumulus:MainActivity";
-    GoogleApiClient gapi;
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final boolean DEBUG = false;
+
     private static final int RESOLVE_CONNECTION_REQUEST_CODE = 100;
     private static final int REQUEST_CODE_CREATOR = 102;
-    DriveSettingsManager sm;
-    MaterialDialog md;
+
+    private GoogleApiClient gapi;
+    private DriveSettingsManager sm;
+    private MaterialDialog md;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,10 +105,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             .itemsCallback(new MaterialDialog.ListCallback() {
                                 @Override
                                 public void onSelection(MaterialDialog materialDialog, View view, final int i, CharSequence charSequence) {
-                                    //Toast.makeText(getApplicationContext(), charSequence + " selected", Toast.LENGTH_SHORT).show();
                                     try {
-                                        JSONChannel jsonChannel = new JSONChannel(cdn.getJSONChannels().getJSONObject(i));
-                                        ActivityUtils.editChannel(MainActivity.this, jsonChannel.getNumber());
+                                        JSONChannel jsonChannel = new JSONChannel(
+                                                cdn.getJSONChannels().getJSONObject(i));
+                                        ActivityUtils.editChannel(MainActivity.this,
+                                                jsonChannel.getNumber());
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -157,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onActionFinished(boolean cloudToLocal) {
                 Log.d(TAG, "Sync req after drive action");
-                final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".CumulusTvService"));
+                final String info = TvContract.buildInputId(ActivityUtils.TV_INPUT_SERVICE);
                 SyncUtils.requestSync(MainActivity.this, info);
                 if (cloudToLocal) {
                     Toast.makeText(MainActivity.this, R.string.downloaded, Toast.LENGTH_SHORT).show();
@@ -166,7 +170,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
             }
         }); //Enable GDrive
-        Log.d(TAG, sm.getString(R.string.sm_google_drive_id)+"<< for onConnected");
+        if (DEBUG) {
+            Log.d(TAG, sm.getString(R.string.sm_google_drive_id) + "<< for onConnected");
+        }
         if(sm.getString(R.string.sm_google_drive_id).isEmpty()) {
             //We need a new file
             new MaterialDialog.Builder(MainActivity.this)
@@ -230,14 +236,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d(TAG, "Error connecting " + connectionResult.getErrorCode());
+        if (DEBUG) {
+            Log.d(TAG, "Error connecting " + connectionResult.getErrorCode());
+        }
         if(md != null) {
             if (md.isShowing()) {
-                ((TextView) md.getCustomView().findViewById(R.id.message)).setText("Error connecting: " + connectionResult.toString());
+                ((TextView) md.getCustomView().findViewById(R.id.message))
+                        .setText("Error connecting: " + connectionResult.toString());
             }
         }
-        Toast.makeText(MainActivity.this, "Connection issue ("+connectionResult.getErrorCode()+"): "+connectionResult.toString(), Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "oCF " + connectionResult.toString());
+        Toast.makeText(MainActivity.this, "Connection issue (" + connectionResult.getErrorCode() +
+                "): " + connectionResult.toString(), Toast.LENGTH_SHORT).show();
+        if (DEBUG) {
+            Log.d(TAG, "oCF " + connectionResult.toString());
+        }
         if (connectionResult.hasResolution()) {
             try {
                 connectionResult.startResolutionForResult(this, RESOLVE_CONNECTION_REQUEST_CODE);
@@ -247,7 +259,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         } else {
             try {
-                GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), MainActivity.this, 0).show();
+                GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(),
+                        MainActivity.this, 0).show();
             } catch(Exception e) {
                 e.printStackTrace();
             }
@@ -265,7 +278,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 public void onResult(DriveApi.DriveContentsResult result) {
                     MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
                             .setTitle("cumulustv_channels.json")
-                            .setDescription("JSON list of channels that can be imported using CumulusTV to view live streams")
+                            .setDescription("JSON list of channels that can be imported using " +
+                                    "CumulusTV to view live streams")
                             .setMimeType("application/json").build();
                     IntentSender intentSender = Drive.DriveApi
                             .newCreateFileActivityBuilder()
@@ -326,7 +340,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                             public void onPositive(MaterialDialog dialog) {
                                                 super.onPositive(dialog);
                                                 Intent gi = new Intent(Intent.ACTION_VIEW);
-                                                gi.setData(Uri.parse("https://bitbucket.org/fleker/mlc-music-live-channels"));
+                                                gi.setData(Uri.parse("https://bitbucket.org/fleke" +
+                                                        "r/mlc-music-live-channels"));
                                                 startActivity(gi);
                                             }
                                         })

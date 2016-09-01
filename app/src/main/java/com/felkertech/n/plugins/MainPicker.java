@@ -45,9 +45,12 @@ import io.fabric.sdk.android.Fabric;
  * Created by Nick on 8/7/2015.
  */
 public class MainPicker extends CumulusTvPlugin {
-    public String label = "";
-    private String TAG = "cumulus:MainPicker";
+    private static final String TAG = "cumulus:MainPicker";
+    private static final boolean DEBUG = false;
+
+    private String label = "";
     private MaterialDialog pickerDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "Start a");
@@ -60,7 +63,8 @@ public class MainPicker extends CumulusTvPlugin {
         Log.d(TAG, areEditing() + "<");
         Intent i = getIntent();
         Log.d(TAG, i.getAction()+"<<");
-        if(i.getAction() != null && (i.getAction().equals(Intent.ACTION_SEND) || i.getAction().equals(Intent.ACTION_VIEW))) {
+        if(i.getAction() != null && (i.getAction().equals(Intent.ACTION_SEND) ||
+                i.getAction().equals(Intent.ACTION_VIEW))) {
             Log.d(TAG, "User shared to this");
             final Uri uri = getIntent().getData();
             Log.d(TAG, "Uri "+uri);
@@ -70,8 +74,10 @@ public class MainPicker extends CumulusTvPlugin {
                 finish();
                 return;
             }
-            if(uri.getScheme().contains("file") && PermissionUtils.isDisabled(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                PermissionUtils.requestPermissionIfDisabled(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            if(uri.getScheme().contains("file") &&
+                    PermissionUtils.isDisabled(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                PermissionUtils.requestPermissionIfDisabled(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 Toast.makeText(this, R.string.permission_not_allowed_error, Toast.LENGTH_SHORT).show();
                 finish();
                 return;
@@ -101,19 +107,30 @@ public class MainPicker extends CumulusTvPlugin {
                                 public void onPositive(MaterialDialog dialog) {
                                     super.onPositive(dialog);
                                     RelativeLayout l = (RelativeLayout) dialog.getCustomView();
-                                    String number = ((EditText) l.findViewById(R.id.number)).getText().toString();
+                                    String number = ((EditText) l.findViewById(R.id.number))
+                                            .getText().toString();
                                     Log.d(TAG, "Channel " + number);
-                                    String name = ((EditText) l.findViewById(R.id.name)).getText().toString();
-                                    String logo = ((EditText) l.findViewById(R.id.logo)).getText().toString();
-                                    String stream = ((EditText) l.findViewById(R.id.stream)).getText().toString();
-                                    String splash = ((EditText) l.findViewById(R.id.splash)).getText().toString();
-                                    String genres = ((Button) l.findViewById(R.id.genres)).getText().toString();
+                                    String name = ((EditText) l.findViewById(R.id.name))
+                                            .getText().toString();
+                                    String logo = ((EditText) l.findViewById(R.id.logo))
+                                            .getText().toString();
+                                    String stream = ((EditText) l.findViewById(R.id.stream))
+                                            .getText().toString();
+                                    String splash = ((EditText) l.findViewById(R.id.splash))
+                                            .getText().toString();
+                                    String genres = ((Button) l.findViewById(R.id.genres))
+                                            .getText().toString();
 
                                     if(number == null || number.length() == 0) {
-                                        Toast.makeText(MainPicker.this, "Your channel must have a number!", Toast.LENGTH_SHORT).show();
-                                        ((EditText) l.findViewById(R.id.number)).setBackgroundColor(getResources().getColor(android.R.color.holo_red_dark));
+                                        Toast.makeText(MainPicker.this,
+                                                R.string.toast_error_channel_number,
+                                                Toast.LENGTH_SHORT).show();
+                                        ((EditText) l.findViewById(R.id.number))
+                                                .setBackgroundColor(getResources()
+                                                        .getColor(android.R.color.holo_red_dark));
                                     } else {
-                                        JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, genres);
+                                        JSONChannel jsch = new JSONChannel(number, name, stream,
+                                                logo, splash, genres);
                                         saveChannel(jsch);
                                     }
                                 }
@@ -128,7 +145,8 @@ public class MainPicker extends CumulusTvPlugin {
                         }
                     });
                     includeGenrePicker(pickerDialog, "");
-                    ((EditText) pickerDialog.getCustomView().findViewById(R.id.stream)).setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    ((EditText) pickerDialog.getCustomView().findViewById(R.id.stream))
+                            .setOnEditorActionListener(new TextView.OnEditorActionListener() {
                         @Override
                         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                             loadStream(pickerDialog, uri.toString());
@@ -147,7 +165,8 @@ public class MainPicker extends CumulusTvPlugin {
                 } else {
                     ContentResolver resolver = getContentResolver();
                     InputStream input = resolver.openInputStream(uri);
-                    final M3UParser.TvListing listings = M3UParser.parse(input, getApplicationContext());
+                    final M3UParser.TvListing listings = M3UParser.parse(input,
+                            getApplicationContext());
                     new MaterialDialog.Builder(MainPicker.this)
                             .title(getString(R.string.import_bulk_title, listings.channels.size()))
                             .content(listings.getChannelList())
@@ -157,12 +176,15 @@ public class MainPicker extends CumulusTvPlugin {
                                 @Override
                                 public void onPositive(MaterialDialog dialog) {
                                     super.onPositive(dialog);
-                                    Toast.makeText(MainPicker.this, R.string.import_bulk_wait, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MainPicker.this, R.string.import_bulk_wait,
+                                            Toast.LENGTH_SHORT).show();
                                     new Thread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            ChannelDatabase channelDatabase = new ChannelDatabase(MainPicker.this);
-                                            for (M3UParser.XmlTvChannel channel : listings.channels) {
+                                            ChannelDatabase channelDatabase =
+                                                    new ChannelDatabase(MainPicker.this);
+                                            for (M3UParser.XmlTvChannel channel :
+                                                    listings.channels) {
                                                 JSONChannel jsonChannel = new JSONChannel(
                                                         channel.displayNumber,
                                                         channel.displayName,
@@ -178,11 +200,14 @@ public class MainPicker extends CumulusTvPlugin {
                                                 }
                                             }
                                             channelDatabase.save();
-                                            Handler finishedImporting = new Handler(Looper.getMainLooper()) {
+                                            Handler finishedImporting =
+                                                    new Handler(Looper.getMainLooper()) {
                                                 @Override
                                                 public void handleMessage(Message msg) {
                                                     super.handleMessage(msg);
-                                                    Toast.makeText(MainPicker.this, R.string.import_bulk_success, Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(MainPicker.this,
+                                                            R.string.import_bulk_success,
+                                                            Toast.LENGTH_SHORT).show();
                                                     saveDatabase();
                                                 }
                                             };
@@ -197,8 +222,9 @@ public class MainPicker extends CumulusTvPlugin {
                 e.printStackTrace();
             }
         } else {
-            if (getChannel() != null)
+            if (getChannel() != null && DEBUG) {
                 Log.d(TAG, getChannel().getName() + "<<");
+            }
             loadDialogs();
         }
     }
@@ -231,22 +257,34 @@ public class MainPicker extends CumulusTvPlugin {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
                             super.onPositive(dialog);
-                            Log.d(TAG, "Submission");
+                            if (DEBUG) {
+                                Log.d(TAG, "Submission");
+                            }
                             //Get stuff
                             RelativeLayout l = (RelativeLayout) dialog.getCustomView();
-                            String number = ((EditText) l.findViewById(R.id.number)).getText().toString();
-                            Log.d(TAG, "Channel " + number);
-                            String name = ((EditText) l.findViewById(R.id.name)).getText().toString();
-                            String logo = ((EditText) l.findViewById(R.id.logo)).getText().toString();
-                            String stream = ((EditText) l.findViewById(R.id.stream)).getText().toString();
-                            String splash = ((EditText) l.findViewById(R.id.splash)).getText().toString();
-                            String genres = ((Button) l.findViewById(R.id.genres)).getText().toString();
-                            JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, genres);
+                            String number = ((EditText) l.findViewById(R.id.number)).getText()
+                                    .toString();
+                            if (DEBUG) {
+                                Log.d(TAG, "Channel " + number);
+                            }
+                            String name = ((EditText) l.findViewById(R.id.name)).getText()
+                                    .toString();
+                            String logo = ((EditText) l.findViewById(R.id.logo)).getText()
+                                    .toString();
+                            String stream = ((EditText) l.findViewById(R.id.stream)).getText()
+                                    .toString();
+                            String splash = ((EditText) l.findViewById(R.id.splash)).getText()
+                                    .toString();
+                            String genres = ((Button) l.findViewById(R.id.genres)).getText()
+                                    .toString();
+                            JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash,
+                                    genres);
                             saveChannel(jsch);
                         }
                     })
                     .show();
-            ((EditText) pickerDialog.getCustomView().findViewById(R.id.stream)).setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            ((EditText) pickerDialog.getCustomView().findViewById(R.id.stream))
+                    .setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                     loadStream(pickerDialog);
@@ -282,15 +320,24 @@ public class MainPicker extends CumulusTvPlugin {
                         public void onPositive(MaterialDialog dialog) {
                             super.onPositive(dialog);
                             RelativeLayout l = (RelativeLayout) dialog.getCustomView();
-                            String number = ((EditText) l.findViewById(R.id.number)).getText().toString();
-                            Log.d(TAG, "Channel " + number);
-                            String name = ((EditText) l.findViewById(R.id.name)).getText().toString();
-                            String logo = ((EditText) l.findViewById(R.id.logo)).getText().toString();
-                            String stream = ((EditText) l.findViewById(R.id.stream)).getText().toString();
-                            String splash = ((EditText) l.findViewById(R.id.splash)).getText().toString();
-                            String genres = ((Button) l.findViewById(R.id.genres)).getText().toString();
+                            String number = ((EditText) l.findViewById(R.id.number)).getText()
+                                    .toString();
+                            if (DEBUG) {
+                                Log.d(TAG, "Channel " + number);
+                            }
+                            String name = ((EditText) l.findViewById(R.id.name)).getText()
+                                    .toString();
+                            String logo = ((EditText) l.findViewById(R.id.logo)).getText()
+                                    .toString();
+                            String stream = ((EditText) l.findViewById(R.id.stream)).getText()
+                                    .toString();
+                            String splash = ((EditText) l.findViewById(R.id.splash)).getText()
+                                    .toString();
+                            String genres = ((Button) l.findViewById(R.id.genres)).getText()
+                                    .toString();
 
-                            JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, genres);
+                            JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash,
+                                    genres);
                             saveChannel(jsch, getChannel());
                         }
 
@@ -298,17 +345,25 @@ public class MainPicker extends CumulusTvPlugin {
                         public void onNegative(MaterialDialog dialog) {
                             super.onNegative(dialog);
                             RelativeLayout l = (RelativeLayout) dialog.getCustomView();
-                            String number = ((EditText) l.findViewById(R.id.number)).getText().toString();
-                            Log.d(TAG, "Channel " + number);
+                            String number = ((EditText) l.findViewById(R.id.number)).getText()
+                                    .toString();
+                            if (DEBUG) {
+                                Log.d(TAG, "Channel " + number);
+                                Log.d(TAG, "DEL Channel " + number);
+                            }
+                            String name = ((EditText) l.findViewById(R.id.name)).getText()
+                                    .toString();
+                            String logo = ((EditText) l.findViewById(R.id.logo)).getText()
+                                    .toString();
+                            String stream = ((EditText) l.findViewById(R.id.stream)).getText()
+                                    .toString();
+                            String splash = ((EditText) l.findViewById(R.id.splash)).getText()
+                                    .toString();
+                            String genres = ((Button) l.findViewById(R.id.genres)).getText()
+                                    .toString();
 
-                            Log.d(TAG, "DEL Channel " + number);
-                            String name = ((EditText) l.findViewById(R.id.name)).getText().toString();
-                            String logo = ((EditText) l.findViewById(R.id.logo)).getText().toString();
-                            String stream = ((EditText) l.findViewById(R.id.stream)).getText().toString();
-                            String splash = ((EditText) l.findViewById(R.id.splash)).getText().toString();
-                            String genres = ((Button) l.findViewById(R.id.genres)).getText().toString();
-
-                            final JSONChannel jsch = new JSONChannel(number, name, stream, logo, splash, genres);
+                            final JSONChannel jsch = new JSONChannel(number, name, stream, logo,
+                                    splash, genres);
                             deleteChannel(jsch);
                         }
                     })
@@ -328,7 +383,8 @@ public class MainPicker extends CumulusTvPlugin {
                 }
             });
             includeGenrePicker(pickerDialog, getChannel().getGenresString());
-            ((EditText) pickerDialog.getCustomView().findViewById(R.id.stream)).setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            ((EditText) pickerDialog.getCustomView().findViewById(R.id.stream))
+                    .setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                     loadStream(pickerDialog);
@@ -345,11 +401,15 @@ public class MainPicker extends CumulusTvPlugin {
                 }
             });
         } else {
-            Toast.makeText(MainPicker.this, "This plugin doesn't support READALL", Toast.LENGTH_SHORT).show();
-            Log.d(TAG, getAllChannels());
+            Toast.makeText(MainPicker.this, R.string.toast_msg_no_support_READALL,
+                    Toast.LENGTH_SHORT).show();
+            if (DEBUG) {
+                Log.d(TAG, getAllChannels());
+            }
             finish();
         }
     }
+
     public void includeGenrePicker(final MaterialDialog d, final String gString) {
         d.findViewById(R.id.genres).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -366,9 +426,12 @@ public class MainPicker extends CumulusTvPlugin {
                 new MaterialDialog.Builder(MainPicker.this)
                         .title(R.string.select_genres)
                         .items(ChannelDatabase.getAllGenres())
-                        .itemsCallbackMultiChoice(selections.toArray(new Integer[selections.size()]), new MaterialDialog.ListCallbackMultiChoice() {
+                        .itemsCallbackMultiChoice(selections.toArray(
+                                new Integer[selections.size()]),
+                                new MaterialDialog.ListCallbackMultiChoice() {
                             @Override
-                            public boolean onSelection(MaterialDialog materialDialog, Integer[] integers, CharSequence[] charSequences) {
+                            public boolean onSelection(MaterialDialog materialDialog,
+                                    Integer[] integers, CharSequence[] charSequences) {
                                 CommaArray genres = new CommaArray("");
                                 for (CharSequence g : charSequences) {
                                     genres.add(g.toString());
@@ -394,7 +457,8 @@ public class MainPicker extends CumulusTvPlugin {
         exoPlayer = new TvInputPlayer();
         exoPlayer.setSurface(sv.getHolder().getSurface());
         try {
-            exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
+            exoPlayer.prepare(getApplicationContext(), Uri.parse(url),
+                    TvInputPlayer.SOURCE_TYPE_HLS);
         } catch(Exception e) {
             //Do nothing
             Log.d(TAG, "IllegalArgumentException");
@@ -407,7 +471,8 @@ public class MainPicker extends CumulusTvPlugin {
         exoPlayer = new TvInputPlayer();
         exoPlayer.setSurface(sv.getHolder().getSurface());
         try {
-            exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
+            exoPlayer.prepare(getApplicationContext(), Uri.parse(url),
+                    TvInputPlayer.SOURCE_TYPE_HLS);
         } catch (Exception e) {
                 e.printStackTrace();
         }
@@ -417,9 +482,13 @@ public class MainPicker extends CumulusTvPlugin {
         String url = "";
         if(getChannel() != null) {
             url = getChannel().getUrl();
-        } if(pickerDialog.getCustomView().findViewById(R.id.stream) != null)
-            url = ((EditText) pickerDialog.getCustomView().findViewById(R.id.stream)).getText().toString();
-        Log.d(TAG, "Found '"+url+"'");
+        } if(pickerDialog.getCustomView().findViewById(R.id.stream) != null) {
+            url = ((EditText) pickerDialog.getCustomView().findViewById(R.id.stream)).getText()
+                    .toString();
+        }
+        if (DEBUG) {
+            Log.d(TAG, "Found '" + url + "'");
+        }
         return url;
     }
 }

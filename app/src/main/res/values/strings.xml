@@ -103,5 +103,29 @@
     <string name="about_mlc_summary" translatable="false">MLC is an experimental, web-based, leanback, musical experience.</string>
     <string name="about_mlc_issues" translatable="false">Visit Issue Tracker</string>
     <string name="connect_drive" translatable="false">Connect to Google Drive</string>
+    <string name="toast_setup_complete">Setup complete. Make sure you enable these channels in the channel list.</string>
+    <string name="toast_please_report">Please report this error and your JSON file: %1$s</string>
+    <string name="toast_report_database_null">Report this error with your JSON file: DatabaseObject is null</string>
+    <string name="toast_error_object_undefined">Error adding: object is undefined</string>
+    <string name="toast_error_no_loading_screen">The loading screen can\'t seem to open, but the channel is loading.</string>
+    <string name="toast_error_cannot_tune">Something\'s wrong. Cannot tune to this channel.</string>
+    <string name="toast_error_low_memory">You\'re running low on system memory. Things may not work as expected.</string>
+    <string name="toast_error_channel_number">Your channel must have a number!</string>
+    <string name="toast_msg_no_support_READALL">This plugin doesn\'t support READALL</string>
+    <string name="toast_error_channel_invalid">Channel is invalid</string>
+    <string name="toast_msg_pack_not_installed">"Plugin %1$s not installed."</string>
+    <string name="create_sync_file_title">Create a syncable file</string>
+    <string name="create_sync_file_description">Save channel info in Google Drive so you can always access it</string>
+    <string name="toast_error_driveid_invalid">Error: DriveId is invalid</string>
+    <string name="toast_msg_channels_deleted">The deed was done</string>
+    <string name="title_delete_all_channels">Delete all your channel data?</string>
+    <string name="toast_msg_wait_google_api_client">Please wait until Drive Service is active</string>
+    <string name="software_licenses">Software Licenses</string>
+    <string name="choose_an_app">Choose an app</string>
+    <string name="choose_default_app">Yes, if there\'s only one app, default to that one</string>
+    <string name="installed_plugins">Installed Plugins</string>
+    <string name="download_more_plugins">Download More</string>
+    <string name="connection_issue_title">Connection Issue</string>
+    <string name="connection_issue_description">Cannot connect to Google Drive at this moment.</string>
 </resources>
 

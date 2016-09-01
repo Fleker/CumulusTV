@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.felkertech.n.tv;
+package com.felkertech.n.tv.activities;
 
 import android.app.Activity;
 import android.os.Bundle;

@@ -1,6 +1,5 @@
 package com.felkertech.n.boilerplate.Utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -21,24 +20,29 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.Set;
 
 /**
  * Created by Nick on 3/22/2016.
  */
 public class DriveSettingsManager extends SettingsManager {
+    private static final String TAG = DriveSettingsManager.class.getSimpleName();
+    private static final boolean DEBUG = false;
+
+    private GoogleApiClient mGoogleApiClient;
+    private GoogleDriveListener mGoogleDriveListener;
+
     public DriveSettingsManager(Context context) {
         super(context);
     }
+
     /* GOOGLE DRIVE */
-    private GoogleApiClient gapi;
-    private GoogleDriveListener gdl;
     public void setGoogleDriveSyncable(GoogleApiClient gapi) {
-        this.gapi = gapi;
+        this.mGoogleApiClient = gapi;
     }
+
     public void setGoogleDriveSyncable(GoogleApiClient gapi, GoogleDriveListener gdl) {
-        this.gapi = gapi;
-        this.gdl = gdl;
+        this.mGoogleApiClient = gapi;
+        this.mGoogleDriveListener = gdl;
     }
 
     /**
@@ -47,51 +51,59 @@ public class DriveSettingsManager extends SettingsManager {
      * @param data The string of data that should be written
      */
     public void writeToGoogleDrive(DriveId driveId, String data) {
-        DriveFile file = Drive.DriveApi.getFile(gapi, driveId);
-        Log.d(TAG, "Writing to "+driveId+" -> "+data);
+        DriveFile file = Drive.DriveApi.getFile(mGoogleApiClient, driveId);
+        if (DEBUG) {
+            Log.d(TAG, "Writing to " + driveId + " -> " + data);
+        }
         new EditGoogleDriveAsyncTask(mContext).execute(file, data);
     }
 
     public void readFromGoogleDrive(DriveId driveId, final int resId) {
         readFromGoogleDrive(driveId, mContext.getString(resId));
     }
+
     /**
      * Reads a file from Google Drive and inserts that data into a preference
      * @param driveId The id of the file to be read from
      * @param resId The key for the desired preference
      */
     public void readFromGoogleDrive(DriveId driveId, final String resId) {
-        if(gapi == null)
+        if(mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
             return;
-        if(!gapi.isConnected())
-            return; //Stop the presses
+        }
         ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback =
                 new ResultCallback<DriveApi.DriveContentsResult>() {
                     @Override
                     public void onResult(DriveApi.DriveContentsResult result) {
                         if (!result.getStatus().isSuccess()) {
-                            Log.d(TAG, "Error while opening the file contents");
+                            if (DEBUG) {
+                                Log.d(TAG, "Error while opening the file contents");
+                            }
                             return;
                         }
-                        Log.d(TAG, "File contents opened");
-
+                        if (DEBUG) {
+                            Log.d(TAG, "File contents opened");
+                        }
                         //Now step 2, build the contents
                         try {
                             DriveContents contents = result.getDriveContents();
-                            BufferedReader reader = new BufferedReader(new InputStreamReader(contents.getInputStream()));
+                            BufferedReader reader = new BufferedReader(
+                                    new InputStreamReader(contents.getInputStream()));
                             StringBuilder builder = new StringBuilder();
                             String line;
                             while ((line = reader.readLine()) != null) {
                                 builder.append(line);
                             }
                             String contentsAsString = builder.toString();
-                            Log.d(TAG, "From "+contents.getDriveId());
-                            Log.d(TAG, "Retrieved "+contentsAsString);
+                            if (DEBUG) {
+                                Log.d(TAG, "From " + contents.getDriveId());
+                                Log.d(TAG, "Retrieved " + contentsAsString);
+                            }
                             //Step 3, write to SM
                             setString(resId, contentsAsString);
 
                             //Step 4, close stream (or not? java.lang.IllegalStateException: Cannot commit contents opened with MODE_READ_ONLY)
-                            /*contents.commit(gapi, null).setResultCallback(new ResultCallback<Status>() {
+                            /*contents.commit(mGoogleApiClient, null).setResultCallback(new ResultCallback<Status>() {
                                 @Override
                                 public void onResult(Status result) {
                                     // handle the response status
@@ -99,12 +111,12 @@ public class DriveSettingsManager extends SettingsManager {
                             });*/
 
                             //Step 5, send alert
-                            if(gdl != null) {
+                            if(mGoogleDriveListener != null) {
                                 Handler h = new Handler(Looper.getMainLooper()) {
                                     @Override
                                     public void handleMessage(Message msg) {
                                         super.handleMessage(msg);
-                                        gdl.onActionFinished(true);
+                                        mGoogleDriveListener.onActionFinished(true);
                                     }
                                 };
                                 h.sendEmptyMessage(0);
@@ -115,10 +127,11 @@ public class DriveSettingsManager extends SettingsManager {
                     }
                 };
 
-        Drive.DriveApi.getFile(gapi, driveId)
-                .open(gapi, DriveFile.MODE_READ_ONLY, null)
+        Drive.DriveApi.getFile(mGoogleApiClient, driveId)
+                .open(mGoogleApiClient, DriveFile.MODE_READ_ONLY, null)
                 .setResultCallback(driveContentsCallback);
     }
+
     public class EditGoogleDriveAsyncTask extends AsyncTask<Object, Void, Boolean> {
 
         DriveContents driveContents;
@@ -132,7 +145,7 @@ public class DriveSettingsManager extends SettingsManager {
             String data = (String) args[1];
             try {
                 DriveApi.DriveContentsResult driveContentsResult = file.open(
-                        gapi, DriveFile.MODE_WRITE_ONLY, null).await();
+                        mGoogleApiClient, DriveFile.MODE_WRITE_ONLY, null).await();
                 if (!driveContentsResult.getStatus().isSuccess()) {
                     return false;
                 }
@@ -140,28 +153,32 @@ public class DriveSettingsManager extends SettingsManager {
                 OutputStream outputStream = driveContents.getOutputStream();
                 outputStream.write(data.getBytes());
                 com.google.android.gms.common.api.Status status =
-                        driveContents.commit(gapi, null).await();
-                if(gdl != null) {
+                        driveContents.commit(mGoogleApiClient, null).await();
+                if(mGoogleDriveListener != null) {
                     Handler h = new Handler(Looper.getMainLooper()) {
                         @Override
                         public void handleMessage(Message msg) {
                             super.handleMessage(msg);
-                            gdl.onActionFinished(false);
+                            mGoogleDriveListener.onActionFinished(false);
                         }
                     };
                     h.sendEmptyMessage(0);
                 }
                 return status.getStatus().isSuccess();
             } catch (IOException e) {
-                Log.e(TAG, "IOException while appending to the output stream", e);
+                if (DEBUG) {
+                    Log.e(TAG, "IOException while appending to the output stream", e);
+                }
             }
             return false;
         }
 
         @Override
         protected void onPostExecute(Boolean result) {
-            Log.d(TAG, "EditContents result "+result);
-            /*driveContents.commit(gapi, null).setResultCallback(new ResultCallback<com.google.android.gms.common.api.Status>() {
+            if (DEBUG) {
+                Log.d(TAG, "EditContents result " + result);
+            }
+            /*driveContents.commit(mGoogleApiClient, null).setResultCallback(new ResultCallback<com.google.android.gms.common.api.Status>() {
                 @Override
                 public void onResult(com.google.android.gms.common.api.Status result) {
                     // Handle the response status
@@ -170,7 +187,8 @@ public class DriveSettingsManager extends SettingsManager {
 
         }
     }
+
     public interface GoogleDriveListener {
-        public abstract void onActionFinished(boolean cloudToLocal);
+        void onActionFinished(boolean cloudToLocal);
     }
 }

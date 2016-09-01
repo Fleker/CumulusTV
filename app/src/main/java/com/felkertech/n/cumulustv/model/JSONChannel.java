@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Objects;
 
 public class JSONChannel {
     private String number;
@@ -21,6 +22,7 @@ public class JSONChannel {
     private String source;
     private String service;
     private boolean audioOnly;
+
     public JSONChannel(JSONObject jsonObject) {
         if(jsonObject == null)
             jsonObject = new JSONObject();
@@ -48,7 +50,7 @@ public class JSONChannel {
             if(jsonObject.has("genres"))
                 genres = jsonObject.getString("genres");
             else
-                genres = TvContract.Programs.Genres.LIFE_STYLE;
+                genres = TvContract.Programs.Genres.MOVIES;
             if(jsonObject.has("source"))
                 source = jsonObject.getString("source");
             else
@@ -65,7 +67,9 @@ public class JSONChannel {
             e.printStackTrace();
         }
     }
-    public JSONChannel(String number, String name, String url, String logo, String splash, String genres) {
+
+    public JSONChannel(String number, String name, String url, String logo, String splash,
+            String genres) {
         this.number = number;
         this.name = name;
         this.url = url;
@@ -97,6 +101,7 @@ public class JSONChannel {
     public boolean hasLogo() {
         return !getLogo().isEmpty();
     }
+
     public boolean hasSplashscreen() {
         return !getSplashscreen().isEmpty();
     }
@@ -104,6 +109,7 @@ public class JSONChannel {
     public String getSource() {
         return source;
     }
+
     public boolean hasSource() {
         if(getSource() == null)
             return false;
@@ -117,6 +123,7 @@ public class JSONChannel {
     public boolean isAudioOnly() {
         return audioOnly;
     }
+
     public JSONChannel setAudioOnly(boolean isAudioOnly) {
         this.audioOnly = isAudioOnly;
         return this;
@@ -134,6 +141,7 @@ public class JSONChannel {
         object.put("audioOnly", isAudioOnly());
         return object;
     }
+
     public String toString() {
         try {
             return toJSON().toString();
@@ -146,6 +154,7 @@ public class JSONChannel {
     public String getGenresString() {
         return genres;
     }
+
     public String[] getGenres() {
         if(genres == null)
             return new String[]{TvContract.Programs.Genres.LIFE_STYLE};
@@ -163,9 +172,15 @@ public class JSONChannel {
             return arrayList.toArray(new String[arrayList.size()]);
         }
     }
+
     public boolean equals(JSONChannel compare) {
         return getNumber().equals(compare.getNumber()) && getName().equals(compare.getName())
                 && getLogo().equals(compare.getLogo()) && getSource().equals(compare.getSource());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getNumber(), getName(), getLogo(), getSource());
     }
 
     public boolean hasService() {
