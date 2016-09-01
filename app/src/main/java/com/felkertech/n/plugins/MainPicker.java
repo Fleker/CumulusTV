@@ -53,21 +53,19 @@ public class MainPicker extends CumulusTvPlugin {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "Start a");
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "Start b");
         Fabric.with(this, new Crashlytics());
         setLabel(label);
         setProprietaryEditing(false);
         setContentView(R.layout.fullphoto);
-        Log.d(TAG, areEditing() + "<");
         Intent i = getIntent();
-        Log.d(TAG, i.getAction()+"<<");
         if(i.getAction() != null && (i.getAction().equals(Intent.ACTION_SEND) ||
                 i.getAction().equals(Intent.ACTION_VIEW))) {
-            Log.d(TAG, "User shared to this");
             final Uri uri = getIntent().getData();
-            Log.d(TAG, "Uri "+uri);
+            if (DEBUG) {
+                Log.d(TAG, "User shared to this");
+                Log.d(TAG, "Uri "+uri);
+            }
             //At this point we need to check for the storage
             if(uri == null) {
                 Toast.makeText(this, R.string.import_null, Toast.LENGTH_SHORT).show();
@@ -83,12 +81,6 @@ public class MainPicker extends CumulusTvPlugin {
                 return;
             }
             try {
-                if(uri == null) {
-                    Toast.makeText(MainPicker.this, "Uri is null", Toast.LENGTH_SHORT).show();
-                    finish();
-                    return;
-                }
-                Log.d(TAG, uri.toString());
                 if(uri.toString().contains("http")) { //Import a channel
                     //Copy from `loadDialogs()` in edit mode
                     pickerDialog = new MaterialDialog.Builder(MainPicker.this)
@@ -182,7 +174,7 @@ public class MainPicker extends CumulusTvPlugin {
                                         @Override
                                         public void run() {
                                             ChannelDatabase channelDatabase =
-                                                    new ChannelDatabase(MainPicker.this);
+                                                    ChannelDatabase.getInstance(MainPicker.this);
                                             for (M3UParser.XmlTvChannel channel :
                                                     listings.channels) {
                                                 JSONChannel jsonChannel = new JSONChannel(
@@ -302,7 +294,7 @@ public class MainPicker extends CumulusTvPlugin {
                 }
             });
         } else if(!areReadingAll()) {
-            final ChannelDatabase cdn = new ChannelDatabase(getApplicationContext());
+            final ChannelDatabase cdn = ChannelDatabase.getInstance(this);
             pickerDialog = new MaterialDialog.Builder(MainPicker.this)
                     .title(R.string.edit_new_channel)
                     .positiveText(R.string.update)

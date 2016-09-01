@@ -142,7 +142,7 @@ public class LeanbackFragment extends BrowseFragment
         } else if(mActivity == null) {
             return;
         }
-        ChannelDatabase cd = new ChannelDatabase(mActivity);
+        ChannelDatabase cd = ChannelDatabase.getInstance(mActivity);
         try {
             CardPresenter channelCardPresenter = new CardPresenter();
 //            GridItemPresenter channelCardPresenter = new GridItemPresenter();

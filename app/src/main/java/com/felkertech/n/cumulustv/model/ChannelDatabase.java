@@ -48,7 +48,7 @@ public class ChannelDatabase {
         return mChannelDatabase;
     }
 
-    public ChannelDatabase(final Context context) {
+    private ChannelDatabase(final Context context) {
         try {
             DriveSettingsManager sp = new DriveSettingsManager(context);
             String spData = sp.getString(KEY, "{'channels':[], 'modified':0}");

@@ -11,6 +11,7 @@ import android.content.pm.ResolveInfo;
 import android.media.tv.TvContract;
 import android.net.Uri;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -21,13 +22,12 @@ import com.felkertech.channelsurfer.utils.LiveChannelsUtils;
 import com.felkertech.n.boilerplate.Utils.AppUtils;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.boilerplate.Utils.PermissionUtils;
-import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.Intro.Intro;
-import com.felkertech.n.cumulustv.model.JSONChannel;
-import com.felkertech.n.cumulustv.activities.MainActivity;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.activities.CumulusTvPlayer;
-import com.felkertech.n.cumulustv.xmltv.TV;
+import com.felkertech.n.cumulustv.activities.MainActivity;
+import com.felkertech.n.cumulustv.model.ChannelDatabase;
+import com.felkertech.n.cumulustv.model.JSONChannel;
 import com.felkertech.n.plugins.CumulusTvPlugin;
 import com.felkertech.n.tv.activities.LeanbackActivity;
 import com.felkertech.settingsmanager.SettingsManager;
@@ -173,7 +173,7 @@ public class ActivityUtils {
         if (DEBUG) {
             Log.d(TAG, "I've been told to add " + j.toString());
         }
-        ChannelDatabase cd = new ChannelDatabase(mActivity);
+        ChannelDatabase cd = ChannelDatabase.getInstance(mActivity);
         if(cd.channelExists(j)) {
             Toast.makeText(mActivity, R.string.channel_dupe, Toast.LENGTH_SHORT).show();
         } else {
@@ -192,7 +192,7 @@ public class ActivityUtils {
         }
     }
     public static void editChannel(final Activity mActivity, final String channel) {
-        ChannelDatabase cdn = new ChannelDatabase(mActivity);
+        ChannelDatabase cdn = ChannelDatabase.getInstance(mActivity);
         JSONChannel jsonChannel = cdn.findChannel(channel); //Find by number
         if(channel == null || jsonChannel == null) {
             Toast.makeText(mActivity, R.string.toast_error_channel_invalid,
@@ -294,7 +294,8 @@ public class ActivityUtils {
             }
         });
         try {
-            sm.writeToGoogleDrive(DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id)), new ChannelDatabase(context).toString());
+            sm.writeToGoogleDrive(DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id)),
+                    ChannelDatabase.getInstance(context).toString());
 
             final String info = TvContract.buildInputId(TV_INPUT_SERVICE);
             SyncUtils.requestSync(context, info);
@@ -305,9 +306,7 @@ public class ActivityUtils {
         }
     }
 
-    public static void readDriveData(Context mContext, GoogleApiClient gapi) {
-        if(mContext == null)
-            return;
+    public static void readDriveData(@NonNull Context mContext, GoogleApiClient gapi) {
         DriveSettingsManager sm = new DriveSettingsManager(mContext);
         sm.setGoogleDriveSyncable(gapi, null);
         DriveId did;
@@ -434,7 +433,7 @@ public class ActivityUtils {
     public static void openPluginPicker(final boolean newChannel, final int index,
                                         final Activity activity) {
         try {
-            ChannelDatabase cdn = new ChannelDatabase(activity);
+            ChannelDatabase cdn = ChannelDatabase.getInstance(activity);
             if(cdn.getJSONChannels().length() == 0) {
                 openPluginPicker(newChannel, new JSONChannel(null), activity);
             } else {
@@ -448,13 +447,13 @@ public class ActivityUtils {
     }
     public static void openPluginPicker(final boolean newChannel, final String channel,
             final Activity activity) {
-        ChannelDatabase cdn = new ChannelDatabase(activity);
+        ChannelDatabase cdn = ChannelDatabase.getInstance(activity);
         openPluginPicker(newChannel, cdn.findChannel(channel), activity);
     }
     public static void openPluginPicker(final boolean newChannel, final JSONChannel queriedChannel,
             final Activity activity) {
         final PackageManager pm = activity.getPackageManager();
-        final Intent plugin_addchannel = new Intent("com.felkertech.cumulustv.ADD_CHANNEL");
+        final Intent plugin_addchannel = new Intent(CumulusTvPlugin.ACTION_ADD_CHANNEL);
         final List<ResolveInfo> plugins = pm.queryIntentActivities(plugin_addchannel, 0);
         ArrayList<String> plugin_names = new ArrayList<String>();
         for (ResolveInfo ri : plugins) {
@@ -480,7 +479,7 @@ public class ActivityUtils {
                         plugin_info.activityInfo.name);
                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
             } else {
-                ChannelDatabase cdn = new ChannelDatabase(activity);
+                ChannelDatabase cdn = ChannelDatabase.getInstance(activity);
                 ResolveInfo plugin_info = plugins.get(0);
                 Log.d(TAG, plugin_info.activityInfo.applicationInfo.packageName + " " +
                         plugin_info.activityInfo.name);
@@ -547,9 +546,9 @@ public class ActivityUtils {
         }
     }
 
-    public static void browsePlugins(final Activity mActivity) {
+    public static void browsePlugins(final Activity activity) {
         //Same opening
-        final PackageManager pm = mActivity.getPackageManager();
+        final PackageManager pm = activity.getPackageManager();
         final Intent plugin_addchannel = new Intent(CumulusTvPlugin.ACTION_ADD_CHANNEL);
         final List<ResolveInfo> plugins = pm.queryIntentActivities(plugin_addchannel, 0);
         ArrayList<String> plugin_names = new ArrayList<String>();
@@ -558,14 +557,14 @@ public class ActivityUtils {
         }
         String[] plugin_names2 = plugin_names.toArray(new String[plugin_names.size()]);
 
-        new MaterialDialog.Builder(mActivity)
+        new MaterialDialog.Builder(activity)
                 .title(R.string.installed_plugins)
                 .items(plugin_names2)
                 .itemsCallback(new MaterialDialog.ListCallback() {
                     @Override
                     public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
                         //Load the given plugin with some additional info
-                        ChannelDatabase cd = new ChannelDatabase(mActivity);
+                        ChannelDatabase cd = ChannelDatabase.getInstance(activity);
                         String s = cd.toString();
                         Intent intent = new Intent();
                         if (DEBUG) {
@@ -580,7 +579,7 @@ public class ActivityUtils {
                         intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION,
                                 CumulusTvPlugin.INTENT_EXTRA_READ_ALL);
                         intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ALL_CHANNELS, s);
-                        mActivity.startActivity(intent);
+                        activity.startActivity(intent);
                     }
                 })
                 .positiveText(R.string.download_more_plugins)
@@ -591,7 +590,7 @@ public class ActivityUtils {
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse(
                                 "http://play.google.com/store/search?q=cumulustv&c=apps"));
-                        mActivity.startActivity(i);
+                        activity.startActivity(i);
                     }
                 }).show();
     }

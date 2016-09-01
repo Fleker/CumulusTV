@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         findViewById(R.id.view).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final ChannelDatabase cdn = new ChannelDatabase(getApplicationContext());
+                final ChannelDatabase cdn = ChannelDatabase.getInstance(MainActivity.this);
                 String[] channelnames = cdn.getChannelNames();
                 if(channelnames.length == 0) {
                     new MaterialDialog.Builder(MainActivity.this)

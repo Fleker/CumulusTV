@@ -22,6 +22,9 @@ import org.json.JSONObject;
 
 public class DataReceiver extends BroadcastReceiver
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    private static final String TAG = DataReceiver.class.getSimpleName();
+    private static final boolean DEBUG = false;
+
     public static String INTENT_EXTRA_JSON = "JSON";
     public static String INTENT_EXTRA_ORIGINAL_JSON = "OGJSON";
     public static String INTENT_EXTRA_ACTION = "Dowhat";
@@ -29,10 +32,10 @@ public class DataReceiver extends BroadcastReceiver
     public static String INTENT_EXTRA_ACTION_DELETE = "Delete";
     public static String INTENT_EXTRA_ACTION_DATABASE_WRITE = "SaveDatabase";
     public static String INTENT_EXTRA_SOURCE = "Source";
-    public static String TAG = "cumulus:DataReceiver";
 
     private GoogleApiClient gapi;
     private Context mContext;
+
     public DataReceiver() {
     }
 
@@ -46,20 +49,22 @@ public class DataReceiver extends BroadcastReceiver
                 .addOnConnectionFailedListener(this)
                 .build();
 
-        Log.d(TAG, "Heard");
+        if (DEBUG) {
+            Log.d(TAG, "Heard");
+        }
         if(intent != null) {
             String action = intent.getStringExtra(INTENT_EXTRA_ACTION);
             String jsonString = "";
-            if(intent.hasExtra(INTENT_EXTRA_JSON))
+            if (intent.hasExtra(INTENT_EXTRA_JSON)) {
                 jsonString = intent.getStringExtra(INTENT_EXTRA_JSON);
-
-            if(action.equals(INTENT_EXTRA_ACTION_DATABASE_WRITE)) {
+            }
+            if (action.equals(INTENT_EXTRA_ACTION_DATABASE_WRITE)) {
                 Log.d(TAG, "Received write command");
                 gapi.connect();
-            } else if(action.equals(INTENT_EXTRA_ACTION_WRITE)) {
+            } else if (action.equals(INTENT_EXTRA_ACTION_WRITE)) {
                 Log.d(TAG, "Received " + jsonString);
                 DriveSettingsManager sm = new DriveSettingsManager(context);
-                ChannelDatabase cdn = new ChannelDatabase(context);
+                ChannelDatabase cdn = ChannelDatabase.getInstance(context);
                 try {
                     JSONObject jo = new JSONObject(jsonString);
                     JSONChannel jsonChannel = new JSONChannel(jo);
@@ -71,38 +76,45 @@ public class DataReceiver extends BroadcastReceiver
                         for(int i = 0; i < cdn.getJSONChannels().length(); i++) {
                             JSONChannel item = new JSONChannel(
                                     cdn.getJSONChannels().getJSONObject(i));
-                            if(original.equals(item)) {
+                            if(original.equals(item) && DEBUG) {
                                 Log.d(TAG, "Found a match");
-
                             }
                         }
-                    } else {
-
                     }
                     if (cdn.channelExists(jsonChannel)) {
                         //Channel exists, so let's update
                         cdn.update(jsonChannel);
-                        Log.d(TAG, "Channel updated");
+                        if (DEBUG) {
+                            Log.d(TAG, "Channel updated");
+                        }
                     } else {
                         cdn.add(jsonChannel);
-                        Log.d(TAG, "Channel added");
+                        if (DEBUG) {
+                            Log.d(TAG, "Channel added");
+                        }
                     }
                     gapi.connect();
                 } catch (JSONException e) {
-                    Log.e(TAG, e.getMessage() + "; Error while adding");
+                    if (DEBUG) {
+                        Log.e(TAG, e.getMessage() + "; Error while adding");
+                    }
                     e.printStackTrace();
                 }
-            } else if(action.equals(INTENT_EXTRA_ACTION_DELETE)) {
-                ChannelDatabase cdn = new ChannelDatabase(context);
+            } else if (action.equals(INTENT_EXTRA_ACTION_DELETE)) {
+                ChannelDatabase cdn = ChannelDatabase.getInstance(context);
                 try {
                     JSONObject jo = new JSONObject(jsonString);
                     JSONChannel jsonChannel = new JSONChannel(jo);
                     cdn.delete(jsonChannel);
-                    Log.d(TAG, "Channel successfully deleted");
-                    //Now sync
+                    if (DEBUG) {
+                        Log.d(TAG, "Channel successfully deleted");
+                    }
+                    // Now sync
                     gapi.connect();
                 } catch (JSONException e) {
-                    Log.e(TAG, e.getMessage() + "; Error while adding");
+                    if (DEBUG) {
+                        Log.e(TAG, e.getMessage() + "; Error while adding");
+                    }
                     e.printStackTrace();
                 }
             }
@@ -111,10 +123,11 @@ public class DataReceiver extends BroadcastReceiver
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.d(TAG, "Connected. Now what?");
+        if (DEBUG) {
+            Log.d(TAG, "Connected - Sync w/ drive");
+        }
         //Let's sync with GDrive
         ActivityUtils.writeDriveData(mContext, gapi);
-        Log.d(TAG, "Sync w/ drive");
 
         final String info = TvContract.buildInputId(ActivityUtils.TV_INPUT_SERVICE);
         SyncUtils.requestSync(mContext, info);
@@ -122,11 +135,9 @@ public class DataReceiver extends BroadcastReceiver
 
     @Override
     public void onConnectionSuspended(int i) {
-
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
     }
 }

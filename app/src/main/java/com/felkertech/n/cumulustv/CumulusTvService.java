@@ -65,26 +65,24 @@ public class CumulusTvService extends MultimediaInputProvider {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "onCreate");
-        mHandlerThread = new HandlerThread(getClass()
-                .getSimpleName());
+        if (DEBUG) {
+            Log.d(TAG, "onCreate");
+        }
+        mHandlerThread = new HandlerThread(getClass().getSimpleName());
         Fabric.with(this, new Crashlytics());
         mHandlerThread.start();
         mDbHandler = new Handler(mHandlerThread.getLooper());
-        mCaptioningManager = (CaptioningManager)
-                getSystemService(Context.CAPTIONING_SERVICE);
+        mCaptioningManager = (CaptioningManager) getSystemService(Context.CAPTIONING_SERVICE);
 
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(TvInputManager
-                .ACTION_BLOCKED_RATINGS_CHANGED);
-        intentFilter.addAction(TvInputManager
-                .ACTION_PARENTAL_CONTROLS_ENABLED_CHANGED);
+        intentFilter.addAction(TvInputManager.ACTION_BLOCKED_RATINGS_CHANGED);
+        intentFilter.addAction(TvInputManager.ACTION_PARENTAL_CONTROLS_ENABLED_CHANGED);
         registerReceiver(mBroadcastReceiver, intentFilter);
     }
 
     @Override
-    public List<Channel> getAllChannels(Context mContext) {
-        ChannelDatabase cdn = new ChannelDatabase(mContext);
+    public List<Channel> getAllChannels(Context context) {
+        ChannelDatabase cdn = ChannelDatabase.getInstance(context);
         try {
             return cdn.getChannels();
         } catch (JSONException e) {
@@ -94,7 +92,7 @@ public class CumulusTvService extends MultimediaInputProvider {
     }
 
     @Override
-    public List<Program> getProgramsForChannel(Context mContext, Uri channelUri,
+    public List<Program> getProgramsForChannel(Context context, Uri channelUri,
             Channel channelInfo, long startTimeMs, long endTimeMs) {
         int programs = (int) ((endTimeMs - startTimeMs) / 1000 / 60 / 60); //Hour long segments
         int SEGMENT = 1000 * 60 * 60; //Hour long segments
@@ -106,7 +104,7 @@ public class CumulusTvService extends MultimediaInputProvider {
             }
             programList.add(new Program.Builder(getGenericProgram(channelInfo))
                     .setInternalProviderData(channelInfo.getInternalProviderData())
-                    .setCanonicalGenres(new ChannelDatabase(mContext).findChannel(
+                    .setCanonicalGenres(ChannelDatabase.getInstance(context).findChannel(
                             channelInfo.getNumber()).getGenres())
                     .setStartTimeUtcMillis((getNearestHour() + SEGMENT * i))
                     .setEndTimeUtcMillis((getNearestHour() + SEGMENT * (i + 1)))
@@ -244,7 +242,7 @@ public class CumulusTvService extends MultimediaInputProvider {
 
     @Override
     public boolean onTune(Channel channel) {
-        ChannelDatabase cd = new ChannelDatabase(this);
+        ChannelDatabase cd = ChannelDatabase.getInstance(this);
         jsonChannel = cd.findChannel(channel.getNumber());
         if (DEBUG) {
             Log.d(TAG, "Tune request to go to " + channel.getName());
@@ -285,7 +283,7 @@ public class CumulusTvService extends MultimediaInputProvider {
             Log.d(TAG, "Pre-tune to " + channelUri.getLastPathSegment() + "<");
             Log.d(TAG, new SettingsManager(this).getString("URI" + channelUri.getLastPathSegment()) + "<<");
         }
-        jsonChannel = new ChannelDatabase(this).findChannel(new SettingsManager(this)
+        jsonChannel = ChannelDatabase.getInstance(this).findChannel(new SettingsManager(this)
                 .getString("URI"+channelUri.getLastPathSegment()));
         simpleSession.setOverlayViewEnabled(false);
         simpleSession.setOverlayViewEnabled(true); //Redo splash

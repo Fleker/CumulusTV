@@ -55,11 +55,9 @@ public class CumulusChannelsSetup extends SimpleTvSetup {
             Log.d(TAG, info);
         }
 
-
-        ChannelDatabase cd = new ChannelDatabase(this);
         List<Channel> list = null;
         try {
-            list = cd.getChannels();
+            list = ChannelDatabase.getInstance(this).getChannels();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -90,10 +88,14 @@ public class CumulusChannelsSetup extends SimpleTvSetup {
 
         //This is a neat little UI thing for people who have channels
         final int[] channelIndex = new int[]{0};
-        final String[] channels = cd.getChannelNames();
-        Log.d(TAG, "Run for "+channels.length+" times");
+        final String[] channels = ChannelDatabase.getInstance(this).getChannelNames();
+        if (DEBUG) {
+            Log.d(TAG, "Run for " + channels.length + " times");
+        }
         if(channels.length <= 0) {
-            Log.d(TAG, "What can you do if you have no channels");
+            if (DEBUG) {
+                Log.d(TAG, "What can you do if you have no channels");
+            }
             return;
         }
         Handler i = new Handler(Looper.myLooper()) {
@@ -110,7 +112,7 @@ public class CumulusChannelsSetup extends SimpleTvSetup {
                 }
             }
         };
-        i.sendEmptyMessageDelayed(0, (SETUP_DURATION-SETUP_UI_LAST)/channels.length);
+        i.sendEmptyMessageDelayed(0, (SETUP_DURATION - SETUP_UI_LAST) / channels.length);
 
         String[] projection = {TvContract.Channels.COLUMN_DISPLAY_NUMBER,
                 TvContract.Channels.COLUMN_DISPLAY_NAME, TvContract.Channels._ID};
@@ -128,7 +130,7 @@ public class CumulusChannelsSetup extends SimpleTvSetup {
                                     TvContract.Channels.COLUMN_DISPLAY_NAME)));
                 }
                 JSONChannel jsonChannel =
-                        new ChannelDatabase(this).findChannel(cursor.getString(
+                        ChannelDatabase.getInstance(this).findChannel(cursor.getString(
                                 cursor.getColumnIndex(TvContract.Channels.COLUMN_DISPLAY_NUMBER)));
                 if (DEBUG) {
                     Log.d(TAG, jsonChannel.toString());

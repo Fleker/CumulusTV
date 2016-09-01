@@ -41,7 +41,7 @@ public class CumulusDreamsSettingsActivity extends PreferenceActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 //            addPreferencesFromResource(R.xml.cumulus_dreams_prefs);
-            final ChannelDatabase cdn = new ChannelDatabase(getActivity());
+            final ChannelDatabase cdn = ChannelDatabase.getInstance(getActivity());
             new MaterialDialog.Builder(getActivity())
                     .title(R.string.daydream_select_channel)
                     .items(cdn.getChannelNames())

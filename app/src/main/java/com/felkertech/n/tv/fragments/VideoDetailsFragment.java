@@ -177,7 +177,7 @@ public class VideoDetailsFragment extends DetailsFragment
 //                getResources().getString(R.string.buy_2)));
         ArrayObjectAdapter actions = new ArrayObjectAdapter();
         //Add another action IF it isn't a channel you already have:
-        ChannelDatabase cdn = new ChannelDatabase(getActivity());
+        ChannelDatabase cdn = ChannelDatabase.getInstance(getActivity());
         if(!cdn.channelNumberExists(mSelectedMovie.getStudio())) {
             actions.add(new Action(ACTION_BUY, "Add"));
         } else {
