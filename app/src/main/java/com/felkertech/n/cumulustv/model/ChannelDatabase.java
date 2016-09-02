@@ -20,6 +20,7 @@ import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.R;
+import com.felkertech.n.tv.activities.PlaybackQuickSettingsActivity;
 import com.felkertech.settingsmanager.SettingsManager;
 
 import junit.framework.Assert;
@@ -103,6 +104,12 @@ public class ChannelDatabase {
         for (int i = 0; i < jsonChannelList.size(); i++) {
             JsonChannel jsonChannel = jsonChannelList.get(i);
             Channel channel = jsonChannel.toChannel();
+            channel.setAppLinkColor("#9C27B0");
+            channel.setAppLinkPoster(jsonChannel.getLogo());
+            channel.setAppLinkText(mSettingsManager.getContext().getString(R.string.quick_settings));
+            channel.setAppLinkIntent(PlaybackQuickSettingsActivity
+                    .getIntent(mSettingsManager.getContext(),
+                            jsonChannel.toString()));
             channelList.add(channel);
         }
         return channelList;
@@ -221,12 +228,11 @@ public class ChannelDatabase {
                     JsonChannel jsonChannel = jsonChannelList.get(i);
                     if(jsonChannel.getMediaUrl() != null &&
                             jsonChannel.getMediaUrl().equals(channel.getMediaUrl())) {
-                        save();
                         mJsonObject.getJSONArray(KEY_CHANNELS).remove(i);
+                        save();
                     }
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } catch (JSONException ignored) {
             }
         }
     }

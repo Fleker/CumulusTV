@@ -202,10 +202,17 @@ public class ActivityUtils {
             }
         }
     }
-    public static void editChannel(final Activity activity, final String channel) {
+
+    /**
+     * Opens the correct intent to start editing the channel.
+     *
+     * @param activity The activity you're calling this from.
+     * @param channelNumber The channel number you're trying to edit.
+     */
+    public static void editChannel(final Activity activity, final String channelNumber) {
         ChannelDatabase cdn = ChannelDatabase.getInstance(activity);
-        final JsonChannel jsonChannel = cdn.findChannelByChannelNumber(channel); //Find by number
-        if(channel == null || jsonChannel == null) {
+        final JsonChannel jsonChannel = cdn.findChannelByChannelNumber(channelNumber);
+        if(channelNumber == null || jsonChannel == null) {
             Toast.makeText(activity, R.string.toast_error_channel_invalid,
                     Toast.LENGTH_SHORT).show();
             return;
@@ -249,18 +256,18 @@ public class ActivityUtils {
                             @Override
                             public void onNegative(MaterialDialog dialog) {
                                 super.onNegative(dialog);
-                                openPluginPicker(false, channel, activity);
+                                openPluginPicker(false, channelNumber, activity);
                             }
                         }).show();
                 Toast.makeText(activity, activity.getString(R.string.toast_msg_pack_not_installed,
                         jsonChannel.getPluginSource().getPackageName()), Toast.LENGTH_SHORT).show();
-                openPluginPicker(false, channel, activity);
+                openPluginPicker(false, channelNumber, activity);
             }
         } else {
             if (DEBUG) {
                 Log.d(TAG, "No specified source");
             }
-            openPluginPicker(false, channel, activity);
+            openPluginPicker(false, channelNumber, activity);
         }
     }
 
@@ -609,11 +616,11 @@ public class ActivityUtils {
 
     /* ACTIVITY CLONES */
     public static void launchLiveChannels(Activity mActivity) {
-        Intent i = LiveChannelsUtils.getLiveChannels(mActivity);
-        if (i == null) {
-            Toast.makeText(mActivity, R.string.no_live_channels, Toast.LENGTH_SHORT).show();
-        } else {
+        Intent i = new Intent(Intent.ACTION_VIEW, TvContract.Channels.CONTENT_URI);
+        try {
             mActivity.startActivity(i);
+        } catch (Exception e) {
+            Toast.makeText(mActivity, R.string.no_live_channels, Toast.LENGTH_SHORT).show();
         }
     }
 
