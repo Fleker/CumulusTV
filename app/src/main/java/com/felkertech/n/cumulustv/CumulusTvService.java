@@ -97,7 +97,7 @@ public class CumulusTvService extends MultimediaInputProvider {
             }
             programList.add(new Program.Builder(getGenericProgram(channelInfo))
                     .setInternalProviderData(channelInfo.getInternalProviderData())
-                    .setCanonicalGenres(ChannelDatabase.getInstance(context).findChannel(
+                    .setCanonicalGenres(ChannelDatabase.getInstance(context).findChannelByChannelNumber(
                             channelInfo.getNumber()).getGenres())
                     .setStartTimeUtcMillis((getNearestHour() + SEGMENT * i))
                     .setEndTimeUtcMillis((getNearestHour() + SEGMENT * (i + 1)))
@@ -236,7 +236,7 @@ public class CumulusTvService extends MultimediaInputProvider {
     @Override
     public boolean onTune(Channel channel) {
         ChannelDatabase cd = ChannelDatabase.getInstance(this);
-        jsonChannel = cd.findChannel(channel.getNumber());
+        jsonChannel = cd.findChannelByChannelNumber(channel.getNumber());
         if (DEBUG) {
             Log.d(TAG, "Tune request to go to " + channel.getName());
             Log.d(TAG, "Has IPD of " + channel.getInternalProviderData());
@@ -276,7 +276,7 @@ public class CumulusTvService extends MultimediaInputProvider {
             Log.d(TAG, "Pre-tune to " + channelUri.getLastPathSegment() + "<");
             Log.d(TAG, new SettingsManager(this).getString("URI" + channelUri.getLastPathSegment()) + "<<");
         }
-        jsonChannel = ChannelDatabase.getInstance(this).findChannel(new SettingsManager(this)
+        jsonChannel = ChannelDatabase.getInstance(this).findChannelByChannelNumber(new SettingsManager(this)
                 .getString("URI"+channelUri.getLastPathSegment()));
         simpleSession.setOverlayViewEnabled(false);
         simpleSession.setOverlayViewEnabled(true); //Redo splash

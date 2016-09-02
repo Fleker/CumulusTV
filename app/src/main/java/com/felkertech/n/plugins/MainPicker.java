@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 import com.felkertech.channelsurfer.players.TvInputPlayer;
+import com.felkertech.n.boilerplate.Utils.AppUtils;
 import com.felkertech.n.boilerplate.Utils.PermissionUtils;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.activities.CumulusTvPlayer;
@@ -160,6 +161,11 @@ public class MainPicker extends CumulusTvPlugin {
                             startActivity(i);
                         }
                     });
+
+                    if (AppUtils.isTV(this)) {
+                        pickerDialog.getCustomView().findViewById(R.id.stream_open)
+                                .setVisibility(View.GONE);
+                    }
                 } else {
                     ContentResolver resolver = getContentResolver();
                     InputStream input = resolver.openInputStream(uri);
@@ -303,6 +309,10 @@ public class MainPicker extends CumulusTvPlugin {
                     startActivity(i);
                 }
             });
+            if (AppUtils.isTV(this)) {
+                pickerDialog.getCustomView().findViewById(R.id.stream_open)
+                        .setVisibility(View.GONE);
+            }
         } else if(!areReadingAll()) {
             final ChannelDatabase cdn = ChannelDatabase.getInstance(this);
             pickerDialog = new MaterialDialog.Builder(MainPicker.this)
@@ -414,6 +424,10 @@ public class MainPicker extends CumulusTvPlugin {
                     startActivity(i);
                 }
             });
+            if (AppUtils.isTV(this)) {
+                pickerDialog.getCustomView().findViewById(R.id.stream_open)
+                        .setVisibility(View.GONE);
+            }
         } else {
             Toast.makeText(MainPicker.this, R.string.toast_msg_no_support_READALL,
                     Toast.LENGTH_SHORT).show();
@@ -479,6 +493,7 @@ public class MainPicker extends CumulusTvPlugin {
         }
         exoPlayer.setPlayWhenReady(true);
     }
+
     public void loadStream(MaterialDialog viewHolder, final String url) {
         SurfaceView sv = (SurfaceView) viewHolder.getCustomView().findViewById(R.id.surface);
         TvInputPlayer exoPlayer;
@@ -492,6 +507,7 @@ public class MainPicker extends CumulusTvPlugin {
         }
         exoPlayer.setPlayWhenReady(true);
     }
+
     public String getUrl() {
         String url = "";
         if(getChannel() != null) {
@@ -504,5 +520,11 @@ public class MainPicker extends CumulusTvPlugin {
             Log.d(TAG, "Found '" + url + "'");
         }
         return url;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadStream(pickerDialog);
     }
 }

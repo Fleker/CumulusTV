@@ -5,6 +5,7 @@ import android.media.tv.TvContract;
 import android.support.annotation.NonNull;
 
 
+import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.settingsmanager.common.CommaArray;
 
 import org.json.JSONException;
@@ -91,7 +92,10 @@ public class JsonChannel {
     }
 
     public ComponentName getPluginSource() {
-        return ComponentName.unflattenFromString(pluginSource);
+        if (pluginSource != null) {
+            return ComponentName.unflattenFromString(pluginSource);
+        }
+        return null;
     }
 
     public boolean hasSplashscreen() {
@@ -114,6 +118,16 @@ public class JsonChannel {
         object.put(KEY_PLUGIN_SOURCE, pluginSource);
         object.put(KEY_SPLASHSCREEN, getSplashscreen());
         return object;
+    }
+
+    public Channel toChannel() {
+        Channel channel = new Channel();
+        channel.setNumber(getNumber());
+        channel.setName(getName());
+        channel.setLogoUrl(getLogo());
+        channel.setInternalProviderData(getMediaUrl());
+        channel.setOriginalNetworkId(getMediaUrl().hashCode());
+        return channel;
     }
 
     public String toString() {
@@ -150,6 +164,24 @@ public class JsonChannel {
 
         public Builder() {
             jsonChannel = new JsonChannel();
+        }
+
+        public Builder(String string) throws JSONException {
+            this(new JSONObject(string));
+        }
+
+        public Builder(JsonChannel channel) {
+            // Clone
+            jsonChannel = new JsonChannel();
+            jsonChannel.audioOnly = channel.audioOnly;
+            jsonChannel.epgUrl = channel.epgUrl;
+            jsonChannel.genres = channel.genres;
+            jsonChannel.logo = channel.logo;
+            jsonChannel.mediaUrl = channel.mediaUrl;
+            jsonChannel.name = channel.name;
+            jsonChannel.number = channel.number;
+            jsonChannel.pluginSource = channel.pluginSource;
+            jsonChannel.splashscreen = channel.splashscreen;
         }
 
         public Builder(JSONObject jsonObject) throws JSONException {

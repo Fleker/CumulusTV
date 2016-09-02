@@ -1,7 +1,9 @@
-package com.felkertech.n.cumulustv;
+package com.felkertech.n.cumulustv.test;
 
 import android.os.Build;
 
+import com.felkertech.channelsurfer.model.Channel;
+import com.felkertech.n.cumulustv.BuildConfig;
 import com.felkertech.n.cumulustv.model.JsonChannel;
 
 import junit.framework.TestCase;
@@ -108,5 +110,48 @@ public class JsonChannelUnitTest extends TestCase {
         } catch (IllegalArgumentException ignored) {
             // Exception correctly handled
         }
+    }
+
+    /**
+     * Tests that we can use the .toChannel method to successfully create a channel object.
+     */
+    @Test
+    public void testSuccessfulChannelConversion() {
+        JsonChannel jsonChannel = new JsonChannel.Builder()
+                .setAudioOnly(AUDIO_ONLY)
+                .setEpgUrl(EPG_URL)
+                .setGenres(GENRES)
+                .setLogo(LOGO)
+                .setMediaUrl(MEDIA_URL)
+                .setName(NAME)
+                .setNumber(NUMBER)
+                .setSplashscreen(SPLASHSCREEN)
+                .build();
+        Channel channel = jsonChannel.toChannel();
+        assertEquals(channel.getName(), jsonChannel.getName());
+    }
+
+    /**
+     * Tests that we can clone a JsonChannel through the Builder to modify later.
+     */
+    @Test
+    public void testJsonChannelCloning() {
+        JsonChannel jsonChannel = new JsonChannel.Builder()
+                .setAudioOnly(AUDIO_ONLY)
+                .setEpgUrl(EPG_URL)
+                .setGenres(GENRES)
+                .setLogo(LOGO)
+                .setMediaUrl(MEDIA_URL)
+                .setName(NAME)
+                .setNumber(NUMBER)
+                .setSplashscreen(SPLASHSCREEN)
+                .build();
+        JsonChannel clonedChannel = new JsonChannel.Builder(jsonChannel).build();
+        assertEquals(clonedChannel, jsonChannel);
+        JsonChannel clonedChannel2 = new JsonChannel.Builder(clonedChannel)
+                .setAudioOnly(!AUDIO_ONLY)
+                .build();
+        assertNotSame(clonedChannel2, clonedChannel);
+        assertEquals(clonedChannel.getName(), clonedChannel2.getName());
     }
 }

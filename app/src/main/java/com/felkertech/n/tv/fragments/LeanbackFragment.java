@@ -138,7 +138,8 @@ public class LeanbackFragment extends BrowseFragment
 
         //ROW 1: MY CHANNELS
         if(mActivity == null && Build.VERSION.SDK_INT >= 23) {
-            Toast.makeText(getContext(), "Uh-oh, something isn't working: loadRows has no activity", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.toast_error_no_activity, Toast.LENGTH_SHORT)
+                    .show();
             return;
         } else if(mActivity == null) {
             return;
@@ -183,7 +184,8 @@ public class LeanbackFragment extends BrowseFragment
 
         //Second row is suggested channels (not really yet)
         CardPresenter suggestedChannelPresenter = new CardPresenter();
-        ArrayObjectAdapter suggestedChannelAdapter = new ArrayObjectAdapter(suggestedChannelPresenter);
+        ArrayObjectAdapter suggestedChannelAdapter =
+                new ArrayObjectAdapter(suggestedChannelPresenter);
         HeaderItem suggestedChannelsHeader = new HeaderItem(1, "Suggested Channels");
         JsonChannel[] suggestedChannels = ActivityUtils.getSuggestedChannels();
         for(JsonChannel jsonChannel: suggestedChannels) {
@@ -294,7 +296,7 @@ public class LeanbackFragment extends BrowseFragment
             @Override
             public void onActionFinished(boolean cloudToLocal) {
                 Log.d(TAG, "Sync req after drive action");
-                final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".CumulusTvService"));
+                final String info = TvContract.buildInputId(ActivityUtils.TV_INPUT_SERVICE);
                 SyncUtils.requestSync(mActivity, info);
                 if (cloudToLocal) {
                     Toast.makeText(getActivity(), "Download complete", Toast.LENGTH_SHORT).show();
@@ -351,9 +353,10 @@ public class LeanbackFragment extends BrowseFragment
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d(TAG, "Error connecting " + connectionResult.getErrorCode());
-
-        Log.d(TAG, "oCF " + connectionResult.toString());
+        if (DEBUG) {
+            Log.d(TAG, "Error connecting " + connectionResult.getErrorCode());
+            Log.d(TAG, "oCF " + connectionResult.toString());
+        }
         if (connectionResult.hasResolution()) {
             try {
                 connectionResult.startResolutionForResult(mActivity, ActivityUtils.RESOLVE_CONNECTION_REQUEST_CODE);

@@ -204,7 +204,7 @@ public class ActivityUtils {
     }
     public static void editChannel(final Activity activity, final String channel) {
         ChannelDatabase cdn = ChannelDatabase.getInstance(activity);
-        final JsonChannel jsonChannel = cdn.findChannel(channel); //Find by number
+        final JsonChannel jsonChannel = cdn.findChannelByChannelNumber(channel); //Find by number
         if(channel == null || jsonChannel == null) {
             Toast.makeText(activity, R.string.toast_error_channel_invalid,
                     Toast.LENGTH_SHORT).show();
@@ -460,7 +460,7 @@ public class ActivityUtils {
     public static void openPluginPicker(final boolean newChannel, final String channel,
             final Activity activity) {
         ChannelDatabase cdn = ChannelDatabase.getInstance(activity);
-        openPluginPicker(newChannel, cdn.findChannel(channel), activity);
+        openPluginPicker(newChannel, cdn.findChannelByChannelNumber(channel), activity);
     }
 
     public static void openPluginPicker(final boolean newChannel, final JsonChannel queriedChannel,

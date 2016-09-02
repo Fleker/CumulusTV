@@ -1,9 +1,12 @@
 package com.felkertech.n.cumulustv.model;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.media.tv.TvContentRating;
 import android.media.tv.TvContract;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,6 +17,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.felkertech.channelsurfer.model.Channel;
+import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.settingsmanager.SettingsManager;
@@ -25,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by N on 7/14/2015.
@@ -42,6 +47,7 @@ public class ChannelDatabase {
     protected JSONObject mJsonObject;
     private TvContentRating mTvContentRating;
     private SettingsManager mSettingsManager;
+    private HashMap<String, Long> mDatabaseHashMap;
 
     private static ChannelDatabase mChannelDatabase;
 
@@ -49,6 +55,7 @@ public class ChannelDatabase {
         if (mChannelDatabase == null) {
             mChannelDatabase = new ChannelDatabase(context);
         }
+        mChannelDatabase.initializeHashMap(context);
         return mChannelDatabase;
     }
 
@@ -95,13 +102,7 @@ public class ChannelDatabase {
         ArrayList<Channel> channelList = new ArrayList<>();
         for (int i = 0; i < jsonChannelList.size(); i++) {
             JsonChannel jsonChannel = jsonChannelList.get(i);
-            Channel channel = new Channel();
-            channel.setNumber(jsonChannel.getNumber());
-            channel.setName(jsonChannel.getName());
-            channel.setOriginalNetworkId(jsonChannel.hashCode());
-            channel.setLogoUrl(jsonChannel.getLogo());
-            Log.d(TAG, "Channel getMediaUrl in GC = " + jsonChannel.getMediaUrl());
-            channel.setInternalProviderData(jsonChannel.getMediaUrl());
+            Channel channel = jsonChannel.toChannel();
             channelList.add(channel);
         }
         return channelList;
@@ -133,12 +134,27 @@ public class ChannelDatabase {
         return false;
     }
 
-    public JsonChannel findChannel(String channelNumber) {
+    public JsonChannel findChannelByChannelNumber(String channelNumber) {
         try {
             ArrayList<JsonChannel> jsonChannelList = getJsonChannels();
             for (JsonChannel jsonChannel : jsonChannelList) {
                 if (jsonChannel.getNumber() != null) {
                     if (jsonChannel.getNumber().equals(channelNumber)) {
+                        return jsonChannel;
+                    }
+                }
+            }
+        } catch (JSONException ignored) {
+        }
+        return null;
+    }
+
+    public JsonChannel findChannelByMediaUrl(String mediaUrl) {
+        try {
+            ArrayList<JsonChannel> jsonChannelList = getJsonChannels();
+            for (JsonChannel jsonChannel : jsonChannelList) {
+                if (jsonChannel.getMediaUrl() != null) {
+                    if (jsonChannel.getMediaUrl().equals(mediaUrl)) {
                         return jsonChannel;
                     }
                 }
@@ -219,6 +235,7 @@ public class ChannelDatabase {
         try {
             setLastModified();
             mSettingsManager.setString(KEY, toString());
+            initializeHashMap(mSettingsManager.getContext());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -237,6 +254,10 @@ public class ChannelDatabase {
         if(mJsonObject != null) {
             mJsonObject.put("modified", System.currentTimeMillis());
         }
+    }
+
+    public HashMap<String, Long> getHashMap() {
+        return mDatabaseHashMap;
     }
 
     public void resetPossibleGenres() throws JSONException {
@@ -274,6 +295,39 @@ public class ChannelDatabase {
             genres.put(TvContract.Programs.Genres.TRAVEL);
         }
         mJsonObject.put("possibleGenres", genres);
+    }
+
+    /**
+     * Creates a link between the database Uris and the JSONChannels
+     * @param context The application's context for the {@link ContentResolver}.
+     */
+    private void initializeHashMap(final Context context) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ContentResolver contentResolver = context.getContentResolver();
+                Uri channelsUri = TvContract.buildChannelsUriForInput(
+                        ActivityUtils.TV_INPUT_SERVICE.flattenToString());
+                Cursor cursor = contentResolver.query(channelsUri, null, null, null, null);
+                mDatabaseHashMap = new HashMap<>();
+                if (cursor != null) {
+                    while (cursor.moveToNext()) {
+                        String mediaUrl = cursor.getString(cursor.getColumnIndex(
+                                TvContract.Channels.COLUMN_INTERNAL_PROVIDER_DATA));
+                        long rowId = cursor.getLong(cursor.getColumnIndex(TvContract.Channels._ID));
+                        try {
+                            for (JsonChannel jsonChannel : getJsonChannels()) {
+                                if (jsonChannel.getMediaUrl().equals(mediaUrl)) {
+                                    mDatabaseHashMap.put(jsonChannel.getMediaUrl(), rowId);
+                                }
+                            }
+                        } catch (JSONException ignored) {
+                        }
+                    }
+                    cursor.close();
+                }
+            }
+        }).start();
     }
 
     public static String[] getAllGenres() {

@@ -131,5 +131,9 @@
     <string name="plugin_not_installed_question">What do you want to do instead?</string>
     <string name="download_app">Download app</string>
     <string name="open_in_another_plugin">Open in another plugin</string>
+    <string name="toast_error_no_activity">Uh-oh, something isn\'t working: loadRows has no activity</string>
+    <string name="add">Add</string>
+    <string name="edit_channel">Edit Channel</string>
+    <string name="play">Play</string>
 </resources>
 

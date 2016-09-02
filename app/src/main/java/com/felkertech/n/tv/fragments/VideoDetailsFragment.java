@@ -16,6 +16,8 @@ package com.felkertech.n.tv.fragments;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.media.tv.TvContract;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v17.leanback.app.BackgroundManager;
 import android.support.v17.leanback.app.DetailsFragment;
@@ -27,10 +29,6 @@ import android.support.v17.leanback.widget.DetailsOverviewRowPresenter;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.OnActionClickedListener;
-import android.support.v17.leanback.widget.OnItemViewClickedListener;
-import android.support.v17.leanback.widget.Presenter;
-import android.support.v17.leanback.widget.Row;
-import android.support.v17.leanback.widget.RowPresenter;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
@@ -61,7 +59,7 @@ public class VideoDetailsFragment extends DetailsFragment
 
     private static final int ACTION_WATCH_TRAILER = 1;
     private static final int ACTION_RENT = 2;
-    private static final int ACTION_BUY = 3;
+    private static final int ACTION_ADD = 3;
     private static final int ACTION_EDIT = 5;
     private static final int ACTION_WATCH = 6;
 
@@ -97,7 +95,6 @@ public class VideoDetailsFragment extends DetailsFragment
             setupMovieListRow();
             setupMovieListRowPresenter();
             updateBackground(mSelectedMovie.getBackgroundImageUrl());
-            setOnItemViewClickedListener(new ItemViewClickedListener());
         } else {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
@@ -169,23 +166,16 @@ public class VideoDetailsFragment extends DetailsFragment
                     }
                 });
 
-//        row.addAction(new Action(ACTION_WATCH_TRAILER, getResources().getString(
-//                R.string.watch_trailer_1), getResources().getString(R.string.watch_trailer_2)));
-//        row.addAction(new Action(ACTION_RENT, getResources().getString(R.string.rent_1),
-//                getResources().getString(R.string.rent_2)));
-//        row.addAction(new Action(ACTION_BUY, getResources().getString(R.string.buy_1),
-//                getResources().getString(R.string.buy_2)));
         ArrayObjectAdapter actions = new ArrayObjectAdapter();
         //Add another action IF it isn't a channel you already have:
         ChannelDatabase cdn = ChannelDatabase.getInstance(getActivity());
         if(!cdn.channelNumberExists(mSelectedMovie.getStudio())) {
-            actions.add(new Action(ACTION_BUY, "Add"));
+            actions.add(new Action(ACTION_ADD, getString(R.string.add)));
         } else {
-            actions.add(new Action(ACTION_EDIT, "Edit Channel"));
+            actions.add(new Action(ACTION_EDIT, getString(R.string.edit_channel)));
         }
-        actions.add(new Action(ACTION_WATCH, "Play"));
+        actions.add(new Action(ACTION_WATCH, getString(R.string.play)));
         row.setActionsAdapter(actions);
-
         mAdapter.add(row);
     }
 
@@ -206,21 +196,26 @@ public class VideoDetailsFragment extends DetailsFragment
                 if(action.getId() == ACTION_EDIT) {
                     ActivityUtils.editChannel(getActivity(), mSelectedMovie.getStudio());
                 } else if(action.getId() == ACTION_WATCH) {
-                    ActivityUtils.openStream(getActivity(), mSelectedMovie.getVideoUrl());
-                } else if(action.getId() == ACTION_BUY) {
-                    /*ChannelDatabase cdn = new ChannelDatabase(getActivity());
-                    JsonChannel jsonChannel = cdn.findChannel(mSelectedMovie.getStudio());
-                    Log.d(TAG, mSelectedMovie.getTitle());
-                    Log.d(TAG, mSelectedMovie.getStudio());
-                    Log.d(TAG, jsonChannel)*/
-                    //Need to get it!
-                    //Let's hope that it exists. (It should b/c this should only be available
-                    //to suggested channels
+                    if (ChannelDatabase.getInstance(getActivity()).getHashMap()
+                            .containsKey(mSelectedMovie.getVideoUrl())) {
+                        // Open in Live Channels
+                        Uri liveChannelsUri =
+                                TvContract.buildChannelUri(
+                                        ChannelDatabase.getInstance(
+                                                getActivity()).getHashMap()
+                                                .get(mSelectedMovie.getVideoUrl()));
+                        getActivity().startActivity(
+                                new Intent(Intent.ACTION_VIEW, liveChannelsUri));
+                    } else {
+                        ActivityUtils.openStream(getActivity(), mSelectedMovie.getVideoUrl());
+                    }
+                } else if(action.getId() == ACTION_ADD) {
                     JsonChannel[] jsonChannels = ActivityUtils.getSuggestedChannels();
                     for(JsonChannel channel: jsonChannels) {
                         if(channel.getNumber().equals(mSelectedMovie.getStudio())) {
                             Log.d(TAG, "Adding " + channel.toString());
-                            ActivityUtils.addChannel(getActivity(), gapi, channel, channel.getName());
+                            ActivityUtils
+                                    .addChannel(getActivity(), gapi, channel, channel.getName());
                             getActivity().finish();
                         }
                     }
@@ -261,28 +256,5 @@ public class VideoDetailsFragment extends DetailsFragment
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
-    }
-
-    private final class ItemViewClickedListener implements OnItemViewClickedListener {
-        @Override
-        public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
-                                  RowPresenter.ViewHolder rowViewHolder, Row row) {
-
-            /*if (item instanceof Movie) {
-                Movie movie = (Movie) item;
-                Log.d(TAG, "Item: " + item.toString());
-                Intent intent = new Intent(getActivity(), DetailsActivity.class);
-                intent.putExtra(getResources().getString(R.string.movie), mSelectedMovie);
-                intent.putExtra(getResources().getString(R.string.should_start), true);
-                startActivity(intent);
-
-
-                Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        getActivity(),
-                        ((ImageCardView) itemViewHolder.view).getMainImageView(),
-                        DetailsActivity.SHARED_ELEMENT_NAME).toBundle();
-                getActivity().startActivity(intent, bundle);
-            }*/
-        }
     }
 }

@@ -1,7 +1,9 @@
-package com.felkertech.n.cumulustv;
+package com.felkertech.n.cumulustv.test;
 
 import android.os.Build;
 
+import com.felkertech.n.cumulustv.BuildConfig;
+import com.felkertech.n.cumulustv.MockChannelDatabase;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
 import com.felkertech.settingsmanager.SettingsManager;
@@ -102,6 +104,6 @@ public class ChannelDatabaseUnitTest extends TestCase {
 
         assertTrue(mockChannelDatabase.channelExists(sampleChannel));
         assertTrue(mockChannelDatabase.channelNumberExists(NUMBER));
-        assertEquals(sampleChannel, mockChannelDatabase.findChannel(NUMBER));
+        assertEquals(sampleChannel, mockChannelDatabase.findChannelByChannelNumber(NUMBER));
     }
 }
