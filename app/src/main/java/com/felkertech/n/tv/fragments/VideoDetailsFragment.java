@@ -194,7 +194,7 @@ public class VideoDetailsFragment extends DetailsFragment
             @Override
             public void onActionClicked(Action action) {
                 if(action.getId() == ACTION_EDIT) {
-                    ActivityUtils.editChannel(getActivity(), mSelectedMovie.getStudio());
+                    ActivityUtils.editChannel(getActivity(), mSelectedMovie.getVideoUrl());
                 } else if(action.getId() == ACTION_WATCH) {
                     if (ChannelDatabase.getInstance(getActivity()).getHashMap()
                             .containsKey(mSelectedMovie.getVideoUrl())) {

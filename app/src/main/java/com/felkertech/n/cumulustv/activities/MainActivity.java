@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                         JsonChannel jsonChannel =
                                                 channelDatabase.getJsonChannels().get(i);
                                         ActivityUtils.editChannel(MainActivity.this,
-                                                jsonChannel.getNumber());
+                                                jsonChannel.getMediaUrl());
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }

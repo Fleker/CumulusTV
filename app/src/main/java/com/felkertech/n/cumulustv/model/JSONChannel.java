@@ -99,7 +99,7 @@ public class JsonChannel {
     }
 
     public boolean hasSplashscreen() {
-        return !getSplashscreen().isEmpty();
+        return getSplashscreen() != null && !getSplashscreen().isEmpty();
     }
 
     public String getSplashscreen() {

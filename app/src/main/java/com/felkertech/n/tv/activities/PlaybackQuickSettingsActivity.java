@@ -34,7 +34,9 @@ public class PlaybackQuickSettingsActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActionBar().hide();
+        if (getActionBar() != null) {
+            getActionBar().hide();
+        }
         setContentView(R.layout.activity_quick_settings);
 
         QuickSetting[] quickSettings = new QuickSetting[3];
@@ -51,7 +53,7 @@ public class PlaybackQuickSettingsActivity extends Activity {
                 @Override
                 public void onClick() {
                     ActivityUtils.editChannel(PlaybackQuickSettingsActivity.this,
-                            jsonChannel.getNumber());
+                            jsonChannel.getMediaUrl());
                 }
             };
 

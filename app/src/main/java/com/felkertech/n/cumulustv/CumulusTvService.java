@@ -48,8 +48,8 @@ import io.fabric.sdk.android.Fabric;
  * Created by N on 7/12/2015.
  */
 public class CumulusTvService extends MultimediaInputProvider {
-    private static final String TAG = "cumulus:TvInputService";
-    private static final boolean DEBUG = false;
+    private static final String TAG = CumulusTvService.class.getSimpleName();
+    private static final boolean DEBUG = true;
 
     private HandlerThread mHandlerThread;
     private BroadcastReceiver mBroadcastReceiver;
@@ -115,8 +115,8 @@ public class CumulusTvService extends MultimediaInputProvider {
             }
             programList.add(new Program.Builder(getGenericProgram(channelInfo))
                     .setInternalProviderData(channelInfo.getInternalProviderData())
-                    .setCanonicalGenres(ChannelDatabase.getInstance(context).findChannelByChannelNumber(
-                            channelInfo.getNumber()).getGenres())
+                    .setCanonicalGenres(ChannelDatabase.getInstance(context).findChannelByMediaUrl(
+                            channelInfo.getInternalProviderData()).getGenres())
                     .setStartTimeUtcMillis((getNearestHour() + SEGMENT * i))
                     .setEndTimeUtcMillis((getNearestHour() + SEGMENT * (i + 1)))
                     .build()
@@ -246,15 +246,16 @@ public class CumulusTvService extends MultimediaInputProvider {
                     Toast.LENGTH_SHORT).show();
             if (DEBUG) {
                 Log.d(TAG, "Failure to open: " + e.getMessage());
+                e.printStackTrace();
             }
             return null;
         }
     }
 
     @Override
-    public boolean onTune(Channel channel) {
+    public boolean onTune(final Channel channel) {
         ChannelDatabase cd = ChannelDatabase.getInstance(this);
-        jsonChannel = cd.findChannelByChannelNumber(channel.getNumber());
+        jsonChannel = cd.findChannelByMediaUrl(channel.getInternalProviderData());
         if (DEBUG) {
             Log.d(TAG, "Tune request to go to " + channel.getName());
             Log.d(TAG, "Has IPD of " + channel.getInternalProviderData());
@@ -273,14 +274,14 @@ public class CumulusTvService extends MultimediaInputProvider {
                     @Override
                     public void handleMessage(Message msg) {
                         super.handleMessage(msg);
+                        if (DEBUG) {
+                            Log.d(TAG, "Redraw splash");
+                        }
                         simpleSession.setOverlayViewEnabled(false);
                         simpleSession.setOverlayViewEnabled(true); //Redo splash
                     }
                 };
-                refreshLayout.sendEmptyMessageDelayed(0, 0);
-                refreshLayout.sendEmptyMessageDelayed(0, 50);
-                refreshLayout.sendEmptyMessageDelayed(0, 150);
-                refreshLayout.sendEmptyMessageDelayed(0, 350);
+                refreshLayout.sendEmptyMessageDelayed(0, 5);
                 refreshLayout.sendEmptyMessageDelayed(0, 550);
             }
             notifyVideoAvailable();
@@ -291,6 +292,13 @@ public class CumulusTvService extends MultimediaInputProvider {
             Toast.makeText(CumulusTvService.this, R.string.toast_error_cannot_tune,
                     Toast.LENGTH_SHORT).show();
             notifyVideoUnavailable(REASON_UNKNOWN);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onTune(channel);
+                }
+            }, 1000 * 5);
             return false;
         }
     }
@@ -299,10 +307,9 @@ public class CumulusTvService extends MultimediaInputProvider {
         stillTuning = true;
         if (DEBUG) {
             Log.d(TAG, "Pre-tune to " + channelUri.getLastPathSegment() + "<");
-            Log.d(TAG, new SettingsManager(this).getString("URI" + channelUri.getLastPathSegment()) + "<<");
         }
-        jsonChannel = ChannelDatabase.getInstance(this).findChannelByChannelNumber(new SettingsManager(this)
-                .getString("URI"+channelUri.getLastPathSegment()));
+        long rowId = Long.parseLong(channelUri.getLastPathSegment());
+        jsonChannel = ChannelDatabase.getInstance(this).getChannelFromRowId(rowId);
         simpleSession.setOverlayViewEnabled(false);
         simpleSession.setOverlayViewEnabled(true); //Redo splash
         simpleSession.notifyVideoAvailable();

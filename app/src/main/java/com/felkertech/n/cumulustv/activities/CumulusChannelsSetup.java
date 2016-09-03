@@ -130,8 +130,8 @@ public class CumulusChannelsSetup extends SimpleTvSetup {
                                     TvContract.Channels.COLUMN_DISPLAY_NAME)));
                 }
                 JsonChannel jsonChannel =
-                        ChannelDatabase.getInstance(this).findChannelByChannelNumber(cursor.getString(
-                                cursor.getColumnIndex(TvContract.Channels.COLUMN_DISPLAY_NUMBER)));
+                        ChannelDatabase.getInstance(this).findChannelByMediaUrl(cursor.getString(
+                                cursor.getColumnIndex(TvContract.Channels.COLUMN_INTERNAL_PROVIDER_DATA)));
                 if (DEBUG) {
                     Log.d(TAG, jsonChannel.toString());
                     Log.d(TAG, String.valueOf(cursor.getInt(

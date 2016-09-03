@@ -4,13 +4,13 @@
     xmlns:lb="http://schemas.android.com/apk/res-auto"
     android:layout_width="@dimen/side_panel_width"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+    android:background="@color/side_panel_background"
     android:orientation="vertical">
 
     <!-- Title -->
     <TextView
         android:id="@+id/title"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/side_panel_header"
         android:layout_width="match_parent"
         android:layout_height="@dimen/side_panel_header_height"
         android:elevation="@dimen/side_panel_header_elevation"

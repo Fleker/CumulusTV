@@ -207,12 +207,12 @@ public class ActivityUtils {
      * Opens the correct intent to start editing the channel.
      *
      * @param activity The activity you're calling this from.
-     * @param channelNumber The channel number you're trying to edit.
+     * @param channelUrl The channel's media url.m
      */
-    public static void editChannel(final Activity activity, final String channelNumber) {
+    public static void editChannel(final Activity activity, final String channelUrl) {
         ChannelDatabase cdn = ChannelDatabase.getInstance(activity);
-        final JsonChannel jsonChannel = cdn.findChannelByChannelNumber(channelNumber);
-        if(channelNumber == null || jsonChannel == null) {
+        final JsonChannel jsonChannel = cdn.findChannelByMediaUrl(channelUrl);
+        if(channelUrl == null || jsonChannel == null) {
             Toast.makeText(activity, R.string.toast_error_channel_invalid,
                     Toast.LENGTH_SHORT).show();
             return;
@@ -256,18 +256,18 @@ public class ActivityUtils {
                             @Override
                             public void onNegative(MaterialDialog dialog) {
                                 super.onNegative(dialog);
-                                openPluginPicker(false, channelNumber, activity);
+                                openPluginPicker(false, channelUrl, activity);
                             }
                         }).show();
                 Toast.makeText(activity, activity.getString(R.string.toast_msg_pack_not_installed,
                         jsonChannel.getPluginSource().getPackageName()), Toast.LENGTH_SHORT).show();
-                openPluginPicker(false, channelNumber, activity);
+                openPluginPicker(false, channelUrl, activity);
             }
         } else {
             if (DEBUG) {
                 Log.d(TAG, "No specified source");
             }
-            openPluginPicker(false, channelNumber, activity);
+            openPluginPicker(false, channelUrl, activity);
         }
     }
 
@@ -464,10 +464,10 @@ public class ActivityUtils {
         }
     }
 
-    public static void openPluginPicker(final boolean newChannel, final String channel,
+    public static void openPluginPicker(final boolean newChannel, final String channelUrl,
             final Activity activity) {
         ChannelDatabase cdn = ChannelDatabase.getInstance(activity);
-        openPluginPicker(newChannel, cdn.findChannelByChannelNumber(channel), activity);
+        openPluginPicker(newChannel, cdn.findChannelByMediaUrl(channelUrl), activity);
     }
 
     public static void openPluginPicker(final boolean newChannel, final JsonChannel queriedChannel,

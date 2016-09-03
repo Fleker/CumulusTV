@@ -207,7 +207,12 @@
 
         <activity android:name="com.felkertech.n.tv.activities.PlaybackQuickSettingsActivity"
             android:exported="true"
-            android:enabled="true" />
+            android:theme="@style/Theme.Panel"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

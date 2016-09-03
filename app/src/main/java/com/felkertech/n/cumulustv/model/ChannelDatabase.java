@@ -15,6 +15,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.security.KeyChain;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -33,6 +34,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Created by N on 7/14/2015.
@@ -139,7 +141,8 @@ public class ChannelDatabase {
         return false;
     }
 
-    public JsonChannel findChannelByChannelNumber(String channelNumber) {
+    @Deprecated
+    private JsonChannel findChannelByChannelNumber(String channelNumber) {
         try {
             ArrayList<JsonChannel> jsonChannelList = getJsonChannels();
             for (JsonChannel jsonChannel : jsonChannelList) {
@@ -262,6 +265,19 @@ public class ChannelDatabase {
 
     public HashMap<String, Long> getHashMap() {
         return mDatabaseHashMap;
+    }
+
+    public JsonChannel getChannelFromRowId(@NonNull long rowId) {
+        if (mDatabaseHashMap == null || rowId < 0) {
+            return null;
+        }
+        Set<String> mediaUrlSet = mDatabaseHashMap.keySet();
+        for (String mediaUrl : mediaUrlSet) {
+            if (mDatabaseHashMap.get(mediaUrl).equals(rowId)) {
+                return findChannelByMediaUrl(mediaUrl);
+            }
+        }
+        return null;
     }
 
     public void resetPossibleGenres() throws JSONException {
