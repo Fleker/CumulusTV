@@ -16,10 +16,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Nick on 11/25/2015.
+ * This class is responsible to converting between M3u playlists and the application model.
  */
-public class M3UParser {
-    private static final String TAG = "cumulus:M3UParser";
+public class M3uParser {
+    private static final String TAG = "cumulus:M3uParser";
     public static TvListing parse(InputStream inputStream, Context mContext) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
         String line;
@@ -41,14 +41,15 @@ public class M3UParser {
                 if (parts.length == 2) {
                     for (String part : parts[0].split(" ")) {
                         if (part.startsWith("#EXTINF:")) {
-//                            Log.d(TAG, "Part: "+part);
                             displayNumber = part.substring(8).replaceAll("^0+", "");
-                            if(displayNumber.isEmpty())
+                            if(displayNumber.isEmpty()) {
                                 displayNumber = String.valueOf(
                                         ChannelDatabase.getAvailableChannelNumber(mContext));
-                            if(displayNumber.equals("-1"))
+                            }
+                            if(displayNumber.equals("-1")) {
                                 displayNumber = String.valueOf(
                                         ChannelDatabase.getAvailableChannelNumber(mContext));
+                            }
                             originalNetworkId = Integer.parseInt(displayNumber);
                         } else if (part.startsWith("tvg-id=")) {
                             int end = part.indexOf("\"", 8);
@@ -72,7 +73,7 @@ public class M3UParser {
                                     originalNetworkId, 0, 0, false);
                     if (channelMap.containsKey(originalNetworkId)) {
                         int freeChannel = 1;
-                        while (channelMap.containsKey(new Integer(freeChannel))) {
+                        while (channelMap.containsKey(Integer.valueOf(freeChannel))) {
                             freeChannel++;
                         }
                         channelMap.put(freeChannel, channels.size());
@@ -96,6 +97,7 @@ public class M3UParser {
         Log.d(TAG, tvl.toString());
         return new TvListing(channels, programs);
     }
+
     public static class TvListing {
         public List<XmlTvChannel> channels;
         public final List<XmlTvProgram> programs;
@@ -136,6 +138,7 @@ public class M3UParser {
             return out;
         }
     }
+
     public static class XmlTvChannel {
         public final String id;
         public final String displayName;

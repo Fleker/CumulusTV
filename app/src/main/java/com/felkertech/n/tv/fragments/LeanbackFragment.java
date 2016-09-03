@@ -15,7 +15,6 @@
 package com.felkertech.n.tv.fragments;
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
@@ -50,15 +49,14 @@ import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
+import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
-import com.felkertech.n.cumulustv.R;
-import com.felkertech.n.cumulustv.xmltv.Program;
-import com.felkertech.n.cumulustv.xmltv.XMLTVParser;
-import com.felkertech.n.tv.presenters.CardPresenter;
+import com.felkertech.n.cumulustv.xmltv.XmlTvParser;
 import com.felkertech.n.tv.Movie;
 import com.felkertech.n.tv.MovieList;
 import com.felkertech.n.tv.activities.DetailsActivity;
+import com.felkertech.n.tv.presenters.CardPresenter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -416,31 +414,6 @@ public class LeanbackFragment extends BrowseFragment
                     ActivityUtils.deleteChannelData(mActivity, gapi);
                 } else if(title.equals(getString(R.string.about_app))) {
                     ActivityUtils.openAbout(mActivity);
-                } else if(title.equals(getString(R.string.settings_read_xmltv))) {
-                    final OkHttpClient client = new OkHttpClient();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Request request = new Request.Builder()
-                                    .url("http://felkerdigitalmedia.com/sampletv.xml")
-                                    .build();
-
-                            Response response = null;
-                            try {
-                                response = client.newCall(request).execute();
-//                                            Log.d(TAG, response.body().string().substring(0,36));
-                                String s = response.body().string();
-                                List<Program> programs = XMLTVParser.parse(s);
-                                            /*Log.d(TAG, programs.toString());
-                                            Log.d(TAG, "Parsed "+programs.size());
-                                            Log.d(TAG, "Program 1: "+ programs.get(0).getTitle());*/
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            } catch (XmlPullParserException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
                 } else {
                     Toast.makeText(mActivity, ((String) item), Toast.LENGTH_SHORT)
                             .show();

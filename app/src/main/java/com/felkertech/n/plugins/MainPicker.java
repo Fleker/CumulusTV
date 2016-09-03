@@ -31,7 +31,7 @@ import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.activities.CumulusTvPlayer;
 import com.felkertech.n.cumulustv.model.JsonChannel;
 import com.felkertech.n.cumulustv.R;
-import com.felkertech.n.fileio.M3UParser;
+import com.felkertech.n.fileio.M3uParser;
 import com.felkertech.settingsmanager.common.CommaArray;
 
 import org.json.JSONException;
@@ -169,7 +169,7 @@ public class MainPicker extends CumulusTvPlugin {
                 } else {
                     ContentResolver resolver = getContentResolver();
                     InputStream input = resolver.openInputStream(uri);
-                    final M3UParser.TvListing listings = M3UParser.parse(input,
+                    final M3uParser.TvListing listings = M3uParser.parse(input,
                             getApplicationContext());
                     new MaterialDialog.Builder(MainPicker.this)
                             .title(getString(R.string.import_bulk_title, listings.channels.size()))
@@ -187,7 +187,7 @@ public class MainPicker extends CumulusTvPlugin {
                                         public void run() {
                                             ChannelDatabase channelDatabase =
                                                     ChannelDatabase.getInstance(MainPicker.this);
-                                            for (M3UParser.XmlTvChannel channel :
+                                            for (M3uParser.XmlTvChannel channel :
                                                     listings.channels) {
                                                 JsonChannel jsonChannel = new JsonChannel.Builder()
                                                         .setName(channel.displayName)
