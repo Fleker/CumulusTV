@@ -10,6 +10,7 @@
     <!-- Title -->
     <TextView
         android:id="@+id/title"
+        android:background="@color/colorPrimaryDark"
         android:layout_width="match_parent"
         android:layout_height="@dimen/side_panel_header_height"
         android:elevation="@dimen/side_panel_header_elevation"

@@ -2,8 +2,10 @@ package com.felkertech.n.cumulustv;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.tv.TvInputManager;
 import android.net.Uri;
 import android.os.Handler;
@@ -29,6 +31,7 @@ import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.cumulustv.livechannels.CumulusSessions;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
+import com.felkertech.n.tv.activities.PlaybackQuickSettingsActivity;
 import com.felkertech.settingsmanager.SettingsManager;
 import com.pnikosis.materialishprogress.ProgressWheel;
 import com.squareup.picasso.Picasso;
@@ -77,7 +80,22 @@ public class CumulusTvService extends MultimediaInputProvider {
     public List<Channel> getAllChannels(Context context) {
         ChannelDatabase cdn = ChannelDatabase.getInstance(context);
         try {
-            return cdn.getChannels();
+            ArrayList<Channel> channels = cdn.getChannels();
+            // Add app linking
+            for (Channel channel : channels) {
+                channel.setAppLinkText(context.getString(R.string.quick_settings));
+                channel.setAppLinkIcon("https://github.com/Fleker/CumulusTV/blob/master/app/src/m" +
+                        "ain/res/drawable-xhdpi/ic_play_action_normal.png?raw=true");
+//                channel.setAppLinkColor(context);
+//                channel.setAppLinkIcon("https://github.com/Fleker/CumulusTV/blob/master/app/src/main/res/drawable-xhdpi/c_mobile.jpg?raw=true");
+                channel.setAppLinkPoster(channel.getLogoUrl());
+                JsonChannel jsonChannel =
+                        cdn.findChannelByMediaUrl(channel.getInternalProviderData());
+                channel.setAppLinkIntent(PlaybackQuickSettingsActivity
+                        .getIntent(context, jsonChannel).toUri(Intent.URI_INTENT_SCHEME));
+//                channel.setAppLinkIntent("intent:#Intent;component=com.example.android.sampletvinput/.rich.RichAppLinkSidePanelActivity;S.display-number=2-3;end");
+            }
+            return channels;
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -247,16 +265,23 @@ public class CumulusTvService extends MultimediaInputProvider {
             play(getProgramRightNow(channel).getInternalProviderData());
             stillTuning = false;
             // Hacky for now
-            if(jsonChannel.isAudioOnly() || jsonChannel.getName().equals("Beats One Radio")) {
-                Log.d(TAG, "Audio only stream");
-                new Handler(Looper.getMainLooper()) {
+            if(jsonChannel.isAudioOnly()) {
+                if (DEBUG) {
+                    Log.d(TAG, "Audio only stream");
+                }
+                Handler refreshLayout = new Handler(Looper.getMainLooper()) {
                     @Override
                     public void handleMessage(Message msg) {
                         super.handleMessage(msg);
                         simpleSession.setOverlayViewEnabled(false);
                         simpleSession.setOverlayViewEnabled(true); //Redo splash
                     }
-                }.sendEmptyMessageDelayed(0, 150);
+                };
+                refreshLayout.sendEmptyMessageDelayed(0, 0);
+                refreshLayout.sendEmptyMessageDelayed(0, 50);
+                refreshLayout.sendEmptyMessageDelayed(0, 150);
+                refreshLayout.sendEmptyMessageDelayed(0, 350);
+                refreshLayout.sendEmptyMessageDelayed(0, 550);
             }
             notifyVideoAvailable();
             return true;

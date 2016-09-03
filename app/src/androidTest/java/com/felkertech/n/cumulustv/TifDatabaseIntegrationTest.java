@@ -58,6 +58,9 @@ public class TifDatabaseIntegrationTest extends ActivityInstrumentationTestCase2
                 null, null, null, null);
         assertNotNull(cursor);
         assertEquals(1, cursor.getCount());
+        assertTrue(cursor.moveToNext());
+        assertEquals(1, cursor.getLong(cursor.getColumnIndex(
+                TvContract.Channels.COLUMN_ORIGINAL_NETWORK_ID)));
         cursor.close();
     }
 

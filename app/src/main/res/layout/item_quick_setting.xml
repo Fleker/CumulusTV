@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_alignParentStart="true"
     android:background="?android:attr/selectableItemBackground"
+    android:textColor="@color/white"
     android:clipChildren="false"
     android:focusable="true"
     android:fontFamily="sans-serif-condensed"

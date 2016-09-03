@@ -2,6 +2,7 @@ package com.felkertech.n.cumulustv.test;
 
 import android.os.Build;
 
+import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.n.cumulustv.BuildConfig;
 import com.felkertech.n.cumulustv.MockChannelDatabase;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
@@ -105,5 +106,27 @@ public class ChannelDatabaseUnitTest extends TestCase {
         assertTrue(mockChannelDatabase.channelExists(sampleChannel));
         assertTrue(mockChannelDatabase.channelNumberExists(NUMBER));
         assertEquals(sampleChannel, mockChannelDatabase.findChannelByChannelNumber(NUMBER));
+    }
+
+    /**
+     * Tests that a {@link JsonChannel} can be converted to a {@link Channel} and then updated
+     * with app link data.
+     */
+    @Test
+    public void testAppLinkValues() throws JSONException {
+        MockChannelDatabase mockChannelDatabase =
+                MockChannelDatabase.getMockedInstance(RuntimeEnvironment.application);
+        JsonChannel sampleChannel = new JsonChannel.Builder()
+                .setName(NAME)
+                .setNumber(NUMBER)
+                .setMediaUrl(MEDIA_URL)
+                .setLogo("http://example.com/poster.png")
+                .build();
+        mockChannelDatabase.add(sampleChannel);
+        Channel firstChannel = mockChannelDatabase.getChannels().get(0);
+
+//        assertNotNull(firstChannel.getAppLinkColor());
+        assertNotNull(firstChannel.getAppLinkText());
+        assertNotNull(firstChannel.getAppLinkPoster());
     }
 }

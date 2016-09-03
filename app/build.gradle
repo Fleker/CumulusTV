@@ -22,9 +22,9 @@ android {
     defaultConfig {
         applicationId "com.felkertech.n.cumulustv"
         minSdkVersion 21
-        targetSdkVersion 23
-        versionCode 44
-        versionName "1.5.7"
+        targetSdkVersion 24
+        versionCode 45
+        versionName "1.6.0.1.dogfood"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {

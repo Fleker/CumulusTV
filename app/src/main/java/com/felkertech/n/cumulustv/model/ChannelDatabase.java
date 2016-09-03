@@ -2,8 +2,10 @@ package com.felkertech.n.cumulustv.model;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.media.tv.TvContentRating;
 import android.media.tv.TvContract;
 import android.net.Uri;
@@ -46,6 +48,7 @@ public class ChannelDatabase {
     private static final String KEY_MODIFIED = "modified";
 
     protected JSONObject mJsonObject;
+
     private TvContentRating mTvContentRating;
     private SettingsManager mSettingsManager;
     private HashMap<String, Long> mDatabaseHashMap;
@@ -104,12 +107,6 @@ public class ChannelDatabase {
         for (int i = 0; i < jsonChannelList.size(); i++) {
             JsonChannel jsonChannel = jsonChannelList.get(i);
             Channel channel = jsonChannel.toChannel();
-            channel.setAppLinkColor("#9C27B0");
-            channel.setAppLinkPoster(jsonChannel.getLogo());
-            channel.setAppLinkText(mSettingsManager.getContext().getString(R.string.quick_settings));
-            channel.setAppLinkIntent(PlaybackQuickSettingsActivity
-                    .getIntent(mSettingsManager.getContext(),
-                            jsonChannel.toString()));
             channelList.add(channel);
         }
         return channelList;

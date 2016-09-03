@@ -34,11 +34,16 @@ public class PlaybackQuickSettingsActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActionBar().hide();
+        setContentView(R.layout.activity_quick_settings);
 
         QuickSetting[] quickSettings = new QuickSetting[3];
         try {
             final JsonChannel jsonChannel = new JsonChannel.Builder(getIntent()
                     .getStringExtra(EXTRA_JSON_CHANNEL)).build();
+
+            // Set the title
+            ((TextView) findViewById(R.id.title)).setText(jsonChannel.getName());
 
             // Open this channel in the editor
             quickSettings[0] = new QuickSetting(
@@ -79,15 +84,13 @@ public class PlaybackQuickSettingsActivity extends Activity {
         layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
         getWindow().setAttributes(layoutParams);
 
-        setContentView(R.layout.activity_quick_settings);
-
         mAppLinkMenuList = (VerticalGridView) findViewById(R.id.list);
         mAppLinkMenuList.setAdapter(new AppLinkMenuAdapter(quickSettings));
     }
 
-    public static Intent getIntent(Context context, String json) {
+    public static Intent getIntent(Context context, JsonChannel jsonChannel) {
         Intent intent = new Intent(context, PlaybackQuickSettingsActivity.class);
-        intent.putExtra(EXTRA_JSON_CHANNEL, json);
+        intent.putExtra(EXTRA_JSON_CHANNEL, jsonChannel.toString());
         return intent;
     }
 
@@ -95,7 +98,6 @@ public class PlaybackQuickSettingsActivity extends Activity {
      * Adapter class that provides the app link menu list.
      */
     public class AppLinkMenuAdapter extends RecyclerView.Adapter<ViewHolder> {
-        private static final int ITEM_COUNT = 2;
         private QuickSetting[] mQuickSettings;
 
         public AppLinkMenuAdapter(QuickSetting[] quickSettings) {
@@ -127,7 +129,7 @@ public class PlaybackQuickSettingsActivity extends Activity {
 
         @Override
         public int getItemCount() {
-            return ITEM_COUNT;
+            return mQuickSettings.length;
         }
     }
 
