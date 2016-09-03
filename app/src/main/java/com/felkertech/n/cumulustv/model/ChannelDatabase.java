@@ -71,8 +71,8 @@ public class ChannelDatabase {
                 spData = getDefaultJsonString();
             }
             mJsonObject = new JSONObject(spData);
-            if (!mJsonObject.has("modified")) {
-                mJsonObject.put("modified", 0L);
+            if (!mJsonObject.has(KEY_MODIFIED)) {
+                mJsonObject.put(KEY_MODIFIED, 0L);
                 save();
             }
             resetPossibleGenres(); // This will try to use the newest API data
@@ -88,7 +88,7 @@ public class ChannelDatabase {
     }
 
     public JSONArray getJSONArray() throws JSONException {
-        return mJsonObject.getJSONArray("channels");
+        return mJsonObject.getJSONArray(KEY_CHANNELS);
     }
 
     public ArrayList<JsonChannel> getJsonChannels() throws JSONException {
@@ -129,7 +129,8 @@ public class ChannelDatabase {
         try {
             ArrayList<JsonChannel> jsonChannelList = getJsonChannels();
             for (JsonChannel jsonChannel : jsonChannelList) {
-                if (jsonChannel.equals(channel)) {
+                if (jsonChannel.equals(channel) ||
+                        jsonChannel.getMediaUrl().equals(channel.getMediaUrl())) {
                     return true;
                 }
             }
