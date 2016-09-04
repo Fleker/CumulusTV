@@ -59,6 +59,10 @@ public class JsonChannel extends CumulusChannel {
         return channel;
     }
 
+    public static JsonChannel getEmptyChannel() {
+        return new JsonChannel();
+    }
+
     public static class Builder extends CumulusChannel.Builder {
         private JsonChannel jsonChannel;
 
