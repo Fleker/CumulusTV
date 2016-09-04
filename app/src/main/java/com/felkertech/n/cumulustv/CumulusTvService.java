@@ -94,14 +94,11 @@ public class CumulusTvService extends MultimediaInputProvider {
                 channel.setAppLinkText(context.getString(R.string.quick_settings));
                 channel.setAppLinkIcon("https://github.com/Fleker/CumulusTV/blob/master/app/src/m" +
                         "ain/res/drawable-xhdpi/ic_play_action_normal.png?raw=true");
-//                channel.setAppLinkColor(context);
-//                channel.setAppLinkIcon("https://github.com/Fleker/CumulusTV/blob/master/app/src/main/res/drawable-xhdpi/c_mobile.jpg?raw=true");
                 channel.setAppLinkPoster(channel.getLogoUrl());
                 JsonChannel jsonChannel =
                         cdn.findChannelByMediaUrl(channel.getInternalProviderData());
                 channel.setAppLinkIntent(PlaybackQuickSettingsActivity
                         .getIntent(context, jsonChannel).toUri(Intent.URI_INTENT_SCHEME));
-//                channel.setAppLinkIntent("intent:#Intent;component=com.example.android.sampletvinput/.rich.RichAppLinkSidePanelActivity;S.display-number=2-3;end");
             }
             return channels;
         } catch (JSONException e) {

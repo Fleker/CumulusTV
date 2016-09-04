@@ -177,18 +177,17 @@ public class XmlTvParser {
             throw new IllegalArgumentException("id and display-name can not be null.");
         }
 
-        // Developers should assign original network ID in the right way not using the fake ID.
         int fakeOriginalNetworkId = Objects.hash(displayName, displayNumber);
         return new Channel()
                 .setName(displayName)
                 .setNumber(displayNumber)
-                .setLogoUrl((icon == null) ? null : icon.src)
-                .setAppLinkIcon(appLink.icon.src)
-                .setAppLinkColor(appLink.color)
-                .setAppLinkText(appLink.text)
-                .setAppLinkIntent(appLink.intentUri)
-                .setOriginalNetworkId(fakeOriginalNetworkId)
-                .setAppLinkPoster(appLink.posterUri);
+//                .setLogoUrl((icon == null) ? null : icon.src)
+//                .setAppLinkIcon((appLink == null || appLink.icon == null) ? null : appLink.icon.src)
+//                .setAppLinkColor((appLink == null) ? null : appLink.color)
+//                .setAppLinkText((appLink == null) ? null : appLink.text)
+//                .setAppLinkIntent((appLink == null) ? null : appLink.intentUri)
+                .setOriginalNetworkId(fakeOriginalNetworkId);
+//                .setAppLinkPoster((appLink == null) ? null : appLink.posterUri);
     }
 
     private static Program parseProgram(XmlPullParser parser)
@@ -249,7 +248,6 @@ public class XmlTvParser {
             throw new IllegalArgumentException("channel, start, and end can not be null.");
         }
         return new Program.Builder()
-                .setChannelId(Long.parseLong(channelId))
                 .setTitle(title)
                 .setDescription(description)
                 .setPosterArtUri(icon.src)

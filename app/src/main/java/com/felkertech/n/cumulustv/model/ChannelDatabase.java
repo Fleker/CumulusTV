@@ -53,7 +53,7 @@ public class ChannelDatabase {
 
     private TvContentRating mTvContentRating;
     private SettingsManager mSettingsManager;
-    private HashMap<String, Long> mDatabaseHashMap;
+    protected HashMap<String, Long> mDatabaseHashMap;
 
     private static ChannelDatabase mChannelDatabase;
 
@@ -321,7 +321,7 @@ public class ChannelDatabase {
      * Creates a link between the database Uris and the JSONChannels
      * @param context The application's context for the {@link ContentResolver}.
      */
-    private void initializeHashMap(final Context context) {
+    protected void initializeHashMap(final Context context) {
         new Thread(new Runnable() {
             @Override
             public void run() {

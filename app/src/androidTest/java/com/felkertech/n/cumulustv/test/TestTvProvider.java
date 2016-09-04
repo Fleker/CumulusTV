@@ -22,7 +22,7 @@ import java.util.List;
 
 public class TestTvProvider extends MultimediaInputProvider {
     public static final String INPUT_ID = new ComponentName(
-            TestTvProvider.class.getPackage().getName(), TestTvProvider.class.getSimpleName())
+            TestTvProvider.class.getPackage().getName(), "." + TestTvProvider.class.getSimpleName())
             .flattenToString();
 
     public static TestFramework mTestFramework;

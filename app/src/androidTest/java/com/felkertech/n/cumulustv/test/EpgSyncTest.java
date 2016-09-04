@@ -14,6 +14,7 @@ import android.util.Log;
 import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.channelsurfer.model.Program;
 import com.felkertech.n.cumulustv.activities.MainActivity;
+import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
 import com.felkertech.n.fileio.XmlTvParser;
 
@@ -53,7 +54,7 @@ public class EpgSyncTest extends ActivityInstrumentationTestCase2<MainActivity> 
      */
     @Test
     public void testPullFromXmlTvResource() throws JSONException, InterruptedException {
-        VolatileChannelDatabase.getInstance(getActivity()).add(
+        VolatileChannelDatabase.getMockedInstance(getActivity()).add(
                 new JsonChannel.Builder()
                         .setName("Name")
                         .setNumber("Number")
@@ -76,9 +77,10 @@ public class EpgSyncTest extends ActivityInstrumentationTestCase2<MainActivity> 
                     Assert.fail(e.getMessage());
                 }
                 assertNotNull("The input stream is null.", inputStream);
-                XmlTvParser.TvListing tvListing = XmlTvParser.parse(new BufferedInputStream(inputStream));
+                XmlTvParser.TvListing tvListing =
+                         XmlTvParser.parse(new BufferedInputStream(inputStream));
                 assertNotNull("The Tv Listing is null!", tvListing);
-                assertEquals(1, tvListing.getChannels().size());
+                assertEquals(2, tvListing.getAllPrograms().size());
                 return tvListing.getAllPrograms();
             }
         };
@@ -95,10 +97,11 @@ public class EpgSyncTest extends ActivityInstrumentationTestCase2<MainActivity> 
 
         // Wait for sync to complete
         Thread.sleep(1000 * 10);
+        ChannelDatabase channelDatabase = VolatileChannelDatabase.getMockedInstance(getActivity());
 
         // Get our channel row
-        HashMap<String, Long> databaseRowMap = VolatileChannelDatabase.getInstance(getActivity())
-                .getHashMap();
+        Thread.sleep(1000 * 5);
+        HashMap<String, Long> databaseRowMap = channelDatabase.getHashMap();
         assertTrue(databaseRowMap.containsKey(MEDIA_URL));
         long rowId = databaseRowMap.get(MEDIA_URL);
         assertTrue(rowId > 0);
