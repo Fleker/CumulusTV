@@ -1,4 +1,4 @@
-package com.felkertech.n.cumulustv;
+package com.felkertech.n.cumulustv.test;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;

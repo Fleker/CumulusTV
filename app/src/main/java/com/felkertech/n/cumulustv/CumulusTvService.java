@@ -1,6 +1,7 @@
 package com.felkertech.n.cumulustv;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -31,6 +32,9 @@ import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.cumulustv.livechannels.CumulusSessions;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
+import com.felkertech.n.fileio.ITvListing;
+import com.felkertech.n.fileio.SingleChannel;
+import com.felkertech.n.fileio.XmlTvParser;
 import com.felkertech.n.tv.activities.PlaybackQuickSettingsActivity;
 import com.felkertech.settingsmanager.SettingsManager;
 import com.pnikosis.materialishprogress.ProgressWheel;
@@ -38,7 +42,11 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,24 +113,79 @@ public class CumulusTvService extends MultimediaInputProvider {
     @Override
     public List<Program> getProgramsForChannel(Context context, Uri channelUri,
             Channel channelInfo, long startTimeMs, long endTimeMs) {
-        int programs = (int) ((endTimeMs - startTimeMs) / 1000 / 60 / 60); //Hour long segments
-        int SEGMENT = 1000 * 60 * 60; //Hour long segments
-        List<Program> programList = new ArrayList<>();
-        for(int i = 0; i < programs; i++) {
-            if (DEBUG) {
-                Log.d(TAG, "Get program " + channelInfo.getName() + " " +
-                        channelInfo.getInternalProviderData());
+        JsonChannel jsonChannel = ChannelDatabase.getInstance(context)
+                .findChannelByMediaUrl(channelInfo.getInternalProviderData());
+        if (jsonChannel.getEpgUrl() != null && !jsonChannel.getEpgUrl().isEmpty()) {
+            List<Program> programForGivenTime = new ArrayList<>();
+            // Load from the EPG url
+            URLConnection urlConnection = null;
+            try {
+                urlConnection = new URL(jsonChannel.getEpgUrl()).openConnection();
+                urlConnection.setConnectTimeout(1000 * 5);
+                urlConnection.setReadTimeout(1000 * 5);
+                InputStream inputStream = urlConnection.getInputStream();
+                InputStream epgInputStream =  new BufferedInputStream(inputStream);
+                XmlTvParser.TvListing tvListing = XmlTvParser.parse(epgInputStream);
+                List<Program> programList = tvListing.getAllPrograms();
+                // If repeat-programs is on, schedule the programs sequentially in a loop. To make
+                // every device play the same program in a given channel and time, we assumes the
+                // loop started from the epoch time.
+                long totalDurationMs = 0;
+                for (Program program : programList) {
+                    totalDurationMs += program.getDuration();
+                }
+                long programStartTimeMs = startTimeMs - startTimeMs % totalDurationMs;
+                int i = 0;
+                final int programCount = programList.size();
+                while (programStartTimeMs < endTimeMs) {
+                    Program currentProgram = programList.get(i++ % programCount);
+                    long programEndTimeMs = programStartTimeMs + currentProgram.getDuration();
+                    if (programEndTimeMs < startTimeMs) {
+                        programStartTimeMs = programEndTimeMs;
+                        continue;
+                    }
+                    programForGivenTime.add(new Program.Builder()
+                            .setChannelId(ContentUris.parseId(channelUri))
+                            .setTitle(currentProgram.getTitle())
+                            .setDescription(currentProgram.getDescription())
+                            .setContentRatings(currentProgram.getContentRatings())
+                            .setCanonicalGenres(currentProgram.getCanonicalGenres())
+                            .setPosterArtUri(currentProgram.getPosterArtUri())
+                            .setThumbnailUri(currentProgram.getThumbnailUri())
+                            .setInternalProviderData(currentProgram.getInternalProviderData())
+                            .setStartTimeUtcMillis(programStartTimeMs)
+                            .setEndTimeUtcMillis(programEndTimeMs)
+                            .build()
+                    );
+                    programStartTimeMs = programEndTimeMs;
+                }
+                return programForGivenTime;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
             }
-            programList.add(new Program.Builder(getGenericProgram(channelInfo))
-                    .setInternalProviderData(channelInfo.getInternalProviderData())
-                    .setCanonicalGenres(ChannelDatabase.getInstance(context).findChannelByMediaUrl(
-                            channelInfo.getInternalProviderData()).getGenres())
-                    .setStartTimeUtcMillis((getNearestHour() + SEGMENT * i))
-                    .setEndTimeUtcMillis((getNearestHour() + SEGMENT * (i + 1)))
-                    .build()
-            );
+        } else {
+            // Generate fake programs in hour-long segments
+            int segment = 1000 * 60 * 60; //Hour long segments
+            int programs = (int) ((endTimeMs - startTimeMs) / segment);
+            List<Program> programList = new ArrayList<>();
+            for(int i = 0; i < programs; i++) {
+                if (DEBUG) {
+                    Log.d(TAG, "Get program " + channelInfo.getName() + " " +
+                            channelInfo.getInternalProviderData());
+                }
+                programList.add(new Program.Builder(getGenericProgram(channelInfo))
+                        .setInternalProviderData(channelInfo.getInternalProviderData())
+                        .setCanonicalGenres(ChannelDatabase.getInstance(context)
+                                .findChannelByMediaUrl(
+                                        channelInfo.getInternalProviderData()).getGenres())
+                        .setStartTimeUtcMillis((getNearestHour() + segment * i))
+                        .setEndTimeUtcMillis((getNearestHour() + segment * (i + 1)))
+                        .build()
+                );
+            }
+            return programList;
         }
-        return programList;
     }
 
     @Override

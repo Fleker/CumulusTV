@@ -22,7 +22,7 @@ import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
-import com.felkertech.n.cumulustv.xmltv.XmlTvParser;
+import com.felkertech.n.fileio.XmlTvParser;
 import com.felkertech.n.tv.activities.LeanbackActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;

@@ -52,7 +52,6 @@ import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
-import com.felkertech.n.cumulustv.xmltv.XmlTvParser;
 import com.felkertech.n.tv.Movie;
 import com.felkertech.n.tv.MovieList;
 import com.felkertech.n.tv.activities.DetailsActivity;
@@ -64,16 +63,10 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi;
 import com.google.android.gms.drive.MetadataChangeSet;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
 import org.json.JSONException;
-import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
