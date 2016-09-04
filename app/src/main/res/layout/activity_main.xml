@@ -25,7 +25,7 @@
         android:id="@+id/view"/>
     <Button android:text="Sync files with Google Drive" android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/gotoapp"
+        android:layout_below="@+id/view"
         style="@style/main_button"
         android:id="@+id/gdrive"/>
     <Button android:text="More..." android:layout_width="match_parent"

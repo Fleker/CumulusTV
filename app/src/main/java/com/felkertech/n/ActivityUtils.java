@@ -640,15 +640,12 @@ public class ActivityUtils {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
                             super.onPositive(dialog);
-                            /*Intent gi = new Intent(Intent.ACTION_VIEW);
-                            gi.setData(Uri.parse("http://cumulustv.herokuapp.com"));
-                            mActivity.startActivity(gi);*/
                             String url = activity.getString(R.string.website_url);
                             CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
                             CustomTabsIntent customTabsIntent = builder.build();
                             try {
                                 customTabsIntent.launchUrl(activity, Uri.parse(url));
-                            } catch (ActivityNotFoundException e) {
+                            } catch (Exception e) {
                                 // There is no way to view the website.
                                 activity.startActivity(new Intent(activity,
                                         HomepageWebViewActivity.class));

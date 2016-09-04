@@ -115,7 +115,8 @@ public class CumulusChannelsSetup extends SimpleTvSetup {
         i.sendEmptyMessageDelayed(0, (SETUP_DURATION - SETUP_UI_LAST) / channels.length);
 
         String[] projection = {TvContract.Channels.COLUMN_DISPLAY_NUMBER,
-                TvContract.Channels.COLUMN_DISPLAY_NAME, TvContract.Channels._ID};
+                TvContract.Channels.COLUMN_DISPLAY_NAME, TvContract.Channels._ID,
+                TvContract.Channels.COLUMN_INTERNAL_PROVIDER_DATA};
         //Now look up this channel in the DB
         try (Cursor cursor =
                      getContentResolver().query(TvContract.buildChannelsUriForInput(null),
@@ -123,7 +124,7 @@ public class CumulusChannelsSetup extends SimpleTvSetup {
             if (cursor == null || cursor.getCount() == 0) {
                 return;
             }
-            while(cursor.moveToNext()) {
+            while (cursor.moveToNext()) {
                 if (DEBUG) {
                     Log.d(TAG, "Tune to " +
                             cursor.getString(cursor.getColumnIndex(

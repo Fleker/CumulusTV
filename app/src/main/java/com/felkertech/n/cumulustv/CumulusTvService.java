@@ -67,7 +67,7 @@ public class CumulusTvService extends MultimediaInputProvider {
     private CaptioningManager mCaptioningManager;
     private JsonChannel jsonChannel;
     private boolean stillTuning;
-    private HashMap<String, XmlTvParser.TvListing> epgData;
+    private static HashMap<String, XmlTvParser.TvListing> epgData;
 
     @Override
     public void onCreate() {
@@ -90,7 +90,7 @@ public class CumulusTvService extends MultimediaInputProvider {
     @Override
     public void performCustomSync(final SyncAdapter syncAdapter, String inputId) {
         new EpgDataSyncThread(syncAdapter.getContext()).start();
-        syncAdapter.performCustomSync(this, inputId);
+        syncAdapter.performSync(this, inputId);
     }
 
     @Override
@@ -391,6 +391,7 @@ public class CumulusTvService extends MultimediaInputProvider {
         simpleSession.setOverlayViewEnabled(true);
         return simpleSession;
     }
+
     private final class EpgDataSyncThread extends Thread {
         private Context mContext;
 
@@ -402,6 +403,7 @@ public class CumulusTvService extends MultimediaInputProvider {
         @Override
         public void run() {
             super.run();
+            epgData = new HashMap<>();
             ChannelDatabase cdn = ChannelDatabase.getInstance(mContext);
             try {
                 List<JsonChannel> channels = cdn.getJsonChannels();
