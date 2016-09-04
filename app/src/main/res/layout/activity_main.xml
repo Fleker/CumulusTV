@@ -23,11 +23,6 @@
         android:layout_below="@+id/suggested"
         style="@style/main_button"
         android:id="@+id/view"/>
-    <Button android:text="@string/manage_livechannels" android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/view"
-        style="@style/main_button"
-        android:id="@+id/gotoapp"/>
     <Button android:text="Sync files with Google Drive" android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/gotoapp"

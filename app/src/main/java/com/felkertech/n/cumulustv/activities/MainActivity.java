@@ -59,17 +59,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d(TAG, "onCreate");
-        //final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".CumulusTvService"));
         sm = new DriveSettingsManager(this);
         ActivityUtils.openIntroIfNeeded(this);
         Fabric.with(this, new Crashlytics());
-
-        if(!AppUtils.isTV(this)) {
-            findViewById(R.id.gotoapp).setVisibility(View.GONE);
-        } else {
-            //Go to tv activity
-            startActivity(new Intent(this, LeanbackActivity.class));
+        if(AppUtils.isTV(this)) {
+            // Go to tv activity
+            Intent leanbackIntent = new Intent(this, LeanbackActivity.class);
+            leanbackIntent.setFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
+            startActivity(leanbackIntent);
         }
+
         findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,12 +121,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View v) {
                 ActivityUtils.openSuggestedChannels(MainActivity.this, gapi);
-            }
-        });
-        findViewById(R.id.gotoapp).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ActivityUtils.launchLiveChannels(MainActivity.this);
             }
         });
         findViewById(R.id.gdrive).setOnClickListener(new View.OnClickListener() {

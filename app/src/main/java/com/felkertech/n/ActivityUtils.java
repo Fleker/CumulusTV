@@ -1,6 +1,7 @@
 package com.felkertech.n;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -12,11 +13,15 @@ import android.media.tv.TvContract;
 import android.net.Uri;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.customtabs.CustomTabsIntent;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
+import com.afollestad.materialdialogs.internal.ThemeSingleton;
 import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.n.boilerplate.Utils.AppUtils;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
@@ -24,6 +29,7 @@ import com.felkertech.n.boilerplate.Utils.PermissionUtils;
 import com.felkertech.n.cumulustv.Intro.Intro;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.activities.CumulusTvPlayer;
+import com.felkertech.n.cumulustv.activities.HomepageWebViewActivity;
 import com.felkertech.n.cumulustv.activities.MainActivity;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
@@ -81,7 +87,7 @@ public class ActivityUtils {
                 }).show();
     }
 
-    public static void addChannel(Activity mActivity, GoogleApiClient gapi, JsonChannel jsonChannel)
+    public static void addChannel(final Activity mActivity, GoogleApiClient gapi, JsonChannel jsonChannel)
     {
         if (DEBUG) {
             Log.d(TAG, "I've been told to add " + jsonChannel.toString());
@@ -100,8 +106,14 @@ public class ActivityUtils {
                 if (DEBUG) {
                     Log.d(TAG, "Added");
                 }
-                // Resync
-                SyncUtils.requestSync(mActivity, ActivityUtils.TV_INPUT_SERVICE.flattenToString());
+                /*new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Resync
+                        SyncUtils.requestSync(mActivity,
+                                ActivityUtils.TV_INPUT_SERVICE.flattenToString());
+                    }
+                }).start();*/
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -431,12 +443,12 @@ public class ActivityUtils {
                     .content(R.string.choose_default_app)
                     .itemsCallback(new MaterialDialog.ListCallback() {
                         @Override
-                        public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                            //Toast.makeText(activity, "Pick " + i, Toast.LENGTH_SHORT).show();
+                        public void onSelection(MaterialDialog materialDialog, View view, int i,
+                                CharSequence charSequence) {
                             Intent intent = new Intent();
                             if (newChannel) {
                                 if (DEBUG) {
-                                    Log.d(TAG, "Try to start ");
+                                    Log.d(TAG, "Try to start");
                                 }
                                 ResolveInfo plugin_info = plugins.get(i);
                                 if (DEBUG) {
@@ -479,7 +491,7 @@ public class ActivityUtils {
         final PackageManager pm = activity.getPackageManager();
         final Intent plugin_addchannel = new Intent(CumulusTvPlugin.ACTION_ADD_CHANNEL);
         final List<ResolveInfo> plugins = pm.queryIntentActivities(plugin_addchannel, 0);
-        ArrayList<String> plugin_names = new ArrayList<String>();
+        ArrayList<String> plugin_names = new ArrayList<>();
         for (ResolveInfo ri : plugins) {
             plugin_names.add(ri.loadLabel(pm).toString());
         }
@@ -491,7 +503,7 @@ public class ActivityUtils {
                 .itemsCallback(new MaterialDialog.ListCallback() {
                     @Override
                     public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                        //Load the given plugin with some additional info
+                        // Load the given plugin with some additional info
                         ChannelDatabase cd = ChannelDatabase.getInstance(activity);
                         String s = cd.toString();
                         Intent intent = new Intent();
@@ -511,10 +523,9 @@ public class ActivityUtils {
                     }
                 })
                 .positiveText(R.string.download_more_plugins)
-                .callback(new MaterialDialog.ButtonCallback() {
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        super.onPositive(dialog);
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse(
                                 "http://play.google.com/store/search?q=cumulustv&c=apps"));
@@ -615,28 +626,39 @@ public class ActivityUtils {
     }
 
     /* MISC */
-    public static void openAbout(final Activity mActivity) {
+    public static void openAbout(final Activity activity) {
         try {
-            PackageInfo pInfo = mActivity.getPackageManager().getPackageInfo(
-                    mActivity.getPackageName(), 0);
-            new MaterialDialog.Builder(mActivity)
+            PackageInfo pInfo = activity.getPackageManager().getPackageInfo(
+                    activity.getPackageName(), 0);
+            new MaterialDialog.Builder(activity)
                     .title(R.string.app_name)
-                    .content(mActivity.getString(R.string.about_app_description, pInfo.versionName))
+                    .theme(Theme.DARK)
+                    .content(activity.getString(R.string.about_app_description, pInfo.versionName))
                     .positiveText(R.string.website)
                     .negativeText(R.string.help)
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
                             super.onPositive(dialog);
-                            Intent gi = new Intent(Intent.ACTION_VIEW);
+                            /*Intent gi = new Intent(Intent.ACTION_VIEW);
                             gi.setData(Uri.parse("http://cumulustv.herokuapp.com"));
-                            mActivity.startActivity(gi);
+                            mActivity.startActivity(gi);*/
+                            String url = activity.getString(R.string.website_url);
+                            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                            CustomTabsIntent customTabsIntent = builder.build();
+                            try {
+                                customTabsIntent.launchUrl(activity, Uri.parse(url));
+                            } catch (ActivityNotFoundException e) {
+                                // There is no way to view the website.
+                                activity.startActivity(new Intent(activity,
+                                        HomepageWebViewActivity.class));
+                            }
                         }
 
                         @Override
                         public void onNegative(MaterialDialog dialog) {
                             super.onNegative(dialog);
-                            ActivityUtils.openIntroVoluntarily(mActivity);
+                            ActivityUtils.openIntroVoluntarily(activity);
                         }
                     })
                     .show();
@@ -645,27 +667,27 @@ public class ActivityUtils {
         }
     }
 
-    public static void openStream(Activity mActivity, String url) {
-        Intent i = new Intent(mActivity, CumulusTvPlayer.class);
+    public static void openStream(Activity activity, String url) {
+        Intent i = new Intent(activity, CumulusTvPlayer.class);
         i.putExtra(CumulusTvPlayer.KEY_VIDEO_URL, url);
-        mActivity.startActivity(i);
+        activity.startActivity(i);
     }
 
-    public static void openIntroIfNeeded(Activity mActivity) {
-        SettingsManager sm = new SettingsManager(mActivity);
+    public static void openIntroIfNeeded(Activity activity) {
+        SettingsManager sm = new SettingsManager(activity);
         if(sm.getInt(R.string.sm_last_version) < LAST_GOOD_BUILD) {
-            mActivity.startActivity(new Intent(mActivity, Intro.class));
-            mActivity.finish();
+            activity.startActivity(new Intent(activity, Intro.class));
+            activity.finish();
         }
     }
 
-    public static void openIntroVoluntarily(Activity mActivity) {
-        mActivity.startActivity(new Intent(mActivity, Intro.class));
-        mActivity.finish();
+    public static void openIntroVoluntarily(Activity activity) {
+        activity.startActivity(new Intent(activity, Intro.class));
+        activity.finish();
     }
 
-    public static Class getMainActivity(Activity mActivity) {
-        if(AppUtils.isTV(mActivity)) {
+    public static Class getMainActivity(Activity activity) {
+        if(AppUtils.isTV(activity)) {
             return LeanbackActivity.class;
         }
         return MainActivity.class;

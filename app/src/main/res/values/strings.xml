@@ -25,7 +25,7 @@
     <!--<string name="browse_title"><![CDATA[Videos by Your Company]]></string>-->
     <!--<string name="vertical_grid_title"><![CDATA[Vertical Video Grid]]></string>-->
     <string name="about_app" translatable="false">@string/settings_about</string>
-    <string name="about_app_description">%1$s\nBackground art by to Marcelo Franceschini\nFrench Translations by @mcmjau\n\nThe app is open source and available on GitHub.</string>
+    <string name="about_app_description">v%1$s\nBackground art by Marcelo Franceschini\nFrench Translations by @mcmjau\n\nThe app is open source and available on GitHub.</string>
     <string name="grid_view">Grid View</string>
     <string name="error_fragment">Error Fragment</string>
     <string name="should_start">shouldStart</string>
@@ -103,50 +103,51 @@
     <string name="about_mlc_summary" translatable="false">MLC is an experimental, web-based, leanback, musical experience.</string>
     <string name="about_mlc_issues" translatable="false">Visit Issue Tracker</string>
     <string name="connect_drive" translatable="false">Connect to Google Drive</string>
-    <string name="toast_setup_complete">Setup complete. Make sure you enable these channels in the channel list.</string>
-    <string name="toast_please_report">Please report this error and your JSON file: %1$s</string>
-    <string name="toast_report_database_null">Report this error with your JSON file: DatabaseObject is null</string>
-    <string name="toast_error_object_undefined">Error adding: object is undefined</string>
-    <string name="toast_error_no_loading_screen">The loading screen can\'t seem to open, but the channel is loading.</string>
-    <string name="toast_error_cannot_tune">Something\'s wrong. Cannot tune to this channel.</string>
-    <string name="toast_error_low_memory">You\'re running low on system memory. Things may not work as expected.</string>
-    <string name="toast_error_channel_number">Your channel must have a number!</string>
-    <string name="toast_msg_no_support_READALL">This plugin doesn\'t support READALL</string>
-    <string name="toast_error_channel_invalid">Channel is invalid</string>
-    <string name="toast_msg_pack_not_installed">"Plugin %1$s not installed."</string>
-    <string name="create_sync_file_title">Create a syncable file</string>
-    <string name="create_sync_file_description">Save channel info in Google Drive so you can always access it</string>
-    <string name="toast_error_driveid_invalid">Error: DriveId is invalid</string>
-    <string name="toast_msg_channels_deleted">The deed was done</string>
-    <string name="title_delete_all_channels">Delete all your channel data?</string>
-    <string name="toast_msg_wait_google_api_client">Please wait until Drive Service is active</string>
-    <string name="software_licenses">Software Licenses</string>
+    <string name="toast_setup_complete" translatable="false">Setup complete. Make sure you enable these channels in the channel list.</string>
+    <string name="toast_please_report" translatable="false">Please report this error and your JSON file: %1$s</string>
+    <string name="toast_report_database_null" translatable="false">Report this error with your JSON file: DatabaseObject is null</string>
+    <string name="toast_error_object_undefined" translatable="false">Error adding: object is undefined</string>
+    <string name="toast_error_no_loading_screen" translatable="false">The loading screen can\'t seem to open, but the channel is loading.</string>
+    <string name="toast_error_cannot_tune" translatable="false">Something\'s wrong. Cannot tune to this channel.</string>
+    <string name="toast_error_low_memory" translatable="false">You\'re running low on system memory. Things may not work as expected.</string>
+    <string name="toast_error_channel_number" translatable="false">Your channel must have a number!</string>
+    <string name="toast_msg_no_support_READALL" translatable="false">This plugin doesn\'t support READALL</string>
+    <string name="toast_error_channel_invalid" translatable="false">Channel is invalid</string>
+    <string name="toast_msg_pack_not_installed" translatable="false">"Plugin %1$s not installed."</string>
+    <string name="create_sync_file_title" translatable="false">Create a syncable file</string>
+    <string name="create_sync_file_description" translatable="false">Save channel info in Google Drive so you can always access it</string>
+    <string name="toast_error_driveid_invalid" translatable="false">Error: DriveId is invalid</string>
+    <string name="toast_msg_channels_deleted" translatable="false">The deed was done</string>
+    <string name="title_delete_all_channels" translatable="false">Delete all your channel data?</string>
+    <string name="toast_msg_wait_google_api_client" translatable="false">Please wait until Drive Service is active</string>
+    <string name="software_licenses" translatable="false">Software Licenses</string>
     <string name="choose_an_app">Choose an app</string>
     <string name="choose_default_app">Yes, if there\'s only one app, default to that one</string>
-    <string name="installed_plugins">Installed Plugins</string>
-    <string name="download_more_plugins">Download More</string>
-    <string name="connection_issue_title">Connection Issue</string>
+    <string name="installed_plugins" translatable="false">Installed Plugins</string>
+    <string name="download_more_plugins" translatable="false">Download More</string>
+    <string name="connection_issue_title" translatable="false">Connection Issue</string>
     <string name="connection_issue_description">Cannot connect to Google Drive at this moment.</string>
-    <string name="plugin_not_installed_title">"Plugin %1$s not installed"</string>
-    <string name="plugin_not_installed_question">What do you want to do instead?</string>
-    <string name="download_app">Download app</string>
-    <string name="open_in_another_plugin">Open in another plugin</string>
-    <string name="toast_error_no_activity">Uh-oh, something isn\'t working: loadRows has no activity</string>
+    <string name="plugin_not_installed_title" translatable="false">"Plugin %1$s not installed"</string>
+    <string name="plugin_not_installed_question" translatable="false">What do you want to do instead?</string>
+    <string name="download_app" translatable="false">Download app</string>
+    <string name="open_in_another_plugin" translatable="false">Open in another plugin</string>
+    <string name="toast_error_no_activity" translatable="false">Uh-oh, something isn\'t working: loadRows has no activity</string>
     <string name="add">Add</string>
-    <string name="edit_channel">Edit Channel</string>
+    <string name="edit_channel" translatable="false">Edit Channel</string>
     <string name="play">Play</string>
-    <string name="toast_error_sorry">Sorry, we couldn\'t do that.</string>
-    <string name="edit_channel_name">Edit %1$s metadata</string>
-    <string name="open_cumulus_tv">Open Cumulus TV</string>
-    <string name="report_playback_issue">Report a playback issue (Sends the Url)</string>
-    <string name="quick_settings">Quick Settings</string>
+    <string name="toast_error_sorry" translatable="false">Sorry, we couldn\'t do that.</string>
+    <string name="edit_channel_name" translatable="false">Edit %1$s metadata</string>
+    <string name="open_cumulus_tv" translatable="false">Open Cumulus TV</string>
+    <string name="report_playback_issue" translatable="false">Report a playback issue (Sends the Url)</string>
+    <string name="quick_settings" translatable="false">Quick Settings</string>
     <string name="add_channel_txt">Add Channel</string>
-    <string name="channel_no_xxx">"Channel # "</string>
-    <string name="suggested_channels">Suggested Channels</string>
-    <string name="google_drive_sync">Google Drive Sync</string>
-    <string name="manage">Manage</string>
+    <string name="channel_no_xxx" translatable="false">\"Channel # %1$s\"</string>
+    <string name="suggested_channels" translatable="false">Suggested Channels</string>
+    <string name="google_drive_sync" translatable="false">Google Drive Sync</string>
+    <string name="manage" translatable="false">Manage</string>
     <string name="settings">Settings</string>
-    <string name="download_complete">Download complete</string>
-    <string name="upload_complete">Upload complete</string>
+    <string name="download_complete" translatable="false">Download complete</string>
+    <string name="upload_complete" translatable="false">Upload complete</string>
+    <string name="website_url" translatable="false">"http://cumulustv.herokuapp.com"</string>
 </resources>
 

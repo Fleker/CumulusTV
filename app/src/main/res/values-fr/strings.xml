@@ -124,5 +124,12 @@
     <string name="yes">Oui</string>
     <string name="daydream_select_channel">Sélectionnez Chaîne</string>
     <string name="daydream_success">Daydream été mis à jour</string>
+    <string name="play">Jouer</string>
+    <string name="settings">Paramètres</string>
+    <string name="connection_issue_description">Impossible de se connecter à Google Drive en ce moment.</string>
+    <string name="choose_default_app">Oui, s\'il n\'y a qu\'une seule application, par défaut à celui-là</string>
+    <string name="choose_an_app">Choisissez une application</string>
+    <string name="add_channel_txt">Ajouter un canal</string>
+    <string name="add">Ajouter</string>
 
 </resources>

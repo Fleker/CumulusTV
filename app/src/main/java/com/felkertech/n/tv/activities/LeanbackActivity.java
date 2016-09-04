@@ -19,6 +19,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -33,8 +34,8 @@ import io.fabric.sdk.android.Fabric;
 /*
  * MainActivity class that loads MainFragment
  */
-public class LeanbackActivity extends Activity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+public class LeanbackActivity extends Activity implements
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     public static final int RESULT_CODE_REFRESH_UI = 10;
 
     private LeanbackFragment lbf;

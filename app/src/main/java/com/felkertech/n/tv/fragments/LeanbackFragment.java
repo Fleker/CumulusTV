@@ -49,6 +49,7 @@ import android.widget.Toast;
 
 import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.n.ActivityUtils;
+import com.felkertech.n.boilerplate.Utils.AppUtils;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
@@ -212,8 +213,11 @@ public class LeanbackFragment extends BrowseFragment
         HeaderItem gridHeader2 = new HeaderItem(1, getString(R.string.settings));
         OptionsCardPresenter mGridPresenter2 = new OptionsCardPresenter();
         ArrayObjectAdapter gridRowAdapter2 = new ArrayObjectAdapter(mGridPresenter2);
+        /*
+        FIXME Plugin browser hidden due to #165
         gridRowAdapter2.add(new Option(getResources().getDrawable(R.drawable.ic_animation),
-                getString(R.string.settings_browse_plugins)));
+                    getString(R.string.settings_browse_plugins)));
+                    */
         gridRowAdapter2.add(new Option(getResources().getDrawable(R.drawable.ic_book_open),
                 getString(R.string.settings_view_licenses)));
         gridRowAdapter2.add(new Option(getResources().getDrawable(R.drawable.ic_delete_forever),
