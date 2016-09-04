@@ -17,9 +17,6 @@ package com.felkertech.n.tv.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -36,12 +33,11 @@ import io.fabric.sdk.android.Fabric;
 /*
  * MainActivity class that loads MainFragment
  */
-public class LeanbackActivity extends Activity
-        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    /**
-     * Called when the activity is first created.
-     */
-    LeanbackFragment lbf;
+public class LeanbackActivity extends Activity implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
+    public static final int RESULT_CODE_REFRESH_UI = 10;
+
+    private LeanbackFragment lbf;
 
 
     @Override
@@ -58,15 +54,9 @@ public class LeanbackActivity extends Activity
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         Log.d("cumulus:leanback", "Got " + requestCode + " " + resultCode + " from activity");
         ActivityUtils.onActivityResult(this, lbf.gapi, requestCode, resultCode, data);
-
-        Handler h = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                lbf.refreshUI();
-            }
-        };
-        h.sendEmptyMessageDelayed(0, 4000);
+        if (requestCode == RESULT_CODE_REFRESH_UI) {
+            lbf.refreshUI();
+        }
     }
 
     @Override

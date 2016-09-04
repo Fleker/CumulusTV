@@ -16,18 +16,34 @@ package com.felkertech.n.tv.presenters;
 
 import android.support.v17.leanback.widget.AbstractDetailsDescriptionPresenter;
 
-import com.felkertech.n.tv.Movie;
+import com.felkertech.n.cumulustv.model.JsonChannel;
 
 public class DetailsDescriptionPresenter extends AbstractDetailsDescriptionPresenter {
 
     @Override
     protected void onBindDescription(ViewHolder viewHolder, Object item) {
-        Movie movie = (Movie) item;
+        JsonChannel jsonChannel = (JsonChannel) item;
 
-        if (movie != null) {
-            viewHolder.getTitle().setText(movie.getTitle());
-            viewHolder.getSubtitle().setText(movie.getStudio());
-            viewHolder.getBody().setText(movie.getDescription());
+        if (jsonChannel != null) {
+            viewHolder.getTitle().setText(jsonChannel.getName());
+            viewHolder.getSubtitle().setText(jsonChannel.getNumber());
+            viewHolder.getBody().setText(getGenresPretty(jsonChannel) +
+                    "\n\n" + jsonChannel.getMediaUrl());
         }
+    }
+
+    private String getGenresPretty(JsonChannel jsonChannel) {
+        String genresString = jsonChannel.getGenresString();
+        genresString = genresString.replaceAll("_", " / ");
+        genresString = genresString.toLowerCase();
+        genresString = genresString.replaceAll(",", ", ");
+        for (int i = 0; i < genresString.length(); i++) {
+            if (i == 0 || genresString.charAt(i - 1) == ' ') {
+                genresString = genresString.substring(0, i) +
+                        genresString.substring(i, i + 1).toUpperCase() +
+                        genresString.substring(i + 1);
+            }
+        }
+        return genresString;
     }
 }

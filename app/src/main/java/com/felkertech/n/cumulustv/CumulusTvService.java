@@ -27,6 +27,7 @@ import com.crashlytics.android.Crashlytics;
 import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.channelsurfer.model.Program;
 import com.felkertech.channelsurfer.service.MultimediaInputProvider;
+import com.felkertech.channelsurfer.sync.SyncAdapter;
 import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.cumulustv.livechannels.CumulusSessions;
@@ -48,6 +49,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
@@ -65,6 +67,7 @@ public class CumulusTvService extends MultimediaInputProvider {
     private CaptioningManager mCaptioningManager;
     private JsonChannel jsonChannel;
     private boolean stillTuning;
+    private HashMap<String, XmlTvParser.TvListing> epgData;
 
     @Override
     public void onCreate() {
@@ -85,13 +88,20 @@ public class CumulusTvService extends MultimediaInputProvider {
     }
 
     @Override
+    public void performCustomSync(final SyncAdapter syncAdapter, String inputId) {
+        new EpgDataSyncThread(syncAdapter.getContext()).start();
+        syncAdapter.performCustomSync(this, inputId);
+    }
+
+    @Override
     public List<Channel> getAllChannels(Context context) {
         ChannelDatabase cdn = ChannelDatabase.getInstance(context);
         try {
-            ArrayList<Channel> channels = cdn.getChannels();
+            List<Channel> channels = cdn.getChannels();
             // Add app linking
             for (Channel channel : channels) {
                 channel.setAppLinkText(context.getString(R.string.quick_settings));
+                // TODO Swap with cog icon
                 channel.setAppLinkIcon("https://github.com/Fleker/CumulusTV/blob/master/app/src/m" +
                         "ain/res/drawable-xhdpi/ic_play_action_normal.png?raw=true");
                 channel.setAppLinkPoster(channel.getLogoUrl());
@@ -112,55 +122,44 @@ public class CumulusTvService extends MultimediaInputProvider {
             Channel channelInfo, long startTimeMs, long endTimeMs) {
         JsonChannel jsonChannel = ChannelDatabase.getInstance(context)
                 .findChannelByMediaUrl(channelInfo.getInternalProviderData());
-        if (jsonChannel.getEpgUrl() != null && !jsonChannel.getEpgUrl().isEmpty()) {
+        if (jsonChannel.getEpgUrl() != null && !jsonChannel.getEpgUrl().isEmpty() &&
+                epgData.containsKey(jsonChannel.getEpgUrl())) {
             List<Program> programForGivenTime = new ArrayList<>();
-            // Load from the EPG url
-            URLConnection urlConnection = null;
-            try {
-                urlConnection = new URL(jsonChannel.getEpgUrl()).openConnection();
-                urlConnection.setConnectTimeout(1000 * 5);
-                urlConnection.setReadTimeout(1000 * 5);
-                InputStream inputStream = urlConnection.getInputStream();
-                InputStream epgInputStream =  new BufferedInputStream(inputStream);
-                XmlTvParser.TvListing tvListing = XmlTvParser.parse(epgInputStream);
-                List<Program> programList = tvListing.getAllPrograms();
-                // If repeat-programs is on, schedule the programs sequentially in a loop. To make
-                // every device play the same program in a given channel and time, we assumes the
-                // loop started from the epoch time.
-                long totalDurationMs = 0;
-                for (Program program : programList) {
-                    totalDurationMs += program.getDuration();
-                }
-                long programStartTimeMs = startTimeMs - startTimeMs % totalDurationMs;
-                int i = 0;
-                final int programCount = programList.size();
-                while (programStartTimeMs < endTimeMs) {
-                    Program currentProgram = programList.get(i++ % programCount);
-                    long programEndTimeMs = programStartTimeMs + currentProgram.getDuration();
-                    if (programEndTimeMs < startTimeMs) {
-                        programStartTimeMs = programEndTimeMs;
-                        continue;
-                    }
-                    programForGivenTime.add(new Program.Builder()
-                            .setChannelId(ContentUris.parseId(channelUri))
-                            .setTitle(currentProgram.getTitle())
-                            .setDescription(currentProgram.getDescription())
-                            .setContentRatings(currentProgram.getContentRatings())
-                            .setCanonicalGenres(currentProgram.getCanonicalGenres())
-                            .setPosterArtUri(currentProgram.getPosterArtUri())
-                            .setThumbnailUri(currentProgram.getThumbnailUri())
-                            .setInternalProviderData(currentProgram.getInternalProviderData())
-                            .setStartTimeUtcMillis(programStartTimeMs)
-                            .setEndTimeUtcMillis(programEndTimeMs)
-                            .build()
-                    );
-                    programStartTimeMs = programEndTimeMs;
-                }
-                return programForGivenTime;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
+            XmlTvParser.TvListing tvListing = epgData.get(jsonChannel.getEpgUrl());
+            List<Program> programList = tvListing.getAllPrograms();
+            // If repeat-programs is on, schedule the programs sequentially in a loop. To make
+            // every device play the same program in a given channel and time, we assumes the
+            // loop started from the epoch time.
+            long totalDurationMs = 0;
+            for (Program program : programList) {
+                totalDurationMs += program.getDuration();
             }
+            long programStartTimeMs = startTimeMs - startTimeMs % totalDurationMs;
+            int i = 0;
+            final int programCount = programList.size();
+            while (programStartTimeMs < endTimeMs) {
+                Program currentProgram = programList.get(i++ % programCount);
+                long programEndTimeMs = programStartTimeMs + currentProgram.getDuration();
+                if (programEndTimeMs < startTimeMs) {
+                    programStartTimeMs = programEndTimeMs;
+                    continue;
+                }
+                programForGivenTime.add(new Program.Builder()
+                        .setChannelId(ContentUris.parseId(channelUri))
+                        .setTitle(currentProgram.getTitle())
+                        .setDescription(currentProgram.getDescription())
+                        .setContentRatings(currentProgram.getContentRatings())
+                        .setCanonicalGenres(currentProgram.getCanonicalGenres())
+                        .setPosterArtUri(currentProgram.getPosterArtUri())
+                        .setThumbnailUri(currentProgram.getThumbnailUri())
+                        .setInternalProviderData(currentProgram.getInternalProviderData())
+                        .setStartTimeUtcMillis(programStartTimeMs)
+                        .setEndTimeUtcMillis(programEndTimeMs)
+                        .build()
+                );
+                programStartTimeMs = programEndTimeMs;
+            }
+            return programForGivenTime;
         } else {
             // Generate fake programs in hour-long segments
             int segment = 1000 * 60 * 60; //Hour long segments
@@ -392,5 +391,41 @@ public class CumulusTvService extends MultimediaInputProvider {
         simpleSession.setOverlayViewEnabled(true);
         return simpleSession;
     }
+    private final class EpgDataSyncThread extends Thread {
+        private Context mContext;
 
+        EpgDataSyncThread(Context context) {
+            super();
+            mContext = context;
+        }
+
+        @Override
+        public void run() {
+            super.run();
+            ChannelDatabase cdn = ChannelDatabase.getInstance(mContext);
+            try {
+                List<JsonChannel> channels = cdn.getJsonChannels();
+                for (JsonChannel jsonChannel : channels) {
+                    if (jsonChannel.getEpgUrl() != null && !jsonChannel.getEpgUrl().isEmpty()) {
+                        List<Program> programForGivenTime = new ArrayList<>();
+                        // Load from the EPG url
+                        URLConnection urlConnection = null;
+                        try {
+                            urlConnection = new URL(jsonChannel.getEpgUrl()).openConnection();
+                            urlConnection.setConnectTimeout(1000 * 5);
+                            urlConnection.setReadTimeout(1000 * 5);
+                            InputStream inputStream = urlConnection.getInputStream();
+                            InputStream epgInputStream =  new BufferedInputStream(inputStream);
+                            XmlTvParser.TvListing tvListing = XmlTvParser.parse(epgInputStream);
+                            epgData.put(jsonChannel.getEpgUrl(), tvListing);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

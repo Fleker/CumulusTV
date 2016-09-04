@@ -34,6 +34,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -66,6 +67,7 @@ public class ChannelDatabase {
     }
 
     protected ChannelDatabase(final Context context) {
+        mSettingsManager = new SettingsManager(context);
         try {
             DriveSettingsManager sp = new DriveSettingsManager(context);
             String spData = sp.getString(KEY, getDefaultJsonString());
@@ -86,16 +88,15 @@ public class ChannelDatabase {
                 "US_TV",
                 "US_TV_PG",
                 "US_TV_D", "US_TV_L");
-        mSettingsManager = new SettingsManager(context);
     }
 
     public JSONArray getJSONArray() throws JSONException {
         return mJsonObject.getJSONArray(KEY_CHANNELS);
     }
 
-    public ArrayList<JsonChannel> getJsonChannels() throws JSONException {
+    public List<JsonChannel> getJsonChannels() throws JSONException {
         JSONArray channels = getJSONArray();
-        ArrayList<JsonChannel> channelList = new ArrayList<>();
+        List<JsonChannel> channelList = new ArrayList<>();
         for (int i = 0; i < channels.length(); i++) {
             JsonChannel channel = new JsonChannel.Builder(channels.getJSONObject(i)).build();
             channelList.add(channel);
@@ -103,9 +104,9 @@ public class ChannelDatabase {
         return channelList;
     }
 
-    public ArrayList<Channel> getChannels() throws JSONException {
-        ArrayList<JsonChannel> jsonChannelList = getJsonChannels();
-        ArrayList<Channel> channelList = new ArrayList<>();
+    public List<Channel> getChannels() throws JSONException {
+        List<JsonChannel> jsonChannelList = getJsonChannels();
+        List<Channel> channelList = new ArrayList<>();
         for (int i = 0; i < jsonChannelList.size(); i++) {
             JsonChannel jsonChannel = jsonChannelList.get(i);
             Channel channel = jsonChannel.toChannel();
@@ -116,7 +117,7 @@ public class ChannelDatabase {
 
     public boolean channelNumberExists(String number) {
         try {
-            ArrayList<JsonChannel> jsonChannelList = getJsonChannels();
+            List<JsonChannel> jsonChannelList = getJsonChannels();
             for (JsonChannel jsonChannel : jsonChannelList) {
                 if (jsonChannel.getNumber().equals(number)) {
                     return true;
@@ -129,7 +130,7 @@ public class ChannelDatabase {
 
     public boolean channelExists(JsonChannel channel) {
         try {
-            ArrayList<JsonChannel> jsonChannelList = getJsonChannels();
+            List<JsonChannel> jsonChannelList = getJsonChannels();
             for (JsonChannel jsonChannel : jsonChannelList) {
                 if (jsonChannel.equals(channel) ||
                         jsonChannel.getMediaUrl().equals(channel.getMediaUrl())) {
@@ -144,7 +145,7 @@ public class ChannelDatabase {
     @Deprecated
     private JsonChannel findChannelByChannelNumber(String channelNumber) {
         try {
-            ArrayList<JsonChannel> jsonChannelList = getJsonChannels();
+            List<JsonChannel> jsonChannelList = getJsonChannels();
             for (JsonChannel jsonChannel : jsonChannelList) {
                 if (jsonChannel.getNumber() != null) {
                     if (jsonChannel.getNumber().equals(channelNumber)) {
@@ -159,7 +160,7 @@ public class ChannelDatabase {
 
     public JsonChannel findChannelByMediaUrl(String mediaUrl) {
         try {
-            ArrayList<JsonChannel> jsonChannelList = getJsonChannels();
+            List<JsonChannel> jsonChannelList = getJsonChannels();
             for (JsonChannel jsonChannel : jsonChannelList) {
                 if (jsonChannel.getMediaUrl() != null) {
                     if (jsonChannel.getMediaUrl().equals(mediaUrl)) {
@@ -173,9 +174,9 @@ public class ChannelDatabase {
     }
 
     public String[] getChannelNames() {
-        ArrayList<String> strings = new ArrayList<>();
+        List<String> strings = new ArrayList<>();
         try {
-            ArrayList<JsonChannel> jsonChannelList = getJsonChannels();
+            List<JsonChannel> jsonChannelList = getJsonChannels();
             for (JsonChannel jsonChannel : jsonChannelList) {
                 strings.add(jsonChannel.getNumber() + " " + jsonChannel.getName());
             }
@@ -198,7 +199,7 @@ public class ChannelDatabase {
         } else {
             try {
                 JSONArray jsonArray = new JSONArray();
-                ArrayList<JsonChannel> jsonChannelList = getJsonChannels();
+                List<JsonChannel> jsonChannelList = getJsonChannels();
                 int finalindex = -1;
                 for (int i = 0; i < jsonChannelList.size(); i++) {
                     JsonChannel jsonChannel = jsonChannelList.get(i);
@@ -224,7 +225,7 @@ public class ChannelDatabase {
             add(channel);
         } else {
             try {
-                ArrayList<JsonChannel> jsonChannelList = getJsonChannels();
+                List<JsonChannel> jsonChannelList = getJsonChannels();
                 for (int i = 0; i < jsonChannelList.size(); i++) {
                     JsonChannel jsonChannel = jsonChannelList.get(i);
                     if(jsonChannel.getMediaUrl() != null &&
