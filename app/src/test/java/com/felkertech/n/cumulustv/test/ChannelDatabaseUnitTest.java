@@ -2,7 +2,7 @@ package com.felkertech.n.cumulustv.test;
 
 import android.os.Build;
 
-import com.felkertech.channelsurfer.model.Channel;
+import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.n.cumulustv.BuildConfig;
 import com.felkertech.n.cumulustv.MockChannelDatabase;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
@@ -68,7 +68,7 @@ public class ChannelDatabaseUnitTest extends TestCase {
     public void testChannelInsertion() throws JSONException {
         MockChannelDatabase mockChannelDatabase =
                 MockChannelDatabase.getMockedInstance(RuntimeEnvironment.application);
-        JsonChannel sampleChannel = new JsonChannel.Builder()
+        CumulusChannel sampleChannel = new JsonChannel.Builder()
                 .setName(NAME)
                 .setNumber(NUMBER)
                 .setMediaUrl(MEDIA_URL)
@@ -96,7 +96,7 @@ public class ChannelDatabaseUnitTest extends TestCase {
     public void testChannelFind() throws JSONException {
         MockChannelDatabase mockChannelDatabase =
                 MockChannelDatabase.getMockedInstance(RuntimeEnvironment.application);
-        JsonChannel sampleChannel = new JsonChannel.Builder()
+        CumulusChannel sampleChannel = new JsonChannel.Builder()
                 .setName(NAME)
                 .setNumber(NUMBER)
                 .setMediaUrl(MEDIA_URL)

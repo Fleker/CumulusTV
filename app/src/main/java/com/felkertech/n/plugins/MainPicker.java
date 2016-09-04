@@ -25,6 +25,8 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 import com.felkertech.channelsurfer.players.TvInputPlayer;
+import com.felkertech.cumulustv.plugins.CumulusChannel;
+import com.felkertech.cumulustv.plugins.CumulusTvPlugin;
 import com.felkertech.n.boilerplate.Utils.AppUtils;
 import com.felkertech.n.boilerplate.Utils.PermissionUtils;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
@@ -122,7 +124,7 @@ public class MainPicker extends CumulusTvPlugin {
                                                 .setBackgroundColor(getResources()
                                                         .getColor(android.R.color.holo_red_dark));
                                     } else {
-                                        JsonChannel jsonChannel = new JsonChannel.Builder()
+                                        CumulusChannel jsonChannel = new JsonChannel.Builder()
                                                 .setName(name)
                                                 .setNumber(number)
                                                 .setMediaUrl(stream)
@@ -189,7 +191,8 @@ public class MainPicker extends CumulusTvPlugin {
                                                     ChannelDatabase.getInstance(MainPicker.this);
                                             for (M3uParser.XmlTvChannel channel :
                                                     listings.channels) {
-                                                JsonChannel jsonChannel = new JsonChannel.Builder()
+                                                CumulusChannel jsonChannel =
+                                                        new JsonChannel.Builder()
                                                         .setName(channel.displayName)
                                                         .setNumber(channel.displayNumber)
                                                         .setMediaUrl(channel.url)
@@ -279,7 +282,7 @@ public class MainPicker extends CumulusTvPlugin {
                                     .toString();
                             String genres = ((Button) l.findViewById(R.id.genres)).getText()
                                     .toString();
-                            JsonChannel jsonChannel = new JsonChannel.Builder()
+                            CumulusChannel jsonChannel = new JsonChannel.Builder()
                                     .setNumber(number)
                                     .setName(name)
                                     .setMediaUrl(stream)
@@ -348,7 +351,7 @@ public class MainPicker extends CumulusTvPlugin {
                             String genres = ((Button) l.findViewById(R.id.genres)).getText()
                                     .toString();
 
-                            JsonChannel jsonChannel = new JsonChannel.Builder()
+                            CumulusChannel jsonChannel = new JsonChannel.Builder()
                                     .setNumber(number)
                                     .setName(name)
                                     .setMediaUrl(stream)
@@ -380,7 +383,7 @@ public class MainPicker extends CumulusTvPlugin {
                             String genres = ((Button) l.findViewById(R.id.genres)).getText()
                                     .toString();
 
-                            JsonChannel jsonChannel = new JsonChannel.Builder()
+                            CumulusChannel jsonChannel = new JsonChannel.Builder()
                                     .setNumber(number)
                                     .setName(name)
                                     .setMediaUrl(stream)
@@ -395,7 +398,7 @@ public class MainPicker extends CumulusTvPlugin {
             pickerDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface dialog) {
-                    JsonChannel jsonChannel = getChannel();
+                    CumulusChannel jsonChannel = getChannel();
                     RelativeLayout l = (RelativeLayout) pickerDialog.getCustomView();
                     ((EditText) l.findViewById(R.id.number)).setText(jsonChannel.getNumber());
                     Log.d(TAG, "Channel " + jsonChannel.getNumber());

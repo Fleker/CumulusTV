@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.model.JsonChannel;
 import com.squareup.picasso.Picasso;
@@ -68,7 +69,7 @@ public class CardPresenter extends Presenter {
 
     @Override
     public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object item) {
-        final JsonChannel jsonChannel = (JsonChannel) item;
+        final CumulusChannel jsonChannel = (CumulusChannel) item;
         final ImageCardView cardView = (ImageCardView) viewHolder.view;
 
         cardView.setTitleText(jsonChannel.getName());

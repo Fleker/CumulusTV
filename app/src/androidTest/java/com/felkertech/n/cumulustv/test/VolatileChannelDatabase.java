@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.media.tv.TvContract;
 import android.net.Uri;
 
+import com.felkertech.channelsurfer.model.Channel;
+import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
@@ -16,6 +18,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Provides a test infrastructure for a {@link ChannelDatabase} where everything exists only in
@@ -26,7 +29,7 @@ public class VolatileChannelDatabase extends ChannelDatabase {
     public static final String KEY = VolatileChannelDatabase.class.getCanonicalName();
 
     private static VolatileChannelDatabase mMockChannelDatabase;
-    private static ArrayList<JsonChannel> mJsonChannels = new ArrayList<>();
+    private static ArrayList<CumulusChannel> mJsonChannels = new ArrayList<>();
 
     public static VolatileChannelDatabase getMockedInstance(Context context) throws JSONException {
         if (mMockChannelDatabase == null) {
@@ -45,13 +48,24 @@ public class VolatileChannelDatabase extends ChannelDatabase {
     }
 
     @Override
-    public void add(JsonChannel channel) throws JSONException {
+    public void add(CumulusChannel channel) throws JSONException {
         mJsonChannels.add(channel);
     }
 
     @Override
-    public void delete(JsonChannel channel) throws JSONException {
+    public void delete(CumulusChannel channel) throws JSONException {
         mJsonChannels.remove(channel);
+    }
+
+    @Override
+    public List<Channel> getChannels() throws JSONException {
+        List<Channel> channelList = new ArrayList<>();
+        for (int i = 0; i < mJsonChannels.size(); i++) {
+            JsonChannel jsonChannel = (JsonChannel) mJsonChannels.get(i);
+            Channel channel = jsonChannel.toChannel();
+            channelList.add(channel);
+        }
+        return channelList;
     }
 
     @Override
@@ -74,12 +88,12 @@ public class VolatileChannelDatabase extends ChannelDatabase {
                                 TvContract.Channels.COLUMN_INTERNAL_PROVIDER_DATA));
                         long rowId = cursor.getLong(cursor.getColumnIndex(TvContract.Channels._ID));
                         try {
-                            for (JsonChannel jsonChannel : getJsonChannels()) {
+                            for (CumulusChannel jsonChannel : mJsonChannels) {
                                 if (jsonChannel.getMediaUrl().equals(mediaUrl)) {
                                     mDatabaseHashMap.put(jsonChannel.getMediaUrl(), rowId);
                                 }
                             }
-                        } catch (JSONException e) {
+                        } catch (Exception e) {
                             Assert.fail(e.getMessage());
                         }
                     }

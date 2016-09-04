@@ -60,6 +60,7 @@ public class EpgSyncTest extends ActivityInstrumentationTestCase2<MainActivity> 
                         .setNumber("Number")
                         .setMediaUrl(MEDIA_URL)
                         .setEpgUrl("http://example.com/epg.xml")
+                        .setLogo("http://static-cdn1.ustream.tv/i/channel/picture/9/4/0/8/9408562/9408562_iss_hr_1330361780,256x144,r:1.jpg")
                         .build());
         TestTvProvider.mTestFramework = new TestTvProvider.TestFramework() {
             @Override

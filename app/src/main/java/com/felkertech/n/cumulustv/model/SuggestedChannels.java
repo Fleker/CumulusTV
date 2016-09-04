@@ -2,6 +2,8 @@ package com.felkertech.n.cumulustv.model;
 
 import android.media.tv.TvContract;
 
+import com.felkertech.cumulustv.plugins.CumulusChannel;
+
 /**
  * <p>This utility class is a single place to access the "Suggested Channels" that are seen in the
  * app. Having them in a separate place makes it easy to edit without affecting other parts
@@ -28,7 +30,7 @@ import android.media.tv.TvContract;
  *     UStream</a>.</p>
  */
 public class SuggestedChannels {
-    private static final JsonChannel[] channels = {
+    private static final CumulusChannel[] channels = {
             new JsonChannel.Builder()
                     .setGenres(TvContract.Programs.Genres.TECH_SCIENCE)
                     .setLogo("http://static-cdn1.ustream.tv/i/channel/live/1_6540154,256x144,b:20" +
@@ -118,25 +120,25 @@ public class SuggestedChannels {
                     .build()
     };
 
-    public static JsonChannel[] getSuggestedChannels() {
+    public static CumulusChannel[] getSuggestedChannels() {
         return channels;
     }
 }
 
-/* new JsonChannel("001",
+/* new CumulusChannel("001",
         "Sky News",
         "https://www.youtube.com/embed/y60wDzZt8yg?autoplay=1",
         "http://news.sky.com/images/33dc2677.sky-news-logo.png", "",
         TvContract.Programs.Genres.NEWS),
-new JsonChannel("002",
+new CumulusChannel("002",
         "Taiwan Formosa Live News",
         "https://www.youtube.com/embed/XxJKnDLYZz4?autoplay=1",
         "https://i.ytimg.com/vi/XxJKnDLYZz4/maxresdefault_live.jpg", "",
         TvContract.Programs.Genres.NEWS),*/
 /*
-        new JsonChannel("900", "Euronews De", "http://fr-par-iphone-2.cdn.hexaglobe.net/streaming/euronews_ewns/14-live.m3u8", ""),
-        new JsonChannel("901", "TVI (Portugal)", "http://noscdn1.connectedviews.com:1935/live/smil:tvi.smil/playlist.m3u8", ""),
-        new JsonChannel("902", "PHOENIXHD", "http://teleboy.customers.cdn.iptv.ch/1122/index.m3u8", ""),
-        new JsonChannel("903", "Sport 1 Germany", "http://streaming-hub.com/tv/i/sport1_1@97464/index_1300_av-p.m3u8?sd=10&rebase=on", ""),
-        new JsonChannel("904", "RTP International", "http://rtp-pull-live.hls.adaptive.level3.net/liverepeater/rtpi_5ch120h264.stream/livestream.m3u8", "")
+        new CumulusChannel("900", "Euronews De", "http://fr-par-iphone-2.cdn.hexaglobe.net/streaming/euronews_ewns/14-live.m3u8", ""),
+        new CumulusChannel("901", "TVI (Portugal)", "http://noscdn1.connectedviews.com:1935/live/smil:tvi.smil/playlist.m3u8", ""),
+        new CumulusChannel("902", "PHOENIXHD", "http://teleboy.customers.cdn.iptv.ch/1122/index.m3u8", ""),
+        new CumulusChannel("903", "Sport 1 Germany", "http://streaming-hub.com/tv/i/sport1_1@97464/index_1300_av-p.m3u8?sd=10&rebase=on", ""),
+        new CumulusChannel("904", "RTP International", "http://rtp-pull-live.hls.adaptive.level3.net/liverepeater/rtpi_5ch120h264.stream/livestream.m3u8", "")
 */

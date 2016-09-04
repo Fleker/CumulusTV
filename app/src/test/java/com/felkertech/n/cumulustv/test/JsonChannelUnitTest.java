@@ -3,6 +3,7 @@ package com.felkertech.n.cumulustv.test;
 import android.os.Build;
 
 import com.felkertech.channelsurfer.model.Channel;
+import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.n.cumulustv.BuildConfig;
 import com.felkertech.n.cumulustv.model.JsonChannel;
 
@@ -31,11 +32,11 @@ public class JsonChannelUnitTest extends TestCase {
     private static final String SPLASHSCREEN = "http://example.com/poster.png";
 
     /**
-     * Tests creating a JsonChannel with the Builder class to make sure the builder works correctly.
+     * Tests creating a CumulusChannel with the Builder class to make sure the builder works correctly.
      */
     @Test
     public void testBuilder() {
-        JsonChannel channel = new JsonChannel.Builder()
+        CumulusChannel channel = new JsonChannel.Builder()
                 .setAudioOnly(AUDIO_ONLY)
                 .setEpgUrl(EPG_URL)
                 .setGenres(GENRES)
@@ -57,11 +58,11 @@ public class JsonChannelUnitTest extends TestCase {
     }
 
     /**
-     * Tests creating a JsonChannel directly from a {@link org.json.JSONObject}.
+     * Tests creating a CumulusChannel directly from a {@link org.json.JSONObject}.
      */
     @Test
     public void testBuildFromJson() throws JSONException {
-        JsonChannel channel = new JsonChannel.Builder()
+        CumulusChannel channel = new JsonChannel.Builder()
                 .setAudioOnly(AUDIO_ONLY)
                 .setEpgUrl(EPG_URL)
                 .setGenres(GENRES)
@@ -84,7 +85,7 @@ public class JsonChannelUnitTest extends TestCase {
     @Test
     public void testBuilderExceptions() {
         try {
-            JsonChannel channel = new JsonChannel.Builder()
+            CumulusChannel channel = new JsonChannel.Builder()
                     .setName(NAME)
                     .setNumber(NUMBER)
                     .build();
@@ -93,7 +94,7 @@ public class JsonChannelUnitTest extends TestCase {
             // Exception correctly handled
         }
         try {
-            JsonChannel channel = new JsonChannel.Builder()
+            CumulusChannel channel = new JsonChannel.Builder()
                     .setName(NAME)
                     .setMediaUrl(MEDIA_URL)
                     .build();
@@ -102,7 +103,7 @@ public class JsonChannelUnitTest extends TestCase {
             // Exception correctly handled
         }
         try {
-            JsonChannel channel = new JsonChannel.Builder()
+            CumulusChannel channel = new JsonChannel.Builder()
                     .setMediaUrl(MEDIA_URL)
                     .setNumber(NUMBER)
                     .build();
@@ -132,11 +133,11 @@ public class JsonChannelUnitTest extends TestCase {
     }
 
     /**
-     * Tests that we can clone a JsonChannel through the Builder to modify later.
+     * Tests that we can cloneInto a CumulusChannel through the Builder to modify later.
      */
     @Test
     public void testJsonChannelCloning() {
-        JsonChannel jsonChannel = new JsonChannel.Builder()
+        CumulusChannel jsonChannel = new JsonChannel.Builder()
                 .setAudioOnly(AUDIO_ONLY)
                 .setEpgUrl(EPG_URL)
                 .setGenres(GENRES)
@@ -148,7 +149,7 @@ public class JsonChannelUnitTest extends TestCase {
                 .build();
         JsonChannel clonedChannel = new JsonChannel.Builder(jsonChannel).build();
         assertEquals(clonedChannel, jsonChannel);
-        JsonChannel clonedChannel2 = new JsonChannel.Builder(clonedChannel)
+        CumulusChannel clonedChannel2 = new JsonChannel.Builder(clonedChannel)
                 .setAudioOnly(!AUDIO_ONLY)
                 .build();
         assertNotSame(clonedChannel2, clonedChannel);

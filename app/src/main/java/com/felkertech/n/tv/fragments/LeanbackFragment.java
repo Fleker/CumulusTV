@@ -48,6 +48,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.felkertech.channelsurfer.sync.SyncUtils;
+import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.boilerplate.Utils.AppUtils;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
@@ -181,8 +182,8 @@ public class LeanbackFragment extends BrowseFragment
                 new ArrayObjectAdapter(suggestedChannelPresenter);
         HeaderItem suggestedChannelsHeader = new HeaderItem(1,
                 getString(R.string.suggested_channels));
-        JsonChannel[] suggestedChannels = SuggestedChannels.getSuggestedChannels();
-        for(JsonChannel jsonChannel : suggestedChannels) {
+        CumulusChannel[] suggestedChannels = SuggestedChannels.getSuggestedChannels();
+        for(CumulusChannel jsonChannel : suggestedChannels) {
             suggestedChannelAdapter.add(jsonChannel);
         }
         mRowsAdapter.add(new ListRow(suggestedChannelsHeader, suggestedChannelAdapter));

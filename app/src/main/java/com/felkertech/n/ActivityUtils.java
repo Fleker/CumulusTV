@@ -21,8 +21,9 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-import com.afollestad.materialdialogs.internal.ThemeSingleton;
 import com.felkertech.channelsurfer.sync.SyncUtils;
+import com.felkertech.cumulustv.plugins.CumulusChannel;
+import com.felkertech.cumulustv.plugins.CumulusTvPlugin;
 import com.felkertech.n.boilerplate.Utils.AppUtils;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.boilerplate.Utils.PermissionUtils;
@@ -34,7 +35,6 @@ import com.felkertech.n.cumulustv.activities.MainActivity;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
 import com.felkertech.n.cumulustv.receivers.GoogleDriveBroadcastReceiver;
-import com.felkertech.n.plugins.CumulusTvPlugin;
 import com.felkertech.n.tv.activities.LeanbackActivity;
 import com.felkertech.settingsmanager.SettingsManager;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -69,9 +69,9 @@ public class ActivityUtils {
     public final static int LAST_GOOD_BUILD = 27;
 
     public static void openSuggestedChannels(final Activity mActivity, final GoogleApiClient gapi) {
-        final JsonChannel[] channels = getSuggestedChannels();
+        final CumulusChannel[] channels = getSuggestedChannels();
         ArrayList<String> channeltext = new ArrayList<String>();
-        for(JsonChannel j: channels) {
+        for(CumulusChannel j: channels) {
             channeltext.add(j.getName());
         }
         final String[] channelList = channeltext.toArray(new String[channeltext.size()]);
@@ -81,14 +81,14 @@ public class ActivityUtils {
                 .itemsCallback(new MaterialDialog.ListCallback() {
                     @Override
                     public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                        JsonChannel j = channels[i];
+                        CumulusChannel j = channels[i];
                         addChannel(mActivity, gapi, j);
                     }
                 }).show();
     }
 
-    public static void addChannel(final Activity mActivity, GoogleApiClient gapi, JsonChannel jsonChannel)
-    {
+    public static void addChannel(final Activity mActivity, GoogleApiClient gapi,
+        CumulusChannel jsonChannel) {
         if (DEBUG) {
             Log.d(TAG, "I've been told to add " + jsonChannel.toString());
         }
@@ -291,10 +291,10 @@ public class ActivityUtils {
         syncFile(mActivity, gapi);
     }
 
-    public static void deleteChannelData(final Activity mActivity, GoogleApiClient gapi) {
-        final DriveSettingsManager sm = new DriveSettingsManager(mActivity);
+    public static void deleteChannelData(final Activity activity, GoogleApiClient gapi) {
+        final DriveSettingsManager sm = new DriveSettingsManager(activity);
         sm.setGoogleDriveSyncable(gapi, null);
-        new MaterialDialog.Builder(mActivity)
+        new MaterialDialog.Builder(activity)
                 .title(R.string.title_delete_all_channels)
                 .positiveText(R.string.yes)
                 .negativeText(R.string.no)
@@ -308,20 +308,20 @@ public class ActivityUtils {
                             sm.writeToGoogleDrive(did,
                                     sm.getString(ChannelDatabase.KEY));
                         } catch (Exception e) {
-                            Toast.makeText(mActivity, R.string.toast_error_driveid_invalid,
+                            Toast.makeText(activity, R.string.toast_error_driveid_invalid,
                                     Toast.LENGTH_SHORT).show();
                         }
                         sm.setString(R.string.sm_google_drive_id, "");
-                        Toast.makeText(mActivity, R.string.toast_msg_channels_deleted,
+                        Toast.makeText(activity, R.string.toast_msg_channels_deleted,
                                 Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(mActivity, MainActivity.class);
-                        mActivity.startActivity(i);
+                        GoogleDriveBroadcastReceiver.changeStatus(activity,
+                                GoogleDriveBroadcastReceiver.EVENT_DOWNLOAD_COMPLETE);
                     }
                 })
                 .show();
     }
 
-    public static void syncFile(Activity mActivity, GoogleApiClient gapi) {
+    public static void syncFile(Activity activity, GoogleApiClient gapi) {
         if (DEBUG) {
         Log.d(TAG, "About to sync a file");
         }
@@ -340,7 +340,7 @@ public class ActivityUtils {
                 if (DEBUG) {
                     Log.d(TAG, "About to start activity");
                 }
-                mActivity.startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0,
+                activity.startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0,
                         0);
                 if (DEBUG) {
                     Log.d(TAG, "Activity activated");
@@ -352,7 +352,7 @@ public class ActivityUtils {
                 e.printStackTrace();
             }
         } else {
-            Toast.makeText(mActivity, R.string.toast_msg_wait_google_api_client,
+            Toast.makeText(activity, R.string.toast_msg_wait_google_api_client,
                     Toast.LENGTH_SHORT).show();
         }
     }

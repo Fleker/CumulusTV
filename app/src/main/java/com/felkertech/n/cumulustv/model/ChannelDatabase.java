@@ -20,6 +20,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.felkertech.channelsurfer.model.Channel;
+import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.R;
@@ -128,7 +129,7 @@ public class ChannelDatabase {
         return false;
     }
 
-    public boolean channelExists(JsonChannel channel) {
+    public boolean channelExists(CumulusChannel channel) {
         try {
             List<JsonChannel> jsonChannelList = getJsonChannels();
             for (JsonChannel jsonChannel : jsonChannelList) {
@@ -185,7 +186,7 @@ public class ChannelDatabase {
         return strings.toArray(new String[strings.size()]);
     }
 
-    public void add(JsonChannel channel) throws JSONException {
+    public void add(CumulusChannel channel) throws JSONException {
         if (mJsonObject != null) {
             JSONArray channels = mJsonObject.getJSONArray("channels");
             channels.put(channel.toJSON());
@@ -193,7 +194,7 @@ public class ChannelDatabase {
         }
     }
 
-    public void update(JsonChannel channel) throws JSONException {
+    public void update(CumulusChannel channel) throws JSONException {
         if(!channelExists(channel)) {
             add(channel);
         } else {
@@ -220,7 +221,7 @@ public class ChannelDatabase {
         }
     }
 
-    public void delete(JsonChannel channel) throws JSONException {
+    public void delete(CumulusChannel channel) throws JSONException {
         if(!channelExists(channel)) {
             add(channel);
         } else {

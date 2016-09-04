@@ -35,7 +35,7 @@ public class TestTvProvider extends MultimediaInputProvider {
     @Override
     public List<Channel> getAllChannels(Context context) {
         try {
-            return VolatileChannelDatabase.getInstance(context).getChannels();
+            return VolatileChannelDatabase.getMockedInstance(context).getChannels();
         } catch (JSONException e) {
             Assert.fail(e.getMessage());
         }
