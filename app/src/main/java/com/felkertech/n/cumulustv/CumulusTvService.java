@@ -287,7 +287,7 @@ public class CumulusTvService extends MultimediaInputProvider {
                                         jsonChannel.getLogo().length() > 8) {
                                     bitmap[0] = Picasso.with(getApplicationContext())
                                             .load(jsonChannel.getLogo())
-                                            .placeholder(R.drawable.ic_launcher)
+                                            .placeholder(R.mipmap.ic_launcher)
                                             .get();
                                     h.sendEmptyMessage(0);
                                 } //Else we have no set logo
