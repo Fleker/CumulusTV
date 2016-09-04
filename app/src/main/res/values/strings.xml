@@ -149,5 +149,7 @@
     <string name="download_complete" translatable="false">Download complete</string>
     <string name="upload_complete" translatable="false">Upload complete</string>
     <string name="website_url" translatable="false">"http://cumulustv.herokuapp.com"</string>
+    <string name="toast_error_channel_name">Your channel must have a name</string>
+    <string name="toast_error_channel_media_url">Your channel must have a media url</string>
 </resources>
 

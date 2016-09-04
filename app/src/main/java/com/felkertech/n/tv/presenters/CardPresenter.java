@@ -76,7 +76,7 @@ public class CardPresenter extends Presenter {
         cardView.setTitleText(jsonChannel.getName());
         cardView.setContentText(jsonChannel.getNumber());
         cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
-        if (jsonChannel.getLogo() == null) {
+        if (jsonChannel.getLogo() == null || jsonChannel.getLogo().isEmpty()) {
             cardView.setMainImage(mContext.getResources().getDrawable(R.drawable.c_banner_3_2));
             cardView.findViewById(R.id.info_field)
                     .setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimaryDark));

@@ -34,6 +34,9 @@ public class DetailsDescriptionPresenter extends AbstractDetailsDescriptionPrese
 
     private String getGenresPretty(JsonChannel jsonChannel) {
         String genresString = jsonChannel.getGenresString();
+        if (genresString == null) {
+            return "";
+        }
         genresString = genresString.replaceAll("_", " / ");
         genresString = genresString.toLowerCase();
         genresString = genresString.replaceAll(",", ", ");
