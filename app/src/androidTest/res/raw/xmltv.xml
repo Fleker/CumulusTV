@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE tv SYSTEM "xmltv.dtd">
+<!--
+xmltv.dtd are extended to be align with Android TV Input Framework and contain static video
+contents. For details, please see the documentation of XmlTvParser class.
+-->
+<tv>
+    <programme
+        channel="com.example.android.sampletvinput.2-2"
+        start="20150817000000 +0000"
+        stop="20150817001053 +0000"
+        video-src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+        video-type="HTTP_PROGRESSIVE">
+        <title>Elephants Dream</title>
+        <desc>Do elephants dream of electric sheep?</desc>
+        <icon
+            src="https://storage.googleapis.com/gtv-videos-bucket/sample/images_480x270/ElephantsDream.jpg"/>
+        <category>MOVIES</category>
+        <category>FAMILY_KIDS</category>
+        <rating system="com.android.tv">
+            <value>com.android.tv/US_TV/US_TV_14/US_TV_D/US_TV_L</value>
+        </rating>
+    </programme>
+    <programme
+        channel="com.example.android.sampletvinput.2-2"
+        start="20150817001053 +0000"
+        stop="20150817002540 +0000"
+        video-src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"
+        video-type="HTTP_PROGRESSIVE">
+        <title>Sintel</title>
+        <desc>Sintel a movie clip.</desc>
+        <icon
+            src="https://storage.googleapis.com/gtv-videos-bucket/sample/images_480x270/Sintel.jpg"/>
+        <category>MOVIES</category>
+        <category>FAMILY_KIDS</category>
+        <rating system="com.android.tv">
+            <value>com.android.tv/US_TV/US_TV_PG/US_TV_D</value>
+        </rating>
+    </programme>
+</tv>

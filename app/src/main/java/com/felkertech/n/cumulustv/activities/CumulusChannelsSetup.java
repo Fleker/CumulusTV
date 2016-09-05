@@ -14,8 +14,8 @@ import com.crashlytics.android.Crashlytics;
 import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.channelsurfer.setup.SimpleTvSetup;
 import com.felkertech.channelsurfer.sync.SyncUtils;
+import com.felkertech.channelsurfer.utils.TvContractUtils;
 import com.felkertech.n.cumulustv.R;
-import com.felkertech.n.cumulustv.TvContractUtils;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
 import com.felkertech.settingsmanager.SettingsManager;
@@ -115,7 +115,8 @@ public class CumulusChannelsSetup extends SimpleTvSetup {
         i.sendEmptyMessageDelayed(0, (SETUP_DURATION - SETUP_UI_LAST) / channels.length);
 
         String[] projection = {TvContract.Channels.COLUMN_DISPLAY_NUMBER,
-                TvContract.Channels.COLUMN_DISPLAY_NAME, TvContract.Channels._ID};
+                TvContract.Channels.COLUMN_DISPLAY_NAME, TvContract.Channels._ID,
+                TvContract.Channels.COLUMN_INTERNAL_PROVIDER_DATA};
         //Now look up this channel in the DB
         try (Cursor cursor =
                      getContentResolver().query(TvContract.buildChannelsUriForInput(null),
@@ -123,15 +124,15 @@ public class CumulusChannelsSetup extends SimpleTvSetup {
             if (cursor == null || cursor.getCount() == 0) {
                 return;
             }
-            while(cursor.moveToNext()) {
+            while (cursor.moveToNext()) {
                 if (DEBUG) {
                     Log.d(TAG, "Tune to " +
                             cursor.getString(cursor.getColumnIndex(
                                     TvContract.Channels.COLUMN_DISPLAY_NAME)));
                 }
                 JsonChannel jsonChannel =
-                        ChannelDatabase.getInstance(this).findChannel(cursor.getString(
-                                cursor.getColumnIndex(TvContract.Channels.COLUMN_DISPLAY_NUMBER)));
+                        ChannelDatabase.getInstance(this).findChannelByMediaUrl(cursor.getString(
+                                cursor.getColumnIndex(TvContract.Channels.COLUMN_INTERNAL_PROVIDER_DATA)));
                 if (DEBUG) {
                     Log.d(TAG, jsonChannel.toString());
                     Log.d(TAG, String.valueOf(cursor.getInt(

@@ -59,4 +59,31 @@
         <item name="android:paddingLeft">16dp</item>
         <item name="android:textSize">14sp</item>
     </style>
+    <style name="Theme.Panel" parent="@android:style/Theme.Material.Panel">
+        <item name="android:windowElevation">@dimen/side_panel_elevation</item>
+        <item name="android:windowBackground">@color/side_panel_background</item>
+        <item name="android:windowAnimationStyle">@style/side_panel_animation</item>
+    </style>
+
+    <style name="side_panel_animation">
+        <item name="android:windowEnterAnimation">@anim/side_panel_enter</item>
+        <item name="android:windowExitAnimation">@anim/side_panel_exit</item>
+    </style>
+
+    <style name="Theme.Transparent" parent="Theme.Leanback">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="OptionsImageCardViewStyle" parent="Widget.Leanback.ImageCardViewStyle">
+        <item name="cardBackground">@color/colorPrimary</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="lbImageCardViewType">Title</item>
+        <item name="android:maxLines">5</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
 </resources>

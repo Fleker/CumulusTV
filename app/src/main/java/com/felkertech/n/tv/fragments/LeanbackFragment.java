@@ -15,8 +15,8 @@
 package com.felkertech.n.tv.fragments;
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -39,6 +39,7 @@ import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -46,19 +47,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.channelsurfer.sync.SyncUtils;
+import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.n.ActivityUtils;
+import com.felkertech.n.boilerplate.Utils.AppUtils;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
+import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
-import com.felkertech.n.cumulustv.R;
-import com.felkertech.n.cumulustv.xmltv.Program;
-import com.felkertech.n.cumulustv.xmltv.XMLTVParser;
-import com.felkertech.n.tv.presenters.CardPresenter;
-import com.felkertech.n.tv.Movie;
-import com.felkertech.n.tv.MovieList;
+import com.felkertech.n.cumulustv.model.Option;
+import com.felkertech.n.cumulustv.model.SuggestedChannels;
+import com.felkertech.n.cumulustv.receivers.GoogleDriveBroadcastReceiver;
 import com.felkertech.n.tv.activities.DetailsActivity;
+import com.felkertech.n.tv.presenters.CardPresenter;
+import com.felkertech.n.tv.presenters.OptionsCardPresenter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -66,16 +68,9 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi;
 import com.google.android.gms.drive.MetadataChangeSet;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
 import org.json.JSONException;
-import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -87,8 +82,6 @@ public class LeanbackFragment extends BrowseFragment
     private static final int BACKGROUND_UPDATE_DELAY = 300;
     private static final int GRID_ITEM_WIDTH = 200;
     private static final int GRID_ITEM_HEIGHT = 200;
-
-    public static final int RESOLVE_CONNECTION_REQUEST_CODE = 100;
     public static final int REQUEST_CODE_CREATOR = 102;
 
     private final Handler mHandler = new Handler();
@@ -96,12 +89,28 @@ public class LeanbackFragment extends BrowseFragment
     private Drawable mDefaultBackground;
     private DisplayMetrics mMetrics;
     private Timer mBackgroundTimer;
-    private URI mBackgroundURI;
     private BackgroundManager mBackgroundManager;
-
     private DriveSettingsManager sm;
     public GoogleApiClient gapi;
     public Activity mActivity;
+    private GoogleDriveBroadcastReceiver broadcastReceiver = new GoogleDriveBroadcastReceiver() {
+        @Override
+        public void onDownloadCompleted() {
+            refreshUI();
+        }
+
+        @Override
+        public void onUploadCompleted() {
+
+        }
+
+        @Override
+        public void onNetworkActionCompleted() {
+            if (DEBUG) {
+                Log.d(TAG, "Some network action occurred");
+            }
+        }
+    };
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -118,13 +127,17 @@ public class LeanbackFragment extends BrowseFragment
             Log.d(TAG, "onDestroy: " + mBackgroundTimer.toString());
             mBackgroundTimer.cancel();
         }
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         refreshUI();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver,
+                new IntentFilter(GoogleDriveBroadcastReceiver.ACTION_STATUS_CHANGED));
     }
+
     public void refreshUI() {
         prepareBackgroundManager();
         setupUIElements();
@@ -133,12 +146,13 @@ public class LeanbackFragment extends BrowseFragment
     }
 
     private void loadRows() {
-        //HERE ARE MY ROWS
+        // Here are my rows
         mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 
-        //ROW 1: MY CHANNELS
+        // My channels
         if(mActivity == null && Build.VERSION.SDK_INT >= 23) {
-            Toast.makeText(getContext(), "Uh-oh, something isn't working: loadRows has no activity", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.toast_error_no_activity, Toast.LENGTH_SHORT)
+                    .show();
             return;
         } else if(mActivity == null) {
             return;
@@ -146,95 +160,71 @@ public class LeanbackFragment extends BrowseFragment
         ChannelDatabase cd = ChannelDatabase.getInstance(mActivity);
         try {
             CardPresenter channelCardPresenter = new CardPresenter();
-//            GridItemPresenter channelCardPresenter = new GridItemPresenter();
             ArrayObjectAdapter channelRowAdapter = new ArrayObjectAdapter(channelCardPresenter);
             int index = 0;
-            for(Channel channelInfo: cd.getChannels()) {
+            for(JsonChannel jsonChannel : cd.getJsonChannels()) {
                 if (DEBUG) {
-                    Log.d(TAG, "Got channels " + channelInfo.getName());
-                    Log.d(TAG, channelInfo.getLogoUrl());
+                    Log.d(TAG, "Got channels " + jsonChannel.getName());
+                    Log.d(TAG, jsonChannel.getLogo());
                 }
-                channelRowAdapter.add(MovieList.buildMovieInfo(
-                        "channel",
-                        channelInfo.getName(),
-                        "",
-                        channelInfo.getNumber(),
-                        cd.getJsonChannels().get(index).getMediaUrl(),
-                        channelInfo.getLogoUrl(),
-                        "android.resource://com.felkertech.n.tv/drawable/c_background5"
-                ));
-                Log.d(TAG, MovieList.buildMovieInfo(
-                        "channel",
-                        channelInfo.getName(),
-                        "",
-                        channelInfo.getNumber(),
-                        cd.getJsonChannels().get(index).getMediaUrl(),
-                        channelInfo.getLogoUrl(),
-                        "android.resource://com.felkertech.n.tv/drawable/c_background5"
-                ).toString());
-//                channelRowAdapter.add(channelInfo.name);
+                channelRowAdapter.add(jsonChannel);
                 index++;
             }
-            HeaderItem header = new HeaderItem(0, "My Channels");
+            HeaderItem header = new HeaderItem(0, getString(R.string.my_channels));
             mRowsAdapter.add(new ListRow(header, channelRowAdapter));
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        //Second row is suggested channels (not really yet)
+        // Second row is suggested channels
         CardPresenter suggestedChannelPresenter = new CardPresenter();
-        ArrayObjectAdapter suggestedChannelAdapter = new ArrayObjectAdapter(suggestedChannelPresenter);
-        HeaderItem suggestedChannelsHeader = new HeaderItem(1, "Suggested Channels");
-        JsonChannel[] suggestedChannels = ActivityUtils.getSuggestedChannels();
-        for(JsonChannel jsonChannel: suggestedChannels) {
-            suggestedChannelAdapter.add(MovieList.buildMovieInfo(
-                    "channel",
-                    jsonChannel.getName(),
-                    "",
-                    jsonChannel.getNumber(),
-                    jsonChannel.getMediaUrl(),
-                    jsonChannel.getLogo(),
-                    "android.resource://com.felkertech.n.tv/drawable/c_background5"
-            ));
+        ArrayObjectAdapter suggestedChannelAdapter =
+                new ArrayObjectAdapter(suggestedChannelPresenter);
+        HeaderItem suggestedChannelsHeader = new HeaderItem(1,
+                getString(R.string.suggested_channels));
+        CumulusChannel[] suggestedChannels = SuggestedChannels.getSuggestedChannels();
+        for(CumulusChannel jsonChannel : suggestedChannels) {
+            suggestedChannelAdapter.add(jsonChannel);
         }
         mRowsAdapter.add(new ListRow(suggestedChannelsHeader, suggestedChannelAdapter));
 
-        //Third row is Drive
-        HeaderItem driveHeader = new HeaderItem(1, "Google Drive Sync");
-        GridItemPresenter drivePresenter = new GridItemPresenter();
+        // Third row is Drive
+        HeaderItem driveHeader = new HeaderItem(1, getString(R.string.google_drive_sync));
+        OptionsCardPresenter drivePresenter = new OptionsCardPresenter();
         ArrayObjectAdapter driveAdapter = new ArrayObjectAdapter(drivePresenter);
-
-/*        IconCardView iconCardView = new IconCardView(mActivity);
-        iconCardView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        iconCardView.setTitleText("Redownload");
-        driveAdapter.add(iconCardView);*/
-        driveAdapter.add(getString(R.string.connect_drive));
-        driveAdapter.add(getString(R.string.settings_refresh_cloud_local));
-//        driveAdapter.add("Upload to cloud");
-        driveAdapter.add(getString(R.string.settings_switch_google_drive));
-//        driveAdapter.add(getString(R.string.settings_sync_file));
+        driveAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_google_drive),
+                getString(R.string.connect_drive)));
+        driveAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_cloud_download),
+                getString(R.string.settings_refresh_cloud_local)));
+        driveAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_google_drive_folder),
+                getString(R.string.settings_switch_google_drive)));
         mRowsAdapter.add(new ListRow(driveHeader, driveAdapter));
 
-        //Fourth row are actions
-        HeaderItem gridHeader = new HeaderItem(1, "Manage");
-        GridItemPresenter mGridPresenter = new GridItemPresenter();
+        // Fourth row is actions
+        HeaderItem gridHeader = new HeaderItem(1, getString(R.string.manage));
+        OptionsCardPresenter mGridPresenter = new OptionsCardPresenter();
         ArrayObjectAdapter gridRowAdapter = new ArrayObjectAdapter(mGridPresenter);
-        gridRowAdapter.add(getString(R.string.manage_livechannels));
-//        gridRowAdapter.add(getString(R.string.manage_add_suggested));
-        gridRowAdapter.add(getString(R.string.manage_add_new));
-//        gridRowAdapter.add("Empty Plugin");
-//        gridRowAdapter.add("Settings");
+        gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_television),
+                getString(R.string.manage_livechannels)));
+        gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_airplay),
+                getString(R.string.manage_add_new)));
         mRowsAdapter.add(new ListRow(gridHeader, gridRowAdapter));
 
-        //Settings will become its own activity
-        HeaderItem gridHeader2 = new HeaderItem(1, "Settings");
-        GridItemPresenter mGridPresenter2 = new GridItemPresenter();
+        // Settings will become its own activity
+        HeaderItem gridHeader2 = new HeaderItem(1, getString(R.string.settings));
+        OptionsCardPresenter mGridPresenter2 = new OptionsCardPresenter();
         ArrayObjectAdapter gridRowAdapter2 = new ArrayObjectAdapter(mGridPresenter2);
-        gridRowAdapter2.add(getString(R.string.settings_browse_plugins));
-        gridRowAdapter2.add(getString(R.string.settings_view_licenses));
-        gridRowAdapter2.add(getString(R.string.settings_reset_channel_data));
-        gridRowAdapter2.add(getString(R.string.about_app));
-//        gridRowAdapter2.add(getString(R.string.settings_read_xmltv));
+        /*
+        FIXME Plugin browser hidden due to #165
+        gridRowAdapter2.add(new Option(getResources().getDrawable(R.drawable.ic_animation),
+                    getString(R.string.settings_browse_plugins)));
+                    */
+        gridRowAdapter2.add(new Option(getResources().getDrawable(R.drawable.ic_book_open),
+                getString(R.string.settings_view_licenses)));
+        gridRowAdapter2.add(new Option(getResources().getDrawable(R.drawable.ic_delete_forever),
+                getString(R.string.settings_reset_channel_data)));
+        gridRowAdapter2.add(new Option(getResources().getDrawable(R.drawable.ic_help_circle_fill),
+                getString(R.string.about_app)));
         mRowsAdapter.add(new ListRow(gridHeader2, gridRowAdapter2));
 
         setAdapter(mRowsAdapter);
@@ -248,16 +238,13 @@ public class LeanbackFragment extends BrowseFragment
             mBackgroundManager.setDrawable(getResources().getDrawable(R.drawable.c_background5));
             mMetrics = new DisplayMetrics();
             getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
-        } catch(Exception e) {
-            e.printStackTrace();
-            //Do nothing
+        } catch(Exception ignored) {
         }
     }
 
     private void setupUIElements() {
         try {
-            // setBadgeDrawable(getActivity().getResources().getDrawable(
-            // R.drawable.videos_by_google_banner));
+            setBadgeDrawable(getActivity().getResources().getDrawable(R.mipmap.ic_launcher));
             setTitle(getString(R.string.app_name)); // Badge, when set, takes precedent
             // over title
             setHeadersState(HEADERS_ENABLED);
@@ -267,8 +254,7 @@ public class LeanbackFragment extends BrowseFragment
             setBrandColor(getResources().getColor(R.color.colorPrimary));
             // set search icon color
 //        setSearchAffordanceColor(getResources().getColor(R.color.search_opaque));
-        } catch(Exception e) {
-            //Shrug.gif
+        } catch(Exception ignored) {
         }
     }
 
@@ -294,12 +280,12 @@ public class LeanbackFragment extends BrowseFragment
             @Override
             public void onActionFinished(boolean cloudToLocal) {
                 Log.d(TAG, "Sync req after drive action");
-                final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".CumulusTvService"));
+                final String info = TvContract.buildInputId(ActivityUtils.TV_INPUT_SERVICE);
                 SyncUtils.requestSync(mActivity, info);
                 if (cloudToLocal) {
-                    Toast.makeText(getActivity(), "Download complete", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.download_complete, Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getActivity(), "Upload complete", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.upload_complete, Toast.LENGTH_SHORT).show();
                 }
             }
         }); //Enable GDrive
@@ -351,9 +337,10 @@ public class LeanbackFragment extends BrowseFragment
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d(TAG, "Error connecting " + connectionResult.getErrorCode());
-
-        Log.d(TAG, "oCF " + connectionResult.toString());
+        if (DEBUG) {
+            Log.d(TAG, "Error connecting " + connectionResult.getErrorCode());
+            Log.d(TAG, "oCF " + connectionResult.toString());
+        }
         if (connectionResult.hasResolution()) {
             try {
                 connectionResult.startResolutionForResult(mActivity, ActivityUtils.RESOLVE_CONNECTION_REQUEST_CODE);
@@ -370,19 +357,19 @@ public class LeanbackFragment extends BrowseFragment
         public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
                                   RowPresenter.ViewHolder rowViewHolder, Row row) {
 
-            if (item instanceof Movie) {
-                Movie movie = (Movie) item;
+            if (item instanceof JsonChannel) {
+                JsonChannel jsonChannel = (JsonChannel) item;
                 Log.d(TAG, "Item: " + item.toString());
                 Intent intent = new Intent(mActivity, DetailsActivity.class);
-                intent.putExtra(DetailsActivity.MOVIE, movie);
+                intent.putExtra(VideoDetailsFragment.EXTRA_JSON_CHANNEL, jsonChannel.toString());
 
                 Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
                         mActivity,
                         ((ImageCardView) itemViewHolder.view).getMainImageView(),
                         DetailsActivity.SHARED_ELEMENT_NAME).toBundle();
                 mActivity.startActivity(intent, bundle);
-            } else if (item instanceof String) {
-                String title = (String) item;
+            } else if (item instanceof Option) {
+                String title = ((Option) item).getText();
                 if(title.equals(getString(R.string.manage_livechannels))) {
                     ActivityUtils.launchLiveChannels(mActivity);
                 } else if(title.equals(getString(R.string.manage_add_suggested))) {
@@ -413,31 +400,6 @@ public class LeanbackFragment extends BrowseFragment
                     ActivityUtils.deleteChannelData(mActivity, gapi);
                 } else if(title.equals(getString(R.string.about_app))) {
                     ActivityUtils.openAbout(mActivity);
-                } else if(title.equals(getString(R.string.settings_read_xmltv))) {
-                    final OkHttpClient client = new OkHttpClient();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Request request = new Request.Builder()
-                                    .url("http://felkerdigitalmedia.com/sampletv.xml")
-                                    .build();
-
-                            Response response = null;
-                            try {
-                                response = client.newCall(request).execute();
-//                                            Log.d(TAG, response.body().string().substring(0,36));
-                                String s = response.body().string();
-                                List<Program> programs = XMLTVParser.parse(s);
-                                            /*Log.d(TAG, programs.toString());
-                                            Log.d(TAG, "Parsed "+programs.size());
-                                            Log.d(TAG, "Program 1: "+ programs.get(0).getTitle());*/
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            } catch (XmlPullParserException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
                 } else {
                     Toast.makeText(mActivity, ((String) item), Toast.LENGTH_SHORT)
                             .show();
@@ -450,30 +412,11 @@ public class LeanbackFragment extends BrowseFragment
         @Override
         public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item,
                                    RowPresenter.ViewHolder rowViewHolder, Row row) {
-            if (item instanceof Movie) {
-//                mBackgroundURI = ((Movie) item).getBackgroundImageURI();
+            if (item instanceof JsonChannel) {
                 startBackgroundTimer();
             }
 
         }
-    }
-
-    protected void updateBackground(String uri) {
-        int width = mMetrics.widthPixels;
-        int height = mMetrics.heightPixels;
-        /*Glide.with(getActivity())
-                .load(uri)
-                .centerCrop()
-                .error(mDefaultBackground)
-                .into(new SimpleTarget<GlideDrawable>(width, height) {
-                    @Override
-                    public void onResourceReady(GlideDrawable resource,
-                                                GlideAnimation<? super GlideDrawable>
-                                                        glideAnimation) {
-                        mBackgroundManager.setDrawable(resource);
-                    }
-                });*/
-        mBackgroundTimer.cancel();
     }
 
     private void startBackgroundTimer() {
@@ -491,9 +434,7 @@ public class LeanbackFragment extends BrowseFragment
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (mBackgroundURI != null) {
-                        updateBackground(mBackgroundURI.toString());
-                    }
+
                 }
             });
 

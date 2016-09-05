@@ -25,12 +25,15 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 import com.felkertech.channelsurfer.players.TvInputPlayer;
+import com.felkertech.cumulustv.plugins.CumulusChannel;
+import com.felkertech.cumulustv.plugins.CumulusTvPlugin;
+import com.felkertech.n.boilerplate.Utils.AppUtils;
 import com.felkertech.n.boilerplate.Utils.PermissionUtils;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.activities.CumulusTvPlayer;
 import com.felkertech.n.cumulustv.model.JsonChannel;
 import com.felkertech.n.cumulustv.R;
-import com.felkertech.n.fileio.M3UParser;
+import com.felkertech.n.fileio.M3uParser;
 import com.felkertech.settingsmanager.common.CommaArray;
 
 import org.json.JSONException;
@@ -121,7 +124,7 @@ public class MainPicker extends CumulusTvPlugin {
                                                 .setBackgroundColor(getResources()
                                                         .getColor(android.R.color.holo_red_dark));
                                     } else {
-                                        JsonChannel jsonChannel = new JsonChannel.Builder()
+                                        CumulusChannel jsonChannel = new JsonChannel.Builder()
                                                 .setName(name)
                                                 .setNumber(number)
                                                 .setMediaUrl(stream)
@@ -160,10 +163,15 @@ public class MainPicker extends CumulusTvPlugin {
                             startActivity(i);
                         }
                     });
+
+                    if (AppUtils.isTV(this)) {
+                        pickerDialog.getCustomView().findViewById(R.id.stream_open)
+                                .setVisibility(View.GONE);
+                    }
                 } else {
                     ContentResolver resolver = getContentResolver();
                     InputStream input = resolver.openInputStream(uri);
-                    final M3UParser.TvListing listings = M3UParser.parse(input,
+                    final M3uParser.TvListing listings = M3uParser.parse(input,
                             getApplicationContext());
                     new MaterialDialog.Builder(MainPicker.this)
                             .title(getString(R.string.import_bulk_title, listings.channels.size()))
@@ -181,9 +189,10 @@ public class MainPicker extends CumulusTvPlugin {
                                         public void run() {
                                             ChannelDatabase channelDatabase =
                                                     ChannelDatabase.getInstance(MainPicker.this);
-                                            for (M3UParser.XmlTvChannel channel :
+                                            for (M3uParser.XmlTvChannel channel :
                                                     listings.channels) {
-                                                JsonChannel jsonChannel = new JsonChannel.Builder()
+                                                CumulusChannel jsonChannel =
+                                                        new JsonChannel.Builder()
                                                         .setName(channel.displayName)
                                                         .setNumber(channel.displayNumber)
                                                         .setMediaUrl(channel.url)
@@ -273,7 +282,7 @@ public class MainPicker extends CumulusTvPlugin {
                                     .toString();
                             String genres = ((Button) l.findViewById(R.id.genres)).getText()
                                     .toString();
-                            JsonChannel jsonChannel = new JsonChannel.Builder()
+                            CumulusChannel jsonChannel = new JsonChannel.Builder()
                                     .setNumber(number)
                                     .setName(name)
                                     .setMediaUrl(stream)
@@ -303,6 +312,10 @@ public class MainPicker extends CumulusTvPlugin {
                     startActivity(i);
                 }
             });
+            if (AppUtils.isTV(this)) {
+                pickerDialog.getCustomView().findViewById(R.id.stream_open)
+                        .setVisibility(View.GONE);
+            }
         } else if(!areReadingAll()) {
             final ChannelDatabase cdn = ChannelDatabase.getInstance(this);
             pickerDialog = new MaterialDialog.Builder(MainPicker.this)
@@ -338,7 +351,7 @@ public class MainPicker extends CumulusTvPlugin {
                             String genres = ((Button) l.findViewById(R.id.genres)).getText()
                                     .toString();
 
-                            JsonChannel jsonChannel = new JsonChannel.Builder()
+                            CumulusChannel jsonChannel = new JsonChannel.Builder()
                                     .setNumber(number)
                                     .setName(name)
                                     .setMediaUrl(stream)
@@ -370,7 +383,7 @@ public class MainPicker extends CumulusTvPlugin {
                             String genres = ((Button) l.findViewById(R.id.genres)).getText()
                                     .toString();
 
-                            JsonChannel jsonChannel = new JsonChannel.Builder()
+                            CumulusChannel jsonChannel = new JsonChannel.Builder()
                                     .setNumber(number)
                                     .setName(name)
                                     .setMediaUrl(stream)
@@ -385,7 +398,7 @@ public class MainPicker extends CumulusTvPlugin {
             pickerDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface dialog) {
-                    JsonChannel jsonChannel = getChannel();
+                    CumulusChannel jsonChannel = getChannel();
                     RelativeLayout l = (RelativeLayout) pickerDialog.getCustomView();
                     ((EditText) l.findViewById(R.id.number)).setText(jsonChannel.getNumber());
                     Log.d(TAG, "Channel " + jsonChannel.getNumber());
@@ -414,6 +427,10 @@ public class MainPicker extends CumulusTvPlugin {
                     startActivity(i);
                 }
             });
+            if (AppUtils.isTV(this)) {
+                pickerDialog.getCustomView().findViewById(R.id.stream_open)
+                        .setVisibility(View.GONE);
+            }
         } else {
             Toast.makeText(MainPicker.this, R.string.toast_msg_no_support_READALL,
                     Toast.LENGTH_SHORT).show();
@@ -479,6 +496,7 @@ public class MainPicker extends CumulusTvPlugin {
         }
         exoPlayer.setPlayWhenReady(true);
     }
+
     public void loadStream(MaterialDialog viewHolder, final String url) {
         SurfaceView sv = (SurfaceView) viewHolder.getCustomView().findViewById(R.id.surface);
         TvInputPlayer exoPlayer;
@@ -492,6 +510,7 @@ public class MainPicker extends CumulusTvPlugin {
         }
         exoPlayer.setPlayWhenReady(true);
     }
+
     public String getUrl() {
         String url = "";
         if(getChannel() != null) {
@@ -504,5 +523,11 @@ public class MainPicker extends CumulusTvPlugin {
             Log.d(TAG, "Found '" + url + "'");
         }
         return url;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadStream(pickerDialog);
     }
 }

@@ -1,6 +1,7 @@
 package com.felkertech.n;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -12,23 +13,28 @@ import android.media.tv.TvContract;
 import android.net.Uri;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.customtabs.CustomTabsIntent;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.felkertech.channelsurfer.sync.SyncUtils;
-import com.felkertech.channelsurfer.utils.LiveChannelsUtils;
+import com.felkertech.cumulustv.plugins.CumulusChannel;
+import com.felkertech.cumulustv.plugins.CumulusTvPlugin;
 import com.felkertech.n.boilerplate.Utils.AppUtils;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.boilerplate.Utils.PermissionUtils;
 import com.felkertech.n.cumulustv.Intro.Intro;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.activities.CumulusTvPlayer;
+import com.felkertech.n.cumulustv.activities.HomepageWebViewActivity;
 import com.felkertech.n.cumulustv.activities.MainActivity;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
-import com.felkertech.n.plugins.CumulusTvPlugin;
+import com.felkertech.n.cumulustv.receivers.GoogleDriveBroadcastReceiver;
 import com.felkertech.n.tv.activities.LeanbackActivity;
 import com.felkertech.settingsmanager.SettingsManager;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -45,6 +51,8 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.felkertech.n.cumulustv.model.SuggestedChannels.getSuggestedChannels;
+
 /**
  * Created by guest1 on 10/29/2015.
  */
@@ -59,153 +67,69 @@ public class ActivityUtils {
             new ComponentName("com.felkertech.n.cumulustv", ".CumulusTvService");
 
     public final static int LAST_GOOD_BUILD = 27;
-    /* SUGGESTED CHANNELS */
-    public static JsonChannel[] getSuggestedChannels() {
-                /*
-                0xx NEWS
-                1xx SCIENCE/TECH/NATURE
-                2xx HISTORY/EDUCATION
-                3xx SPORTS/VIDEO GAMES
-                4xx MUSIC
-                5xx FICTION
-                6xx NONFICTION
-                7xx GOVERNMENT/SOCIETY
-                9xx MISC
-                 */
-        final JsonChannel[] channels = { /* Some via http://rgw.ustream.tv/json.php/Ustream.searchBroadcast/ */
-                new JsonChannel.Builder()
-                        .setGenres(TvContract.Programs.Genres.TECH_SCIENCE)
-                        .setLogo("http://static-cdn1.ustream.tv/i/channel/live/1_6540154,256x144," +
-                                "b:2015071514.jpg")
-                        .setMediaUrl("http://iphone-streaming.ustream.tv/uhls/6540154/streams/liv" +
-                                "e/iphone/playlist.m3u8")
-                        .setName("NASA Public")
-                        .setNumber("100")
-                        .build(),
-                new JsonChannel.Builder()
-                        .setGenres(TvContract.Programs.Genres.TECH_SCIENCE)
-                        .setLogo("http://static-cdn1.ustream.tv/i/channel/picture/9/4/0/8/9408562" +
-                                "/9408562_iss_hr_1330361780,256x144,r:1.jpg")
-                        .setMediaUrl("http://iphone-streaming.ustream.tv/uhls/9408562/streams/liv" +
-                                "e/iphone/playlist.m3u8")
-                        .setName("ISS Stream")
-                        .setNumber("101")
-                        .build(),
-                new JsonChannel.Builder()
-                        .setGenres(TvContract.Programs.Genres.TECH_SCIENCE + "," +
-                                TvContract.Programs.Genres.NEWS)
-                        .setLogo("http://wiki.twit.tv//w//images//TWiT-horizontal.png")
-                        .setMediaUrl("http://twit.live-s.cdn.bitgravity.com/cdn-live-s1/_definst_" +
-                                "/twit/live/high/playlist.m3u8")
-                        .setName("TWiT.tv")
-                        .setNumber("133")
-                        .build(),
-                new JsonChannel.Builder()
-                        .setLogo("http://static-cdn1.ustream.tv/i/channel/live/1_9600798,256x144," +
-                                "b:2015071514.jpg")
-                        .setMediaUrl("http://iphone-streaming.ustream.tv/uhls/9600798/streams/liv" +
-                                "e/iphone/playlist.m3u8")
-                        .setName("Monterey Bay Aquarium")
-                        .setNumber("167")
-                        .build(),
-                new JsonChannel.Builder()
-                        .setGenres(TvContract.Programs.Genres.MUSIC)
-                        .setMediaUrl("http://pablogott.videocdn.scaleengine.net/pablogott-iphone/" +
-                                "play/ooftv1/playlist.m3u8")
-                        .setNumber("400")
-                        .setName("OutOfFocus.TV")
-                        .build(),
-                new JsonChannel.Builder()
-                        .setGenres(TvContract.Programs.Genres.MUSIC)
-                        .setLogo("http://payload247.cargocollective.com/1/9/312377/7259316/hits.jpg")
-                        .setMediaUrl("http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch1/a" +
-                                "ppleman.m3u8")
-                        .setName("VEVO TV Hits")
-                        .setNumber("401")
-                        .build(),
-                new JsonChannel.Builder()
-                        .setGenres(TvContract.Programs.Genres.MUSIC)
-                        .setLogo("http://payload247.cargocollective.com/1/9/312377/7259316/flow.jpg")
-                        .setMediaUrl("http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch2/a" +
-                                "ppleman.m3u8")
-                        .setName("VEVO TV Flow")
-                        .setNumber("402")
-                        .build(),
-                new JsonChannel.Builder()
-                        .setGenres(TvContract.Programs.Genres.MUSIC)
-                        .setLogo("http://payload247.cargocollective.com/1/9/312377/7259316/nashville.jpg")
-                        .setMediaUrl("http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch3/a" +
-                                "ppleman.m3u8")
-                        .setName("VEVO TV Nashville")
-                        .setNumber("403")
-                        .build(),
-                new JsonChannel.Builder()
-                        .setAudioOnly(true)
-                        .setGenres(TvContract.Programs.Genres.MUSIC + "," +
-                                TvContract.Programs.Genres.ENTERTAINMENT)
-                        .setLogo("https://ottleyboothr.files.wordpress.com/2015/06/beats-1.jpg")
-                        .setMediaUrl("http://itsliveradio.apple.com/streams/master_session01_hub0" +
-                                "1_hub02.m3u8")
-                        .setName("Beats One Radio")
-                        .setNumber("410")
-                        .build(),
-                new JsonChannel.Builder()
-                        .setGenres(TvContract.Programs.Genres.ARTS + "," +
-                                TvContract.Programs.Genres.ENTERTAINMENT)
-                        .setLogo("http://content.provideocoalition.com/uploads/ArtbeatsLogo_black" +
-                                "box.jpg")
-                        .setMediaUrl("http://cdn-fms.rbs.com.br/hls-vod/sample1_1500kbps.f4v.m3u8")
-                        .setName("Artbeats Demo")
-                        .setNumber("900")
-                        .build()
-        };
-        return channels;
-    }
+
     public static void openSuggestedChannels(final Activity mActivity, final GoogleApiClient gapi) {
-        final JsonChannel[] channels = getSuggestedChannels();
+        final CumulusChannel[] channels = getSuggestedChannels();
         ArrayList<String> channeltext = new ArrayList<String>();
-        for(JsonChannel j: channels) {
+        for(CumulusChannel j: channels) {
             channeltext.add(j.getName());
         }
         final String[] channelList = channeltext.toArray(new String[channeltext.size()]);
         new MaterialDialog.Builder(mActivity)
-                .title(R.string.suggested_channels)
+                .title(R.string.here_are_suggested_channels)
                 .items(channelList)
                 .itemsCallback(new MaterialDialog.ListCallback() {
                     @Override
                     public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                        JsonChannel j = channels[i];
-                        addChannel(mActivity, gapi, j, charSequence+"");
+                        CumulusChannel j = channels[i];
+                        addChannel(mActivity, gapi, j);
                     }
                 }).show();
     }
-    public static void addChannel(Activity mActivity, GoogleApiClient gapi, JsonChannel j,
-            String name) {
+
+    public static void addChannel(final Activity mActivity, GoogleApiClient gapi,
+        CumulusChannel jsonChannel) {
         if (DEBUG) {
-            Log.d(TAG, "I've been told to add " + j.toString());
+            Log.d(TAG, "I've been told to add " + jsonChannel.toString());
         }
         ChannelDatabase cd = ChannelDatabase.getInstance(mActivity);
-        if(cd.channelExists(j)) {
+        if(cd.channelExists(jsonChannel)) {
             Toast.makeText(mActivity, R.string.channel_dupe, Toast.LENGTH_SHORT).show();
         } else {
             try {
-                if(name != null)
-                    Toast.makeText(mActivity, mActivity.getString(R.string.channel_added, name), Toast.LENGTH_SHORT).show();
-                cd.add(j);
+                if(jsonChannel.getName() != null) {
+                    Toast.makeText(mActivity, mActivity.getString(R.string.channel_added,
+                            jsonChannel.getName()), Toast.LENGTH_SHORT).show();
+                }
+                cd.add(jsonChannel);
                 ActivityUtils.writeDriveData(mActivity, gapi);
                 if (DEBUG) {
                     Log.d(TAG, "Added");
                 }
-//                SyncUtils.requestSync(info);
+                /*new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Resync
+                        SyncUtils.requestSync(mActivity,
+                                ActivityUtils.TV_INPUT_SERVICE.flattenToString());
+                    }
+                }).start();*/
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     }
-    public static void editChannel(final Activity activity, final String channel) {
+
+    /**
+     * Opens the correct intent to start editing the channel.
+     *
+     * @param activity The activity you're calling this from.
+     * @param channelUrl The channel's media url.m
+     */
+    public static void editChannel(final Activity activity, final String channelUrl) {
         ChannelDatabase cdn = ChannelDatabase.getInstance(activity);
-        final JsonChannel jsonChannel = cdn.findChannel(channel); //Find by number
-        if(channel == null || jsonChannel == null) {
+        final JsonChannel jsonChannel = cdn.findChannelByMediaUrl(channelUrl);
+        if(channelUrl == null || jsonChannel == null) {
             Toast.makeText(activity, R.string.toast_error_channel_invalid,
                     Toast.LENGTH_SHORT).show();
             return;
@@ -249,18 +173,18 @@ public class ActivityUtils {
                             @Override
                             public void onNegative(MaterialDialog dialog) {
                                 super.onNegative(dialog);
-                                openPluginPicker(false, channel, activity);
+                                openPluginPicker(false, channelUrl, activity);
                             }
                         }).show();
                 Toast.makeText(activity, activity.getString(R.string.toast_msg_pack_not_installed,
                         jsonChannel.getPluginSource().getPackageName()), Toast.LENGTH_SHORT).show();
-                openPluginPicker(false, channel, activity);
+                openPluginPicker(false, channelUrl, activity);
             }
         } else {
             if (DEBUG) {
                 Log.d(TAG, "No specified source");
             }
-            openPluginPicker(false, channel, activity);
+            openPluginPicker(false, channelUrl, activity);
         }
     }
 
@@ -307,30 +231,34 @@ public class ActivityUtils {
         try {
             sm.writeToGoogleDrive(DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id)),
                     ChannelDatabase.getInstance(context).toString());
+            GoogleDriveBroadcastReceiver.changeStatus(context,
+                    GoogleDriveBroadcastReceiver.EVENT_UPLOAD_COMPLETE);
 
             final String info = TvContract.buildInputId(TV_INPUT_SERVICE);
             SyncUtils.requestSync(context, info);
         } catch(Exception e) {
-            //Probably invalid drive id. No worries, just let someone know
+            // Probably invalid drive id. No worries, just let someone know
             Log.e(TAG, e.getMessage() + "");
             Toast.makeText(context, R.string.invalid_file, Toast.LENGTH_SHORT).show();
         }
     }
 
-    public static void readDriveData(@NonNull Context mContext, GoogleApiClient gapi) {
-        DriveSettingsManager sm = new DriveSettingsManager(mContext);
+    public static void readDriveData(@NonNull Context context, GoogleApiClient gapi) {
+        DriveSettingsManager sm = new DriveSettingsManager(context);
         sm.setGoogleDriveSyncable(gapi, null);
         DriveId did;
         try {
             did = DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id));
         } catch (Exception e) {
-            Toast.makeText(mContext, R.string.invalid_file, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.invalid_file, Toast.LENGTH_SHORT).show();
             return;
         }
         sm.readFromGoogleDrive(did, ChannelDatabase.KEY);
+        GoogleDriveBroadcastReceiver.changeStatus(context,
+                GoogleDriveBroadcastReceiver.EVENT_DOWNLOAD_COMPLETE);
 
         final String info = TvContract.buildInputId(TV_INPUT_SERVICE);
-        SyncUtils.requestSync(mContext, info);
+        SyncUtils.requestSync(context, info);
     }
 
     public static void createDriveData(Activity activity, GoogleApiClient gapi,
@@ -363,10 +291,10 @@ public class ActivityUtils {
         syncFile(mActivity, gapi);
     }
 
-    public static void deleteChannelData(final Activity mActivity, GoogleApiClient gapi) {
-        final DriveSettingsManager sm = new DriveSettingsManager(mActivity);
+    public static void deleteChannelData(final Activity activity, GoogleApiClient gapi) {
+        final DriveSettingsManager sm = new DriveSettingsManager(activity);
         sm.setGoogleDriveSyncable(gapi, null);
-        new MaterialDialog.Builder(mActivity)
+        new MaterialDialog.Builder(activity)
                 .title(R.string.title_delete_all_channels)
                 .positiveText(R.string.yes)
                 .negativeText(R.string.no)
@@ -380,20 +308,20 @@ public class ActivityUtils {
                             sm.writeToGoogleDrive(did,
                                     sm.getString(ChannelDatabase.KEY));
                         } catch (Exception e) {
-                            Toast.makeText(mActivity, R.string.toast_error_driveid_invalid,
+                            Toast.makeText(activity, R.string.toast_error_driveid_invalid,
                                     Toast.LENGTH_SHORT).show();
                         }
                         sm.setString(R.string.sm_google_drive_id, "");
-                        Toast.makeText(mActivity, R.string.toast_msg_channels_deleted,
+                        Toast.makeText(activity, R.string.toast_msg_channels_deleted,
                                 Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(mActivity, MainActivity.class);
-                        mActivity.startActivity(i);
+                        GoogleDriveBroadcastReceiver.changeStatus(activity,
+                                GoogleDriveBroadcastReceiver.EVENT_DOWNLOAD_COMPLETE);
                     }
                 })
                 .show();
     }
 
-    public static void syncFile(Activity mActivity, GoogleApiClient gapi) {
+    public static void syncFile(Activity activity, GoogleApiClient gapi) {
         if (DEBUG) {
         Log.d(TAG, "About to sync a file");
         }
@@ -412,7 +340,7 @@ public class ActivityUtils {
                 if (DEBUG) {
                     Log.d(TAG, "About to start activity");
                 }
-                mActivity.startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0,
+                activity.startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER, null, 0, 0,
                         0);
                 if (DEBUG) {
                     Log.d(TAG, "Activity activated");
@@ -424,7 +352,7 @@ public class ActivityUtils {
                 e.printStackTrace();
             }
         } else {
-            Toast.makeText(mActivity, R.string.toast_msg_wait_google_api_client,
+            Toast.makeText(activity, R.string.toast_msg_wait_google_api_client,
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -457,10 +385,10 @@ public class ActivityUtils {
         }
     }
 
-    public static void openPluginPicker(final boolean newChannel, final String channel,
+    public static void openPluginPicker(final boolean newChannel, final String channelUrl,
             final Activity activity) {
         ChannelDatabase cdn = ChannelDatabase.getInstance(activity);
-        openPluginPicker(newChannel, cdn.findChannel(channel), activity);
+        openPluginPicker(newChannel, cdn.findChannelByMediaUrl(channelUrl), activity);
     }
 
     public static void openPluginPicker(final boolean newChannel, final JsonChannel queriedChannel,
@@ -515,12 +443,12 @@ public class ActivityUtils {
                     .content(R.string.choose_default_app)
                     .itemsCallback(new MaterialDialog.ListCallback() {
                         @Override
-                        public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                            //Toast.makeText(activity, "Pick " + i, Toast.LENGTH_SHORT).show();
+                        public void onSelection(MaterialDialog materialDialog, View view, int i,
+                                CharSequence charSequence) {
                             Intent intent = new Intent();
                             if (newChannel) {
                                 if (DEBUG) {
-                                    Log.d(TAG, "Try to start ");
+                                    Log.d(TAG, "Try to start");
                                 }
                                 ResolveInfo plugin_info = plugins.get(i);
                                 if (DEBUG) {
@@ -563,7 +491,7 @@ public class ActivityUtils {
         final PackageManager pm = activity.getPackageManager();
         final Intent plugin_addchannel = new Intent(CumulusTvPlugin.ACTION_ADD_CHANNEL);
         final List<ResolveInfo> plugins = pm.queryIntentActivities(plugin_addchannel, 0);
-        ArrayList<String> plugin_names = new ArrayList<String>();
+        ArrayList<String> plugin_names = new ArrayList<>();
         for (ResolveInfo ri : plugins) {
             plugin_names.add(ri.loadLabel(pm).toString());
         }
@@ -575,7 +503,7 @@ public class ActivityUtils {
                 .itemsCallback(new MaterialDialog.ListCallback() {
                     @Override
                     public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
-                        //Load the given plugin with some additional info
+                        // Load the given plugin with some additional info
                         ChannelDatabase cd = ChannelDatabase.getInstance(activity);
                         String s = cd.toString();
                         Intent intent = new Intent();
@@ -595,10 +523,9 @@ public class ActivityUtils {
                     }
                 })
                 .positiveText(R.string.download_more_plugins)
-                .callback(new MaterialDialog.ButtonCallback() {
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        super.onPositive(dialog);
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse(
                                 "http://play.google.com/store/search?q=cumulustv&c=apps"));
@@ -609,11 +536,11 @@ public class ActivityUtils {
 
     /* ACTIVITY CLONES */
     public static void launchLiveChannels(Activity mActivity) {
-        Intent i = LiveChannelsUtils.getLiveChannels(mActivity);
-        if (i == null) {
-            Toast.makeText(mActivity, R.string.no_live_channels, Toast.LENGTH_SHORT).show();
-        } else {
+        Intent i = new Intent(Intent.ACTION_VIEW, TvContract.Channels.CONTENT_URI);
+        try {
             mActivity.startActivity(i);
+        } catch (Exception e) {
+            Toast.makeText(mActivity, R.string.no_live_channels, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -699,28 +626,36 @@ public class ActivityUtils {
     }
 
     /* MISC */
-    public static void openAbout(final Activity mActivity) {
+    public static void openAbout(final Activity activity) {
         try {
-            PackageInfo pInfo = mActivity.getPackageManager().getPackageInfo(
-                    mActivity.getPackageName(), 0);
-            new MaterialDialog.Builder(mActivity)
+            PackageInfo pInfo = activity.getPackageManager().getPackageInfo(
+                    activity.getPackageName(), 0);
+            new MaterialDialog.Builder(activity)
                     .title(R.string.app_name)
-                    .content(mActivity.getString(R.string.about_app_description, pInfo.versionName))
+                    .theme(Theme.DARK)
+                    .content(activity.getString(R.string.about_app_description, pInfo.versionName))
                     .positiveText(R.string.website)
                     .negativeText(R.string.help)
                     .callback(new MaterialDialog.ButtonCallback() {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
                             super.onPositive(dialog);
-                            Intent gi = new Intent(Intent.ACTION_VIEW);
-                            gi.setData(Uri.parse("http://cumulustv.herokuapp.com"));
-                            mActivity.startActivity(gi);
+                            String url = activity.getString(R.string.website_url);
+                            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                            CustomTabsIntent customTabsIntent = builder.build();
+                            try {
+                                customTabsIntent.launchUrl(activity, Uri.parse(url));
+                            } catch (Exception e) {
+                                // There is no way to view the website.
+                                activity.startActivity(new Intent(activity,
+                                        HomepageWebViewActivity.class));
+                            }
                         }
 
                         @Override
                         public void onNegative(MaterialDialog dialog) {
                             super.onNegative(dialog);
-                            ActivityUtils.openIntroVoluntarily(mActivity);
+                            ActivityUtils.openIntroVoluntarily(activity);
                         }
                     })
                     .show();
@@ -729,27 +664,27 @@ public class ActivityUtils {
         }
     }
 
-    public static void openStream(Activity mActivity, String url) {
-        Intent i = new Intent(mActivity, CumulusTvPlayer.class);
+    public static void openStream(Activity activity, String url) {
+        Intent i = new Intent(activity, CumulusTvPlayer.class);
         i.putExtra(CumulusTvPlayer.KEY_VIDEO_URL, url);
-        mActivity.startActivity(i);
+        activity.startActivity(i);
     }
 
-    public static void openIntroIfNeeded(Activity mActivity) {
-        SettingsManager sm = new SettingsManager(mActivity);
+    public static void openIntroIfNeeded(Activity activity) {
+        SettingsManager sm = new SettingsManager(activity);
         if(sm.getInt(R.string.sm_last_version) < LAST_GOOD_BUILD) {
-            mActivity.startActivity(new Intent(mActivity, Intro.class));
-            mActivity.finish();
+            activity.startActivity(new Intent(activity, Intro.class));
+            activity.finish();
         }
     }
 
-    public static void openIntroVoluntarily(Activity mActivity) {
-        mActivity.startActivity(new Intent(mActivity, Intro.class));
-        mActivity.finish();
+    public static void openIntroVoluntarily(Activity activity) {
+        activity.startActivity(new Intent(activity, Intro.class));
+        activity.finish();
     }
 
-    public static Class getMainActivity(Activity mActivity) {
-        if(AppUtils.isTV(mActivity)) {
+    public static Class getMainActivity(Activity activity) {
+        if(AppUtils.isTV(activity)) {
             return LeanbackActivity.class;
         }
         return MainActivity.class;
@@ -800,21 +735,3 @@ public class ActivityUtils {
         }
     }
 }
-
-/* new JsonChannel("001",
-        "Sky News",
-        "https://www.youtube.com/embed/y60wDzZt8yg?autoplay=1",
-        "http://news.sky.com/images/33dc2677.sky-news-logo.png", "",
-        TvContract.Programs.Genres.NEWS),
-new JsonChannel("002",
-        "Taiwan Formosa Live News",
-        "https://www.youtube.com/embed/XxJKnDLYZz4?autoplay=1",
-        "https://i.ytimg.com/vi/XxJKnDLYZz4/maxresdefault_live.jpg", "",
-        TvContract.Programs.Genres.NEWS),*/
-/*
-        new JsonChannel("900", "Euronews De", "http://fr-par-iphone-2.cdn.hexaglobe.net/streaming/euronews_ewns/14-live.m3u8", ""),
-        new JsonChannel("901", "TVI (Portugal)", "http://noscdn1.connectedviews.com:1935/live/smil:tvi.smil/playlist.m3u8", ""),
-        new JsonChannel("902", "PHOENIXHD", "http://teleboy.customers.cdn.iptv.ch/1122/index.m3u8", ""),
-        new JsonChannel("903", "Sport 1 Germany", "http://streaming-hub.com/tv/i/sport1_1@97464/index_1300_av-p.m3u8?sd=10&rebase=on", ""),
-        new JsonChannel("904", "RTP International", "http://rtp-pull-live.hls.adaptive.level3.net/liverepeater/rtpi_5ch120h264.stream/livestream.m3u8", "")
-*/

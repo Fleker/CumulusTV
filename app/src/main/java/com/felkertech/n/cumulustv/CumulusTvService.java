@@ -1,9 +1,12 @@
 package com.felkertech.n.cumulustv;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.tv.TvInputManager;
 import android.net.Uri;
 import android.os.Handler;
@@ -24,19 +27,29 @@ import com.crashlytics.android.Crashlytics;
 import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.channelsurfer.model.Program;
 import com.felkertech.channelsurfer.service.MultimediaInputProvider;
+import com.felkertech.channelsurfer.sync.SyncAdapter;
 import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.n.ActivityUtils;
 import com.felkertech.n.cumulustv.livechannels.CumulusSessions;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
+import com.felkertech.n.fileio.ITvListing;
+import com.felkertech.n.fileio.SingleChannel;
+import com.felkertech.n.fileio.XmlTvParser;
+import com.felkertech.n.tv.activities.PlaybackQuickSettingsActivity;
 import com.felkertech.settingsmanager.SettingsManager;
 import com.pnikosis.materialishprogress.ProgressWheel;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
@@ -45,8 +58,8 @@ import io.fabric.sdk.android.Fabric;
  * Created by N on 7/12/2015.
  */
 public class CumulusTvService extends MultimediaInputProvider {
-    private static final String TAG = "cumulus:TvInputService";
-    private static final boolean DEBUG = false;
+    private static final String TAG = CumulusTvService.class.getSimpleName();
+    private static final boolean DEBUG = true;
 
     private HandlerThread mHandlerThread;
     private BroadcastReceiver mBroadcastReceiver;
@@ -54,6 +67,7 @@ public class CumulusTvService extends MultimediaInputProvider {
     private CaptioningManager mCaptioningManager;
     private JsonChannel jsonChannel;
     private boolean stillTuning;
+    private static HashMap<String, XmlTvParser.TvListing> epgData;
 
     @Override
     public void onCreate() {
@@ -74,10 +88,29 @@ public class CumulusTvService extends MultimediaInputProvider {
     }
 
     @Override
+    public void performCustomSync(final SyncAdapter syncAdapter, String inputId) {
+        new EpgDataSyncThread(syncAdapter.getContext()).start();
+        syncAdapter.performSync(this, inputId);
+    }
+
+    @Override
     public List<Channel> getAllChannels(Context context) {
         ChannelDatabase cdn = ChannelDatabase.getInstance(context);
         try {
-            return cdn.getChannels();
+            List<Channel> channels = cdn.getChannels();
+            // Add app linking
+            for (Channel channel : channels) {
+                channel.setAppLinkText(context.getString(R.string.quick_settings));
+                // TODO Swap with cog icon
+                channel.setAppLinkIcon("https://github.com/Fleker/CumulusTV/blob/master/app/src/m" +
+                        "ain/res/drawable-xhdpi/ic_play_action_normal.png?raw=true");
+                channel.setAppLinkPoster(channel.getLogoUrl());
+                JsonChannel jsonChannel =
+                        cdn.findChannelByMediaUrl(channel.getInternalProviderData());
+                channel.setAppLinkIntent(PlaybackQuickSettingsActivity
+                        .getIntent(context, jsonChannel).toUri(Intent.URI_INTENT_SCHEME));
+            }
+            return channels;
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -87,24 +120,68 @@ public class CumulusTvService extends MultimediaInputProvider {
     @Override
     public List<Program> getProgramsForChannel(Context context, Uri channelUri,
             Channel channelInfo, long startTimeMs, long endTimeMs) {
-        int programs = (int) ((endTimeMs - startTimeMs) / 1000 / 60 / 60); //Hour long segments
-        int SEGMENT = 1000 * 60 * 60; //Hour long segments
-        List<Program> programList = new ArrayList<>();
-        for(int i = 0; i < programs; i++) {
-            if (DEBUG) {
-                Log.d(TAG, "Get program " + channelInfo.getName() + " " +
-                        channelInfo.getInternalProviderData());
+        JsonChannel jsonChannel = ChannelDatabase.getInstance(context)
+                .findChannelByMediaUrl(channelInfo.getInternalProviderData());
+        if (jsonChannel.getEpgUrl() != null && !jsonChannel.getEpgUrl().isEmpty() &&
+                epgData.containsKey(jsonChannel.getEpgUrl())) {
+            List<Program> programForGivenTime = new ArrayList<>();
+            XmlTvParser.TvListing tvListing = epgData.get(jsonChannel.getEpgUrl());
+            List<Program> programList = tvListing.getAllPrograms();
+            // If repeat-programs is on, schedule the programs sequentially in a loop. To make
+            // every device play the same program in a given channel and time, we assumes the
+            // loop started from the epoch time.
+            long totalDurationMs = 0;
+            for (Program program : programList) {
+                totalDurationMs += program.getDuration();
             }
-            programList.add(new Program.Builder(getGenericProgram(channelInfo))
-                    .setInternalProviderData(channelInfo.getInternalProviderData())
-                    .setCanonicalGenres(ChannelDatabase.getInstance(context).findChannel(
-                            channelInfo.getNumber()).getGenres())
-                    .setStartTimeUtcMillis((getNearestHour() + SEGMENT * i))
-                    .setEndTimeUtcMillis((getNearestHour() + SEGMENT * (i + 1)))
-                    .build()
-            );
+            long programStartTimeMs = startTimeMs - startTimeMs % totalDurationMs;
+            int i = 0;
+            final int programCount = programList.size();
+            while (programStartTimeMs < endTimeMs) {
+                Program currentProgram = programList.get(i++ % programCount);
+                long programEndTimeMs = programStartTimeMs + currentProgram.getDuration();
+                if (programEndTimeMs < startTimeMs) {
+                    programStartTimeMs = programEndTimeMs;
+                    continue;
+                }
+                programForGivenTime.add(new Program.Builder()
+                        .setChannelId(ContentUris.parseId(channelUri))
+                        .setTitle(currentProgram.getTitle())
+                        .setDescription(currentProgram.getDescription())
+                        .setContentRatings(currentProgram.getContentRatings())
+                        .setCanonicalGenres(currentProgram.getCanonicalGenres())
+                        .setPosterArtUri(currentProgram.getPosterArtUri())
+                        .setThumbnailUri(currentProgram.getThumbnailUri())
+                        .setInternalProviderData(currentProgram.getInternalProviderData())
+                        .setStartTimeUtcMillis(programStartTimeMs)
+                        .setEndTimeUtcMillis(programEndTimeMs)
+                        .build()
+                );
+                programStartTimeMs = programEndTimeMs;
+            }
+            return programForGivenTime;
+        } else {
+            // Generate fake programs in hour-long segments
+            int segment = 1000 * 60 * 60; //Hour long segments
+            int programs = (int) ((endTimeMs - startTimeMs) / segment);
+            List<Program> programList = new ArrayList<>();
+            for(int i = 0; i < programs; i++) {
+                if (DEBUG) {
+                    Log.d(TAG, "Get program " + channelInfo.getName() + " " +
+                            channelInfo.getInternalProviderData());
+                }
+                programList.add(new Program.Builder(getGenericProgram(channelInfo))
+                        .setInternalProviderData(channelInfo.getInternalProviderData())
+                        .setCanonicalGenres(ChannelDatabase.getInstance(context)
+                                .findChannelByMediaUrl(
+                                        channelInfo.getInternalProviderData()).getGenres())
+                        .setStartTimeUtcMillis((getNearestHour() + segment * i))
+                        .setEndTimeUtcMillis((getNearestHour() + segment * (i + 1)))
+                        .build()
+                );
+            }
+            return programList;
         }
-        return programList;
     }
 
     @Override
@@ -210,7 +287,7 @@ public class CumulusTvService extends MultimediaInputProvider {
                                         jsonChannel.getLogo().length() > 8) {
                                     bitmap[0] = Picasso.with(getApplicationContext())
                                             .load(jsonChannel.getLogo())
-                                            .placeholder(R.drawable.ic_launcher)
+                                            .placeholder(R.mipmap.ic_launcher)
                                             .get();
                                     h.sendEmptyMessage(0);
                                 } //Else we have no set logo
@@ -228,15 +305,16 @@ public class CumulusTvService extends MultimediaInputProvider {
                     Toast.LENGTH_SHORT).show();
             if (DEBUG) {
                 Log.d(TAG, "Failure to open: " + e.getMessage());
+                e.printStackTrace();
             }
             return null;
         }
     }
 
     @Override
-    public boolean onTune(Channel channel) {
+    public boolean onTune(final Channel channel) {
         ChannelDatabase cd = ChannelDatabase.getInstance(this);
-        jsonChannel = cd.findChannel(channel.getNumber());
+        jsonChannel = cd.findChannelByMediaUrl(channel.getInternalProviderData());
         if (DEBUG) {
             Log.d(TAG, "Tune request to go to " + channel.getName());
             Log.d(TAG, "Has IPD of " + channel.getInternalProviderData());
@@ -247,16 +325,23 @@ public class CumulusTvService extends MultimediaInputProvider {
             play(getProgramRightNow(channel).getInternalProviderData());
             stillTuning = false;
             // Hacky for now
-            if(jsonChannel.isAudioOnly() || jsonChannel.getName().equals("Beats One Radio")) {
-                Log.d(TAG, "Audio only stream");
-                new Handler(Looper.getMainLooper()) {
+            if(jsonChannel.isAudioOnly()) {
+                if (DEBUG) {
+                    Log.d(TAG, "Audio only stream");
+                }
+                Handler refreshLayout = new Handler(Looper.getMainLooper()) {
                     @Override
                     public void handleMessage(Message msg) {
                         super.handleMessage(msg);
+                        if (DEBUG) {
+                            Log.d(TAG, "Redraw splash");
+                        }
                         simpleSession.setOverlayViewEnabled(false);
                         simpleSession.setOverlayViewEnabled(true); //Redo splash
                     }
-                }.sendEmptyMessageDelayed(0, 150);
+                };
+                refreshLayout.sendEmptyMessageDelayed(0, 5);
+                refreshLayout.sendEmptyMessageDelayed(0, 550);
             }
             notifyVideoAvailable();
             return true;
@@ -266,6 +351,13 @@ public class CumulusTvService extends MultimediaInputProvider {
             Toast.makeText(CumulusTvService.this, R.string.toast_error_cannot_tune,
                     Toast.LENGTH_SHORT).show();
             notifyVideoUnavailable(REASON_UNKNOWN);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onTune(channel);
+                }
+            }, 1000 * 5);
             return false;
         }
     }
@@ -274,10 +366,9 @@ public class CumulusTvService extends MultimediaInputProvider {
         stillTuning = true;
         if (DEBUG) {
             Log.d(TAG, "Pre-tune to " + channelUri.getLastPathSegment() + "<");
-            Log.d(TAG, new SettingsManager(this).getString("URI" + channelUri.getLastPathSegment()) + "<<");
         }
-        jsonChannel = ChannelDatabase.getInstance(this).findChannel(new SettingsManager(this)
-                .getString("URI"+channelUri.getLastPathSegment()));
+        long rowId = Long.parseLong(channelUri.getLastPathSegment());
+        jsonChannel = ChannelDatabase.getInstance(this).getChannelFromRowId(rowId);
         simpleSession.setOverlayViewEnabled(false);
         simpleSession.setOverlayViewEnabled(true); //Redo splash
         simpleSession.notifyVideoAvailable();
@@ -301,4 +392,42 @@ public class CumulusTvService extends MultimediaInputProvider {
         return simpleSession;
     }
 
+    private final class EpgDataSyncThread extends Thread {
+        private Context mContext;
+
+        EpgDataSyncThread(Context context) {
+            super();
+            mContext = context;
+        }
+
+        @Override
+        public void run() {
+            super.run();
+            epgData = new HashMap<>();
+            ChannelDatabase cdn = ChannelDatabase.getInstance(mContext);
+            try {
+                List<JsonChannel> channels = cdn.getJsonChannels();
+                for (JsonChannel jsonChannel : channels) {
+                    if (jsonChannel.getEpgUrl() != null && !jsonChannel.getEpgUrl().isEmpty()) {
+                        List<Program> programForGivenTime = new ArrayList<>();
+                        // Load from the EPG url
+                        URLConnection urlConnection = null;
+                        try {
+                            urlConnection = new URL(jsonChannel.getEpgUrl()).openConnection();
+                            urlConnection.setConnectTimeout(1000 * 5);
+                            urlConnection.setReadTimeout(1000 * 5);
+                            InputStream inputStream = urlConnection.getInputStream();
+                            InputStream epgInputStream =  new BufferedInputStream(inputStream);
+                            XmlTvParser.TvListing tvListing = XmlTvParser.parse(epgInputStream);
+                            epgData.put(jsonChannel.getEpgUrl(), tvListing);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

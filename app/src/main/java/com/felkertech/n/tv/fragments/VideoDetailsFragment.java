@@ -15,8 +15,13 @@
 package com.felkertech.n.tv.fragments;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.media.tv.TvContract;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v17.leanback.app.BackgroundManager;
 import android.support.v17.leanback.app.DetailsFragment;
 import android.support.v17.leanback.widget.Action;
@@ -27,29 +32,26 @@ import android.support.v17.leanback.widget.DetailsOverviewRowPresenter;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.OnActionClickedListener;
-import android.support.v17.leanback.widget.OnItemViewClickedListener;
-import android.support.v17.leanback.widget.Presenter;
-import android.support.v17.leanback.widget.Row;
-import android.support.v17.leanback.widget.RowPresenter;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.felkertech.n.ActivityUtils;
+import com.felkertech.n.cumulustv.R;
+import com.felkertech.n.cumulustv.activities.MainActivity;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
-import com.felkertech.n.cumulustv.activities.MainActivity;
-import com.felkertech.n.cumulustv.R;
-import com.felkertech.n.tv.presenters.DetailsDescriptionPresenter;
-import com.felkertech.n.tv.Movie;
 import com.felkertech.n.tv.Utils;
 import com.felkertech.n.tv.activities.DetailsActivity;
+import com.felkertech.n.tv.activities.LeanbackActivity;
+import com.felkertech.n.tv.presenters.DetailsDescriptionPresenter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+
+import java.io.IOException;
 
 /*
  * LeanbackDetailsFragment extends DetailsFragment, a Wrapper fragment for leanback details screens.
@@ -57,11 +59,12 @@ import com.google.android.gms.drive.Drive;
  */
 public class VideoDetailsFragment extends DetailsFragment
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    private static final String TAG = "VideoDetailsFragment";
+    private static final String TAG = VideoDetailsFragment.class.getSimpleName();
+    private static final boolean DEBUG = true;
 
-    private static final int ACTION_WATCH_TRAILER = 1;
-    private static final int ACTION_RENT = 2;
-    private static final int ACTION_BUY = 3;
+    public static final String EXTRA_JSON_CHANNEL = "json";
+
+    private static final int ACTION_ADD = 3;
     private static final int ACTION_EDIT = 5;
     private static final int ACTION_WATCH = 6;
 
@@ -70,7 +73,7 @@ public class VideoDetailsFragment extends DetailsFragment
 
     private static final int NUM_COLS = 10;
 
-    private Movie mSelectedMovie;
+    private JsonChannel jsonChannel;
 
     private ArrayObjectAdapter mAdapter;
     private ClassPresenterSelector mPresenterSelector;
@@ -88,16 +91,20 @@ public class VideoDetailsFragment extends DetailsFragment
 
         prepareBackgroundManager();
 
-        mSelectedMovie = (Movie) getActivity().getIntent()
-                .getSerializableExtra(DetailsActivity.MOVIE);
-        if (mSelectedMovie != null) {
+        try {
+            jsonChannel = new JsonChannel.Builder(getActivity().getIntent()
+                    .getStringExtra(EXTRA_JSON_CHANNEL))
+                    .build();
+        } catch (JSONException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
+
+        if (jsonChannel != null) {
             setupAdapter();
             setupDetailsOverviewRow();
             setupDetailsOverviewRowPresenter();
-            setupMovieListRow();
             setupMovieListRowPresenter();
-            updateBackground(mSelectedMovie.getBackgroundImageUrl());
-            setOnItemViewClickedListener(new ItemViewClickedListener());
+            updateBackground();
         } else {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
@@ -125,18 +132,7 @@ public class VideoDetailsFragment extends DetailsFragment
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
     }
 
-    protected void updateBackground(String uri) {
-       /* Glide.with(getActivity())
-                .load(uri)
-                .centerCrop()
-                .error(mDefaultBackground)
-                .into(new SimpleTarget<GlideDrawable>(mMetrics.widthPixels, mMetrics.heightPixels) {
-                    @Override
-                    public void onResourceReady(GlideDrawable resource,
-                                                GlideAnimation<? super GlideDrawable> glideAnimation) {
-                        mBackgroundManager.setDrawable(resource);
-                    }
-                });*/
+    protected void updateBackground() {
         mBackgroundManager.setDrawable(getResources().getDrawable(R.drawable.c_background5));
     }
 
@@ -147,45 +143,45 @@ public class VideoDetailsFragment extends DetailsFragment
     }
 
     private void setupDetailsOverviewRow() {
-        Log.d(TAG, "doInBackground: " + mSelectedMovie.toString());
-        final DetailsOverviewRow row = new DetailsOverviewRow(mSelectedMovie);
+        final DetailsOverviewRow row = new DetailsOverviewRow(jsonChannel);
         row.setImageDrawable(getResources().getDrawable(R.drawable.c_background5));
         int width = Utils.convertDpToPixel(getActivity()
                 .getApplicationContext(), DETAIL_THUMB_WIDTH);
         int height = Utils.convertDpToPixel(getActivity()
                 .getApplicationContext(), DETAIL_THUMB_HEIGHT);
-        Glide.with(getActivity())
-                .load(mSelectedMovie.getCardImageUrl())
-                .centerCrop()
-                .error(R.drawable.c_background5)
-                .into(new SimpleTarget<GlideDrawable>(width, height) {
-                    @Override
-                    public void onResourceReady(GlideDrawable resource,
-                                                GlideAnimation<? super GlideDrawable>
-                                                        glideAnimation) {
-                        Log.d(TAG, "details overview card image url ready: " + resource);
-                        row.setImageDrawable(resource);
-                        mAdapter.notifyArrayItemRangeChanged(0, mAdapter.size());
-                    }
-                });
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final Bitmap bitmap = Picasso.with(getActivity())
+                            .load(jsonChannel.getLogo())
+                            .centerInside()
+                            .error(R.drawable.c_background5)
+                            .resize(DETAIL_THUMB_WIDTH, DETAIL_THUMB_HEIGHT)
+                            .get();
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            row.setImageBitmap(getActivity(), bitmap);
+                            mAdapter.notifyArrayItemRangeChanged(0, mAdapter.size());
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
 
-//        row.addAction(new Action(ACTION_WATCH_TRAILER, getResources().getString(
-//                R.string.watch_trailer_1), getResources().getString(R.string.watch_trailer_2)));
-//        row.addAction(new Action(ACTION_RENT, getResources().getString(R.string.rent_1),
-//                getResources().getString(R.string.rent_2)));
-//        row.addAction(new Action(ACTION_BUY, getResources().getString(R.string.buy_1),
-//                getResources().getString(R.string.buy_2)));
         ArrayObjectAdapter actions = new ArrayObjectAdapter();
-        //Add another action IF it isn't a channel you already have:
+        // Add another action IF it isn't a channel you already have:
         ChannelDatabase cdn = ChannelDatabase.getInstance(getActivity());
-        if(!cdn.channelNumberExists(mSelectedMovie.getStudio())) {
-            actions.add(new Action(ACTION_BUY, "Add"));
+        if(cdn.findChannelByMediaUrl(jsonChannel.getMediaUrl()) == null) {
+            actions.add(new Action(ACTION_ADD, getString(R.string.add_channel_txt)));
         } else {
-            actions.add(new Action(ACTION_EDIT, "Edit Channel"));
+            actions.add(new Action(ACTION_EDIT, getString(R.string.edit_channel)));
         }
-        actions.add(new Action(ACTION_WATCH, "Play"));
+        actions.add(new Action(ACTION_WATCH, getString(R.string.play)));
         row.setActionsAdapter(actions);
-
         mAdapter.add(row);
     }
 
@@ -204,44 +200,31 @@ public class VideoDetailsFragment extends DetailsFragment
             @Override
             public void onActionClicked(Action action) {
                 if(action.getId() == ACTION_EDIT) {
-                    ActivityUtils.editChannel(getActivity(), mSelectedMovie.getStudio());
+                    ActivityUtils.editChannel(getActivity(), jsonChannel.getMediaUrl());
                 } else if(action.getId() == ACTION_WATCH) {
-                    ActivityUtils.openStream(getActivity(), mSelectedMovie.getVideoUrl());
-                } else if(action.getId() == ACTION_BUY) {
-                    /*ChannelDatabase cdn = new ChannelDatabase(getActivity());
-                    JsonChannel jsonChannel = cdn.findChannel(mSelectedMovie.getStudio());
-                    Log.d(TAG, mSelectedMovie.getTitle());
-                    Log.d(TAG, mSelectedMovie.getStudio());
-                    Log.d(TAG, jsonChannel)*/
-                    //Need to get it!
-                    //Let's hope that it exists. (It should b/c this should only be available
-                    //to suggested channels
-                    JsonChannel[] jsonChannels = ActivityUtils.getSuggestedChannels();
-                    for(JsonChannel channel: jsonChannels) {
-                        if(channel.getNumber().equals(mSelectedMovie.getStudio())) {
-                            Log.d(TAG, "Adding " + channel.toString());
-                            ActivityUtils.addChannel(getActivity(), gapi, channel, channel.getName());
-                            getActivity().finish();
-                        }
+                    if (ChannelDatabase.getInstance(getActivity()).getHashMap()
+                            .containsKey(jsonChannel.getMediaUrl())) {
+                        // Open in Live Channels
+                        Uri liveChannelsUri =
+                                TvContract.buildChannelUri(
+                                        ChannelDatabase.getInstance(
+                                                getActivity()).getHashMap()
+                                                .get(jsonChannel.getMediaUrl()));
+                        getActivity().startActivity(
+                                new Intent(Intent.ACTION_VIEW, liveChannelsUri));
+                    } else {
+                        ActivityUtils.openStream(getActivity(), jsonChannel.getMediaUrl());
                     }
+                } else if(action.getId() == ACTION_ADD) {
+                    Log.d(TAG, "Adding " + jsonChannel.toString());
+                    ActivityUtils
+                            .addChannel(getActivity(), gapi, jsonChannel);
+                    getActivity().setResult(LeanbackActivity.RESULT_CODE_REFRESH_UI);
+                    getActivity().finish();
                 }
             }
         });
         mPresenterSelector.addClassPresenter(DetailsOverviewRow.class, detailsPresenter);
-    }
-
-    private void setupMovieListRow() {
-        /*String subcategories[] = {getString(R.string.related_movies)};
-        List<Movie> list = MovieList.list;
-
-        Collections.shuffle(list);
-        ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
-        for (int j = 0; j < NUM_COLS; j++) {
-            listRowAdapter.add(list.get(j % 5));
-        }
-
-        HeaderItem header = new HeaderItem(0, subcategories[0]);
-        mAdapter.add(new ListRow(header, listRowAdapter));*/
     }
 
     private void setupMovieListRowPresenter() {
@@ -261,28 +244,5 @@ public class VideoDetailsFragment extends DetailsFragment
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
-    }
-
-    private final class ItemViewClickedListener implements OnItemViewClickedListener {
-        @Override
-        public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
-                                  RowPresenter.ViewHolder rowViewHolder, Row row) {
-
-            /*if (item instanceof Movie) {
-                Movie movie = (Movie) item;
-                Log.d(TAG, "Item: " + item.toString());
-                Intent intent = new Intent(getActivity(), DetailsActivity.class);
-                intent.putExtra(getResources().getString(R.string.movie), mSelectedMovie);
-                intent.putExtra(getResources().getString(R.string.should_start), true);
-                startActivity(intent);
-
-
-                Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        getActivity(),
-                        ((ImageCardView) itemViewHolder.view).getMainImageView(),
-                        DetailsActivity.SHARED_ELEMENT_NAME).toBundle();
-                getActivity().startActivity(intent, bundle);
-            }*/
-        }
     }
 }

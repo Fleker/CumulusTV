@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.felkertech.n.cumulustv.test">
+
+    <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" />
+    <uses-permission android:name="com.android.providers.tv.permission.READ_EPG_DATA" />
+
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.screen.landscape"
+        android:required="false" />
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
+
+    <!--
+    Required to expose this app in the store only when the device has TV input framework
+    with the TV app.
+    -->
+    <uses-feature
+        android:name="android.software.live_tv"
+        android:required="false" />
+
+    <application>
+
+        <activity
+            android:name="com.felkertech.n.cumulustv.activities.MainActivity"
+            android:exported="true"
+            android:label="CumulusTV">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name="com.felkertech.n.cumulustv.CumulusTvService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_TV_INPUT">
+            <intent-filter>
+                <action android:name="android.media.tv.TvInputService" />
+            </intent-filter>
+        </service>
+
+    </application>
+
+</manifest>

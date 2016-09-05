@@ -98,7 +98,7 @@
 
     <string name="channel_added">"%1$s wurde hinzugefügt"</string>
 
-    <string name="suggested_channels">"Hier einige Vorschläge Kanäle"</string>
+    <string name="here_are_suggested_channels">"Hier einige Vorschläge Kanäle"</string>
 
     <string name="no_channels_find">"Finden Sie ein paar Bäche hinzufügen"</string>
 
@@ -124,4 +124,11 @@
     <string name="yes">Si</string>
     <string name="daydream_select_channel">Wählen Sie Kanal</string>
     <string name="daydream_success">Daydream erfolgreich aktualisiert wurde</string>
+    <string name="add">hinzufügen</string>
+    <string name="add_channel_txt">Channel hinzufügen</string>
+    <string name="choose_an_app">Wählen Sie eine App</string>
+    <string name="choose_default_app">Ja, wenn es nur eine App, Standard zu, dass man</string>
+    <string name="connection_issue_description">Kann nicht an Google Drive in diesem Moment verbinden.</string>
+    <string name="play">spielen</string>
+    <string name="settings">Einstellungen</string>
 </resources>

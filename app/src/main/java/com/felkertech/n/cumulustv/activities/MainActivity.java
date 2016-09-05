@@ -22,8 +22,7 @@ import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
-import com.felkertech.n.cumulustv.xmltv.Program;
-import com.felkertech.n.cumulustv.xmltv.XMLTVParser;
+import com.felkertech.n.fileio.XmlTvParser;
 import com.felkertech.n.tv.activities.LeanbackActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -37,7 +36,6 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import org.json.JSONException;
-import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.util.List;
@@ -61,17 +59,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d(TAG, "onCreate");
-        //final String info = TvContract.buildInputId(new ComponentName("com.felkertech.n.cumulustv", ".CumulusTvService"));
         sm = new DriveSettingsManager(this);
         ActivityUtils.openIntroIfNeeded(this);
         Fabric.with(this, new Crashlytics());
-
-        if(!AppUtils.isTV(this)) {
-            findViewById(R.id.gotoapp).setVisibility(View.GONE);
-        } else {
-            //Go to tv activity
-            startActivity(new Intent(this, LeanbackActivity.class));
+        if(AppUtils.isTV(this)) {
+            // Go to tv activity
+            Intent leanbackIntent = new Intent(this, LeanbackActivity.class);
+            leanbackIntent.setFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
+            startActivity(leanbackIntent);
         }
+
         findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                         JsonChannel jsonChannel =
                                                 channelDatabase.getJsonChannels().get(i);
                                         ActivityUtils.editChannel(MainActivity.this,
-                                                jsonChannel.getNumber());
+                                                jsonChannel.getMediaUrl());
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -124,12 +121,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View v) {
                 ActivityUtils.openSuggestedChannels(MainActivity.this, gapi);
-            }
-        });
-        findViewById(R.id.gotoapp).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ActivityUtils.launchLiveChannels(MainActivity.this);
             }
         });
         findViewById(R.id.gdrive).setOnClickListener(new View.OnClickListener() {
@@ -361,13 +352,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                             response = client.newCall(request).execute();
 //                                            Log.d(TAG, response.body().string().substring(0,36));
                                             String s = response.body().string();
-                                            List<Program> programs = XMLTVParser.parse(s);
+                                            List<com.felkertech.channelsurfer.model.Program> programs = XmlTvParser.parse(response.body().byteStream()).getAllPrograms();
                                             /*Log.d(TAG, programs.toString());
                                             Log.d(TAG, "Parsed "+programs.size());
                                             Log.d(TAG, "Program 1: "+ programs.get(0).getTitle());*/
                                         } catch (IOException e) {
-                                            e.printStackTrace();
-                                        } catch (XmlPullParserException e) {
                                             e.printStackTrace();
                                         }
                                     }

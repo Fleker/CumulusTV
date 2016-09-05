@@ -5,6 +5,9 @@
     <color name="colorPrimaryDark">#7B1FA2</color>
     <color name="colorAccent">#64FFDA</color>
 
+    <color name="side_panel_background">@color/colorPrimary</color>
+    <color name="side_panel_header">@color/colorPrimaryDark</color>
+
     <color name="background_gradient_start">#000000</color>
     <color name="background_gradient_end">#DDDDDD</color>
     <color name="fastlane_background">@color/colorPrimary</color>

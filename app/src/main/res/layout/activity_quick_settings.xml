@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:lb="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/side_panel_width"
+    android:layout_height="match_parent"
+    android:background="@color/side_panel_background"
+    android:orientation="vertical">
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/title"
+        android:background="@color/side_panel_header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/side_panel_header_height"
+        android:elevation="@dimen/side_panel_header_elevation"
+        android:ellipsize="end"
+        android:focusable="false"
+        android:fontFamily="sans-serif-condensed"
+        android:gravity="center_vertical"
+        android:paddingEnd="@dimen/side_panel_padding_end"
+        android:paddingStart="@dimen/side_panel_padding_start"
+        android:paddingTop="@dimen/side_panel_header_padding_top"
+        android:maxLines="1"
+        android:textColor="#FFEEEEEE"
+        android:textSize="@dimen/side_panel_header_text_size" />
+
+    <!-- List of contents. -->
+    <android.support.v17.leanback.widget.VerticalGridView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="true"
+        lb:verticalMargin="0dp" />
+
+</LinearLayout>

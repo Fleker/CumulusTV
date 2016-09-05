@@ -16,21 +16,21 @@ package com.felkertech.n.tv.presenters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.Presenter;
+import android.support.v7.graphics.Palette;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bumptech.glide.Glide;
+import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.n.cumulustv.R;
-import com.felkertech.n.tv.Movie;
+import com.felkertech.n.cumulustv.model.JsonChannel;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
-import java.net.URI;
+import java.io.IOException;
 
 /*
  * A CardPresenter is used to generate Views and bind Objects to them on demand. 
@@ -39,21 +39,17 @@ import java.net.URI;
 public class CardPresenter extends Presenter {
     private static final String TAG = "CardPresenter";
 
-    private static int CARD_WIDTH = 313;
-    private static int CARD_HEIGHT = 176;
+    protected static int CARD_WIDTH = 313;
+    protected static int CARD_HEIGHT = 176;
     private static int sSelectedBackgroundColor;
     private static int sDefaultBackgroundColor;
-    private Drawable mDefaultCardImage;
     private static Context mContext;
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
-//        Log.d(TAG, "onCreateViewHolder");
-
         mContext = parent.getContext();
         sDefaultBackgroundColor = parent.getResources().getColor(R.color.default_background);
         sSelectedBackgroundColor = parent.getResources().getColor(R.color.selected_background);
-        mDefaultCardImage = parent.getResources().getDrawable(R.drawable.movie);
 
         ImageCardView cardView = new ImageCardView(mContext);
 
@@ -73,92 +69,64 @@ public class CardPresenter extends Presenter {
 
     @Override
     public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object item) {
-        Movie movie = (Movie) item;
-//        Log.d(TAG, movie+"");
-        ImageCardView cardView = (ImageCardView) viewHolder.view;
+        final CumulusChannel jsonChannel = (CumulusChannel) item;
+        final ImageCardView cardView = (ImageCardView) viewHolder.view;
 
-//        Log.d(TAG, "onBindViewHolder");
-        if (movie.getCardImageUrl() != null) {
-            cardView.setTitleText(movie.getTitle());
-            cardView.setContentText(movie.getStudio());
-            cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
-            Glide.with(viewHolder.view.getContext())
-                    .load(movie.getCardImageUrl())
-                    .centerCrop()
-                    .error(mDefaultCardImage)
-                    .into(cardView.getMainImageView());
+        cardView.setTitleText(jsonChannel.getName());
+        cardView.setContentText(jsonChannel.getNumber());
+        cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
+        if (jsonChannel.getLogo() == null) {
+            cardView.setMainImage(mContext.getResources().getDrawable(R.drawable.c_banner_3_2));
+            cardView.findViewById(R.id.info_field)
+                    .setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimaryDark));
+        } else {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        final Bitmap logo = Picasso.with(mContext).load(jsonChannel.getLogo())
+                                .error(R.drawable.c_banner_3_2)
+                                .centerInside()
+                                .resize(CARD_WIDTH, CARD_HEIGHT)
+                                .get();
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    cardView.getMainImageView().setImageBitmap(logo);
+                                    Palette colors = Palette.from(logo).generate();
+                                    if (colors.getDarkVibrantSwatch() != null) {
+                                        cardView.findViewById(R.id.info_field).setBackgroundColor(
+                                                colors.getDarkVibrantSwatch().getRgb());
+                                    } else {
+                                        cardView.findViewById(R.id.info_field).setBackgroundColor(
+                                                colors.getSwatches().get(0).getRgb());
+                                    }
+                                } catch (IllegalArgumentException e) {
+                                    Log.e(TAG, "There was a problem loading " + jsonChannel.getLogo());
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         }
     }
 
     @Override
     public void onUnbindViewHolder(Presenter.ViewHolder viewHolder) {
-//        Log.d(TAG, "onUnbindViewHolder");
         ImageCardView cardView = (ImageCardView) viewHolder.view;
         // Remove references to images so that the garbage collector can free up memory
         cardView.setBadgeImage(null);
         cardView.setMainImage(null);
     }
 
-    public class MyImageCardView extends ImageCardView {
-        public MyImageCardView(Context c) {
-            super(c);
-        }
-        @Override
-        public void setSelected(boolean selected) {
-            updateCardBackgroundColor(this, selected);
-            super.setSelected(selected);
-        }
-    }
-
     static class ViewHolder extends Presenter.ViewHolder {
-        private ImageCardView mCardView;
-        private Drawable mDefaultCardImage;
-        private PicassoImageCardViewTarget mImageCardViewTarget;
         public ViewHolder(View view) {
             super(view);
-
-            mCardView = (ImageCardView) view;
-            mImageCardViewTarget = new PicassoImageCardViewTarget(mCardView, mContext);
-            mDefaultCardImage = mContext.getResources().getDrawable(R.drawable.ic_launcher);
-        }
-
-        public ImageCardView getCardView() {
-            return mCardView;
-        }
-
-        protected void updateCardViewImage(URI uri) {
-            Picasso.with(mContext)
-                    .load(uri.toString())
-                    .resize(CARD_WIDTH, CARD_HEIGHT)
-                    .centerCrop()
-                    .error(mDefaultCardImage)
-                    .into(mImageCardViewTarget);
         }
     }
-    static class PicassoImageCardViewTarget implements Target {
-        private ImageCardView mImageCardView;
-        private Context mContext;
-
-        public PicassoImageCardViewTarget(ImageCardView mImageCardView, Context c) {
-            this.mImageCardView = mImageCardView;
-            mContext = c;
-        }
-
-        @Override
-        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom loadedFrom) {
-            Drawable bitmapDrawable = new BitmapDrawable(mContext.getResources(), bitmap);
-            mImageCardView.setMainImage(bitmapDrawable);
-        }
-
-        @Override
-        public void onBitmapFailed(Drawable drawable) {
-            mImageCardView.setMainImage(drawable);
-        }
-
-        @Override
-        public void onPrepareLoad(Drawable drawable) {
-            // Do nothing, default_background manager has its own transitions
-        }
-    }
-
 }

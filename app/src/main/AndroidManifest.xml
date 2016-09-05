@@ -32,7 +32,7 @@
     <application
         android:allowBackup="true"
         android:banner="@drawable/c_banner_3_2"
-        android:icon="@drawable/c_mobile"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:logo="@drawable/c_banner_3_2">
         <service
@@ -204,6 +204,17 @@
                 android:name="android.service.dream"
                 android:resource="@xml/cumulus_dreams_info" />
         </service>
+
+        <activity android:name="com.felkertech.n.tv.activities.PlaybackQuickSettingsActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Panel"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".activities.HomepageWebViewActivity" />
     </application>
 
 </manifest>

@@ -30,7 +30,7 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:id="@+id/image"
-            android:src="@drawable/high_res_icon2"/>
+            android:src="@mipmap/ic_launcher"/>
     </LinearLayout>
     <TextView
         android:layout_width="fill_parent"
