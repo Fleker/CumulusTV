@@ -375,7 +375,7 @@ public class ActivityUtils {
         try {
             ChannelDatabase cdn = ChannelDatabase.getInstance(activity);
             if(cdn.getJsonChannels().isEmpty()) {
-                openPluginPicker(newChannel, new JsonChannel.Builder().build(), activity);
+                openPluginPicker(newChannel, JsonChannel.getEmptyChannel(), activity);
             } else {
                 JsonChannel jsonChannel = cdn.getJsonChannels().get(index);
                 openPluginPicker(newChannel, jsonChannel, activity);

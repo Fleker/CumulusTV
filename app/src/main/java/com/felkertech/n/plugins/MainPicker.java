@@ -2,6 +2,7 @@ package com.felkertech.n.plugins;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -515,7 +516,9 @@ public class MainPicker extends CumulusTvPlugin {
         String url = "";
         if(getChannel() != null) {
             url = getChannel().getMediaUrl();
-        } if(pickerDialog.getCustomView().findViewById(R.id.stream) != null) {
+        }
+        if(pickerDialog != null &&
+                pickerDialog.getCustomView().findViewById(R.id.stream) != null) {
             url = ((EditText) pickerDialog.getCustomView().findViewById(R.id.stream)).getText()
                     .toString();
         }

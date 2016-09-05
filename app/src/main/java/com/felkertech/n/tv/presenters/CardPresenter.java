@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.Presenter;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.util.Log;
 import android.view.View;
@@ -98,9 +99,13 @@ public class CardPresenter extends Presenter {
                                     if (colors.getDarkVibrantSwatch() != null) {
                                         cardView.findViewById(R.id.info_field).setBackgroundColor(
                                                 colors.getDarkVibrantSwatch().getRgb());
-                                    } else {
+                                    } else if (colors.getSwatches().size() > 0) {
                                         cardView.findViewById(R.id.info_field).setBackgroundColor(
                                                 colors.getSwatches().get(0).getRgb());
+                                    } else {
+                                        cardView.findViewById(R.id.info_field).setBackgroundColor(
+                                                ContextCompat.getColor(mContext,
+                                                        R.color.colorPrimaryDark));
                                     }
                                 } catch (IllegalArgumentException e) {
                                     Log.e(TAG, "There was a problem loading " + jsonChannel.getLogo());
