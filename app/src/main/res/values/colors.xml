@@ -4,6 +4,7 @@
     <color name="colorPrimary">#9C27B0</color>
     <color name="colorPrimaryDark">#7B1FA2</color>
     <color name="colorAccent">#64FFDA</color>
+    <color name="picker_background">#AA333333</color>
 
     <color name="side_panel_background">@color/colorPrimary</color>
     <color name="side_panel_header">@color/colorPrimaryDark</color>

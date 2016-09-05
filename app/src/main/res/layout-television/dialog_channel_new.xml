@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:background="@drawable/c_background5"
+    android:id="@+id/picker"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="640dp"
+        android:textSize="24sp"
+        android:paddingStart="32dp"
+        android:layout_marginTop="32dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:id="@+id/title"
+        android:text="Edit Channel"
+        android:background="@color/picker_background"
+        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:layout_width="240dp"
+        android:id="@+id/labels"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:paddingTop="32dp"
+        android:layout_marginBottom="32dp"
+        android:background="@color/picker_background"
+        android:orientation="vertical"
+        android:layout_below="@id/title"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="Channel Number"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="22dp"
+            android:text="Channel Name"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="21dp"
+            android:text="Logo Url"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="20dp"
+            android:text="Media Url"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="22dp"
+            android:text="Splashscreen Url"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="24dp"
+            android:text="Epg Url"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="400dp"
+        android:layout_toEndOf="@id/labels"
+        android:orientation="vertical"
+        android:id="@+id/fields"
+        android:paddingTop="32dp"
+        android:layout_below="@id/title"
+        android:background="@color/picker_background"
+        android:paddingEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:layout_height="match_parent">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TvPickerEditText"
+            android:id="@+id/number"
+            android:inputType="number" />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TvPickerEditText"
+            android:id="@+id/name"
+            android:inputType="text|textCapWords" />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TvPickerEditText"
+            android:id="@+id/logo"
+            android:inputType="text|textUri" />
+        <EditText
+            android:layout_width="match_parent"
+            style="@style/TvPickerEditText"
+            android:layout_height="wrap_content"
+            android:id="@+id/stream"
+            android:inputType="text|textUri" />
+        <EditText
+            android:layout_width="match_parent"
+            style="@style/TvPickerEditText"
+            android:layout_height="wrap_content"
+            android:id="@+id/splash"
+            android:inputType="text|textUri" />
+        <EditText
+            android:layout_width="match_parent"
+            style="@style/TvPickerEditText"
+            android:layout_height="wrap_content"
+            android:id="@+id/epg"
+            android:inputType="text|textUri" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SELECT Genres"
+            android:id="@+id/genres"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/positive_button"
+                android:text=""
+                android:layout_height="wrap_content" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/neutral_button"
+                android:visibility="invisible"
+                android:text="@string/cancel"
+                android:layout_height="wrap_content" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/negative_button"
+                android:text="@string/delete"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:id="@+id/surface_player"
+        android:nextFocusUp="@id/genres"
+        android:layout_toEndOf="@id/fields"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:orientation="vertical"
+        android:gravity="center_vertical|end"
+        android:layout_height="match_parent">
+        <SurfaceView
+            android:layout_width="240dp"
+            android:layout_marginTop="8dp"
+            android:id="@+id/surface"
+            android:layout_gravity="center_vertical|end"
+            android:layout_height="135dp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:text="Cannot resolve URL."
+            android:id="@+id/playback_error"
+            android:textColor="@android:color/holo_orange_dark"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:id="@+id/stream_open"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_below="@id/surface_player"
+        android:text="Open Stream"/>
+</RelativeLayout>

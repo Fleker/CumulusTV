@@ -15,6 +15,7 @@
 package com.felkertech.n.tv.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
@@ -133,9 +134,14 @@ public class LeanbackFragment extends BrowseFragment
     @Override
     public void onStart() {
         super.onStart();
-        refreshUI();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver,
                 new IntentFilter(GoogleDriveBroadcastReceiver.ACTION_STATUS_CHANGED));
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        refreshUI();
     }
 
     public void refreshUI() {
