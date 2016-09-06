@@ -119,6 +119,7 @@ public class LeanbackFragment extends BrowseFragment
         super.onActivityCreated(savedInstanceState);
         sm = new DriveSettingsManager(getActivity());
         ActivityUtils.GoogleDrive.autoConnect(getActivity());
+        refreshUI();
     }
 
     @Override
@@ -138,12 +139,6 @@ public class LeanbackFragment extends BrowseFragment
                 new IntentFilter(GoogleDriveBroadcastReceiver.ACTION_STATUS_CHANGED));
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        refreshUI();
-    }
-
     public void refreshUI() {
         prepareBackgroundManager();
         setupUIElements();
@@ -154,6 +149,9 @@ public class LeanbackFragment extends BrowseFragment
     private void loadRows() {
         // Here are my rows
         mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
+        if (mActivity == null) {
+            mActivity = getActivity();
+        }
 
         // My channels
         if(mActivity == null && Build.VERSION.SDK_INT >= 23) {

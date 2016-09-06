@@ -40,7 +40,6 @@ public class LeanbackActivity extends Activity implements
 
     private LeanbackFragment lbf;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
