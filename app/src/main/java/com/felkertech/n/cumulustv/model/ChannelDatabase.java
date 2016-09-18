@@ -269,7 +269,7 @@ public class ChannelDatabase {
         return mDatabaseHashMap;
     }
 
-    public JsonChannel getChannelFromRowId(@NonNull long rowId) {
+    public JsonChannel getChannelFromRowId(@NonNull Long rowId) {
         if (mDatabaseHashMap == null || rowId < 0) {
             return null;
         }

@@ -59,7 +59,7 @@ import io.fabric.sdk.android.Fabric;
  */
 public class CumulusTvService extends MultimediaInputProvider {
     private static final String TAG = CumulusTvService.class.getSimpleName();
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private HandlerThread mHandlerThread;
     private BroadcastReceiver mBroadcastReceiver;

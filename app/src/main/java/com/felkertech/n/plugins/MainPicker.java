@@ -185,8 +185,8 @@ public class MainPicker extends CumulusTvPlugin {
     protected void onStop() {
         SurfaceView sv = (SurfaceView) mPickerDialog.getCustomView().findViewById(R.id.surface);
         sv.getHolder().getSurface().release();
-        mTvInputPlayer.setSurface(null);
         if (mTvInputPlayer != null) {
+            mTvInputPlayer.setSurface(null);
             mTvInputPlayer.stop();
             mTvInputPlayer.release();
         } else {
@@ -526,7 +526,7 @@ public class MainPicker extends CumulusTvPlugin {
                         .setVisibility(View.GONE);
             }
             CumulusChannel cumulusChannel = getChannel();
-            if (cumulusChannel.getGenresString() != null) {
+            if (cumulusChannel != null && cumulusChannel.getGenresString() != null) {
                 includeGenrePicker(MobilePickerDialog.this, cumulusChannel.getGenresString());
             } else {
                 includeGenrePicker(MobilePickerDialog.this, "");
