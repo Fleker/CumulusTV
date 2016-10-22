@@ -221,7 +221,9 @@ public class CumulusChannel {
         }
 
         public Builder setPluginSource(@NonNull ComponentName pluginComponent) {
-            cumulusChannel.pluginSource = pluginComponent.flattenToString();
+            if (pluginComponent != null) {
+                cumulusChannel.pluginSource = pluginComponent.flattenToString();
+            }
             return this;
         }
 

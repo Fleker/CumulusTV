@@ -19,7 +19,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -37,9 +37,8 @@ import io.fabric.sdk.android.Fabric;
 public class LeanbackActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     public static final int RESULT_CODE_REFRESH_UI = 10;
-
-    private LeanbackFragment lbf;
-
+    @VisibleForTesting
+    public static LeanbackFragment lbf;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,5 +72,11 @@ public class LeanbackActivity extends Activity implements
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         lbf.onConnectionFailed(connectionResult);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        lbf = null;
     }
 }

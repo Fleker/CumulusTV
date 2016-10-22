@@ -15,7 +15,6 @@
 package com.felkertech.n.tv.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
@@ -51,7 +50,6 @@ import android.widget.Toast;
 import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.n.ActivityUtils;
-import com.felkertech.n.boilerplate.Utils.AppUtils;
 import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
@@ -119,6 +117,7 @@ public class LeanbackFragment extends BrowseFragment
         super.onActivityCreated(savedInstanceState);
         sm = new DriveSettingsManager(getActivity());
         ActivityUtils.GoogleDrive.autoConnect(getActivity());
+        refreshUI();
     }
 
     @Override
@@ -138,12 +137,6 @@ public class LeanbackFragment extends BrowseFragment
                 new IntentFilter(GoogleDriveBroadcastReceiver.ACTION_STATUS_CHANGED));
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        refreshUI();
-    }
-
     public void refreshUI() {
         prepareBackgroundManager();
         setupUIElements();
@@ -154,6 +147,9 @@ public class LeanbackFragment extends BrowseFragment
     private void loadRows() {
         // Here are my rows
         mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
+        if (mActivity == null) {
+            mActivity = getActivity();
+        }
 
         // My channels
         if(mActivity == null && Build.VERSION.SDK_INT >= 23) {
@@ -444,30 +440,6 @@ public class LeanbackFragment extends BrowseFragment
                 }
             });
 
-        }
-    }
-
-    private class GridItemPresenter extends Presenter {
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent) {
-            TextView view = new TextView(parent.getContext());
-            view.setLayoutParams(new ViewGroup.LayoutParams(GRID_ITEM_WIDTH, GRID_ITEM_HEIGHT));
-            view.setFocusable(true);
-            view.setFocusableInTouchMode(true);
-            view.setBackgroundColor(getResources().getColor(R.color.default_background));
-            view.setTextColor(Color.WHITE);
-            view.setGravity(Gravity.CENTER);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder viewHolder, Object item) {
-            Log.d(TAG, item.toString());
-            ((TextView) viewHolder.view).setText(item.toString());
-        }
-
-        @Override
-        public void onUnbindViewHolder(ViewHolder viewHolder) {
         }
     }
 }
