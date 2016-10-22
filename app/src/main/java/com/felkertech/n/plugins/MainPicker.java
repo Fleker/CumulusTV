@@ -183,8 +183,10 @@ public class MainPicker extends CumulusTvPlugin {
 
     @Override
     protected void onStop() {
-        SurfaceView sv = (SurfaceView) mPickerDialog.getCustomView().findViewById(R.id.surface);
-        sv.getHolder().getSurface().release();
+        if (mPickerDialog != null) {
+            SurfaceView sv = (SurfaceView) mPickerDialog.getCustomView().findViewById(R.id.surface);
+            sv.getHolder().getSurface().release();
+        }
         if (mTvInputPlayer != null) {
             mTvInputPlayer.setSurface(null);
             mTvInputPlayer.stop();
