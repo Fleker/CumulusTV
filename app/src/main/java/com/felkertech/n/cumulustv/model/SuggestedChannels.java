@@ -75,31 +75,6 @@ public class SuggestedChannels {
                     .setName("OutOfFocus.TV")
                     .build(),
             new JsonChannel.Builder()
-                    .setGenres(TvContract.Programs.Genres.MUSIC)
-                    .setLogo("http://payload247.cargocollective.com/1/9/312377/7259316/hits.jpg")
-                    .setMediaUrl("http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch1/apple" +
-                            "man.m3u8")
-                    .setName("VEVO TV Hits")
-                    .setNumber("401")
-                    .build(),
-            new JsonChannel.Builder()
-                    .setGenres(TvContract.Programs.Genres.MUSIC)
-                    .setLogo("http://payload247.cargocollective.com/1/9/312377/7259316/flow.jpg")
-                    .setMediaUrl("http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch2/apple" +
-                            "man.m3u8")
-                    .setName("VEVO TV Flow")
-                    .setNumber("402")
-                    .build(),
-            new JsonChannel.Builder()
-                    .setGenres(TvContract.Programs.Genres.MUSIC)
-                    .setLogo("http://payload247.cargocollective.com/1/9/312377/7259316/nashville." +
-                            "jpg")
-                    .setMediaUrl("http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch3/apple" +
-                            "man.m3u8")
-                    .setName("VEVO TV Nashville")
-                    .setNumber("403")
-                    .build(),
-            new JsonChannel.Builder()
                     .setAudioOnly(true)
                     .setGenres(TvContract.Programs.Genres.MUSIC + "," +
                             TvContract.Programs.Genres.ENTERTAINMENT)
