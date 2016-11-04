@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.RemoteViews;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.felkertech.n.cumulustv.R;
@@ -29,6 +30,7 @@ public class WidgetSelectionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setResult(RESULT_CANCELED);
         final ChannelDatabase channelDatabase = ChannelDatabase.getInstance(WidgetSelectionActivity.this);
         String[] channelnames = channelDatabase.getChannelNames();
         try {
@@ -55,9 +57,20 @@ public class WidgetSelectionActivity extends AppCompatActivity {
                                 new SettingsManager(WidgetSelectionActivity.this);
                         settingsManager.setString(SETTINGS_MANAGER_WIDGET_URL + mAppWidgetId,
                                 jsonChannel.getMediaUrl());
+                        completeConfiguration();
                     }
                 })
                 .show();
+    }
+
+    private void completeConfiguration() {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget_channel);
+        appWidgetManager.updateAppWidget(mAppWidgetId, views);
+        Intent resultValue = new Intent();
+        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+        setResult(RESULT_OK, resultValue);
+        finish();
     }
 
     public static Intent getSetupActivity(int appWidgetId, Context context) {

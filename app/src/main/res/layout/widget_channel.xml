@@ -13,7 +13,7 @@
         android:text="101 NASA"
         android:id="@+id/widget_text"
         android:gravity="center_horizontal"
-        android:textSize="22sp"
+        android:textSize="18sp"
         android:shadowColor="#A0000000"
         android:shadowDx="1"
         android:shadowDy="1"

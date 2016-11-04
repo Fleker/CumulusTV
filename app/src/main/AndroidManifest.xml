@@ -229,7 +229,10 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".activities.WidgetSelectionActivity">
+        <activity
+            android:name=".activities.WidgetSelectionActivity"
+            android:exported="true"
+            android:theme="@style/CompatTheme">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>

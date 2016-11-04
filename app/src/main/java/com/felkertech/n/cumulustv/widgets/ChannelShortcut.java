@@ -19,7 +19,9 @@ import com.felkertech.n.cumulustv.activities.MainActivity;
 import com.felkertech.n.cumulustv.activities.WidgetSelectionActivity;
 import com.felkertech.n.cumulustv.model.JsonChannel;
 import com.felkertech.n.plugins.MainPicker;
+import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -70,8 +72,8 @@ public class ChannelShortcut extends AppWidgetProvider {
     }
 
     void updateAppWidget(final Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
-        final RemoteViews views = new RemoteViews(context.getPackageName(),
-                R.layout.widget_channel);
+        final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_channel);
+        Log.d(TAG, "Update the widget " + appWidgetId);
         // Get the widget id to get the channel
         final JsonChannel channel = WidgetSelectionActivity.getWidgetChannel(context, appWidgetId);
         if (channel == null) {
@@ -82,10 +84,10 @@ public class ChannelShortcut extends AppWidgetProvider {
             @Override
             public void run() {
                 try {
-                    final Bitmap logo = Glide.with(context)
+                    Log.d(TAG, "Loading the image " + channel.getLogo());
+                    final Bitmap logo = Picasso.with(context)
                             .load(channel.getLogo())
-                            .asBitmap()
-                            .into(180, 100)
+                            .placeholder(R.drawable.c_banner_3_2)
                             .get();
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
@@ -93,7 +95,7 @@ public class ChannelShortcut extends AppWidgetProvider {
                             views.setImageViewBitmap(R.id.widget_image, logo);
                         }
                     });
-                } catch (InterruptedException | ExecutionException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
