@@ -22,6 +22,7 @@ import com.felkertech.n.cumulustv.utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
+import com.felkertech.n.cumulustv.widgets.ChannelShortcut;
 import com.felkertech.n.fileio.XmlTvParser;
 import com.felkertech.n.tv.activities.LeanbackActivity;
 import com.google.android.gms.common.ConnectionResult;
@@ -65,6 +66,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         }
     };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ChannelShortcut.updateWidgets(this, ChannelShortcut.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

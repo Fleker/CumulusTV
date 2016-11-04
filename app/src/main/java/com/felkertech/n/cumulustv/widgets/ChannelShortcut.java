@@ -3,6 +3,7 @@ package com.felkertech.n.cumulustv.widgets;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,18 +12,13 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import com.bumptech.glide.BitmapTypeRequest;
-import com.bumptech.glide.Glide;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.activities.CumulusTvPlayer;
-import com.felkertech.n.cumulustv.activities.MainActivity;
 import com.felkertech.n.cumulustv.activities.WidgetSelectionActivity;
 import com.felkertech.n.cumulustv.model.JsonChannel;
-import com.felkertech.n.plugins.MainPicker;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 /**
  * A widget implementation which provides a shortcut to a user selected channel on mobile and
@@ -71,7 +67,7 @@ public class ChannelShortcut extends AppWidgetProvider {
         }
     }
 
-    void updateAppWidget(final Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+    void updateAppWidget(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId) {
         final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_channel);
         Log.d(TAG, "Update the widget " + appWidgetId);
         // Get the widget id to get the channel
@@ -92,7 +88,9 @@ public class ChannelShortcut extends AppWidgetProvider {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
+                            Log.d(TAG, "Update the bitmap");
                             views.setImageViewBitmap(R.id.widget_image, logo);
+                            appWidgetManager.updateAppWidget(appWidgetId, views);
                         }
                     });
                 } catch (IOException e) {
@@ -100,11 +98,22 @@ public class ChannelShortcut extends AppWidgetProvider {
                 }
             }
         }).start();
+        Log.d(TAG, channel.getNumber() + " " + channel.getName());
         views.setTextViewText(R.id.widget_text, channel.getNumber() + " " + channel.getName());
         Intent i = new Intent(context, CumulusTvPlayer.class);
         i.putExtra(CumulusTvPlayer.KEY_VIDEO_URL, channel.getMediaUrl());
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, i, 0);
         views.setOnClickPendingIntent(R.id.widget_image, pendingIntent);
+        appWidgetManager.updateAppWidget(appWidgetId, views);
+    }
+
+    public static void updateWidgets(Context context, Class<? extends AppWidgetProvider> widgetType) {
+        Intent intent = new Intent(context, widgetType);
+        intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
+        int ids[] = AppWidgetManager.getInstance(context)
+                .getAppWidgetIds(new ComponentName(context, widgetType));
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
+        context.sendBroadcast(intent);
     }
 }

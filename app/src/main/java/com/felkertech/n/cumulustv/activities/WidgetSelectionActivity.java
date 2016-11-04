@@ -13,6 +13,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
+import com.felkertech.n.cumulustv.widgets.ChannelShortcut;
 import com.felkertech.settingsmanager.SettingsManager;
 
 import org.json.JSONException;
@@ -68,8 +69,10 @@ public class WidgetSelectionActivity extends AppCompatActivity {
         RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget_channel);
         appWidgetManager.updateAppWidget(mAppWidgetId, views);
         Intent resultValue = new Intent();
+        resultValue.setAction("android.appwidget.action.APPWIDGET_UPDATE");
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
         setResult(RESULT_OK, resultValue);
+        ChannelShortcut.updateWidgets(this, ChannelShortcut.class);
         finish();
     }
 

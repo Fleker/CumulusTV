@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="180dp"
-    android:layout_height="120dp">
+    android:orientation="vertical" android:layout_width="110dp"
+    android:layout_height="110dp">
     <ImageView
-        android:layout_width="180dp"
+        android:layout_width="110dp"
         android:src="@drawable/c_banner_3_2"
         android:id="@+id/widget_image"
         android:scaleType="centerCrop"
-        android:layout_height="100dp" />
+        android:layout_height="92dp" />
     <TextView
-        android:layout_width="180dp"
-        android:text="101 NASA"
+        android:layout_width="110dp"
+        android:text="101 Channel"
         android:id="@+id/widget_text"
         android:gravity="center_horizontal"
-        android:textSize="18sp"
+        android:textSize="16sp"
+        android:fontFamily="sans-serif-condensed"
         android:shadowColor="#A0000000"
         android:shadowDx="1"
         android:shadowDy="1"
