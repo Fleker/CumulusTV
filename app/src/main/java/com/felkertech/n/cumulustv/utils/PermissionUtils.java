@@ -1,8 +1,6 @@
-package com.felkertech.n.boilerplate.Utils;
+package com.felkertech.n.cumulustv.utils;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;

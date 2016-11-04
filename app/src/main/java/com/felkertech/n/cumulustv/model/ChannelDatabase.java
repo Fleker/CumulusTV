@@ -2,32 +2,19 @@ package com.felkertech.n.cumulustv.model;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.media.tv.TvContentRating;
 import android.media.tv.TvContract;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.preference.PreferenceManager;
-import android.security.KeyChain;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.n.ActivityUtils;
-import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
-import com.felkertech.n.cumulustv.R;
-import com.felkertech.n.tv.activities.PlaybackQuickSettingsActivity;
+import com.felkertech.n.cumulustv.utils.DriveSettingsManager;
 import com.felkertech.settingsmanager.SettingsManager;
-
-import junit.framework.Assert;
 
 import org.json.JSONArray;
 import org.json.JSONException;

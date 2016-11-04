@@ -48,4 +48,21 @@ public class Utils {
         float density = ctx.getResources().getDisplayMetrics().density;
         return Math.round((float) dp * density);
     }
+
+    public static String normalizeGenre(String genreName) {
+        if (genreName == null) {
+            return "";
+        }
+        genreName = genreName.replaceAll("_", " / ");
+        genreName = genreName.toLowerCase();
+        genreName = genreName.replaceAll(",", ", ");
+        for (int i = 0; i < genreName.length(); i++) {
+            if (i == 0 || genreName.charAt(i - 1) == ' ') {
+                genreName = genreName.substring(0, i) +
+                        genreName.substring(i, i + 1).toUpperCase() +
+                        genreName.substring(i + 1);
+            }
+        }
+        return genreName;
+    }
 }

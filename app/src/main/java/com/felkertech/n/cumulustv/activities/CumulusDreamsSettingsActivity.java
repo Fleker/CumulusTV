@@ -9,14 +9,12 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
+import com.felkertech.n.cumulustv.utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.CumulusDreams;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
-import com.felkertech.n.cumulustv.model.JsonChannel;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * A settings Activity for {@link CumulusDreams}.

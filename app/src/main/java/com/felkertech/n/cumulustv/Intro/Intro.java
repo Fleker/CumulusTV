@@ -8,8 +8,8 @@ import android.view.KeyEvent;
 import android.view.View;
 
 import com.felkertech.n.ActivityUtils;
-import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
-import com.felkertech.n.boilerplate.Utils.PermissionUtils;
+import com.felkertech.n.cumulustv.utils.DriveSettingsManager;
+import com.felkertech.n.cumulustv.utils.PermissionUtils;
 import com.felkertech.n.cumulustv.R;
 import com.github.paolorotolo.appintro.AppIntro2;
 

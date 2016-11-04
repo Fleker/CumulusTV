@@ -1,7 +1,6 @@
 package com.felkertech.n;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -24,9 +23,9 @@ import com.afollestad.materialdialogs.Theme;
 import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.cumulustv.plugins.CumulusTvPlugin;
-import com.felkertech.n.boilerplate.Utils.AppUtils;
-import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
-import com.felkertech.n.boilerplate.Utils.PermissionUtils;
+import com.felkertech.n.cumulustv.utils.AppUtils;
+import com.felkertech.n.cumulustv.utils.DriveSettingsManager;
+import com.felkertech.n.cumulustv.utils.PermissionUtils;
 import com.felkertech.n.cumulustv.Intro.Intro;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.activities.CumulusTvPlayer;

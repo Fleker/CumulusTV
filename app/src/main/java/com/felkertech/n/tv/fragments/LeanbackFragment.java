@@ -18,7 +18,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.tv.TvContract;
 import android.os.Build;
@@ -42,21 +41,19 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.n.ActivityUtils;
-import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
+import com.felkertech.n.cumulustv.utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
 import com.felkertech.n.cumulustv.model.Option;
 import com.felkertech.n.cumulustv.model.SuggestedChannels;
 import com.felkertech.n.cumulustv.receivers.GoogleDriveBroadcastReceiver;
+import com.felkertech.n.tv.Utils;
 import com.felkertech.n.tv.activities.DetailsActivity;
 import com.felkertech.n.tv.presenters.CardPresenter;
 import com.felkertech.n.tv.presenters.OptionsCardPresenter;
@@ -70,6 +67,8 @@ import com.google.android.gms.drive.MetadataChangeSet;
 
 import org.json.JSONException;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -160,6 +159,7 @@ public class LeanbackFragment extends BrowseFragment
             return;
         }
         ChannelDatabase cd = ChannelDatabase.getInstance(mActivity);
+        Map<String, ListRow> genresListRows = new HashMap<>();
         try {
             CardPresenter channelCardPresenter = new CardPresenter();
             ArrayObjectAdapter channelRowAdapter = new ArrayObjectAdapter(channelCardPresenter);
@@ -168,6 +168,18 @@ public class LeanbackFragment extends BrowseFragment
                 if (DEBUG) {
                     Log.d(TAG, "Got channels " + jsonChannel.getName());
                     Log.d(TAG, jsonChannel.getLogo());
+                }
+                String[] genres = jsonChannel.getGenres();
+                for (String genre : genres) {
+                    if (!genresListRows.containsKey(genre)) {
+                        CardPresenter genresCardPresenter = new CardPresenter();
+                        ArrayObjectAdapter genresObjectAdapter = new ArrayObjectAdapter(genresCardPresenter);
+                        HeaderItem genresHeader = new HeaderItem(0, Utils.normalizeGenre(genre));
+                        ListRow row = new ListRow(genresHeader, genresObjectAdapter);
+                        mRowsAdapter.add(row);
+                        genresListRows.put(genre, row);
+                    }
+                    ((ArrayObjectAdapter) genresListRows.get(genre).getAdapter()).add(jsonChannel);
                 }
                 channelRowAdapter.add(jsonChannel);
                 index++;

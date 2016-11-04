@@ -1,4 +1,4 @@
-package com.felkertech.n.boilerplate.Utils;
+package com.felkertech.n.cumulustv.utils;
 
 import android.app.UiModeManager;
 import android.content.Context;

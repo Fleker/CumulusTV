@@ -11,7 +11,7 @@ import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.cumulustv.plugins.CumulusTvPlugin;
 import com.felkertech.n.ActivityUtils;
-import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
+import com.felkertech.n.cumulustv.utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.model.JsonChannel;
 import com.google.android.gms.common.ConnectionResult;

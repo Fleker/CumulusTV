@@ -9,7 +9,7 @@ import android.view.SurfaceView;
 import android.widget.TextView;
 
 import com.felkertech.channelsurfer.players.TvInputPlayer;
-import com.felkertech.n.boilerplate.Utils.DriveSettingsManager;
+import com.felkertech.n.cumulustv.utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.activities.CumulusDreamsSettingsActivity;
 
 /**
