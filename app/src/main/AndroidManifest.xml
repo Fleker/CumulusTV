@@ -20,6 +20,9 @@
     <uses-feature
         android:name="android.software.leanback"
         android:required="false" />
+    <uses-feature
+        android:name="android.hardware.wifi"
+        android:required="false" />
 
     <!--
     Required to expose this app in the store only when the device has TV input framework
