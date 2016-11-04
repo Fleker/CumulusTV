@@ -664,18 +664,12 @@ public class MainPicker extends CumulusTvPlugin {
             findViewById(R.id.positive_button).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String number = ((EditText) findViewById(R.id.number))
-                            .getText().toString();
-                    String name = ((EditText) findViewById(R.id.name))
-                            .getText().toString();
-                    String logo = ((EditText) findViewById(R.id.logo))
-                            .getText().toString();
-                    String mediaUrl = ((EditText) findViewById(R.id.stream))
-                            .getText().toString();
-                    String splash = ((EditText) findViewById(R.id.splash))
-                            .getText().toString();
-                    String genres = ((Button) findViewById(R.id.genres))
-                            .getText().toString();
+                    String number = ((EditText) findViewById(R.id.number)).getText().toString();
+                    String name = ((EditText) findViewById(R.id.name)).getText().toString();
+                    String logo = ((EditText) findViewById(R.id.logo)).getText().toString();
+                    String mediaUrl = ((EditText) findViewById(R.id.stream)).getText().toString();
+                    String splash = ((EditText) findViewById(R.id.splash)).getText().toString();
+                    String genres = ((Button) findViewById(R.id.genres)).getText().toString();
 
                     if(number.length() == 0) {
                         Toast.makeText(MainPicker.this,
@@ -720,16 +714,11 @@ public class MainPicker extends CumulusTvPlugin {
                         Log.d(TAG, "Channel " + number);
                         Log.d(TAG, "DEL Channel " + number);
                     }
-                    String name = ((EditText) findViewById(R.id.name)).getText()
-                            .toString();
-                    String logo = ((EditText) findViewById(R.id.logo)).getText()
-                            .toString();
-                    String stream = ((EditText) findViewById(R.id.stream)).getText()
-                            .toString();
-                    String splash = ((EditText) findViewById(R.id.splash)).getText()
-                            .toString();
-                    String genres = ((Button) findViewById(R.id.genres)).getText()
-                            .toString();
+                    String name = ((EditText) findViewById(R.id.name)).getText().toString();
+                    String logo = ((EditText) findViewById(R.id.logo)).getText().toString();
+                    String stream = ((EditText) findViewById(R.id.stream)).getText().toString();
+                    String splash = ((EditText) findViewById(R.id.splash)).getText().toString();
+                    String genres = ((Button) findViewById(R.id.genres)).getText().toString();
 
                     CumulusChannel jsonChannel = new JsonChannel.Builder()
                             .setNumber(number)

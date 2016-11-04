@@ -415,17 +415,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         displayChannelPicker(jsonChannels, channelNames, getString(R.string.my_channels));
     }
 
-    public void displayChannelPicker(final List<JsonChannel> jsonChannels, String[] channelNames, String label) {
+    public void displayChannelPicker(final List<JsonChannel> jsonChannels, String[] channelNames,
+             String label) {
         new MaterialDialog.Builder(MainActivity.this)
                 .title(label)
                 .items(channelNames)
                 .itemsCallback(new MaterialDialog.ListCallback() {
                     @Override
-                    public void onSelection(MaterialDialog materialDialog, View view, final int i, CharSequence charSequence) {
-                        JsonChannel jsonChannel =
-                                jsonChannels.get(i);
-                        ActivityUtils.editChannel(MainActivity.this,
-                                jsonChannel.getMediaUrl());
+                    public void onSelection(MaterialDialog materialDialog, View view, final int i,
+                            CharSequence charSequence) {
+                        JsonChannel jsonChannel = jsonChannels.get(i);
+                        ActivityUtils.editChannel(MainActivity.this, jsonChannel.getMediaUrl());
                     }
                 })
                 .show();

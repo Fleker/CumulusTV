@@ -218,6 +218,22 @@
         </activity>
 
         <activity android:name=".activities.HomepageWebViewActivity" />
+
+        <receiver android:name=".widgets.ChannelShortcut"
+            android:enabled="true"
+            android:exported="true">
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/channel_widget" />
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+        </receiver>
+
+        <activity android:name=".activities.WidgetSelectionActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
