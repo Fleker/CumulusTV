@@ -70,7 +70,7 @@
     <string name="sync_cloud_local">"Write cloud data to local"</string>
     <string name="sync_local_cloud">"Write local data to cloud"</string>
 
-    <string name="my_channels">"My Channels"</string>
+    <string name="my_channels">"All Channels"</string>
     <string name="no_channels">"You have no streams"</string>
     <string name="channel_dupe">Channel already added</string>
     <string name="channel_added">%1$s has been added</string>

@@ -82,6 +82,12 @@ public class LeanbackFragment extends BrowseFragment
     private static final int GRID_ITEM_HEIGHT = 200;
     public static final int REQUEST_CODE_CREATOR = 102;
 
+    private static final int ORDER_GENRE_CATEGORY = 0;
+    private static final int ORDER_ALL_CHANNELS = 1;
+    private static final int ORDER_SUGGESTED_CHANNELS = 2;
+    private static final int ORDER_GOOGLE_DRIVE = 3;
+    private static final int ORDER_MANAGE_SETTINGS = 4;
+
     private final Handler mHandler = new Handler();
     private ArrayObjectAdapter mRowsAdapter;
     private Drawable mDefaultBackground;
@@ -174,7 +180,8 @@ public class LeanbackFragment extends BrowseFragment
                     if (!genresListRows.containsKey(genre)) {
                         CardPresenter genresCardPresenter = new CardPresenter();
                         ArrayObjectAdapter genresObjectAdapter = new ArrayObjectAdapter(genresCardPresenter);
-                        HeaderItem genresHeader = new HeaderItem(0, Utils.normalizeGenre(genre));
+                        HeaderItem genresHeader =
+                                new HeaderItem(ORDER_GENRE_CATEGORY, Utils.normalizeGenre(genre));
                         ListRow row = new ListRow(genresHeader, genresObjectAdapter);
                         mRowsAdapter.add(row);
                         genresListRows.put(genre, row);
@@ -184,7 +191,7 @@ public class LeanbackFragment extends BrowseFragment
                 channelRowAdapter.add(jsonChannel);
                 index++;
             }
-            HeaderItem header = new HeaderItem(0, getString(R.string.my_channels));
+            HeaderItem header = new HeaderItem(ORDER_ALL_CHANNELS, getString(R.string.my_channels));
             mRowsAdapter.add(new ListRow(header, channelRowAdapter));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -194,7 +201,7 @@ public class LeanbackFragment extends BrowseFragment
         CardPresenter suggestedChannelPresenter = new CardPresenter();
         ArrayObjectAdapter suggestedChannelAdapter =
                 new ArrayObjectAdapter(suggestedChannelPresenter);
-        HeaderItem suggestedChannelsHeader = new HeaderItem(1,
+        HeaderItem suggestedChannelsHeader = new HeaderItem(ORDER_SUGGESTED_CHANNELS,
                 getString(R.string.suggested_channels));
         CumulusChannel[] suggestedChannels = SuggestedChannels.getSuggestedChannels();
         for(CumulusChannel jsonChannel : suggestedChannels) {
@@ -203,7 +210,7 @@ public class LeanbackFragment extends BrowseFragment
         mRowsAdapter.add(new ListRow(suggestedChannelsHeader, suggestedChannelAdapter));
 
         // Third row is Drive
-        HeaderItem driveHeader = new HeaderItem(1, getString(R.string.google_drive_sync));
+        HeaderItem driveHeader = new HeaderItem(ORDER_GOOGLE_DRIVE, getString(R.string.google_drive_sync));
         OptionsCardPresenter drivePresenter = new OptionsCardPresenter();
         ArrayObjectAdapter driveAdapter = new ArrayObjectAdapter(drivePresenter);
         driveAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_google_drive),
@@ -215,7 +222,7 @@ public class LeanbackFragment extends BrowseFragment
         mRowsAdapter.add(new ListRow(driveHeader, driveAdapter));
 
         // Fourth row is actions
-        HeaderItem gridHeader = new HeaderItem(1, getString(R.string.manage));
+        HeaderItem gridHeader = new HeaderItem(ORDER_MANAGE_SETTINGS, getString(R.string.manage));
         OptionsCardPresenter mGridPresenter = new OptionsCardPresenter();
         ArrayObjectAdapter gridRowAdapter = new ArrayObjectAdapter(mGridPresenter);
         gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_television),
@@ -225,7 +232,7 @@ public class LeanbackFragment extends BrowseFragment
         mRowsAdapter.add(new ListRow(gridHeader, gridRowAdapter));
 
         // Settings will become its own activity
-        HeaderItem gridHeader2 = new HeaderItem(1, getString(R.string.settings));
+        HeaderItem gridHeader2 = new HeaderItem(ORDER_MANAGE_SETTINGS, getString(R.string.settings));
         OptionsCardPresenter mGridPresenter2 = new OptionsCardPresenter();
         ArrayObjectAdapter gridRowAdapter2 = new ArrayObjectAdapter(mGridPresenter2);
         /*

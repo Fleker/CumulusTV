@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.d(TAG, "onCreate");
         sm = new DriveSettingsManager(this);
         ActivityUtils.openIntroIfNeeded(this);
+        final ChannelDatabase channelDatabase = ChannelDatabase.getInstance(MainActivity.this);
         Fabric.with(this, new Crashlytics());
         if(AppUtils.isTV(this)) {
             // Go to tv activity
@@ -78,8 +79,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         findViewById(R.id.view).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final ChannelDatabase channelDatabase =
-                        ChannelDatabase.getInstance(MainActivity.this);
                 String[] channelnames = channelDatabase.getChannelNames();
                 if(channelnames.length == 0) {
                     new MaterialDialog.Builder(MainActivity.this)
@@ -117,6 +116,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
             }
         });
+        if (channelDatabase.getChannelNames().length == 0) {
+            findViewById(R.id.view_categories).setVisibility(View.GONE);
+        }
         findViewById(R.id.suggested).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
