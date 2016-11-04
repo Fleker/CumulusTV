@@ -38,7 +38,11 @@ import com.squareup.okhttp.Response;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -53,6 +57,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private GoogleApiClient gapi;
     private DriveSettingsManager sm;
     private MaterialDialog md;
+
+    private MaterialDialog.ListCallback genreSelectionCallback = new MaterialDialog.ListCallback() {
+        @Override
+        public void onSelection(MaterialDialog dialog, View itemView,
+                int position, CharSequence text) {
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,28 +108,61 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             })
                             .show();
                 } else {
-                    new MaterialDialog.Builder(MainActivity.this)
-                            .title(R.string.my_channels)
-                            .items(channelnames)
-                            .itemsCallback(new MaterialDialog.ListCallback() {
-                                @Override
-                                public void onSelection(MaterialDialog materialDialog, View view, final int i, CharSequence charSequence) {
-                                    try {
-                                        JsonChannel jsonChannel =
-                                                channelDatabase.getJsonChannels().get(i);
-                                        ActivityUtils.editChannel(MainActivity.this,
-                                                jsonChannel.getMediaUrl());
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            })
-                            .show();
+                    try {
+                        displayChannelPicker(channelDatabase.getJsonChannels(), channelnames);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
         if (channelDatabase.getChannelNames().length == 0) {
-            findViewById(R.id.view_categories).setVisibility(View.GONE);
+            findViewById(R.id.view_genres).setVisibility(View.GONE);
+        } else {
+            findViewById(R.id.view_genres).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Generate genres
+                    Set<String> genreSet = new HashSet<>();
+                    try {
+                        for (JsonChannel jsonChannel : channelDatabase.getJsonChannels()) {
+                            Collections.addAll(genreSet, jsonChannel.getGenres());
+                        }
+                        final String[] genreArray = genreSet.toArray(new String[genreSet.size()]);
+                        new MaterialDialog.Builder(MainActivity.this)
+                                .title(R.string.select_genres)
+                                .items(genreArray)
+                                .itemsCallback(new MaterialDialog.ListCallback() {
+                                    @Override
+                                    public void onSelection(MaterialDialog dialog, View itemView,
+                                            int position, CharSequence text) {
+                                        // Now only get certain channels
+                                        String selectedGenre = genreArray[position];
+                                        List<JsonChannel> jsonChannelList = new ArrayList<>();
+                                        List<String> channelNames = new ArrayList<>();
+                                        try {
+                                            for (JsonChannel jsonChannel :
+                                                    channelDatabase.getJsonChannels()) {
+                                                if (jsonChannel.getGenresString().contains(selectedGenre)) {
+                                                    jsonChannelList.add(jsonChannel);
+                                                    channelNames.add(jsonChannel.getNumber() + " " +
+                                                        jsonChannel.getName());
+                                                }
+                                            }
+                                            displayChannelPicker(jsonChannelList, channelNames
+                                                    .toArray(new String[channelNames.size()]),
+                                                    selectedGenre);
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                })
+                                .show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
         findViewById(R.id.suggested).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -365,6 +410,26 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                 }).start();
                                 break;
                         }
+                    }
+                })
+                .show();
+    }
+
+    public void displayChannelPicker(final List<JsonChannel> jsonChannels, String[] channelNames) {
+        displayChannelPicker(jsonChannels, channelNames, getString(R.string.my_channels));
+    }
+
+    public void displayChannelPicker(final List<JsonChannel> jsonChannels, String[] channelNames, String label) {
+        new MaterialDialog.Builder(MainActivity.this)
+                .title(label)
+                .items(channelNames)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog materialDialog, View view, final int i, CharSequence charSequence) {
+                        JsonChannel jsonChannel =
+                                jsonChannels.get(i);
+                        ActivityUtils.editChannel(MainActivity.this,
+                                jsonChannel.getMediaUrl());
                     }
                 })
                 .show();
