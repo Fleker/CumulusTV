@@ -44,7 +44,7 @@ import java.util.Set;
  */
 public class ChannelDatabase {
     private static final String TAG = ChannelDatabase.class.getSimpleName();
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     public static final String KEY = "JSONDATA";
 
@@ -188,7 +188,7 @@ public class ChannelDatabase {
 
     public void add(CumulusChannel channel) throws JSONException {
         if (mJsonObject != null) {
-            JSONArray channels = mJsonObject.getJSONArray("channels");
+            JSONArray channels = mJsonObject.getJSONArray(KEY_CHANNELS);
             channels.put(channel.toJSON());
             save();
         }
@@ -209,10 +209,11 @@ public class ChannelDatabase {
                     } else if(jsonChannel.getMediaUrl().equals(channel.getMediaUrl())) {
                         if (DEBUG) {
                             Log.d(TAG, "Remove " + i + " and put at " + i + ": " +
-                                    channel.toJSON().toString());
+                                    channel.toString());
                         }
                         jsonArray.put(i, channel.toJSON());
                         finalindex = i;
+                        mJsonObject.getJSONArray(KEY_CHANNELS).put(i, channel.toJSON());
                         save();
                     }
                 }

@@ -5,22 +5,19 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by guest1 on 8/7/2015.
  */
 public abstract class CumulusTvPlugin extends AppCompatActivity {
     private static final String TAG = CumulusTvPlugin.class.getSimpleName();
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     public static final String INTENT_EDIT = "Edit";
     public static final String INTENT_ADD = "Add";
     public static final String INTENT_EXTRA_ACTION = "action";
-    public static final String INTENT_EXTRA_NUMBER = "Number";
-    public static final String INTENT_EXTRA_NAME = "Name";
-    public static final String INTENT_EXTRA_ICON = "Icon";
-    public static final String INTENT_EXTRA_URL = "Url";
-    public static final String INTENT_EXTRA_SPLASH = "Splash";
-    public static final String INTENT_EXTRA_GENRES = "Genres";
     public static final String INTENT_EXTRA_READ_ALL = "Readall";
     public static final String INTENT_EXTRA_ALL_CHANNELS = "Allchannels";
 
@@ -33,6 +30,9 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
 
     public static final String ACTION_ADD_CHANNEL = "com.felkertech.cumulustv.ADD_CHANNEL";
     public static final String ACTION_RECEIVER = "com.felkertech.cumulustv.RECEIVER";
+
+    private static final String CLASS_NAME = "com.felkertech.n.cumulustv";
+    private static final String DATA_RECEIVER = "com.felkertech.n.plugins.DataReceiver";
 
     private boolean isEdit = false;
     private boolean proprietary = true;
@@ -86,10 +86,41 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
     public void saveChannel(CumulusChannel jsonChannel) {
         String jsonString = jsonChannel.toString();
         Intent i = new Intent();
-        i.setClassName("com.felkertech.n.cumulustv",
-                "com.felkertech.n.plugins.DataReceiver");
+        i.setClassName(CLASS_NAME, DATA_RECEIVER);
         i.setAction(ACTION_RECEIVER);
         i.putExtra(INTENT_EXTRA_JSON, jsonString);
+        if (proprietary) {
+            i.putExtra(INTENT_EXTRA_SOURCE, getApplicationInfo().packageName + "," +
+                    getApplicationInfo().name);
+        } else {
+            i.putExtra(INTENT_EXTRA_SOURCE, "");
+        }
+        i.putExtra(INTENT_EXTRA_ACTION, INTENT_EXTRA_ACTION_WRITE);
+        if (DEBUG) {
+            Log.d(TAG, "   :");
+            Log.d(TAG, jsonString);
+            Log.d(TAG, "Saving changes");
+        }
+        sendBroadcast(i);
+        finish();
+    }
+
+    /**
+     * Replaces the original channel with a new channel.
+     *
+     * @param newChannel The new channel metadat
+     * @param original The original channel metadata.
+     */
+    public void updateChannel(CumulusChannel newChannel, CumulusChannel original) {
+        String jsonString = newChannel.toString();
+        Intent i = new Intent();
+        String ogString = original.toString();
+        i.setClassName(CLASS_NAME, DATA_RECEIVER);
+        i.setAction(ACTION_RECEIVER);
+        i.putExtra(INTENT_EXTRA_JSON, jsonString);
+        if (getChannel() != null) {
+            i.putExtra(INTENT_EXTRA_ORIGINAL_JSON, ogString);
+        }
         if (proprietary) {
             i.putExtra(INTENT_EXTRA_SOURCE, getApplicationInfo().packageName + "," +
                     getApplicationInfo().name);
@@ -105,41 +136,12 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
     }
 
     /**
-     * Replaces the original channel with a new channel.
-     *
-     * @param newChannel The new channel metadat
-     * @param original The original channel metadata.
-     */
-    public void saveChannel(CumulusChannel newChannel, CumulusChannel original) {
-        String jsonString = newChannel.toString();
-        Intent i = new Intent();
-        String ogString = original.toString();
-        i.setClassName("com.felkertech.n.cumulustv",
-                "com.felkertech.n.plugins.DataReceiver");
-        i.setAction(ACTION_RECEIVER);
-        i.putExtra(INTENT_EXTRA_JSON, jsonString);
-        if (getChannel() != null) {
-            i.putExtra(INTENT_EXTRA_ORIGINAL_JSON, ogString);
-        }
-        if (proprietary) {
-            i.putExtra(INTENT_EXTRA_SOURCE, getApplicationInfo().packageName + "," +
-                    getApplicationInfo().name);
-        } else {
-            i.putExtra(INTENT_EXTRA_SOURCE, "");
-        }
-        i.putExtra(INTENT_EXTRA_ACTION, INTENT_EXTRA_ACTION_WRITE);
-        Log.d("cumulus:plugin", "Saving changes");
-        sendBroadcast(i);
-        finish();
-    }
-
-    /**
      * Deletes the provided channel and resyncs. Then the app closes.
      * @param jsonChannel The jsonchannel to delete
      */
     public void deleteChannel(CumulusChannel jsonChannel) {
         String jsonString = jsonChannel.toString();
-        Intent i = new Intent("com.felkertech.cumulustv.RECEIVER");
+        Intent i = new Intent(ACTION_RECEIVER);
         i.putExtra(INTENT_EXTRA_JSON, jsonString);
         i.putExtra(INTENT_EXTRA_ACTION, INTENT_EXTRA_ACTION_DELETE);
         sendBroadcast(i);
@@ -150,7 +152,7 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
      * You made special modifications to the database and you're requesting a sync
      */
     public void saveDatabase() {
-        Intent i = new Intent("com.felkertech.cumulustv.RECEIVER");
+        Intent i = new Intent(ACTION_RECEIVER);
         i.putExtra(INTENT_EXTRA_ACTION,
                 INTENT_EXTRA_ACTION_DATABASE_WRITE);
         sendBroadcast(i);
@@ -164,20 +166,18 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
         if(telegram.getStringExtra(INTENT_EXTRA_ACTION).equals(INTENT_ADD)) {
             return null;
         }
-        String number = telegram.getStringExtra(INTENT_EXTRA_NUMBER);
-        String name = telegram.getStringExtra(INTENT_EXTRA_NAME);
-        String logo = telegram.getStringExtra(INTENT_EXTRA_ICON);
-        String url = telegram.getStringExtra(INTENT_EXTRA_URL);
-        String splash = telegram.getStringExtra(INTENT_EXTRA_SPLASH);
-        String genres = telegram.getStringExtra(INTENT_EXTRA_GENRES);
-        return new CumulusChannel.Builder()
-                .setNumber(number)
-                .setName(name)
-                .setMediaUrl(url)
-                .setLogo(logo)
-                .setSplashscreen(splash)
-                .setGenres(genres)
-                .build();
+        try {
+            JSONObject jsonObject = new JSONObject(telegram.getStringExtra(INTENT_EXTRA_JSON));
+            CumulusChannel channel = new CumulusChannel.Builder(jsonObject)
+                    .build();
+            if (DEBUG) {
+                Log.d(TAG, channel.toString());
+            }
+            return channel;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

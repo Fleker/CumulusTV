@@ -24,7 +24,7 @@ import org.json.JSONObject;
 public class DataReceiver extends BroadcastReceiver
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = DataReceiver.class.getSimpleName();
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     private GoogleApiClient gapi;
     private Context mContext;
@@ -43,7 +43,7 @@ public class DataReceiver extends BroadcastReceiver
                 .build();
 
         if (DEBUG) {
-            Log.d(TAG, "Heard");
+            Log.d(TAG, "Received a message");
         }
         if(intent != null) {
             String action = intent.getStringExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION);

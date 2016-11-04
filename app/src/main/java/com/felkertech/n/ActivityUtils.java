@@ -135,22 +135,18 @@ public class ActivityUtils {
             return;
         }
         if(jsonChannel.getPluginSource() != null) {
-            //Search through all plugins for one of a given source
+            // Search through all plugins for one of a given source
             PackageManager pm = activity.getPackageManager();
 
             try {
                 pm.getPackageInfo(jsonChannel.getPluginSource().getPackageName(),
                         PackageManager.GET_ACTIVITIES);
-                //Open up this particular activity
+                // Open up this particular activity
                 Intent intent = new Intent();
                 intent.setComponent(jsonChannel.getPluginSource());
                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_EDIT);
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NUMBER, jsonChannel.getNumber());
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NAME, jsonChannel.getName());
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_URL, jsonChannel.getMediaUrl());
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ICON, jsonChannel.getLogo());
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_SPLASH, jsonChannel.getSplashscreen());
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_GENRES, jsonChannel.getGenresString());
+                Log.d(TAG, "Editing channel " + jsonChannel.toString());
+                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_JSON, jsonChannel.toString());
                 activity.startActivity(intent);
             }
             catch (PackageManager.NameNotFoundException e) {
@@ -426,14 +422,7 @@ public class ActivityUtils {
                 intent.setClassName(plugin_info.activityInfo.applicationInfo.packageName,
                         plugin_info.activityInfo.name);
                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_EDIT);
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NUMBER, queriedChannel.getNumber());
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NAME, queriedChannel.getName());
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_URL, queriedChannel.getMediaUrl());
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ICON, queriedChannel.getLogo());
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_SPLASH,
-                        queriedChannel.getSplashscreen());
-                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_GENRES,
-                        queriedChannel.getGenresString());
+                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_JSON, queriedChannel.toString());
             }
             activity.startActivity(intent);
         } else {
@@ -467,18 +456,8 @@ public class ActivityUtils {
                                         plugin_info.activityInfo.name);
                                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION,
                                         CumulusTvPlugin.INTENT_EDIT);
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NUMBER,
-                                        queriedChannel.getNumber());
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_NAME,
-                                        queriedChannel.getName());
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_URL,
-                                        queriedChannel.getMediaUrl());
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ICON,
-                                        queriedChannel.getLogo());
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_SPLASH,
-                                        queriedChannel.getSplashscreen());
-                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_GENRES,
-                                        queriedChannel.getGenresString());
+                                intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_JSON,
+                                        queriedChannel.toString());
                             }
                             activity.startActivity(intent);
                         }

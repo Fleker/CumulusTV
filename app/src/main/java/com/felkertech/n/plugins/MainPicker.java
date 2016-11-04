@@ -55,8 +55,8 @@ import io.fabric.sdk.android.Fabric;
  * Created by Nick on 8/7/2015.
  */
 public class MainPicker extends CumulusTvPlugin {
-    private static final String TAG = "cumulus:MainPicker";
-    private static final boolean DEBUG = false;
+    private static final String TAG = MainPicker.class.getSimpleName();
+    private static final boolean DEBUG = true;
 
     private String label = "";
     private IMainPicker mPickerDialog;
@@ -335,6 +335,7 @@ public class MainPicker extends CumulusTvPlugin {
         String url = "";
         if(getChannel() != null) {
             url = getChannel().getMediaUrl();
+            Log.d(TAG, "Have actual channel, have url " + url);
         }
         if(mPickerDialog != null &&
                 mPickerDialog.getCustomView().findViewById(R.id.stream) != null) {
@@ -342,7 +343,7 @@ public class MainPicker extends CumulusTvPlugin {
                     .toString();
         }
         if (DEBUG) {
-            Log.d(TAG, "Found '" + url + "'");
+            Log.d(TAG, "Found url '" + url + "'");
         }
         return url;
     }
@@ -527,7 +528,7 @@ public class MainPicker extends CumulusTvPlugin {
                 mDialog.getCustomView().findViewById(R.id.stream_open)
                         .setVisibility(View.GONE);
             }
-            CumulusChannel cumulusChannel = getChannel();
+            final CumulusChannel cumulusChannel = getChannel();
             if (cumulusChannel != null && cumulusChannel.getGenresString() != null) {
                 includeGenrePicker(MobilePickerDialog.this, cumulusChannel.getGenresString());
             } else {
@@ -544,15 +545,19 @@ public class MainPicker extends CumulusTvPlugin {
             mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface dialog) {
-                    CumulusChannel jsonChannel = getChannel();
                     RelativeLayout l = (RelativeLayout) mDialog.getCustomView();
-                    ((EditText) l.findViewById(R.id.number)).setText(jsonChannel.getNumber());
-                    Log.d(TAG, "Channel " + jsonChannel.getNumber());
-                    ((EditText) l.findViewById(R.id.name)).setText(jsonChannel.getName());
-                    ((EditText) l.findViewById(R.id.logo)).setText(jsonChannel.getLogo());
-                    ((EditText) l.findViewById(R.id.stream)).setText(jsonChannel.getMediaUrl());
-                    ((Button) l.findViewById(R.id.genres)).setText(jsonChannel.getGenresString());
-
+                    if (DEBUG) {
+                        Log.d(TAG, "Populate the form?");
+                        Log.d(TAG, (cumulusChannel != null) + "  " + (getChannel() != null));
+                    }
+                    if (cumulusChannel != null) {
+                        ((EditText) l.findViewById(R.id.number)).setText(cumulusChannel.getNumber());
+                        Log.d(TAG, "Channel " + cumulusChannel.getNumber());
+                        ((EditText) l.findViewById(R.id.name)).setText(cumulusChannel.getName());
+                        ((EditText) l.findViewById(R.id.logo)).setText(cumulusChannel.getLogo());
+                        ((EditText) l.findViewById(R.id.stream)).setText(cumulusChannel.getMediaUrl());
+                        ((Button) l.findViewById(R.id.genres)).setText(cumulusChannel.getGenresString());
+                    }
                     loadStream(MobilePickerDialog.this);
                 }
             });
@@ -752,14 +757,13 @@ public class MainPicker extends CumulusTvPlugin {
             ((EditText) findViewById(R.id.stream))
                     .addTextChangedListener(filterTextWatcher);
 
-            CumulusChannel jsonChannel = getChannel();
-            if (jsonChannel != null) {
-                ((EditText) findViewById(R.id.number)).setText(jsonChannel.getNumber());
-                Log.d(TAG, "Channel " + jsonChannel.getNumber());
-                ((EditText) findViewById(R.id.name)).setText(jsonChannel.getName());
-                ((EditText) findViewById(R.id.logo)).setText(jsonChannel.getLogo());
-                ((EditText) findViewById(R.id.stream)).setText(jsonChannel.getMediaUrl());
-                ((Button) findViewById(R.id.genres)).setText(jsonChannel.getGenresString());
+            if (cumulusChannel != null) {
+                ((EditText) findViewById(R.id.number)).setText(cumulusChannel.getNumber());
+                Log.d(TAG, "Channel " + cumulusChannel.getNumber());
+                ((EditText) findViewById(R.id.name)).setText(cumulusChannel.getName());
+                ((EditText) findViewById(R.id.logo)).setText(cumulusChannel.getLogo());
+                ((EditText) findViewById(R.id.stream)).setText(cumulusChannel.getMediaUrl());
+                ((Button) findViewById(R.id.genres)).setText(cumulusChannel.getGenresString());
             }
 
             loadStream(TvPickerDialog.this);
