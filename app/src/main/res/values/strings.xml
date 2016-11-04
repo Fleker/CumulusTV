@@ -34,7 +34,7 @@
 
     <!--Leanback Menu Items-->
     <string name="manage_livechannels">Open Live Channels</string>
-    <string name="manage_add_suggested">Add Suggested Channels</string>
+    <string name="manage_add_suggested">Add Suggested Channel</string>
     <string name="manage_add_new">Add New Channel</string>
 
     <string name="settings_sync_file">Sync File with Google Drive</string>

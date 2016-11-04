@@ -142,7 +142,7 @@
         jumboMode="true"
         optimize="true"
         revision="21.1.2"
-        sha1="ec36db497b5b0cbb710f24a4fe15a8a086f79e94">
+        sha1="cde2ac2e31374b0f731410ef8c94d4d54e5ae319">
         <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_4e4b8c1bcdeb21c5ed6caecc139db63e9566ed87\classes.dex" />
     </item>
     <item
@@ -268,7 +268,7 @@
         jumboMode="true"
         optimize="true"
         revision="21.1.2"
-        sha1="f3bfa17b3626c1e3b747e30e4a2eec578eb75b00">
+        sha1="54647aa52cf5fd97274a5f47a21af9795b261a85">
         <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_9542fcf8ffde793a19ad6a69b125501292eb42ef\classes.dex" />
     </item>
     <item
