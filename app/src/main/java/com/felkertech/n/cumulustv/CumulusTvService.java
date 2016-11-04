@@ -315,6 +315,12 @@ public class CumulusTvService extends MultimediaInputProvider {
     public boolean onTune(final Channel channel) {
         ChannelDatabase cd = ChannelDatabase.getInstance(this);
         jsonChannel = cd.findChannelByMediaUrl(channel.getInternalProviderData());
+        if (jsonChannel == null) {
+            Toast.makeText(this, "Cannot find channel metadata for " +
+                    channel.getInternalProviderData(), Toast.LENGTH_SHORT).show();
+            notifyVideoUnavailable(REASON_UNKNOWN);
+            return false;
+        }
         if (DEBUG) {
             Log.d(TAG, "Tune request to go to " + channel.getName());
             Log.d(TAG, "Has IPD of " + channel.getInternalProviderData());

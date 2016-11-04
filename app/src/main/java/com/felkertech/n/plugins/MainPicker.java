@@ -525,8 +525,8 @@ public class MainPicker extends CumulusTvPlugin {
                 mDialog.getCustomView().findViewById(R.id.stream_open)
                         .setVisibility(View.GONE);
             }
-            CumulusChannel cumulusChannel = getChannel();
-            if (cumulusChannel.getGenresString() != null) {
+            final CumulusChannel cumulusChannel = getChannel();
+            if (cumulusChannel != null && cumulusChannel.getGenresString() != null) {
                 includeGenrePicker(MobilePickerDialog.this, cumulusChannel.getGenresString());
             } else {
                 includeGenrePicker(MobilePickerDialog.this, "");
@@ -542,14 +542,15 @@ public class MainPicker extends CumulusTvPlugin {
             mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface dialog) {
-                    CumulusChannel jsonChannel = getChannel();
                     RelativeLayout l = (RelativeLayout) mDialog.getCustomView();
-                    ((EditText) l.findViewById(R.id.number)).setText(jsonChannel.getNumber());
-                    Log.d(TAG, "Channel " + jsonChannel.getNumber());
-                    ((EditText) l.findViewById(R.id.name)).setText(jsonChannel.getName());
-                    ((EditText) l.findViewById(R.id.logo)).setText(jsonChannel.getLogo());
-                    ((EditText) l.findViewById(R.id.stream)).setText(jsonChannel.getMediaUrl());
-                    ((Button) l.findViewById(R.id.genres)).setText(jsonChannel.getGenresString());
+                    if (cumulusChannel != null) {
+                        ((EditText) l.findViewById(R.id.number)).setText(cumulusChannel.getNumber());
+                        Log.d(TAG, "Channel " + cumulusChannel.getNumber());
+                        ((EditText) l.findViewById(R.id.name)).setText(cumulusChannel.getName());
+                        ((EditText) l.findViewById(R.id.logo)).setText(cumulusChannel.getLogo());
+                        ((EditText) l.findViewById(R.id.stream)).setText(cumulusChannel.getMediaUrl());
+                        ((Button) l.findViewById(R.id.genres)).setText(cumulusChannel.getGenresString());
+                    }
 
                     loadStream(MobilePickerDialog.this);
                 }
