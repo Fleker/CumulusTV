@@ -221,6 +221,7 @@
 
         <receiver android:name=".widgets.ChannelShortcut"
             android:enabled="true"
+            android:label="Channel Shortcut"
             android:exported="true">
             <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/channel_widget" />
