@@ -129,8 +129,12 @@ public class ActivityUtils {
         ChannelDatabase cdn = ChannelDatabase.getInstance(activity);
         final JsonChannel jsonChannel = cdn.findChannelByMediaUrl(channelUrl);
         if(channelUrl == null || jsonChannel == null) {
-            Toast.makeText(activity, R.string.toast_error_channel_invalid,
-                    Toast.LENGTH_SHORT).show();
+            try {
+                Toast.makeText(activity, R.string.toast_error_channel_invalid,
+                        Toast.LENGTH_SHORT).show();
+            } catch (RuntimeException e) {
+                Log.e(TAG, activity.getString(R.string.toast_error_channel_invalid));
+            }
             return;
         }
         if(jsonChannel.getPluginSource() != null) {

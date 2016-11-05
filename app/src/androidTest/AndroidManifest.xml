@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.felkertech.n.cumulustv.test">
 
+    <!-- Required to play internet-based streaming contents. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Required to do some Google Drive stuff and open files -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- For Daydream -->
+    <uses-permission android:name="android.permission.BIND_DREAM_SERVICE" />
     <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" />
     <uses-permission android:name="com.android.providers.tv.permission.READ_EPG_DATA" />
 

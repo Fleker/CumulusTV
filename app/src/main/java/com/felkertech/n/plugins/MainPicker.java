@@ -14,6 +14,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -57,6 +58,12 @@ import io.fabric.sdk.android.Fabric;
 public class MainPicker extends CumulusTvPlugin {
     private static final String TAG = MainPicker.class.getSimpleName();
     private static final boolean DEBUG = true;
+
+    @VisibleForTesting
+    /**
+     * @hide
+     */
+    public static View streamView;
 
     private String label = "";
     private IMainPicker mPickerDialog;
@@ -354,6 +361,12 @@ public class MainPicker extends CumulusTvPlugin {
         loadStream(mPickerDialog);
     }
 
+    @VisibleForTesting
+    @Deprecated
+    public void getMediaUrl() {
+        ((EditText) findViewById(R.id.stream)).getText();
+    }
+
     private IMainPicker getPicker() {
         if (AppUtils.isTV(this)) {
             return new TvPickerDialog();
@@ -573,6 +586,7 @@ public class MainPicker extends CumulusTvPlugin {
         public MainPicker.IMainPicker show(Context context, boolean isNewChannel) {
             mDialog = build(context, isNewChannel);
             mDialog.show();
+            streamView = mDialog.getCustomView().findViewById(R.id.stream);
             return this;
         }
 
@@ -650,7 +664,7 @@ public class MainPicker extends CumulusTvPlugin {
 
         @Override
         public IMainPicker show(Context context, boolean isNewChannel) {
-            setContentView(R.layout.dialog_channel_new);
+            setContentView(R.layout.dialog_channel_new_tv);
             mContext = context;
             mIsNewChannel = isNewChannel;
 
@@ -660,7 +674,7 @@ public class MainPicker extends CumulusTvPlugin {
             if (isNewChannel) {
                 findViewById(R.id.negative_button).setVisibility(View.GONE);
             }
-
+            streamView = ((EditText) findViewById(R.id.stream));
             findViewById(R.id.positive_button).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
