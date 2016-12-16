@@ -21,11 +21,9 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.felkertech.channelsurfer.sync.SyncUtils;
+import com.felkertech.cumulustv.fileio.CloudStorageProvider;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.cumulustv.plugins.CumulusTvPlugin;
-import com.felkertech.cumulustv.utils.AppUtils;
-import com.felkertech.cumulustv.utils.DriveSettingsManager;
-import com.felkertech.cumulustv.utils.PermissionUtils;
 import com.felkertech.cumulustv.Intro.Intro;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.cumulustv.activities.CumulusTvPlayer;
@@ -63,9 +61,16 @@ public class ActivityUtils {
     public static final int REQUEST_CODE_CREATOR = 102;
     public static final int REQUEST_CODE_OPENER = 104;
     public static final ComponentName TV_INPUT_SERVICE =
-            new ComponentName("com.felkertech.n.cumulustv", ".CumulusTvService");
+            new ComponentName("com.felkertech.cumulustv.tv", ".CumulusTvService");
 
     public final static int LAST_GOOD_BUILD = 27;
+
+    private static CloudStorageProvider mCloudStorageProvider = CloudStorageProvider.getInstance();
+    private static GoogleApiClient mGoogleApiClient;
+
+    public static GoogleApiClient getGoogleApiClient() {
+        return mGoogleApiClient;
+    }
 
     public static void openSuggestedChannels(final Activity mActivity, final GoogleApiClient gapi) {
         final CumulusChannel[] channels = getSuggestedChannels();
@@ -266,7 +271,7 @@ public class ActivityUtils {
                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 activity.getString(R.string.permission_storage_rationale));
         if(gapi == null)
-            gapi = GoogleDrive.gapi;
+            gapi = mCloudStorageProvider.connect(activity);
         try {
             final GoogleApiClient finalGapi = gapi;
             new MaterialDialog.Builder(activity)
@@ -283,7 +288,10 @@ public class ActivityUtils {
                         }
                     })
                     .show();
-        } catch(Exception ignored) {}
+        } catch(Exception ignored) {
+            Toast.makeText(activity, "Error creating drive data: " + ignored.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     public static void switchGoogleDrive(Activity mActivity, GoogleApiClient gapi) {
@@ -324,9 +332,9 @@ public class ActivityUtils {
         if (DEBUG) {
         Log.d(TAG, "About to sync a file");
         }
-        if (gapi == null && GoogleDrive.gapi != null) {
-            gapi = GoogleDrive.gapi;
-        } else if(GoogleDrive.gapi == null) {
+        if (gapi == null && mCloudStorageProvider.connect(activity) != null) {
+            gapi = mCloudStorageProvider.connect(activity);
+        } else if(mCloudStorageProvider.connect(activity) == null) {
             // Is not existant
             return;
         }
@@ -517,20 +525,22 @@ public class ActivityUtils {
     }
 
     /* ACTIVITY CLONES */
-    public static void launchLiveChannels(Activity mActivity) {
+    public static void launchLiveChannels(Activity activity) {
         Intent i = new Intent(Intent.ACTION_VIEW, TvContract.Channels.CONTENT_URI);
         try {
-            mActivity.startActivity(i);
+            activity.startActivity(i);
         } catch (Exception e) {
-            Toast.makeText(mActivity, R.string.no_live_channels, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, R.string.no_live_channels, Toast.LENGTH_SHORT).show();
         }
     }
 
-    public static void onActivityResult(final Activity mActivity, GoogleApiClient gapi,
+    public static void onActivityResult(final Activity activity, GoogleApiClient gapi,
             final int requestCode, final int resultCode, final Intent data) {
-        SettingsManager sm = new SettingsManager(mActivity);
-        if(gapi == null)
-            gapi = GoogleDrive.gapi;
+        SettingsManager sm = new SettingsManager(activity);
+        if(gapi == null) {
+            gapi = mCloudStorageProvider.connect(activity);
+        }
+        mGoogleApiClient = gapi;
         switch (requestCode) {
             case RESOLVE_CONNECTION_REQUEST_CODE:
                 if (resultCode == Activity.RESULT_OK) {
@@ -543,7 +553,7 @@ public class ActivityUtils {
                         Log.d(TAG, "App cannot connect");
                     }
                     final GoogleApiClient finalGapi = gapi;
-                    new MaterialDialog.Builder(mActivity)
+                    new MaterialDialog.Builder(activity)
                             .title(R.string.connection_issue_title)
                             .content(R.string.connection_issue_description)
                             .positiveText(R.string.ok)
@@ -573,7 +583,7 @@ public class ActivityUtils {
                 DriveFile file = Drive.DriveApi.getFile(gapi,
                         DriveId.decodeFromString(driveId.encodeToString()));
                 //Write initial data
-                ActivityUtils.writeDriveData(mActivity, gapi);
+                ActivityUtils.writeDriveData(activity, gapi);
                 break;
             case ActivityUtils.REQUEST_CODE_OPENER:
                 if (data == null) //If op was canceled
@@ -586,7 +596,7 @@ public class ActivityUtils {
                 }
                 sm.setString(R.string.sm_google_drive_id, driveId.encodeToString());
                 final GoogleApiClient finalGapi1 = gapi;
-                new MaterialDialog.Builder(mActivity)
+                new MaterialDialog.Builder(activity)
                         .title(R.string.sync_initial)
                         .positiveText(R.string.sync_cloud_local)
                         .negativeText(R.string.sync_local_cloud)
@@ -594,13 +604,13 @@ public class ActivityUtils {
                             @Override
                             public void onPositive(MaterialDialog dialog) {
                                 super.onPositive(dialog);
-                                ActivityUtils.readDriveData(mActivity, finalGapi1);
+                                ActivityUtils.readDriveData(activity, finalGapi1);
                             }
 
                             @Override
                             public void onNegative(MaterialDialog dialog) {
                                 super.onNegative(dialog);
-                                ActivityUtils.writeDriveData(mActivity, finalGapi1);
+                                ActivityUtils.writeDriveData(activity, finalGapi1);
                             }
                         })
                         .show();

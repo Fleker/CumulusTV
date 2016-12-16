@@ -19,19 +19,29 @@ public class CloudStorageProvider {
 
     private static CloudStorageProvider mCloudStorageProvider;
     private GoogleApiClient mGoogleApiClient;
+    private CloudProviderCallback mOnConnectedCallback;
 
     private CloudStorageProvider() {
     }
 
+    public static CloudStorageProvider getInstance() {
+        if (mCloudStorageProvider == null) {
+            mCloudStorageProvider = new CloudStorageProvider();
+        }
+        return mCloudStorageProvider;
+    }
+
     public GoogleApiClient connect(Activity activity) {
-        mGoogleApiClient = new GoogleApiClient.Builder(activity)
-                .addApi(Drive.API)
-                .addScope(Drive.SCOPE_FILE)
-                .addConnectionCallbacks((GoogleApiClient.ConnectionCallbacks) activity)
-                .addOnConnectionFailedListener((GoogleApiClient.OnConnectionFailedListener)
-                        activity)
-                .build();
-        mGoogleApiClient.connect();
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(activity)
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks((GoogleApiClient.ConnectionCallbacks) activity)
+                    .addOnConnectionFailedListener((GoogleApiClient.OnConnectionFailedListener)
+                            activity)
+                    .build();
+            mGoogleApiClient.connect();
+        }
         return mGoogleApiClient;
     }
 
@@ -60,11 +70,45 @@ public class CloudStorageProvider {
         return mGoogleApiClient.isConnected();
     }
 
-    public void pickDriveFile(Activity activity) {
-        ActivityUtils.syncFile(activity, mGoogleApiClient);
+    public void pickDriveFile(final Activity activity) {
+        if (!isDriveConnected()) {
+            connect(activity);
+            mOnConnectedCallback = new CloudProviderCallback() {
+                @Override
+                public void actionCompleted(int status) {
+                    if (status == Activity.RESULT_OK) {
+                        ActivityUtils.syncFile(activity, mGoogleApiClient);
+                    }
+                }
+            };
+        } else {
+            ActivityUtils.syncFile(activity, mGoogleApiClient);
+        }
     }
 
-    public interface CloudProviderCallback() {
+    public void switchFile(final Activity activity) {
+        if (!isDriveConnected()) {
+            connect(activity);
+            mOnConnectedCallback = new CloudProviderCallback() {
+                @Override
+                public void actionCompleted(int status) {
+                    if (status == Activity.RESULT_OK) {
+                        ActivityUtils.switchGoogleDrive(activity, mGoogleApiClient);
+                    }
+                }
+            };
+        } else {
+            ActivityUtils.switchGoogleDrive(activity, mGoogleApiClient);
+        }
+    }
 
+    public void onConnected(int status) {
+        if (mOnConnectedCallback != null) {
+            mOnConnectedCallback.actionCompleted(status);
+        }
+    }
+
+    public interface CloudProviderCallback {
+        void actionCompleted(int status);
     }
 }

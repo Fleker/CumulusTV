@@ -1,5 +1,6 @@
 package com.felkertech.cumulustv.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageInfo;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 import com.felkertech.channelsurfer.sync.SyncUtils;
+import com.felkertech.cumulustv.fileio.CloudStorageProvider;
 import com.felkertech.cumulustv.utils.ActivityUtils;
 import com.felkertech.cumulustv.utils.AppUtils;
 import com.felkertech.cumulustv.utils.DriveSettingsManager;
@@ -176,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         findViewById(R.id.gdrive).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gapi = ActivityUtils.GoogleDrive.connect(MainActivity.this);
+                gapi = CloudStorageProvider.getInstance().connect(MainActivity.this);
             }
         });
         findViewById(R.id.more_actions).setOnClickListener(new View.OnClickListener() {
@@ -199,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
             }
         }
+        CloudStorageProvider.getInstance().onConnected(Activity.RESULT_OK);
         sm.setGoogleDriveSyncable(gapi, new DriveSettingsManager.GoogleDriveListener() {
             @Override
             public void onActionFinished(boolean cloudToLocal) {
@@ -257,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         } else {
         }*/
-        ActivityUtils.GoogleDrive.autoConnect(this);
+        CloudStorageProvider.getInstance().autoConnect(this);
         /*md = new MaterialDialog.Builder(this)
                 .customView(R.layout.load_dialog, false)
                 .show();*/

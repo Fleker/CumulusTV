@@ -30,6 +30,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.felkertech.channelsurfer.sync.SyncUtils;
+import com.felkertech.cumulustv.fileio.CloudStorageProvider;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.cumulustv.utils.ActivityUtils;
 import com.felkertech.cumulustv.utils.DriveSettingsManager;
@@ -107,7 +108,7 @@ public class LeanbackFragment extends BrowseFragment
         Log.i(TAG, "onCreate");
         super.onActivityCreated(savedInstanceState);
         sm = new DriveSettingsManager(getActivity());
-        ActivityUtils.GoogleDrive.autoConnect(getActivity());
+        CloudStorageProvider.getInstance().autoConnect(getActivity());
         refreshUI();
     }
 
@@ -326,7 +327,7 @@ public class LeanbackFragment extends BrowseFragment
                             .setActivityTitle("cumulustv_channels.json")
                             .setInitialMetadata(metadataChangeSet)
                             .setInitialDriveContents(result.getDriveContents())
-                            .build(ActivityUtils.GoogleDrive.gapi);
+                            .build(ActivityUtils.getGoogleApiClient());
                     try {
                         mActivity.startIntentSenderForResult(
                                 intentSender, REQUEST_CODE_CREATOR, null, 0, 0, 0);
@@ -384,13 +385,13 @@ public class LeanbackFragment extends BrowseFragment
                 } else if(title.equals(getString(R.string.manage_add_new))) {
                     ActivityUtils.openPluginPicker(true, mActivity);
                 } else if(title.equals(getString(R.string.connect_drive))) {
-                    ActivityUtils.GoogleDrive.connect(mActivity);
+                    CloudStorageProvider.getInstance().connect(mActivity);
                 } else if(title.equals(getString(R.string.settings_switch_google_drive))) {
-                    ActivityUtils.GoogleDrive.pickDriveFile(mActivity);
+                    CloudStorageProvider.getInstance().pickDriveFile(mActivity);
+                } else if(title.equals(getString(R.string.settings_switch_google_drive))) {
+                    CloudStorageProvider.getInstance().switchFile(mActivity);
                 } else if(title.equals(getString(R.string.settings_browse_plugins))) {
                     ActivityUtils.browsePlugins(mActivity);
-                } else if(title.equals(getString(R.string.settings_switch_google_drive))) {
-                    ActivityUtils.switchGoogleDrive(mActivity, gapi);
                 } else if(title.equals(getString(R.string.settings_refresh_cloud_local))) {
                     ActivityUtils.readDriveData(mActivity, gapi);
                     Handler h = new Handler(Looper.myLooper()) {
