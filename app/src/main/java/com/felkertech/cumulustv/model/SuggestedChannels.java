@@ -52,7 +52,8 @@ public class SuggestedChannels {
             new JsonChannel.Builder()
                     .setGenres(TvContract.Programs.Genres.TECH_SCIENCE + "," +
                             TvContract.Programs.Genres.NEWS)
-                    .setLogo("http://wiki.twit.tv//w//images//TWiT-horizontal.png")
+                    .setLogo("https://raw.githubusercontent.com/Fleker/CumulusTV/a576e4d49cec21ad" +
+                            "1fdabb0ed49190f87800e462/store/other/TWiT-horizontal.png")
                     .setMediaUrl("http://twit.live-s.cdn.bitgravity.com/cdn-live-s1/_definst_/twi" +
                             "t/live/high/playlist.m3u8")
                     .setName("TWiT.tv")
