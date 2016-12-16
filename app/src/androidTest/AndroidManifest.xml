@@ -42,7 +42,7 @@
         </activity>
 
         <service
-            android:name="com.felkertech.n.cumulustv.CumulusTvService"
+            android:name="com.felkertech.n.tv.CumulusTvService"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_TV_INPUT">
