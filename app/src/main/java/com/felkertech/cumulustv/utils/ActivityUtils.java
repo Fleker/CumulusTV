@@ -335,7 +335,8 @@ public class ActivityUtils {
         if (gapi == null && mCloudStorageProvider.connect(activity) != null) {
             gapi = mCloudStorageProvider.connect(activity);
         } else if(mCloudStorageProvider.connect(activity) == null) {
-            // Is not existant
+            // Is not existent
+            Toast.makeText(activity, "There is no Google Play Service", Toast.LENGTH_SHORT).show();
             return;
         }
         if (gapi.isConnected()) {
@@ -586,8 +587,9 @@ public class ActivityUtils {
                 ActivityUtils.writeDriveData(activity, gapi);
                 break;
             case ActivityUtils.REQUEST_CODE_OPENER:
-                if (data == null) //If op was canceled
+                if (data == null) { // If operation was canceled
                     return;
+                }
                 driveId = data.getParcelableExtra(
                         OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
                 if (DEBUG) {

@@ -88,6 +88,7 @@ public class LeanbackFragment extends BrowseFragment
         @Override
         public void onDownloadCompleted() {
             refreshUI();
+            Toast.makeText(mActivity, "Data downloaded from Google Drive", Toast.LENGTH_SHORT).show();
         }
 
         @Override

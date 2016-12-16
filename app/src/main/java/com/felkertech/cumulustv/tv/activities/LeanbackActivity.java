@@ -22,6 +22,8 @@ import io.fabric.sdk.android.Fabric;
  */
 public class LeanbackActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    private static final String TAG = LeanbackActivity.class.getSimpleName();
+
     public static final int RESULT_CODE_REFRESH_UI = 10;
     @VisibleForTesting
     public static LeanbackFragment lbf;
@@ -38,7 +40,7 @@ public class LeanbackActivity extends Activity implements
 
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        Log.d("cumulus:leanback", "Got " + requestCode + " " + resultCode + " from activity");
+        Log.d(TAG, "Got " + requestCode + " " + resultCode + " from activity");
         ActivityUtils.onActivityResult(this, lbf.gapi, requestCode, resultCode, data);
         if (requestCode == RESULT_CODE_REFRESH_UI) {
             lbf.refreshUI();

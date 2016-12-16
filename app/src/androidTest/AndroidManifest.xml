@@ -32,7 +32,7 @@
     <application>
 
         <activity
-            android:name="com.felkertech.n.cumulustv.activities.MainActivity"
+            android:name="com.felkertech.cumulustv.activities.MainActivity"
             android:exported="true"
             android:label="CumulusTV">
             <intent-filter>
@@ -42,7 +42,7 @@
         </activity>
 
         <service
-            android:name="com.felkertech.n.tv.CumulusTvService"
+            android:name="com.felkertech.cumulustv.tv.CumulusTvService"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_TV_INPUT">

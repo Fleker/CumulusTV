@@ -9,7 +9,7 @@ import android.content.Intent;
  */
 public abstract class GoogleDriveBroadcastReceiver extends BroadcastReceiver {
     public static final String ACTION_STATUS_CHANGED =
-            GoogleDriveBroadcastReceiver.class.getPackage().getName() + "status_changed";
+            GoogleDriveBroadcastReceiver.class.getPackage().getName() + ".status_changed";
     public static final String EXTRA_STATUS = "extra_status";
     public static final String EVENT_UPLOAD_COMPLETE =
             GoogleDriveBroadcastReceiver.class.getPackage().getName() + ".upload_complete";
@@ -20,12 +20,12 @@ public abstract class GoogleDriveBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent != null && intent.hasExtra(EXTRA_STATUS)) {
             if (intent.getStringExtra(EXTRA_STATUS).equals(EVENT_DOWNLOAD_COMPLETE)) {
-                onDownloadCompleted();
                 onNetworkActionCompleted();
+                onDownloadCompleted();
             }
             if (intent.getStringExtra(EXTRA_STATUS).equals(EVENT_UPLOAD_COMPLETE)) {
-                onUploadCompleted();
                 onNetworkActionCompleted();
+                onUploadCompleted();
             }
         }
     }

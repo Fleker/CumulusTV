@@ -2,9 +2,9 @@
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_browse_fragment"
-    android:name="com.felkertech.n.tv.fragments.LeanbackFragment"
+    android:name="com.felkertech.cumulustv.tv.fragments.LeanbackFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.MainActivity"
+    tools:context="com.felkertech.cumulustv.activities.MainActivity"
     tools:deviceIds="tv"
     tools:ignore="MergeRootFrame" />
