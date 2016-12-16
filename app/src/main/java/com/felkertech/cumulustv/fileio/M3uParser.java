@@ -44,8 +44,6 @@ public class M3uParser {
         BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
         String line;
         List<M3uTvChannel> channels = new ArrayList<>();
-        List<XmlTvProgram> programs = new ArrayList<>();
-        Map<Integer, Integer> channelMap = new HashMap<>();
         Map<String, String> globalAttributes = new HashMap<>(); // Unused for now
 
         while ((line = in.readLine()) != null) {
@@ -83,21 +81,18 @@ public class M3uParser {
 
                 // Set channel properties
                 channel.displayName = channelName;
-                channel.displayNumber = getKey(channel.m3uAttributes, "#EXTINF", "tvg-id");
-                channel.icon = getKey(channel.m3uAttributes, "tvg-logo");
             }
         }
-        TvListing tvl = new TvListing(channels, programs);
+        TvListing tvl = new TvListing(channels);
         Log.d(TAG, "Done parsing");
         Log.d(TAG, tvl.toString());
-        return new TvListing(channels, programs);
+        return new TvListing(channels);
     }
 
     public static class TvListing {
         public List<M3uTvChannel> channels;
-        public final List<XmlTvProgram> programs;
 
-        public TvListing(List<M3uTvChannel> channels, List<XmlTvProgram> programs) {
+        public TvListing(List<M3uTvChannel> channels) {
             this.channels = channels;
             // Validate channels, making sure they have urls
             Iterator<M3uTvChannel> xmlTvChannelIterator = channels.iterator();
@@ -109,7 +104,6 @@ public class M3uParser {
                 }
 
             }
-            this.programs = programs;
         }
 
         public void setChannels(List<M3uTvChannel> channels) {
@@ -128,21 +122,14 @@ public class M3uParser {
         public String getChannelList() {
             String out = "";
             for(M3uTvChannel tvChannel: channels) {
-                out += tvChannel.displayNumber+" - "+tvChannel.displayName+"\n";
+                out += tvChannel.displayName+"\n";
             }
             return out;
         }
     }
 
     public static class M3uTvChannel {
-        public String id;
-        public String displayName;
-        public String displayNumber;
-        public String icon;
-        public int originalNetworkId;
-        public int transportStreamId;
-        public int serviceId;
-        public boolean repeatPrograms;
+        protected String displayName;
         public String url;
         private HashMap<String, String> m3uAttributes = new HashMap<>();
 
@@ -156,68 +143,16 @@ public class M3uParser {
 
         public JsonChannel toJsonChannel() {
             return new JsonChannel.Builder()
-                    .setLogo(icon)
+                    .setLogo(getKey(m3uAttributes, "tvg-logo"))
                     .setName(displayName)
-                    .setNumber(displayNumber)
+                    .setNumber(getKey(m3uAttributes, "#EXTINF:", "tvg-id"))
                     .setMediaUrl(url)
                     .build();
         }
 
         @Override
         public String toString() {
-            return displayNumber+" - "+displayName+": "+url+"\n";
-        }
-    }
-
-    public static class XmlTvProgram {
-        public final String channelId;
-        public final String title;
-        public final String description;
-        public final XmlTvIcon icon;
-        public final String[] category;
-        public final long startTimeUtcMillis;
-        public final long endTimeUtcMillis;
-        public final XmlTvRating[] rating;
-        public final String videoSrc;
-        public final int videoType;
-
-        private XmlTvProgram(String channelId, String title, String description, XmlTvIcon icon,
-                             String[] category, long startTimeUtcMillis, long endTimeUtcMillis,
-                             XmlTvRating[] rating, String videoSrc, int videoType) {
-            this.channelId = channelId;
-            this.title = title;
-            this.description = description;
-            this.icon = icon;
-            this.category = category;
-            this.startTimeUtcMillis = startTimeUtcMillis;
-            this.endTimeUtcMillis = endTimeUtcMillis;
-            this.rating = rating;
-            this.videoSrc = videoSrc;
-            this.videoType = videoType;
-        }
-
-        public long getDurationMillis() {
-            return endTimeUtcMillis - startTimeUtcMillis;
-        }
-    }
-
-    @Deprecated
-    public static class XmlTvIcon {
-        public final String src;
-
-        public XmlTvIcon(String src) {
-            this.src = src;
-        }
-    }
-
-    @Deprecated
-    public static class XmlTvRating {
-        public final String system;
-        public final String value;
-
-        public XmlTvRating(String system, String value) {
-            this.system = system;
-            this.value = value;
+            return displayName+": "+url+"\n";
         }
     }
 }

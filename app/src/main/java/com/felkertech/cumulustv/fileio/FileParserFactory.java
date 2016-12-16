@@ -14,26 +14,32 @@ public class FileParserFactory {
      */
     public static void parseGenericFileUri(String uri, FileIdentifier identifier) {
         if(uri.startsWith("file://"))
-            identifier.onLocalFile();
+            identifier.onLocalFile(uri);
         else if(uri.startsWith("http://"))
-            identifier.onHttpFile();
+            identifier.onHttpFile(uri);
         else if(uri.startsWith("android.resource://"))
-            identifier.onAsset();
+            identifier.onAsset(uri);
     }
+
+    public static String getFileExtension(String uri) {
+        String[] dots = uri.split(".");
+        return dots[dots.length - 1];
+    }
+
     public interface FileIdentifier {
         /**
          * Called when the file is locally on the device
          */
-        void onLocalFile();
+        void onLocalFile(String uri);
 
         /**
          * Called when the file is located in your app's assets
          */
-        void onAsset();
+        void onAsset(String uri);
 
         /**
          * Called when the file is from a web address
          */
-        void onHttpFile();
+        void onHttpFile(String uri);
     }
 }

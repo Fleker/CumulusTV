@@ -141,17 +141,10 @@ public class MainPicker extends CumulusTvPlugin {
                                         public void run() {
                                             ChannelDatabase channelDatabase =
                                                     ChannelDatabase.getInstance(MainPicker.this);
-                                            for (M3uParser.XmlTvChannel channel :
+                                            for (M3uParser.M3uTvChannel channel :
                                                     listings.channels) {
-                                                CumulusChannel jsonChannel =
-                                                        new JsonChannel.Builder()
-                                                        .setName(channel.displayName)
-                                                        .setNumber(channel.displayNumber)
-                                                        .setMediaUrl(channel.url)
-                                                        .setGenres(TvContract.Programs.Genres.MOVIES)
-                                                        .build();
                                                 try {
-                                                    channelDatabase.add(jsonChannel);
+                                                    channelDatabase.add(channel.toJsonChannel());
                                                 } catch (JSONException e) {
                                                     e.printStackTrace();
                                                 }

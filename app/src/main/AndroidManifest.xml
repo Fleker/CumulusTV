@@ -238,6 +238,10 @@
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
+
+        <activity android:name="com.felkertech.cumulustv.activities.FileIoTestActivity"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>
