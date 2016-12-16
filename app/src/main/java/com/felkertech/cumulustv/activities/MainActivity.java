@@ -8,12 +8,14 @@ import android.content.pm.PackageManager;
 import android.media.tv.TvContract;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 import com.felkertech.channelsurfer.sync.SyncUtils;
@@ -82,15 +84,23 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.d(TAG, "onCreate");
         sm = new DriveSettingsManager(this);
         ActivityUtils.openIntroIfNeeded(this);
-        final ChannelDatabase channelDatabase = ChannelDatabase.getInstance(MainActivity.this);
-        Fabric.with(this, new Crashlytics());
-        if(AppUtils.isTV(this)) {
-            // Go to tv activity
-            Intent leanbackIntent = new Intent(this, LeanbackActivity.class);
-            leanbackIntent.setFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
-            startActivity(leanbackIntent);
+        try {
+            final ChannelDatabase channelDatabase = ChannelDatabase.getInstance(MainActivity.this);
+            Fabric.with(this, new Crashlytics());
+            if(AppUtils.isTV(this)) {
+                // Go to tv activity
+                Intent leanbackIntent = new Intent(this, LeanbackActivity.class);
+                leanbackIntent.setFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME);
+                startActivity(leanbackIntent);
+            }
+            updateUi();
+        } catch (ChannelDatabase.MalformedChannelDataException e) {
+            ActivityUtils.handleMalformedChannelData(MainActivity.this, gapi, e);
         }
+    }
 
+    public void updateUi() {
+        final ChannelDatabase channelDatabase = ChannelDatabase.getInstance(MainActivity.this);
         findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             .itemsCallback(new MaterialDialog.ListCallback() {
                                 @Override
                                 public void onSelection(MaterialDialog dialog, View itemView,
-                                        int position, CharSequence text) {
+                                                        int position, CharSequence text) {
                                     // Now only get certain channels
                                     String selectedGenre = genreArray[position];
                                     List<JsonChannel> jsonChannelList = new ArrayList<>();
@@ -152,11 +162,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                             if (jsonChannel.getGenresString().contains(selectedGenre)) {
                                                 jsonChannelList.add(jsonChannel);
                                                 channelNames.add(jsonChannel.getNumber() + " " +
-                                                    jsonChannel.getName());
+                                                        jsonChannel.getName());
                                             }
                                         }
                                         displayChannelPicker(jsonChannelList, channelNames
-                                                .toArray(new String[channelNames.size()]),
+                                                        .toArray(new String[channelNames.size()]),
                                                 selectedGenre);
                                     } catch (JSONException e) {
                                         e.printStackTrace();

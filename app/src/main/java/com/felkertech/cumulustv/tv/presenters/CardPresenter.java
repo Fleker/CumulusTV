@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.cumulustv.model.JsonChannel;
@@ -71,7 +72,8 @@ public class CardPresenter extends Presenter {
                 @Override
                 public void run() {
                     try {
-                        final Bitmap logo = Picasso.with(mContext).load(jsonChannel.getLogo())
+                        final Bitmap logo = Picasso.with(mContext)
+                                .load(ChannelDatabase.getNonNullChannelLogo(jsonChannel))
                                 .error(R.drawable.c_banner_3_2)
                                 .centerInside()
                                 .resize(CARD_WIDTH, CARD_HEIGHT)

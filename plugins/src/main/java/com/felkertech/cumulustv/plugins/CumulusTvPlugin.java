@@ -166,16 +166,18 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
         if(telegram.getStringExtra(INTENT_EXTRA_ACTION).equals(INTENT_ADD)) {
             return null;
         }
-        try {
-            JSONObject jsonObject = new JSONObject(telegram.getStringExtra(INTENT_EXTRA_JSON));
-            CumulusChannel channel = new CumulusChannel.Builder(jsonObject)
-                    .build();
-            if (DEBUG) {
-                Log.d(TAG, channel.toString());
+        if (telegram.hasExtra(INTENT_EXTRA_JSON)) {
+            try {
+                JSONObject jsonObject = new JSONObject(telegram.getStringExtra(INTENT_EXTRA_JSON));
+                CumulusChannel channel = new CumulusChannel.Builder(jsonObject)
+                        .build();
+                if (DEBUG) {
+                    Log.d(TAG, channel.toString());
+                }
+                return channel;
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            return channel;
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
         return null;
     }

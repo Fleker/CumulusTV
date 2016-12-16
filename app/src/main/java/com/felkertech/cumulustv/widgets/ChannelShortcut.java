@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.cumulustv.activities.CumulusTvPlayer;
 import com.felkertech.cumulustv.activities.WidgetSelectionActivity;
@@ -82,7 +83,7 @@ public class ChannelShortcut extends AppWidgetProvider {
                 try {
                     Log.d(TAG, "Loading the image " + channel.getLogo());
                     final Bitmap logo = Picasso.with(context)
-                            .load(channel.getLogo())
+                            .load(ChannelDatabase.getNonNullChannelLogo(channel))
                             .placeholder(R.drawable.c_banner_3_2)
                             .get();
                     new Handler(Looper.getMainLooper()).post(new Runnable() {

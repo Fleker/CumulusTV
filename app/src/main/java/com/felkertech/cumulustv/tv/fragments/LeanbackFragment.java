@@ -127,6 +127,11 @@ public class LeanbackFragment extends BrowseFragment
         super.onStart();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver,
                 new IntentFilter(GoogleDriveBroadcastReceiver.ACTION_STATUS_CHANGED));
+        try {
+            ChannelDatabase.getInstance(getActivity());
+        } catch (ChannelDatabase.MalformedChannelDataException e) {
+            ActivityUtils.handleMalformedChannelData(getActivity(), gapi, e);
+        }
     }
 
     public void refreshUI() {

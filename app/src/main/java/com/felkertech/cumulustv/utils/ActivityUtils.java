@@ -682,5 +682,29 @@ public class ActivityUtils {
         return MainActivity.class;
     }
 
-
+    public static void handleMalformedChannelData(final Activity activity,
+          final GoogleApiClient googleApiClient, ChannelDatabase.MalformedChannelDataException e) {
+        // Give users the option to reset
+        new MaterialDialog.Builder(activity)
+                .title("Issue with your channel data")
+                .content("An error has been found loading your data. This may be due to a " +
+                        "syntax error. Local data can be cleared to allow the app to continue" +
+                        "working. Do you want to do this?\n\nError below:\n\n" + e.getMessage())
+                .positiveText("Clear Local Data")
+                .negativeText("Exit App")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        ActivityUtils.deleteChannelData(activity, googleApiClient);
+                        activity.startActivity(new Intent(activity, MainActivity.class));
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        activity.finish();
+                    }
+                })
+                .show();
+    }
 }

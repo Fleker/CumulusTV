@@ -69,7 +69,7 @@ public class ChannelDatabase {
             }
             resetPossibleGenres(); // This will try to use the newest API data
         } catch (final JSONException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new MalformedChannelDataException(e.getMessage());
         }
         mTvContentRating = TvContentRating.createRating(
                 "com.android.tv",
@@ -396,5 +396,18 @@ public class ChannelDatabase {
             e.printStackTrace();
         }
         throw new RuntimeException("Default JSON String cannot be created");
+    }
+
+    public static String getNonNullChannelLogo(CumulusChannel jsonChannel) {
+        if (jsonChannel.hasLogo()) {
+            return jsonChannel.getLogo();
+        }
+        return "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/main/res/drawable-xhdpi/c_banner_3_2.jpg";
+    }
+
+    public static class MalformedChannelDataException extends RuntimeException {
+        public MalformedChannelDataException(String reason) {
+            super(reason);
+        }
     }
 }
