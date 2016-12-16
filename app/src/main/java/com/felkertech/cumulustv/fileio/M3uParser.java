@@ -20,6 +20,7 @@ import java.util.Map;
  */
 public class M3uParser {
     private static final String TAG = M3uParser.class.getSimpleName();
+
     public static TvListing parse(InputStream inputStream, Context mContext) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
         String line;

@@ -67,7 +67,7 @@ public class CloudStorageProvider {
     }
 
     public boolean isDriveConnected() {
-        return mGoogleApiClient.isConnected();
+        return mGoogleApiClient != null && mGoogleApiClient.isConnected();
     }
 
     public void pickDriveFile(final Activity activity) {

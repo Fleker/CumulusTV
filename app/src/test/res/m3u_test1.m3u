@@ -1,0 +1,6 @@
+#EXTM3U
+#EXTINF:-1 tvg-name="Canal 2 HD" tvg-logo="http://y.cdn.entutele.com/media/channels/big/canal-2-hd.gif",Canal 2 HD
+https://totalgo.total.com.mx:444/TPMHLSWeb/M3U8LiveFile?a=&f=.m3u8
+
+#EXTINF:-1 tvg-name="Foro TV HD" tvg-logo="http://y.cdn.entutele.com/media/channels/big/foro-tv-hd.gif",Foro TV HD
+https://totalgo.total.com.mx:444/TPMHLSWeb/M3U8LiveFile?a=&f=.m3u8
