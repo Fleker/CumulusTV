@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.felkertech.cumulustv.model.ChannelDatabase;
+import com.felkertech.cumulustv.model.JsonChannel;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,11 +24,20 @@ public class M3uParser {
 
     private static int indexOf(String haystack, String... needles) {
         for (String n : needles) {
-            if (haystack.indexOf(n) > -1) {
+            if (haystack.contains(n)) {
                 return haystack.indexOf(n);
             }
         }
         return -1;
+    }
+
+    private static String getKey(HashMap<String, String> map, String... keys) {
+        for (String k : keys) {
+            if (map.containsKey(k)) {
+                return map.get(k);
+            }
+        }
+        return null;
     }
 
     public static TvListing parse(InputStream inputStream) throws IOException {
@@ -36,69 +46,45 @@ public class M3uParser {
         List<M3uTvChannel> channels = new ArrayList<>();
         List<XmlTvProgram> programs = new ArrayList<>();
         Map<Integer, Integer> channelMap = new HashMap<>();
+        Map<String, String> globalAttributes = new HashMap<>(); // Unused for now
 
         while ((line = in.readLine()) != null) {
-            if (line.startsWith("#EXTINF:")) {
+            if (line.startsWith("#EXTINF:")) { // This is a channel
                 // #EXTINF:0051 tvg-id="blizz.de" group-title="DE Spartensender" tvg-logo="897815.png", [COLOR orangered]blizz TV HD[/COLOR]
                 M3uTvChannel channel = new M3uTvChannel();
 
-
                 String[] parts = line.split(",", 2);
-                if (parts.length == 2) {
-                    for (String part : parts[0].split(" ")) {
-                        int valueDivider = indexOf(part, ":", "=");
-
-                        if (part.startsWith("#EXTINF:")) {
-                            displayNumber = part.substring(8).replaceAll("^0+", "");
-                            if (displayNumber.isEmpty()) {
-                                displayNumber = String.valueOf(channels.size());
-                            }
-                            if (displayNumber.equals("-1")) {
-                                displayNumber = String.valueOf(channels.size());
-                            }
-                            originalNetworkId = Integer.parseInt(displayNumber);
-                        } else if (part.startsWith("tvg-id=")) {
-                            int end = part.indexOf("\"", 8);
-                            if (end > 8) {
-                                id = part.substring(8, end);
-                            }
-                        } else if (part.startsWith("tvg-logo=")) {
-                            int end = part.indexOf("\"", 10);
-                            if (end > 10) {
-                                icon = new XmlTvIcon("http://logo.iptv.ink/"
-                                        + part.substring(10, end));
-                            }
-                        }
+                String channelAttributes = parts[0];
+                while (channelAttributes.length() > 0) { // Chip away at data until complete
+                    boolean inPhrase = false;
+                    int valueDivider = indexOf(channelAttributes, ":", "=");
+                    String attribute = channelAttributes.substring(0, valueDivider);
+                    int valueIndex = valueDivider + 1;
+                    int valueEnd = channelAttributes.indexOf(" ", valueIndex);
+                    int variableEnd = valueEnd + 1;
+                    if (attribute.charAt(valueDivider + 1) == '"') {
+                        valueIndex++;
+                        inPhrase = true;
+                        valueEnd = channelAttributes.indexOf("\"", valueIndex + 1);
+                        variableEnd = valueEnd + 2; // '" '
                     }
-                    displayName = parts[1].replaceAll("\\[\\/?(COLOR |)[^\\]]*\\]", "");
+                    String value = channelAttributes.substring(valueIndex, valueEnd);
+                    channel.put(attribute, value);
+                    channelAttributes = channelAttributes.substring(variableEnd).trim();
                 }
-
-                if (originalNetworkId != 0 && displayName != null) {
-                    M3uTvChannel channel =
-                            new M3uTvChannel(id, displayName, displayNumber, icon,
-                                    originalNetworkId, 0, 0, false);
-                    if (channelMap.containsKey(originalNetworkId)) {
-                        int freeChannel = 1;
-                        while (channelMap.containsKey(Integer.valueOf(freeChannel))) {
-                            freeChannel++;
-                        }
-                        channelMap.put(freeChannel, channels.size());
-                        channel.displayNumber = freeChannel + "";
-                        channels.add(channel);
-                    } else {
-                        channelMap.put(originalNetworkId, channels.size());
-                        channels.add(channel);
-                    }
-                } else {
-                    Log.d(TAG, "Import failed: " + originalNetworkId + "= " + line);
-                }
+                String channelName = parts[1].replaceAll("\\[\\/?(COLOR |)[^\\]]*\\]", "");
 
                 line = in.readLine();
                 if (line.startsWith("http") && channels.size() > 0) {
-                    channels.get(channels.size() - 1).url = line;
+                    channel.url = line;
                 } else if (line.startsWith("rtmp") && channels.size() > 0) {
-                    channels.get(channels.size() - 1).url = line;
+                    channel.url = line;
                 }
+
+                // Set channel properties
+                channel.displayName = channelName;
+                channel.displayNumber = getKey(channel.m3uAttributes, "#EXTINF", "tvg-id");
+                channel.icon = getKey(channel.m3uAttributes, "tvg-logo");
             }
         }
         TvListing tvl = new TvListing(channels, programs);
@@ -113,7 +99,7 @@ public class M3uParser {
 
         public TvListing(List<M3uTvChannel> channels, List<XmlTvProgram> programs) {
             this.channels = channels;
-            //Validate channels, making sure they have urls
+            // Validate channels, making sure they have urls
             Iterator<M3uTvChannel> xmlTvChannelIterator = channels.iterator();
             while(xmlTvChannelIterator.hasNext()) {
                 M3uTvChannel tvChannel = xmlTvChannelIterator.next();
@@ -152,37 +138,29 @@ public class M3uParser {
         public String id;
         public String displayName;
         public String displayNumber;
-        public XmlTvIcon icon;
+        public String icon;
         public int originalNetworkId;
         public int transportStreamId;
         public int serviceId;
         public boolean repeatPrograms;
         public String url;
-        private HashMap<String, String> m3uAttributes;
+        private HashMap<String, String> m3uAttributes = new HashMap<>();
 
         public M3uTvChannel() {
 
         }
 
-        public M3uTvChannel(String id, String displayName, String displayNumber, XmlTvIcon icon,
-                            int originalNetworkId, int transportStreamId, int serviceId,
-                            boolean repeatPrograms) {
-            this(id, displayName, displayNumber, icon, originalNetworkId, transportStreamId,
-                    serviceId, repeatPrograms, null);
+        public void put(String key, String value) {
+            m3uAttributes.put(key, value);
         }
 
-        public M3uTvChannel(String id, String displayName, String displayNumber, XmlTvIcon icon,
-                            int originalNetworkId, int transportStreamId, int serviceId,
-                            boolean repeatPrograms, String url) {
-            this.id = id;
-            this.displayName = displayName;
-            this.displayNumber = displayNumber;
-            this.icon = icon;
-            this.originalNetworkId = originalNetworkId;
-            this.transportStreamId = transportStreamId;
-            this.serviceId = serviceId;
-            this.repeatPrograms = repeatPrograms;
-            this.url = url;
+        public JsonChannel toJsonChannel() {
+            return new JsonChannel.Builder()
+                    .setLogo(icon)
+                    .setName(displayName)
+                    .setNumber(displayNumber)
+                    .setMediaUrl(url)
+                    .build();
         }
 
         @Override
@@ -223,6 +201,7 @@ public class M3uParser {
         }
     }
 
+    @Deprecated
     public static class XmlTvIcon {
         public final String src;
 
@@ -231,6 +210,7 @@ public class M3uParser {
         }
     }
 
+    @Deprecated
     public static class XmlTvRating {
         public final String system;
         public final String value;
