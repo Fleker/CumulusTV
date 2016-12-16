@@ -31,8 +31,6 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 import com.felkertech.channelsurfer.players.TvInputPlayer;
-import com.felkertech.cumulustv.plugins.CumulusChannel;
-import com.felkertech.cumulustv.plugins.CumulusTvPlugin;
 import com.felkertech.cumulustv.utils.AppUtils;
 import com.felkertech.cumulustv.utils.PermissionUtils;
 import com.felkertech.cumulustv.model.ChannelDatabase;
@@ -125,8 +123,8 @@ public class MainPicker extends CumulusTvPlugin {
                 } else {
                     ContentResolver resolver = getContentResolver();
                     InputStream input = resolver.openInputStream(uri);
-                    final M3uParser.TvListing listings = M3uParser.parse(input,
-                            getApplicationContext());
+                    final M3uParser.TvListing listings = M3uParser.parse(input
+                    );
                     new MaterialDialog.Builder(MainPicker.this)
                             .title(getString(R.string.import_bulk_title, listings.channels.size()))
                             .content(listings.getChannelList())

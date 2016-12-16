@@ -14,12 +14,13 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 /**
  * Tests various components of the {@link JsonChannel} class related to creation and parsing.
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.M)
 public class JsonChannelUnitTest extends TestCase {
     private static final boolean AUDIO_ONLY = true;
@@ -30,6 +31,8 @@ public class JsonChannelUnitTest extends TestCase {
     private static final String MEDIA_URL = "http://example.com/stream.m3u8";
     private static final String NUMBER = "1-1";
     private static final String SPLASHSCREEN = "http://example.com/poster.png";
+
+    public JsonChannelUnitTest() {}
 
     /**
      * Tests creating a CumulusChannel with the Builder class to make sure the builder works correctly.

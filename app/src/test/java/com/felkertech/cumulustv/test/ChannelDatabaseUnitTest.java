@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
@@ -25,12 +26,14 @@ import java.util.List;
 /**
  * Tests management of channels in the {@link ChannelDatabase}.
  */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.M)
 public class ChannelDatabaseUnitTest extends TestCase {
     private static final String NAME = "My Channel";
     private static final String MEDIA_URL = "http://example.com/stream.m3u8";
     private static final String NUMBER = "1-1";
+
+    public ChannelDatabaseUnitTest() {}
 
     /**
      * Deletes data from the {@link SettingsManager}.

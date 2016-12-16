@@ -21,35 +21,40 @@ import java.util.Map;
 public class M3uParser {
     private static final String TAG = M3uParser.class.getSimpleName();
 
-    public static TvListing parse(InputStream inputStream, Context mContext) throws IOException {
+    private static int indexOf(String haystack, String... needles) {
+        for (String n : needles) {
+            if (haystack.indexOf(n) > -1) {
+                return haystack.indexOf(n);
+            }
+        }
+        return -1;
+    }
+
+    public static TvListing parse(InputStream inputStream) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
         String line;
-        List<XmlTvChannel> channels = new ArrayList<>();
+        List<M3uTvChannel> channels = new ArrayList<>();
         List<XmlTvProgram> programs = new ArrayList<>();
         Map<Integer, Integer> channelMap = new HashMap<>();
 
         while ((line = in.readLine()) != null) {
             if (line.startsWith("#EXTINF:")) {
                 // #EXTINF:0051 tvg-id="blizz.de" group-title="DE Spartensender" tvg-logo="897815.png", [COLOR orangered]blizz TV HD[/COLOR]
+                M3uTvChannel channel = new M3uTvChannel();
 
-                String id = null;
-                String displayName = null;
-                String displayNumber = null;
-                int originalNetworkId = 0;
-                XmlTvIcon icon = null;
 
                 String[] parts = line.split(",", 2);
                 if (parts.length == 2) {
                     for (String part : parts[0].split(" ")) {
+                        int valueDivider = indexOf(part, ":", "=");
+
                         if (part.startsWith("#EXTINF:")) {
                             displayNumber = part.substring(8).replaceAll("^0+", "");
-                            if(displayNumber.isEmpty()) {
-                                displayNumber = String.valueOf(
-                                        ChannelDatabase.getAvailableChannelNumber(mContext));
+                            if (displayNumber.isEmpty()) {
+                                displayNumber = String.valueOf(channels.size());
                             }
-                            if(displayNumber.equals("-1")) {
-                                displayNumber = String.valueOf(
-                                        ChannelDatabase.getAvailableChannelNumber(mContext));
+                            if (displayNumber.equals("-1")) {
+                                displayNumber = String.valueOf(channels.size());
                             }
                             originalNetworkId = Integer.parseInt(displayNumber);
                         } else if (part.startsWith("tvg-id=")) {
@@ -69,8 +74,8 @@ public class M3uParser {
                 }
 
                 if (originalNetworkId != 0 && displayName != null) {
-                    XmlTvChannel channel =
-                            new XmlTvChannel(id, displayName, displayNumber, icon,
+                    M3uTvChannel channel =
+                            new M3uTvChannel(id, displayName, displayNumber, icon,
                                     originalNetworkId, 0, 0, false);
                     if (channelMap.containsKey(originalNetworkId)) {
                         int freeChannel = 1;
@@ -78,19 +83,22 @@ public class M3uParser {
                             freeChannel++;
                         }
                         channelMap.put(freeChannel, channels.size());
-                        channel.displayNumber = freeChannel+"";
+                        channel.displayNumber = freeChannel + "";
                         channels.add(channel);
                     } else {
                         channelMap.put(originalNetworkId, channels.size());
-                            channels.add(channel);
+                        channels.add(channel);
                     }
                 } else {
-                    Log.d(TAG, "Import failed: "+originalNetworkId+"= "+line);
+                    Log.d(TAG, "Import failed: " + originalNetworkId + "= " + line);
                 }
-            } else if (line.startsWith("http") && channels.size() > 0) {
-                channels.get(channels.size()-1).url = line;
-            } else if(line.startsWith("rtmp") && channels.size() > 0) {
-                channels.get(channels.size()-1).url = line;
+
+                line = in.readLine();
+                if (line.startsWith("http") && channels.size() > 0) {
+                    channels.get(channels.size() - 1).url = line;
+                } else if (line.startsWith("rtmp") && channels.size() > 0) {
+                    channels.get(channels.size() - 1).url = line;
+                }
             }
         }
         TvListing tvl = new TvListing(channels, programs);
@@ -100,15 +108,15 @@ public class M3uParser {
     }
 
     public static class TvListing {
-        public List<XmlTvChannel> channels;
+        public List<M3uTvChannel> channels;
         public final List<XmlTvProgram> programs;
 
-        public TvListing(List<XmlTvChannel> channels, List<XmlTvProgram> programs) {
+        public TvListing(List<M3uTvChannel> channels, List<XmlTvProgram> programs) {
             this.channels = channels;
             //Validate channels, making sure they have urls
-            Iterator<XmlTvChannel> xmlTvChannelIterator = channels.iterator();
+            Iterator<M3uTvChannel> xmlTvChannelIterator = channels.iterator();
             while(xmlTvChannelIterator.hasNext()) {
-                XmlTvChannel tvChannel = xmlTvChannelIterator.next();
+                M3uTvChannel tvChannel = xmlTvChannelIterator.next();
                 if(tvChannel.url == null) {
                     Log.e(TAG, tvChannel.displayName+" has no url!");
                     xmlTvChannelIterator.remove();
@@ -118,14 +126,14 @@ public class M3uParser {
             this.programs = programs;
         }
 
-        public void setChannels(List<XmlTvChannel> channels) {
+        public void setChannels(List<M3uTvChannel> channels) {
             this.channels = channels;
         }
 
         @Override
         public String toString() {
             String out = "";
-            for(XmlTvChannel tvChannel: channels) {
+            for(M3uTvChannel tvChannel: channels) {
                 out += tvChannel.toString();
             }
             return out;
@@ -133,32 +141,37 @@ public class M3uParser {
 
         public String getChannelList() {
             String out = "";
-            for(XmlTvChannel tvChannel: channels) {
+            for(M3uTvChannel tvChannel: channels) {
                 out += tvChannel.displayNumber+" - "+tvChannel.displayName+"\n";
             }
             return out;
         }
     }
 
-    public static class XmlTvChannel {
-        public final String id;
-        public final String displayName;
+    public static class M3uTvChannel {
+        public String id;
+        public String displayName;
         public String displayNumber;
-        public final XmlTvIcon icon;
-        public final int originalNetworkId;
-        public final int transportStreamId;
-        public final int serviceId;
-        public final boolean repeatPrograms;
+        public XmlTvIcon icon;
+        public int originalNetworkId;
+        public int transportStreamId;
+        public int serviceId;
+        public boolean repeatPrograms;
         public String url;
+        private HashMap<String, String> m3uAttributes;
 
-        public XmlTvChannel(String id, String displayName, String displayNumber, XmlTvIcon icon,
+        public M3uTvChannel() {
+
+        }
+
+        public M3uTvChannel(String id, String displayName, String displayNumber, XmlTvIcon icon,
                             int originalNetworkId, int transportStreamId, int serviceId,
                             boolean repeatPrograms) {
             this(id, displayName, displayNumber, icon, originalNetworkId, transportStreamId,
                     serviceId, repeatPrograms, null);
         }
 
-        public XmlTvChannel(String id, String displayName, String displayNumber, XmlTvIcon icon,
+        public M3uTvChannel(String id, String displayName, String displayNumber, XmlTvIcon icon,
                             int originalNetworkId, int transportStreamId, int serviceId,
                             boolean repeatPrograms, String url) {
             this.id = id;

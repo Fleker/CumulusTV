@@ -298,8 +298,8 @@ public class CumulusTvService extends MultimediaInputProvider {
             Log.d(TAG, "Overlay");
             return v;
         } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), R.string.toast_error_no_loading_screen,
-                    Toast.LENGTH_SHORT).show();
+            /*Toast.makeText(getApplicationContext(), R.string.toast_error_no_loading_screen,
+                    Toast.LENGTH_SHORT).show();*/
             if (DEBUG) {
                 Log.d(TAG, "Failure to open: " + e.getMessage());
                 e.printStackTrace();
