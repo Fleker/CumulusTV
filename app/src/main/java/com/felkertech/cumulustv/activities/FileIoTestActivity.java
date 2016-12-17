@@ -25,7 +25,7 @@ import java.io.InputStream;
  */
 public class FileIoTestActivity extends Activity {
     private ImportedFile[] files = new ImportedFile[] {
-
+        new ImportedFile("M3U 1", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test1.m3u")
     };
 
     @Override
