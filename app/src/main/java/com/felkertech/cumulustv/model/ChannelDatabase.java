@@ -34,13 +34,10 @@ public class ChannelDatabase {
     private static final boolean DEBUG = true;
 
     public static final String KEY = "JSONDATA";
-
     private static final String KEY_CHANNELS = "channels";
     private static final String KEY_MODIFIED = "modified";
 
-    protected JSONObject mJsonObject;
-
-    private TvContentRating mTvContentRating;
+    private JSONObject mJsonObject;
     private SettingsManager mSettingsManager;
     protected HashMap<String, Long> mDatabaseHashMap;
 
@@ -71,11 +68,6 @@ public class ChannelDatabase {
         } catch (final JSONException e) {
             throw new MalformedChannelDataException(e.getMessage());
         }
-        mTvContentRating = TvContentRating.createRating(
-                "com.android.tv",
-                "US_TV",
-                "US_TV_PG",
-                "US_TV_D", "US_TV_L");
     }
 
     public JSONArray getJSONArray() throws JSONException {
@@ -128,22 +120,6 @@ public class ChannelDatabase {
         } catch (JSONException ignored) {
         }
         return false;
-    }
-
-    @Deprecated
-    private JsonChannel findChannelByChannelNumber(String channelNumber) {
-        try {
-            List<JsonChannel> jsonChannelList = getJsonChannels();
-            for (JsonChannel jsonChannel : jsonChannelList) {
-                if (jsonChannel.getNumber() != null) {
-                    if (jsonChannel.getNumber().equals(channelNumber)) {
-                        return jsonChannel;
-                    }
-                }
-            }
-        } catch (JSONException ignored) {
-        }
-        return null;
     }
 
     public JsonChannel findChannelByMediaUrl(String mediaUrl) {
@@ -377,15 +353,6 @@ public class ChannelDatabase {
         };
     }
 
-    public static int getAvailableChannelNumber(Context mContext) {
-        ChannelDatabase cd = new ChannelDatabase(mContext);
-        int i = 1;
-        while (cd.channelNumberExists(String.valueOf(i))) {
-            i++;
-        }
-        return i;
-    }
-
     protected static String getDefaultJsonString() {
         try {
             JSONObject jsonObject = new JSONObject();
@@ -402,7 +369,8 @@ public class ChannelDatabase {
         if (jsonChannel.hasLogo()) {
             return jsonChannel.getLogo();
         }
-        return "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/main/res/drawable-xhdpi/c_banner_3_2.jpg";
+        return "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/main/res/drawab" +
+                "le-xhdpi/c_banner_3_2.jpg";
     }
 
     public static class MalformedChannelDataException extends RuntimeException {

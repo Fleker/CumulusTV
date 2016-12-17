@@ -138,13 +138,9 @@ public class VideoDetailsFragment extends DetailsFragment
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String logo = jsonChannel.getLogo();
-                if (!jsonChannel.hasLogo()) {
-                    logo = "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/main/res/drawable-xhdpi/c_banner_3_2.jpg";
-                }
                 try {
                     final Bitmap bitmap = Picasso.with(getActivity())
-                            .load(logo)
+                            .load(ChannelDatabase.getNonNullChannelLogo(jsonChannel))
                             .centerInside()
                             .error(R.drawable.c_background5)
                             .resize(DETAIL_THUMB_WIDTH, DETAIL_THUMB_HEIGHT)

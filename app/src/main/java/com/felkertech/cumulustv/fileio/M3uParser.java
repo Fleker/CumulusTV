@@ -1,9 +1,7 @@
 package com.felkertech.cumulustv.fileio;
 
-import android.content.Context;
 import android.util.Log;
 
-import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.model.JsonChannel;
 
 import java.io.BufferedReader;
