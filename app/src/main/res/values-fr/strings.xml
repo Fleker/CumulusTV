@@ -132,5 +132,6 @@
     <string name="add_channel_txt">Ajouter un canal</string>
     <string name="add">Ajouter</string>
     <string name="loading_data">Loading data</string>
+    <string name="export_m3u">Export M3u</string>
 
 </resources>
