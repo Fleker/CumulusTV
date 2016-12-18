@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.media.tv.TvContract;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
@@ -45,6 +46,10 @@ import com.google.android.gms.drive.OpenFileActivityBuilder;
 
 import org.json.JSONException;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +65,7 @@ public class ActivityUtils {
     public static final int RESOLVE_CONNECTION_REQUEST_CODE = 100;
     public static final int REQUEST_CODE_CREATOR = 102;
     public static final int REQUEST_CODE_OPENER = 104;
+    public static final int PERMISSION_EXPORT_M3U = 201;
     public static final ComponentName TV_INPUT_SERVICE =
             new ComponentName("com.felkertech.cumulustv.tv", ".CumulusTvService");
 
@@ -708,5 +714,33 @@ public class ActivityUtils {
                     }
                 })
                 .show();
+    }
+
+    public static void exportM3uPlaylist(final Activity activity) {
+        File dir = Environment.getExternalStorageDirectory();
+        File userM3u = new File(dir.toString() + "/" + "cumulus_channels.m3u");
+        int index = 0;
+        Log.d(TAG, "Searching for viable file");
+        while (userM3u.exists()) {
+            userM3u = new File(dir.toString() + "/" + "cumulus_channels_" + index + ".m3u");
+            Log.d(TAG, "Trying " + userM3u.getName());
+            index++;
+        }
+        if (!dir.exists()) {
+            Log.d(TAG, "Make directory? " + dir.mkdir());
+        }
+        try {
+            Log.d(TAG, "To create: " + userM3u.getAbsolutePath());
+            FileOutputStream out = new FileOutputStream(userM3u);
+            Log.d(TAG, "Starting to write out data");
+            out.write(ChannelDatabase.getInstance(activity).toM3u().getBytes());
+            out.flush();
+            out.close();
+            Log.d(TAG, "Data written to " + userM3u.getAbsolutePath());
+            Toast.makeText(activity, "M3U Playlist written to " +
+                    userM3u.getCanonicalPath(), Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

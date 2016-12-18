@@ -1,5 +1,6 @@
 package com.felkertech.cumulustv.activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -7,6 +8,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.media.tv.TvContract;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -53,6 +55,9 @@ import java.util.List;
 import java.util.Set;
 
 import io.fabric.sdk.android.Fabric;
+
+import static android.content.pm.PackageManager.PERMISSION_DENIED;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
@@ -309,6 +314,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         ActivityUtils.onActivityResult(MainActivity.this, gapi, requestCode, resultCode, data);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case ActivityUtils.PERMISSION_EXPORT_M3U:
+                if (grantResults[0] == PERMISSION_GRANTED) {
+                    ActivityUtils.exportM3uPlaylist(MainActivity.this);
+                }
+                break;
+        }
+    }
+
     /** GDRIVE **/
     ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback =
             new ResultCallback<DriveApi.DriveContentsResult>() {
@@ -358,27 +376,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                 ActivityUtils.switchGoogleDrive(MainActivity.this, gapi);
                                 break;
                             case 2: // Export data as M3u
-                                File dir = Environment.getExternalStorageDirectory();
-                                File userM3u = new File(dir, "cumulus_channels.m3u");
-                                int index = 0;
-                                Log.d(TAG, "Searching for viable file");
-                                while (!userM3u.exists()) {
-                                    userM3u = new File(dir, "cumulus_channels_" + index + ".m3u");
-                                    Log.d(TAG, "Trying " + userM3u.getName());
-                                    index++;
+                                if (Build.VERSION.SDK_INT >= 23) {
+                                    // Check if we're allowed to do this
+                                    if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                        == PERMISSION_DENIED) {
+                                        requestPermissions(new String[]
+                                                {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                                ActivityUtils.PERMISSION_EXPORT_M3U);
+                                        break;
+                                    }
                                 }
-                                try {
-                                    FileWriter writer = new FileWriter(userM3u);
-                                    Log.d(TAG, "Starting to write out data");
-                                    writer.write(ChannelDatabase.getInstance(MainActivity.this)
-                                            .toM3u());
-                                    writer.close();
-                                    Log.d(TAG, "Data written to " + userM3u.getAbsolutePath());
-                                    Toast.makeText(MainActivity.this, "M3U Playlist written to " +
-                                            userM3u.getCanonicalPath(), Toast.LENGTH_SHORT).show();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+                                ActivityUtils.exportM3uPlaylist(MainActivity.this);
                                 break;
                             case 3:
                                 ActivityUtils.readDriveData(MainActivity.this, gapi);
