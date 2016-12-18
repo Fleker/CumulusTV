@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.media.tv.TvContract;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -42,6 +43,8 @@ import com.squareup.okhttp.Response;
 
 import org.json.JSONException;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -253,27 +256,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     protected void onStart() {
         super.onStart();
-        /*if(!new DriveSettingsManager(this).getString(R.string.sm_google_drive_id).isEmpty()) {
-            if(!gapi.isConnected()) {
-                md = new MaterialDialog.Builder(this)
-                        .customView(R.layout.load_dialog, false)
-                        .show();
-                findViewById(R.id.gdrive).setVisibility(View.GONE);
-                findViewById(R.id.gdrive).setEnabled(false);
-                Log.d(TAG, "Need to connect");
-            } else {
-                if(md != null) {
-                    if(md.isShowing())
-                        md.dismiss();
-                }
-            }
-
-        } else {
-        }*/
         CloudStorageProvider.getInstance().autoConnect(this);
-        /*md = new MaterialDialog.Builder(this)
-                .customView(R.layout.load_dialog, false)
-                .show();*/
         Log.d(TAG, "onStart");
         try {
             PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -354,6 +337,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         String[] actions = new String[] {
                 getString(R.string.settings_browse_plugins),
                 getString(R.string.settings_switch_google_drive),
+                getString(R.string.export_m3u),
                 getString(R.string.settings_refresh_cloud_local),
                 getString(R.string.settings_view_licenses),
                 getString(R.string.settings_reset_channel_data),
@@ -373,19 +357,42 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             case 1:
                                 ActivityUtils.switchGoogleDrive(MainActivity.this, gapi);
                                 break;
-                            case 2:
-                                ActivityUtils.readDriveData(MainActivity.this, gapi);
+                            case 2: // Export data as M3u
+                                File dir = Environment.getExternalStorageDirectory();
+                                File userM3u = new File(dir, "cumulus_channels.m3u");
+                                int index = 0;
+                                Log.d(TAG, "Searching for viable file");
+                                while (!userM3u.exists()) {
+                                    userM3u = new File(dir, "cumulus_channels_" + index + ".m3u");
+                                    Log.d(TAG, "Trying " + userM3u.getName());
+                                    index++;
+                                }
+                                try {
+                                    FileWriter writer = new FileWriter(userM3u);
+                                    Log.d(TAG, "Starting to write out data");
+                                    writer.write(ChannelDatabase.getInstance(MainActivity.this)
+                                            .toM3u());
+                                    writer.close();
+                                    Log.d(TAG, "Data written to " + userM3u.getAbsolutePath());
+                                    Toast.makeText(MainActivity.this, "M3U Playlist written to " +
+                                            userM3u.getCanonicalPath(), Toast.LENGTH_SHORT).show();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                                 break;
                             case 3:
-                                ActivityUtils.oslClick(MainActivity.this);
+                                ActivityUtils.readDriveData(MainActivity.this, gapi);
                                 break;
                             case 4:
-                                ActivityUtils.deleteChannelData(MainActivity.this, gapi);
+                                ActivityUtils.oslClick(MainActivity.this);
                                 break;
                             case 5:
-                                ActivityUtils.openAbout(MainActivity.this);
+                                ActivityUtils.deleteChannelData(MainActivity.this, gapi);
                                 break;
                             case 6:
+                                ActivityUtils.openAbout(MainActivity.this);
+                                break;
+                            case 7:
                                 new MaterialDialog.Builder(MainActivity.this)
                                         .title(R.string.about_mlc)
                                         .content(R.string.about_mlc_summary)
@@ -401,30 +408,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                             }
                                         })
                                         .show();
-                            case 13:
-                                final OkHttpClient client = new OkHttpClient();
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Request request = new Request.Builder()
-                                                .url("http://felkerdigitalmedia.com/sampletv.xml")
-                                                .build();
-
-                                        Response response = null;
-                                        try {
-                                            response = client.newCall(request).execute();
-//                                            Log.d(TAG, response.body().string().substring(0,36));
-                                            String s = response.body().string();
-                                            List<com.felkertech.channelsurfer.model.Program> programs = XmlTvParser.parse(response.body().byteStream()).getAllPrograms();
-                                            /*Log.d(TAG, programs.toString());
-                                            Log.d(TAG, "Parsed "+programs.size());
-                                            Log.d(TAG, "Program 1: "+ programs.get(0).getTitle());*/
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }).start();
-                                break;
                         }
                     }
                 })
