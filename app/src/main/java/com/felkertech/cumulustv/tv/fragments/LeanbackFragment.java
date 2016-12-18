@@ -377,11 +377,11 @@ public class LeanbackFragment extends BrowseFragment
                 Intent intent = new Intent(mActivity, DetailsActivity.class);
                 intent.putExtra(VideoDetailsFragment.EXTRA_JSON_CHANNEL, jsonChannel.toString());
 
-                Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                /*Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
                         mActivity,
                         ((ImageCardView) itemViewHolder.view).getMainImageView(),
-                        DetailsActivity.SHARED_ELEMENT_NAME).toBundle();
-                mActivity.startActivity(intent, bundle);
+                        DetailsActivity.SHARED_ELEMENT_NAME).toBundle();*/
+                mActivity.startActivity(intent, null);
             } else if (item instanceof Option) {
                 String title = ((Option) item).getText();
                 if(title.equals(getString(R.string.manage_livechannels))) {

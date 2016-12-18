@@ -123,7 +123,7 @@ public class FileIoTestActivity extends Activity {
          * @param first  the first object in the Pair
          * @param second the second object in the pair
          */
-        public ImportedFile(String first, String second) {
+        ImportedFile(String first, String second) {
             super(first, second);
             title = first;
             uri = second;

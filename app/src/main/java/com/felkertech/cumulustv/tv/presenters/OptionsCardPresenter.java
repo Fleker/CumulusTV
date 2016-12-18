@@ -17,6 +17,8 @@ import com.felkertech.cumulustv.model.Option;
  * @version 2016.09.04
  */
 public class OptionsCardPresenter extends CardPresenter {
+    private static final boolean DEFAULT_BANNER = false;
+
     private ContextThemeWrapper contextThemeWrapper;
 
     @Override
@@ -36,7 +38,11 @@ public class OptionsCardPresenter extends CardPresenter {
     public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object item) {
         final Option option = (Option) item;
         final ImageCardView cardView = (ImageCardView) viewHolder.view;
-        cardView.setMainImage(option.getDrawable());
+        if (DEFAULT_BANNER) {
+            cardView.setMainImage(contextThemeWrapper.getDrawable(R.drawable.c_banner_3_2));
+        } else {
+            cardView.setMainImage(option.getDrawable());
+        }
         cardView.setTitleText(option.getText());
         cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
         cardView.getMainImageView().setScaleType(ImageView.ScaleType.FIT_CENTER);
