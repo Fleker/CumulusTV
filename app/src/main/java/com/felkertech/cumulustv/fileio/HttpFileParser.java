@@ -53,25 +53,17 @@ public class HttpFileParser extends AbstractFileParser {
      * @throws IOException
      */
     private InputStream downloadUrl(String myurl) throws IOException {
-        InputStream is = null;
         // Only display the first 500 characters of the retrieved
         // web page content.
-        try {
-            URL url = new URL(myurl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(28000 /* milliseconds */);
-            //set back to 15000, 10000
-            conn.setConnectTimeout(30000 /* milliseconds */);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            // Starts the query
-            conn.connect();
-            is = conn.getInputStream();
-            return is;
-        } finally {
-            if (is != null) {
-                is.close();
-            }
-        }
+        URL url = new URL(myurl);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setReadTimeout(28000 /* milliseconds */);
+        //set back to 15000, 10000
+        conn.setConnectTimeout(30000 /* milliseconds */);
+        conn.setRequestMethod("GET");
+        conn.setDoInput(true);
+        // Starts the query
+        conn.connect();
+        return conn.getInputStream();
     }
 }

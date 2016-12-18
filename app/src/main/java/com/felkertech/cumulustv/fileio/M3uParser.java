@@ -21,12 +21,12 @@ public class M3uParser {
     private static final String TAG = M3uParser.class.getSimpleName();
 
     private static int indexOf(String haystack, String... needles) {
+        int index = haystack.length();
         for (String n : needles) {
-            if (haystack.contains(n)) {
-                return haystack.indexOf(n);
-            }
+            int needleIndex = haystack.indexOf(n);
+            index = (index > needleIndex && needleIndex > -1) ? needleIndex : index;
         }
-        return -1;
+        return index;
     }
 
     private static String getKey(HashMap<String, String> map, String... keys) {
@@ -46,39 +46,43 @@ public class M3uParser {
 
         while ((line = in.readLine()) != null) {
             if (line.startsWith("#EXTINF:")) { // This is a channel
-                // #EXTINF:0051 tvg-id="blizz.de" group-title="DE Spartensender" tvg-logo="897815.png", [COLOR orangered]blizz TV HD[/COLOR]
                 M3uTvChannel channel = new M3uTvChannel();
-
                 String[] parts = line.split(",", 2);
                 String channelAttributes = parts[0];
                 while (channelAttributes.length() > 0) { // Chip away at data until complete
-                    boolean inPhrase = false;
+                    Log.d(TAG, channelAttributes);
                     int valueDivider = indexOf(channelAttributes, ":", "=");
                     String attribute = channelAttributes.substring(0, valueDivider);
                     int valueIndex = valueDivider + 1;
                     int valueEnd = channelAttributes.indexOf(" ", valueIndex);
                     int variableEnd = valueEnd + 1;
-                    if (attribute.charAt(valueDivider + 1) == '"') {
+                    if (channelAttributes.charAt(valueDivider + 1) == '"') {
                         valueIndex++;
-                        inPhrase = true;
                         valueEnd = channelAttributes.indexOf("\"", valueIndex + 1);
                         variableEnd = valueEnd + 2; // '" '
                     }
                     String value = channelAttributes.substring(valueIndex, valueEnd);
                     channel.put(attribute, value);
-                    channelAttributes = channelAttributes.substring(variableEnd).trim();
+                    if (variableEnd > channelAttributes.length()) {
+                        channelAttributes = "";
+                    } else {
+                        channelAttributes = channelAttributes.substring(variableEnd).trim();
+                    }
                 }
                 String channelName = parts[1].replaceAll("\\[\\/?(COLOR |)[^\\]]*\\]", "");
 
                 line = in.readLine();
-                if (line.startsWith("http") && channels.size() > 0) {
+                Log.d(TAG, "URL: " + line);
+                if (line.startsWith("http")) {
                     channel.url = line;
-                } else if (line.startsWith("rtmp") && channels.size() > 0) {
+                } else if (line.startsWith("rtmp")) {
                     channel.url = line;
                 }
 
                 // Set channel properties
                 channel.displayName = channelName;
+                channel.put("count", String.valueOf(channels.size()));
+                channels.add(channel);
             }
         }
         TvListing tvl = new TvListing(channels);
@@ -143,14 +147,14 @@ public class M3uParser {
             return new JsonChannel.Builder()
                     .setLogo(getKey(m3uAttributes, "tvg-logo"))
                     .setName(displayName)
-                    .setNumber(getKey(m3uAttributes, "#EXTINF:", "tvg-id"))
+                    .setNumber(getKey(m3uAttributes, "#EXTINF:", "tvg-id", "count"))
                     .setMediaUrl(url)
                     .build();
         }
 
         @Override
         public String toString() {
-            return displayName+": "+url+"\n";
+            return toJsonChannel().toString() + "\n";
         }
     }
 }

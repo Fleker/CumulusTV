@@ -131,5 +131,6 @@
     <string name="choose_an_app">Choisissez une application</string>
     <string name="add_channel_txt">Ajouter un canal</string>
     <string name="add">Ajouter</string>
+    <string name="loading_data">Loading data</string>
 
 </resources>

@@ -31,6 +31,11 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 import com.felkertech.channelsurfer.players.TvInputPlayer;
+import com.felkertech.cumulustv.fileio.AbstractFileParser;
+import com.felkertech.cumulustv.fileio.AssetsFileParser;
+import com.felkertech.cumulustv.fileio.FileParserFactory;
+import com.felkertech.cumulustv.fileio.HttpFileParser;
+import com.felkertech.cumulustv.fileio.LocalFileParser;
 import com.felkertech.cumulustv.utils.AppUtils;
 import com.felkertech.cumulustv.utils.PermissionUtils;
 import com.felkertech.cumulustv.model.ChannelDatabase;
@@ -44,6 +49,8 @@ import com.google.android.exoplayer.ExoPlayer;
 
 import org.json.JSONException;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -113,63 +120,46 @@ public class MainPicker extends CumulusTvPlugin {
                 finish();
                 return;
             }
-            try {
-                if(uri.toString().contains("http")) { //Import a channel
-                    // Copy from `loadDialogs()` in edit mode
-                    mPickerDialog = getPicker().show(this, true);
-                    RelativeLayout l = (RelativeLayout) mPickerDialog.getCustomView();
-                    ((EditText) l.findViewById(R.id.stream)).setText(uri.toString());
-                    loadStream(mPickerDialog, uri.toString());
-                } else {
-                    ContentResolver resolver = getContentResolver();
-                    InputStream input = resolver.openInputStream(uri);
-                    final M3uParser.TvListing listings = M3uParser.parse(input
-                    );
-                    new MaterialDialog.Builder(MainPicker.this)
-                            .title(getString(R.string.import_bulk_title, listings.channels.size()))
-                            .content(listings.getChannelList())
-                            .positiveText(R.string.ok)
-                            .negativeText(R.string.no)
-                            .callback(new MaterialDialog.ButtonCallback() {
+            if(uri.toString().endsWith("m3u8")) { // Import a single channel
+                // Copy from `loadDialogs()` in edit mode
+                mPickerDialog = getPicker().show(this, true);
+                RelativeLayout l = (RelativeLayout) mPickerDialog.getCustomView();
+                ((EditText) l.findViewById(R.id.stream)).setText(uri.toString());
+                loadStream(mPickerDialog, uri.toString());
+            } else if (uri.toString().endsWith("m3u")) {
+                Log.d(TAG, "Import m3u playlist");
+                Toast.makeText(this, R.string.loading_data, Toast.LENGTH_SHORT).show();
+                FileParserFactory.parseGenericFileUri(uri.toString(),
+                        new FileParserFactory.FileIdentifier() {
+                    @Override
+                    public void onLocalFile(String uri) {
+                        try {
+                            new LocalFileParser(uri, new AbstractFileParser.FileLoader() {
                                 @Override
-                                public void onPositive(MaterialDialog dialog) {
-                                    super.onPositive(dialog);
-                                    Toast.makeText(MainPicker.this, R.string.import_bulk_wait,
-                                            Toast.LENGTH_SHORT).show();
-                                    new Thread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            ChannelDatabase channelDatabase =
-                                                    ChannelDatabase.getInstance(MainPicker.this);
-                                            for (M3uParser.M3uTvChannel channel :
-                                                    listings.channels) {
-                                                try {
-                                                    channelDatabase.add(channel.toJsonChannel());
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
-                                            }
-                                            channelDatabase.save();
-                                            Handler finishedImporting =
-                                                    new Handler(Looper.getMainLooper()) {
-                                                @Override
-                                                public void handleMessage(Message msg) {
-                                                    super.handleMessage(msg);
-                                                    Toast.makeText(MainPicker.this,
-                                                            R.string.import_bulk_success,
-                                                            Toast.LENGTH_SHORT).show();
-                                                    saveDatabase();
-                                                }
-                                            };
-                                            finishedImporting.sendEmptyMessage(0);
-                                        }
-                                    }).start();
+                                public void onFileLoaded(InputStream inputStream) {
+                                    importChannels(inputStream);
                                 }
-                            })
-                            .show();
-                }
-            } catch (java.io.IOException e) {
-                e.printStackTrace();
+                            });
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onAsset(String uri) {
+                        throw new UnsupportedOperationException("Don't import from assets pls");
+                    }
+
+                    @Override
+                    public void onHttpFile(String uri) {
+                        new HttpFileParser(uri, new AbstractFileParser.FileLoader() {
+                            @Override
+                            public void onFileLoaded(InputStream inputStream) {
+                                importChannels(inputStream);
+                            }
+                        });
+                    }
+                });
             }
         } else {
             if (getChannel() != null && DEBUG) {
@@ -194,6 +184,59 @@ public class MainPicker extends CumulusTvPlugin {
         }
         mTvInputPlayer = null;
         super.onStop();
+    }
+
+    private void importChannels(InputStream input) {
+        try {
+            Log.d(TAG, "Parse channels");
+            final M3uParser.TvListing listings = M3uParser.parse(input);
+            Log.d(TAG, "Import " + listings.channels.size() + " channels");
+            new MaterialDialog.Builder(MainPicker.this)
+                    .title(getString(R.string.import_bulk_title, listings.channels.size()))
+                    .content(listings.getChannelList())
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.no)
+                    .callback(new MaterialDialog.ButtonCallback() {
+                        @Override
+                        public void onPositive(MaterialDialog dialog) {
+                            super.onPositive(dialog);
+                            Toast.makeText(MainPicker.this, R.string.import_bulk_wait,
+                                    Toast.LENGTH_SHORT).show();
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ChannelDatabase channelDatabase =
+                                            ChannelDatabase.getInstance(MainPicker.this);
+                                    for (M3uParser.M3uTvChannel channel :
+                                            listings.channels) {
+                                        try {
+                                            channelDatabase.add(channel.toJsonChannel());
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    channelDatabase.save();
+                                    Handler finishedImporting =
+                                            new Handler(Looper.getMainLooper()) {
+                                                @Override
+                                                public void handleMessage(Message msg) {
+                                                    super.handleMessage(msg);
+                                                    Toast.makeText(MainPicker.this,
+                                                            R.string.import_bulk_success,
+                                                            Toast.LENGTH_SHORT).show();
+                                                    saveDatabase();
+                                                    finish();
+                                                }
+                                            };
+                                    finishedImporting.sendEmptyMessage(0);
+                                }
+                            }).start();
+                        }
+                    })
+                    .show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private String getContentName(ContentResolver resolver, Uri uri){

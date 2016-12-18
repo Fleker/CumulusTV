@@ -84,7 +84,7 @@
     <string name="permission_action_settings">View Permissions</string>
 
     <string name="import_bulk_title">Import %1$d Channels?</string>
-    <string name="import_bulk_wait">Hold on a second</string>
+    <string name="import_bulk_wait">Hold on a sec...</string>
     <string name="import_null" translatable="false">Found a null Uri</string>
     <string name="import_bulk_success">"You're good to go!"</string>
 
@@ -151,5 +151,6 @@
     <string name="website_url" translatable="false">"http://cumulustv.herokuapp.com"</string>
     <string name="toast_error_channel_name" translatable="false">Your channel must have a name</string>
     <string name="toast_error_channel_media_url" translatable="false">Your channel must have a media url</string>
+    <string name="loading_data">Loading data</string>
 </resources>
 
