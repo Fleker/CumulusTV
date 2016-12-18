@@ -22,8 +22,8 @@ android {
         applicationId "com.felkertech.n.cumulustv"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 53
-        versionName '1.6.7'
+        versionCode 54
+        versionName '1.6.8'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         testApplicationId 'com.felkertech.n.cumulustv.test'
     }
@@ -52,12 +52,12 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.5.1@aar') {
         transitive = true;
     }
-    compile 'com.android.support:recyclerview-v7:25.0.0'
-    compile 'com.android.support:leanback-v17:25.0.0'
-    compile 'com.android.support:appcompat-v7:25.0.0'
-    compile 'com.android.support:customtabs:25.0.0'
-    compile 'com.android.support:palette-v7:25.0.0'
-    androidTestCompile 'com.android.support:support-annotations:25.0.0'
+    compile 'com.android.support:recyclerview-v7:25.0.1'
+    compile 'com.android.support:leanback-v17:25.0.1'
+    compile 'com.android.support:appcompat-v7:25.0.1'
+    compile 'com.android.support:customtabs:25.0.1'
+    compile 'com.android.support:palette-v7:25.0.1'
+    androidTestCompile 'com.android.support:support-annotations:25.0.1'
     compile 'com.google.android.gms:play-services-drive:8.4.0'
     compile 'com.pnikosis:materialish-progress:1.5'
     compile 'com.squareup.picasso:picasso:2.5.2'
@@ -75,5 +75,3 @@ dependencies {
     testCompile 'org.robolectric:robolectric:3.1.4'
     testCompile 'org.mockito:mockito-core:1.10.19'
 }
-
-task testClasses {}
