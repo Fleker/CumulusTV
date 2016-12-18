@@ -19,6 +19,7 @@ import com.felkertech.cumulustv.fileio.HttpFileParser;
 import com.felkertech.cumulustv.fileio.LocalFileParser;
 import com.felkertech.cumulustv.fileio.M3uParser;
 import com.felkertech.cumulustv.fileio.XmlTvParser;
+import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.R;
 
 import java.io.FileNotFoundException;
@@ -33,6 +34,7 @@ public class FileIoTestActivity extends AppCompatActivity {
 
     private ImportedFile[] files = new ImportedFile[] {
         new ImportedFile("Test Open", ""),
+        new ImportedFile("Print M3U", ""),
         new ImportedFile("M3U 1", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test1.m3u")
     };
 
@@ -54,13 +56,18 @@ public class FileIoTestActivity extends AppCompatActivity {
                     @Override
                     public void onSelection(MaterialDialog dialog, View itemView, int position,
                                             CharSequence text) {
-                        if (position > 0) {
+                        if (position > 1) {
                             readFile(position);
-                        } else {
+                        } else if (position == 0) {
                             Intent i = new Intent(Intent.ACTION_VIEW);
                             i.setData(Uri.parse("https://raw.githubusercontent.com/Fleker/Cumulus" +
                                     "TV/master/app/src/test/resources/m3u_test1.m3u"));
                             startActivity(i);
+                        } else if (position == 1) {
+                            new MaterialDialog.Builder(FileIoTestActivity.this)
+                                    .title("Here's how your Channel Data Looks:")
+                                    .content(ChannelDatabase.getInstance(FileIoTestActivity.this).toM3u())
+                                    .show();
                         }
                     }
                 })

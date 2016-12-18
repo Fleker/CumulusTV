@@ -14,6 +14,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static com.felkertech.cumulustv.fileio.M3uParser.Constants.CH_AUDIO_ONLY;
+import static com.felkertech.cumulustv.fileio.M3uParser.Constants.CH_EPG_URL;
+import static com.felkertech.cumulustv.fileio.M3uParser.Constants.CH_GENRES;
+import static com.felkertech.cumulustv.fileio.M3uParser.Constants.CH_GENRES_ALT1;
+import static com.felkertech.cumulustv.fileio.M3uParser.Constants.CH_LOGO;
+import static com.felkertech.cumulustv.fileio.M3uParser.Constants.CH_NUMBER;
+import static com.felkertech.cumulustv.fileio.M3uParser.Constants.CH_PLUGIN;
+import static com.felkertech.cumulustv.fileio.M3uParser.Constants.CH_SPLASH;
+import static com.felkertech.cumulustv.fileio.M3uParser.Constants.CH_SPLASH_ALT1;
+
 /**
  * This class is responsible to converting between M3u playlists and the application model.
  */
@@ -145,9 +155,14 @@ public class M3uParser {
 
         public JsonChannel toJsonChannel() {
             return new JsonChannel.Builder()
-                    .setLogo(getKey(m3uAttributes, "tvg-logo"))
+                    .setAudioOnly(getKey(m3uAttributes, CH_AUDIO_ONLY) != null)
+                    .setEpgUrl(getKey(m3uAttributes, CH_EPG_URL))
+                    .setGenres(getKey(m3uAttributes, CH_GENRES, CH_GENRES_ALT1))
+                    .setLogo(getKey(m3uAttributes, CH_LOGO))
                     .setName(displayName)
-                    .setNumber(getKey(m3uAttributes, "#EXTINF:", "tvg-id", "count"))
+                    .setNumber(getKey(m3uAttributes, "#EXTINF:", CH_NUMBER, "count"))
+                    .setPluginSource(getKey(m3uAttributes, CH_PLUGIN))
+                    .setSplashscreen(getKey(m3uAttributes, CH_SPLASH, CH_SPLASH_ALT1))
                     .setMediaUrl(url)
                     .build();
         }
@@ -156,5 +171,19 @@ public class M3uParser {
         public String toString() {
             return toJsonChannel().toString() + "\n";
         }
+    }
+
+    public static class Constants {
+        public static final String HEADER_TAG = "#EXTM3U";
+        public static final String CHANNEL_TAG = "#EXTINF:-1";
+        public static final String CH_NUMBER = "tvg-id";
+        public static final String CH_LOGO = "tvg-logo";
+        public static final String CH_AUDIO_ONLY = "audio-only";
+        public static final String CH_EPG_URL = "epg-url";
+        public static final String CH_GENRES = "group-title";
+        public static final String CH_GENRES_ALT1 = "genres";
+        public static final String CH_PLUGIN = "cumulus-plugin";
+        public static final String CH_SPLASH = "splashscreen";
+        public static final String CH_SPLASH_ALT1 = "tvg-splashscreen";
     }
 }

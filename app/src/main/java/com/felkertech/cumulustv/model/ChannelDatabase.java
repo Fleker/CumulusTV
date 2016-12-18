@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.felkertech.channelsurfer.model.Channel;
+import com.felkertech.cumulustv.fileio.M3uParser;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.cumulustv.utils.ActivityUtils;
 import com.felkertech.cumulustv.utils.DriveSettingsManager;
@@ -217,6 +218,47 @@ public class ChannelDatabase {
     @Override
     public String toString() {
         return mJsonObject.toString();
+    }
+
+    public String toM3u() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(M3uParser.Constants.HEADER_TAG + "\n");
+        try {
+            List<JsonChannel> jsonChannelList = getJsonChannels();
+            for (int i = 0; i< jsonChannelList.size(); i++) {
+                JsonChannel jsonChannel = jsonChannelList.get(i);
+                builder.append(M3uParser.Constants.CHANNEL_TAG);
+                builder.append(" " + M3uParser.Constants.CH_NUMBER + "=\"")
+                        .append(jsonChannel.getNumber()).append("\"");
+                if (jsonChannel.hasLogo()) {
+                    builder.append(" " + M3uParser.Constants.CH_LOGO + "=\"")
+                            .append(jsonChannel.getLogo()).append("\"");
+                }
+                if (jsonChannel.isAudioOnly()) {
+                    builder.append(" " + M3uParser.Constants.CH_AUDIO_ONLY + "=1");
+                }
+                if (jsonChannel.getEpgUrl() != null) {
+                    builder.append(" " + M3uParser.Constants.CH_EPG_URL + "=\"")
+                            .append(jsonChannel.getEpgUrl()).append("\"");
+                }
+                builder.append(" " + M3uParser.Constants.CH_GENRES + "=\"")
+                        .append(jsonChannel.getGenresString()).append("\"");
+                if (jsonChannel.getPluginSource() != null) {
+                    builder.append(" " + M3uParser.Constants.CH_PLUGIN + "=\"")
+                            .append(jsonChannel.getPluginSource()).append("\"");
+                }
+                if (jsonChannel.hasSplashscreen()) {
+                    builder.append(" " + M3uParser.Constants.CH_SPLASH + "=\"")
+                            .append(jsonChannel.getSplashscreen()).append("\"");
+                }
+                builder.append(", ").append(jsonChannel.getName()).append("\n");
+                // Add URL
+                builder.append(jsonChannel.getMediaUrl()).append("\n");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return builder.toString();
     }
 
     public long getLastModified() throws JSONException {
