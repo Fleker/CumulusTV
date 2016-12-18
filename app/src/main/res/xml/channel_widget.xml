@@ -5,7 +5,7 @@
     android:updatePeriodMillis="864000"
     android:previewImage="@drawable/c_banner_3_2"
     android:initialLayout="@layout/widget_channel"
-    android:configure="com.felkertech.n.cumulustv.activities.WidgetSelectionActivity"
+    android:configure="com.felkertech.cumulustv.activities.WidgetSelectionActivity"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen">
 </appwidget-provider>
