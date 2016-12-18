@@ -31,6 +31,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 import com.felkertech.channelsurfer.players.TvInputPlayer;
+import com.felkertech.cumulustv.activities.MainActivity;
 import com.felkertech.cumulustv.fileio.AbstractFileParser;
 import com.felkertech.cumulustv.fileio.AssetsFileParser;
 import com.felkertech.cumulustv.fileio.FileParserFactory;
@@ -141,6 +142,8 @@ public class MainPicker extends CumulusTvPlugin {
                                 }
                             });
                         } catch (FileNotFoundException e) {
+                            Toast.makeText(MainPicker.this, "Error: " + e.getMessage(),
+                                    Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
                         }
                     }
@@ -195,11 +198,10 @@ public class MainPicker extends CumulusTvPlugin {
                     .title(getString(R.string.import_bulk_title, listings.channels.size()))
                     .content(listings.getChannelList())
                     .positiveText(R.string.ok)
-                    .negativeText(R.string.no)
-                    .callback(new MaterialDialog.ButtonCallback() {
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
-                        public void onPositive(MaterialDialog dialog) {
-                            super.onPositive(dialog);
+                        public void onClick(@NonNull MaterialDialog dialog,
+                                @NonNull DialogAction which) {
                             Toast.makeText(MainPicker.this, R.string.import_bulk_wait,
                                     Toast.LENGTH_SHORT).show();
                             new Thread(new Runnable() {
@@ -231,6 +233,14 @@ public class MainPicker extends CumulusTvPlugin {
                                     finishedImporting.sendEmptyMessage(0);
                                 }
                             }).start();
+                        }
+                    })
+                    .negativeText(R.string.no)
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog,
+                                @NonNull DialogAction which) {
+                            finish();
                         }
                     })
                     .show();

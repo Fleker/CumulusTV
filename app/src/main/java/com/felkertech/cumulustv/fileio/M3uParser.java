@@ -39,6 +39,15 @@ public class M3uParser {
         return index;
     }
 
+    private static int indexOf(String haystack, int startAt, String... needles) {
+        int index = haystack.length();
+        for (String n : needles) {
+            int needleIndex = haystack.indexOf(n, startAt);
+            index = (index > needleIndex && needleIndex > -1) ? needleIndex : index;
+        }
+        return index;
+    }
+
     private static String getKey(HashMap<String, String> map, String... keys) {
         for (String k : keys) {
             if (map.containsKey(k)) {
@@ -46,6 +55,15 @@ public class M3uParser {
             }
         }
         return null;
+    }
+
+    private static int getLastComma(String haystack) {
+        int comma = -1;
+        for (int i = 0; i < haystack.length(); i++) {
+            int c2 = haystack.indexOf(",", comma + 1);
+            comma = (c2 > comma) ? c2 : comma;
+        }
+        return comma;
     }
 
     public static TvListing parse(InputStream inputStream) throws IOException {
@@ -57,15 +75,19 @@ public class M3uParser {
         while ((line = in.readLine()) != null) {
             if (line.startsWith("#EXTINF:")) { // This is a channel
                 M3uTvChannel channel = new M3uTvChannel();
-                String[] parts = line.split(",", 2);
-                String channelAttributes = parts[0];
+                String channelAttributes = line.substring(0, getLastComma(line));
+                String channelName = line.substring(getLastComma(line) + 1).trim()
+                        .replaceAll("\\[\\/?(COLOR |)[^\\]]*\\]", "");
                 while (channelAttributes.length() > 0) { // Chip away at data until complete
                     Log.d(TAG, channelAttributes);
                     int valueDivider = indexOf(channelAttributes, ":", "=");
                     String attribute = channelAttributes.substring(0, valueDivider);
                     int valueIndex = valueDivider + 1;
-                    int valueEnd = channelAttributes.indexOf(" ", valueIndex);
+                    int valueEnd = indexOf(channelAttributes, valueIndex, " ");
                     int variableEnd = valueEnd + 1;
+                    if (valueEnd == -1) {
+                        valueEnd = channelAttributes.length(); // We're at the end
+                    }
                     if (channelAttributes.charAt(valueDivider + 1) == '"') {
                         valueIndex++;
                         valueEnd = channelAttributes.indexOf("\"", valueIndex + 1);
@@ -79,7 +101,6 @@ public class M3uParser {
                         channelAttributes = channelAttributes.substring(variableEnd).trim();
                     }
                 }
-                String channelName = parts[1].replaceAll("\\[\\/?(COLOR |)[^\\]]*\\]", "");
 
                 line = in.readLine();
                 Log.d(TAG, "URL: " + line);
