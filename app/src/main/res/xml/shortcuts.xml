@@ -1,0 +1,19 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="newchannel"
+        android:enabled="true"
+        android:icon="@drawable/ic_airplay_black"
+        android:shortcutShortLabel="@string/add_channel_txt"
+        android:shortcutLongLabel="@string/add_channel_txt"
+        android:shortcutDisabledMessage="@string/add_channel_txt">
+        <intent
+            android:action="ADD"
+            android:targetPackage="com.felkertech.n.cumulustv"
+            android:targetClass="com.felkertech.cumulustv.plugins.MainPicker" />
+        <!-- If your shortcut is associated with multiple intents, include them
+             here. The last intent in the list determines what the user sees when
+             they launch this shortcut. -->
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+    <!-- Specify more shortcuts here. -->
+</shortcuts>

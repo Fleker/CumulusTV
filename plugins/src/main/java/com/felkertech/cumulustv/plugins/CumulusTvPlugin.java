@@ -76,7 +76,8 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
      * @return
      */
     public boolean areReadingAll() {
-        return telegram.getStringExtra(INTENT_EXTRA_ACTION).equals(INTENT_EXTRA_READ_ALL);
+        return telegram.hasExtra(INTENT_EXTRA_ACTION) &&
+                telegram.getStringExtra(INTENT_EXTRA_ACTION).equals(INTENT_EXTRA_READ_ALL);
     }
 
     /**
