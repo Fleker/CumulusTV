@@ -26,11 +26,6 @@
     <!--<string name="vertical_grid_title"><![CDATA[Vertical Video Grid]]></string>-->
     <string name="about_app" translatable="false">@string/settings_about</string>
     <string name="about_app_description">v%1$s\nBackground art by Marcelo Franceschini\nFrench Translations by @mcmjau\n\nThe app is open source and available on GitHub.</string>
-    <string name="grid_view">Grid View</string>
-    <string name="error_fragment">Error Fragment</string>
-    <string name="should_start">shouldStart</string>
-    <string name="start_position">startPosition</string>
-    <string name="search_results">Search Results</string>
 
     <!--Leanback Menu Items-->
     <string name="manage_livechannels">Open Live Channels</string>

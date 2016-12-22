@@ -1,5 +1,6 @@
 package com.felkertech.cumulustv.utils;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -187,7 +188,8 @@ public class ActivityUtils {
                             }
                         }).show();
                 Toast.makeText(activity, activity.getString(R.string.toast_msg_pack_not_installed,
-                        jsonChannel.getPluginSource().getPackageName()), Toast.LENGTH_SHORT).show();
+                        jsonChannel.getPluginSource().getPackageName()),
+                        Toast.LENGTH_SHORT).show();
                 openPluginPicker(false, channelUrl, activity);
             }
         } else {
@@ -200,11 +202,11 @@ public class ActivityUtils {
 
     /* DRIVE */
     public static void writeDriveData(final Activity context, GoogleApiClient gapi) {
-        //Ask here for permission to storage
+        // Ask here for permission to storage
         PermissionUtils.requestPermissionIfDisabled(context,
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 context.getString(R.string.permission_storage_rationale));
-        if(PermissionUtils.isDisabled(context, android.Manifest.permission_group.STORAGE)) {
+        if (PermissionUtils.isDisabled(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             new MaterialDialog.Builder(context)
                     .title(R.string.permission_not_allowed_error)
                     .content(R.string.permission_not_allowed_text)
@@ -221,8 +223,9 @@ public class ActivityUtils {
                         }
                     })
                     .build();
-        } else
+        } else {
             actuallyWriteData(context, gapi);
+        }
     }
 
     public static void writeDriveData(final Context context, GoogleApiClient gapi) {
@@ -246,10 +249,13 @@ public class ActivityUtils {
 
             final String info = TvContract.buildInputId(TV_INPUT_SERVICE);
             SyncUtils.requestSync(context, info);
+            Log.d(TAG, "Data actually written");
+            Toast.makeText(context, "Channels uploaded", Toast.LENGTH_SHORT).show();
         } catch(Exception e) {
             // Probably invalid drive id. No worries, just let someone know
             Log.e(TAG, e.getMessage() + "");
-            Toast.makeText(context, R.string.invalid_file, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.invalid_file,
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
