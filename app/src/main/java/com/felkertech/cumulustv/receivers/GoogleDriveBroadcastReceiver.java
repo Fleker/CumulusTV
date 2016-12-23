@@ -3,11 +3,14 @@ package com.felkertech.cumulustv.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 /**
  * Receives events related to the current Google Drive operation
  */
 public abstract class GoogleDriveBroadcastReceiver extends BroadcastReceiver {
+    private static final String TAG = GoogleDriveBroadcastReceiver.class.getSimpleName();
+
     public static final String ACTION_STATUS_CHANGED =
             GoogleDriveBroadcastReceiver.class.getPackage().getName() + ".status_changed";
     public static final String EXTRA_STATUS = "extra_status";
@@ -19,6 +22,7 @@ public abstract class GoogleDriveBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent != null && intent.hasExtra(EXTRA_STATUS)) {
+            Log.d(TAG, "Received intent " + intent.toString());
             if (intent.getStringExtra(EXTRA_STATUS).equals(EVENT_DOWNLOAD_COMPLETE)) {
                 onNetworkActionCompleted();
                 onDownloadCompleted();
@@ -27,6 +31,8 @@ public abstract class GoogleDriveBroadcastReceiver extends BroadcastReceiver {
                 onNetworkActionCompleted();
                 onUploadCompleted();
             }
+        } else {
+            Log.w(TAG, "Received invalid call");
         }
     }
 
@@ -35,6 +41,7 @@ public abstract class GoogleDriveBroadcastReceiver extends BroadcastReceiver {
         statusChangedEvent.setAction(ACTION_STATUS_CHANGED);
         statusChangedEvent.putExtra(EXTRA_STATUS, event);
         context.sendBroadcast(statusChangedEvent);
+        Log.d(TAG, "Sending GDrive broadcast: " + event);
     }
 
     public abstract void onDownloadCompleted();

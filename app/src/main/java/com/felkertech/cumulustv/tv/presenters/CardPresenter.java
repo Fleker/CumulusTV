@@ -11,6 +11,7 @@ import android.support.v7.graphics.Palette;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
@@ -87,9 +88,14 @@ public class CardPresenter extends Presenter {
                                     if (colors.getDarkVibrantSwatch() != null) {
                                         cardView.findViewById(R.id.info_field).setBackgroundColor(
                                                 colors.getDarkVibrantSwatch().getRgb());
+                                    } else if (colors.getDarkMutedSwatch() != null) {
+                                        cardView.findViewById(R.id.info_field).setBackgroundColor(
+                                                colors.getDarkMutedSwatch().getRgb());
                                     } else if (colors.getSwatches().size() > 0) {
                                         cardView.findViewById(R.id.info_field).setBackgroundColor(
                                                 colors.getSwatches().get(0).getRgb());
+//                                        ((TextView) cardView.findViewById(R.id.info_field))
+//                                                .setTextColor(colors.getSwatches().get(0).getTitleTextColor());
                                     } else {
                                         cardView.findViewById(R.id.info_field).setBackgroundColor(
                                                 ContextCompat.getColor(mContext,

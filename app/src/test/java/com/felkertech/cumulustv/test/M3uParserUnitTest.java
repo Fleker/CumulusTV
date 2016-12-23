@@ -10,7 +10,6 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -39,11 +38,11 @@ public class M3uParserUnitTest {
     public void testFile1() throws IOException {
         M3uParser.TvListing listing = M3uParser.parse(openFile("m3u_test1.m3u"));
         assertEquals(2, listing.channels.size());
-        assertEquals("Canal 2 HD", listing.channels.get(0).displayName);
+        assertEquals("Canal 2 HD", listing.channels.get(0).toJsonChannel().getName());
         assertEquals("http://y.cdn.entutele.com/media/channels/big/canal-2-hd.gif",
-                listing.channels.get(0).icon.src);
-        assertEquals("Foro TV HD", listing.channels.get(1).displayName);
+                listing.channels.get(0).toJsonChannel().getLogo());
+        assertEquals("Foro TV HD", listing.channels.get(1).toJsonChannel().getName());
         assertEquals("http://y.cdn.entutele.com/media/channels/big/foro-tv-hd.gif",
-                listing.channels.get(1).icon.src);
+                listing.channels.get(1).toJsonChannel().getLogo());
     }
 }

@@ -82,9 +82,6 @@
     <string name="daydream_success">Daydream a été mis à jour</string>
 
     <!-- MLC - Music Live Channels -->
-    <string name="about_mlc">About MLC</string>
-    <string name="about_mlc_summary">MLC is an experimental, web-based, leanback, musical experience.</string>
-    <string name="about_mlc_issues">Visit Issue Tracker</string>
 
     <string name="connect_drive">Connexion au Google Drive</string>
     <string name="toast_setup_complete">Configuration terminée. Assurez-vous d\'avoir activées ces chaînes dans la liste des chaînes.</string>
@@ -132,4 +129,7 @@
     <string name="download_complete">@string/downloaded</string>
     <string name="upload_complete">@string/uploaded</string>
     <string name="export_m3u">Export M3u</string>
+    <string name="about_mlc" translatable="false"></string>
+    <string name="about_mlc_issues" translatable="false"></string>
+    <string name="about_mlc_summary" translatable="false"></string>
 </resources>

@@ -59,14 +59,12 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class LeanbackFragment extends BrowseFragment
-        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = LeanbackFragment.class.getSimpleName();
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     private static final int BACKGROUND_UPDATE_DELAY = 300;
-    private static final int GRID_ITEM_WIDTH = 200;
-    private static final int GRID_ITEM_HEIGHT = 200;
     public static final int REQUEST_CODE_CREATOR = 102;
 
     private static final int ORDER_GENRE_CATEGORY = 0;

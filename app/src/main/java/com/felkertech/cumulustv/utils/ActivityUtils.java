@@ -266,7 +266,8 @@ public class ActivityUtils {
         try {
             did = DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id));
         } catch (Exception e) {
-            Toast.makeText(context, R.string.invalid_file, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.invalid_file,
+                    Toast.LENGTH_SHORT).show();
             return;
         }
         sm.readFromGoogleDrive(did, ChannelDatabase.KEY);
