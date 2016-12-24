@@ -20,13 +20,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.accessibility.CaptioningManager;
 
+import com.felkertech.cumulustv.player.CumulusTvPlayer;
 import com.felkertech.cumulustv.services.CumulusJobService;
 import com.felkertech.n.cumulustv.R;
-import com.google.android.exoplayer.ExoPlayer;
-import com.google.android.exoplayer.MediaFormat;
-import com.google.android.exoplayer.text.CaptionStyleCompat;
-import com.google.android.exoplayer.text.Cue;
-import com.google.android.exoplayer.text.SubtitleLayout;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.media.tv.companionlibrary.BaseTvInputService;
 import com.google.android.media.tv.companionlibrary.EpgSyncJobService;
 import com.google.android.media.tv.companionlibrary.TvPlayer;
@@ -35,13 +33,10 @@ import com.google.android.media.tv.companionlibrary.model.Program;
 import com.google.android.media.tv.companionlibrary.model.RecordedProgram;
 import com.google.android.media.tv.companionlibrary.utils.TvContractUtils;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Created by guest1 on 12/23/2016.
+ * An instance of {@link BaseTvInputService} which plays Cumulus Tv videos.
  */
-
 public class CumulusTvTifService extends BaseTvInputService {
     private static final String TAG = "RichTvInputService";
     private static final boolean DEBUG = false;
@@ -69,15 +64,13 @@ public class CumulusTvTifService extends BaseTvInputService {
         return null;
     }
 
-    class RichTvInputSessionImpl extends BaseTvInputService.Session implements
-            DemoPlayer.Listener, DemoPlayer.CaptionListener {
+    class RichTvInputSessionImpl extends BaseTvInputService.Session {
         private static final float CAPTION_LINE_HEIGHT_RATIO = 0.0533f;
         private static final int TEXT_UNIT_PIXELS = 0;
         private static final String UNKNOWN_LANGUAGE = "und";
 
         private int mSelectedSubtitleTrackIndex;
-        private SubtitleLayout mSubtitleView;
-        private DemoPlayer mPlayer;
+        private CumulusTvPlayer mPlayer;
         private boolean mCaptionEnabled;
         private String mInputId;
         private Context mContext;
@@ -93,54 +86,6 @@ public class CumulusTvTifService extends BaseTvInputService {
         public View onCreateOverlayView() {
             LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
             return null;
-        }
-
-        private List<TvTrackInfo> getAllTracks() {
-            String trackId;
-            List<TvTrackInfo> tracks = new ArrayList<>();
-
-            int[] trackTypes = {
-                    DemoPlayer.TYPE_AUDIO,
-                    DemoPlayer.TYPE_VIDEO,
-                    DemoPlayer.TYPE_TEXT
-            };
-
-            for (int trackType : trackTypes) {
-                int count = mPlayer.getTrackCount(trackType);
-                for (int i = 0; i < count; i++) {
-                    MediaFormat format = mPlayer.getTrackFormat(trackType, i);
-                    trackId = getTrackId(trackType, i);
-                    TvTrackInfo.Builder builder = new TvTrackInfo.Builder(trackType, trackId);
-
-                    if (trackType == DemoPlayer.TYPE_VIDEO) {
-                        if (format.maxWidth != MediaFormat.NO_VALUE) {
-                            builder.setVideoWidth(format.maxWidth);
-                        } else if (format.width != MediaFormat.NO_VALUE) {
-                            builder.setVideoWidth(format.width);
-                        }
-                        if (format.maxHeight != MediaFormat.NO_VALUE) {
-                            builder.setVideoHeight(format.maxHeight);
-                        } else if (format.height != MediaFormat.NO_VALUE) {
-                            builder.setVideoHeight(format.height);
-                        }
-                    } else if (trackType == DemoPlayer.TYPE_AUDIO) {
-                        builder.setAudioChannelCount(format.channelCount);
-                        builder.setAudioSampleRate(format.sampleRate);
-                        if (format.language != null && !UNKNOWN_LANGUAGE.equals(format.language)) {
-                            // TvInputInfo expects {@code null} for unknown language.
-                            builder.setLanguage(format.language);
-                        }
-                    } else if (trackType == DemoPlayer.TYPE_TEXT) {
-                        if (format.language != null && !UNKNOWN_LANGUAGE.equals(format.language)) {
-                            // TvInputInfo expects {@code null} for unknown language.
-                            builder.setLanguage(format.language);
-                        }
-                    }
-
-                    tracks.add(builder.build());
-                }
-            }
-            return tracks;
         }
 
         @Override
@@ -192,6 +137,11 @@ public class CumulusTvTifService extends BaseTvInputService {
         }
 
         @Override
+        public void onSetCaptionEnabled(boolean enabled) {
+            // Captions currently unsupported
+        }
+
+        @Override
         public void onPlayAdvertisement(Advertisement advertisement) {
             createPlayer(TvContractUtils.SOURCE_TYPE_HTTP_PROGRESSIVE,
                     Uri.parse(advertisement.getRequestUrl()));
@@ -199,51 +149,12 @@ public class CumulusTvTifService extends BaseTvInputService {
 
         private void createPlayer(int videoType, Uri videoUrl) {
             releasePlayer();
-            mPlayer = new DemoPlayer(RendererBuilderFactory.createRendererBuilder(
-                    mContext, videoType, videoUrl));
-            mPlayer.addListener(this);
-            mPlayer.setCaptionListener(this);
+            mPlayer = new CumulusTvPlayer(mContext);
             mPlayer.prepare();
-        }
-
-        @Override
-        public void onSetCaptionEnabled(boolean enabled) {
-            mCaptionEnabled = enabled;
-            if (mPlayer != null) {
-                if (mCaptionEnabled) {
-                    mPlayer.setSelectedTrack(TvTrackInfo.TYPE_SUBTITLE,
-                            mSelectedSubtitleTrackIndex);
-                } else {
-                    mPlayer.setSelectedTrack(TvTrackInfo.TYPE_SUBTITLE, DemoPlayer.TRACK_DISABLED);
-                }
-            }
-        }
-
-        @Override
-        public boolean onSelectTrack(int type, String trackId) {
-            if (trackId == null) {
-                return true;
-            }
-
-            int trackIndex = getIndexFromTrackId(trackId);
-            if (mPlayer != null) {
-                if (type == TvTrackInfo.TYPE_SUBTITLE) {
-                    if (! mCaptionEnabled) {
-                        return false;
-                    }
-                    mSelectedSubtitleTrackIndex = trackIndex;
-                }
-
-                mPlayer.setSelectedTrack(type, trackIndex);
-                notifyTrackSelected(type, trackId);
-                return true;
-            }
-            return false;
         }
 
         private void releasePlayer() {
             if (mPlayer != null) {
-                mPlayer.removeListener(this);
                 mPlayer.setSurface(null);
                 mPlayer.stop();
                 mPlayer.release();
@@ -261,15 +172,6 @@ public class CumulusTvTifService extends BaseTvInputService {
         public void onBlockContent(TvContentRating rating) {
             super.onBlockContent(rating);
             releasePlayer();
-        }
-
-        private float getCaptionFontSize() {
-            Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE))
-                    .getDefaultDisplay();
-            Point displaySize = new Point();
-            display.getSize(displaySize);
-            return Math.max(getResources().getDimension(R.dimen.subtitle_minimum_font_size),
-                    CAPTION_LINE_HEIGHT_RATIO * Math.min(displaySize.x, displaySize.y));
         }
 
         @Override
@@ -298,20 +200,8 @@ public class CumulusTvTifService extends BaseTvInputService {
             }
         }
 
-        @Override
-        public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees,
-                                       float pixelWidthHeightRatio) {
-            // Do nothing.
-        }
-
-        @Override
         public void onError(Exception e) {
             Log.e(TAG, e.getMessage());
-        }
-
-        @Override
-        public void onCues(List<Cue> cues) {
-            mSubtitleView.setCues(cues);
         }
 
         public void requestEpgSync(final Uri channelUri) {
