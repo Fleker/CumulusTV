@@ -52,6 +52,7 @@ public class CumulusTvPlayer implements TvPlayer, ExoPlayer.EventListener {
     public CumulusTvPlayer(Context context, TrackSelector trackSelector, LoadControl loadControl) {
         mSimpleExoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector, loadControl);
         mContext = context;
+        mSimpleExoPlayer.addListener(this);
     }
 
     @Override
@@ -131,6 +132,7 @@ public class CumulusTvPlayer implements TvPlayer, ExoPlayer.EventListener {
     }
 
     public void release() {
+        mSimpleExoPlayer.removeListener(this);
         mSimpleExoPlayer.release();
     }
 

@@ -88,7 +88,8 @@ public class CumulusTvTifService extends BaseTvInputService {
 
         @Override
         public boolean onPlayProgram(Program program, long startPosMs) {
-            Log.d(TAG, "Play program " + program.getTitle());
+            Log.d(TAG, "Play program " + program.getTitle() + " " +
+                    program.getInternalProviderData().getVideoUrl());
             if (program == null) {
                 requestEpgSync(getCurrentChannelUri());
                 notifyVideoUnavailable(TvInputManager.VIDEO_UNAVAILABLE_REASON_TUNING);
@@ -121,6 +122,10 @@ public class CumulusTvTifService extends BaseTvInputService {
             return true;
         }
 
+        // FIXME Change initial playback time for live video
+        // FIXME Get player state to play
+        // FIXME Playing video should open in LC
+
         public TvPlayer getTvPlayer() {
             return mPlayer;
         }
@@ -151,6 +156,14 @@ public class CumulusTvTifService extends BaseTvInputService {
 
             mPlayer = new CumulusTvPlayer(mContext);
             mPlayer.startPlaying(videoUrl);
+            mPlayer.registerCallback(new TvPlayer.Callback() {
+                @Override
+                public void onStarted() {
+                    super.onStarted();
+                    Log.d(TAG, "Video available");
+                    notifyVideoAvailable();
+                }
+            });
             mPlayer.registerErrorListener(new CumulusTvPlayer.ErrorListener() {
                 @Override
                 public void onError(Exception error) {

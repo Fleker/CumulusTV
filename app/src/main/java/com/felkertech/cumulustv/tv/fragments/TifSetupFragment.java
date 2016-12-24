@@ -36,7 +36,7 @@ public class TifSetupFragment extends ChannelSetupFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View fragmentView = super.onCreateView(inflater, container, savedInstanceState);
-        setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.detail_background));
+        setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark));
         setBadge(getResources().getDrawable(R.mipmap.ic_launcher));
         setChannelListVisibility(true);
         setTitle("Cumulus TV");
