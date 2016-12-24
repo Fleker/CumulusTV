@@ -66,6 +66,7 @@ public class JsonChannel extends CumulusChannel {
 
     public Channel toChannel(InternalProviderData providerData) {
         providerData.setVideoUrl(getMediaUrl());
+        // TODO Add app linking
         return new Channel.Builder()
                 .setDisplayName(getName())
                 .setDisplayNumber(getNumber())

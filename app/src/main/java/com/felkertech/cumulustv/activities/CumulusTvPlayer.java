@@ -17,17 +17,15 @@ import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.bumptech.glide.Glide;
 import com.felkertech.channelsurfer.players.TvInputPlayer;
 import com.felkertech.channelsurfer.players.WebInputPlayer;
 import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.model.JsonChannel;
 import com.felkertech.n.cumulustv.R;
-import com.google.android.exoplayer.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Arrays;
 
 /**
@@ -74,60 +72,6 @@ public class CumulusTvPlayer extends AppCompatActivity {
             urlStream = parameters.getStringExtra(KEY_VIDEO_URL);
             if(!urlStream.isEmpty()) {
                 setContentView(R.layout.full_surfaceview);
-                SurfaceView sv = (SurfaceView) findViewById(R.id.surface);
-                exoPlayer = new TvInputPlayer();
-                exoPlayer.setSurface(sv.getHolder().getSurface());
-                exoPlayer.setVolume(1);
-                exoPlayer.addCallback(new TvInputPlayer.Callback() {
-                    @Override
-                    public void onPrepared() {
-
-                    }
-
-                    @Override
-                    public void onPlayerStateChanged(boolean playWhenReady, int state) {
-
-                    }
-
-                    @Override
-                    public void onPlayWhenReadyCommitted() {
-
-                    }
-
-                    @Override
-                    public void onPlayerError(ExoPlaybackException e) {
-                        Log.e(TAG, "Callback2");
-                        Log.e(TAG, e.getMessage()+"");
-                        if(e.getMessage().contains("Extractor")) {
-                            Log.d(TAG, "Cannot play the stream, try loading it as a website");
-                            Toast.makeText(CumulusTvPlayer.this, "This is not a video stream, interpreting as a website", Toast.LENGTH_SHORT).show();
-                            WebInputPlayer wv = new WebInputPlayer(CumulusTvPlayer.this, new WebInputPlayer.WebViewListener() {
-                                @Override
-                                public void onPageFinished() {
-                                    //Don't do anything
-                                }
-                            });
-                            wv.load(urlStream);
-                            setContentView(wv);
-                        }
-                    }
-
-                    @Override
-                    public void onDrawnToSurface(Surface surface) {
-
-                    }
-
-                    @Override
-                    public void onText(String text) {
-
-                    }
-                });
-                try {
-                    exoPlayer.prepare(getApplicationContext(), Uri.parse(urlStream), TvInputPlayer.SOURCE_TYPE_HLS);
-                } catch(Exception e) {
-
-                }
-                exoPlayer.setPlayWhenReady(true);
             }
         }
     }

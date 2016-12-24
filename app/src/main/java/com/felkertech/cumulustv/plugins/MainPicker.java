@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.media.tv.TvContract;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,7 +17,6 @@ import android.support.annotation.VisibleForTesting;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
@@ -30,23 +28,18 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
-import com.felkertech.channelsurfer.players.TvInputPlayer;
-import com.felkertech.cumulustv.activities.MainActivity;
+import com.felkertech.cumulustv.activities.CumulusTvPlayer;
 import com.felkertech.cumulustv.fileio.AbstractFileParser;
-import com.felkertech.cumulustv.fileio.AssetsFileParser;
 import com.felkertech.cumulustv.fileio.FileParserFactory;
 import com.felkertech.cumulustv.fileio.HttpFileParser;
 import com.felkertech.cumulustv.fileio.LocalFileParser;
+import com.felkertech.cumulustv.fileio.M3uParser;
+import com.felkertech.cumulustv.model.ChannelDatabase;
+import com.felkertech.cumulustv.model.JsonChannel;
 import com.felkertech.cumulustv.utils.AppUtils;
 import com.felkertech.cumulustv.utils.PermissionUtils;
-import com.felkertech.cumulustv.model.ChannelDatabase;
-import com.felkertech.cumulustv.activities.CumulusTvPlayer;
-import com.felkertech.cumulustv.model.JsonChannel;
 import com.felkertech.n.cumulustv.R;
-import com.felkertech.cumulustv.fileio.M3uParser;
 import com.felkertech.settingsmanager.common.CommaArray;
-import com.google.android.exoplayer.ExoPlaybackException;
-import com.google.android.exoplayer.ExoPlayer;
 
 import org.json.JSONException;
 
@@ -73,7 +66,6 @@ public class MainPicker extends CumulusTvPlugin {
 
     private String label = "";
     private IMainPicker mPickerDialog;
-    private TvInputPlayer mTvInputPlayer;
     private TextWatcher filterTextWatcher = new TextWatcher() {
 
         @Override
@@ -178,14 +170,6 @@ public class MainPicker extends CumulusTvPlugin {
             SurfaceView sv = (SurfaceView) mPickerDialog.getCustomView().findViewById(R.id.surface);
             sv.getHolder().getSurface().release();
         }
-        if (mTvInputPlayer != null) {
-            mTvInputPlayer.setSurface(null);
-            mTvInputPlayer.stop();
-            mTvInputPlayer.release();
-        } else {
-            Log.w(TAG, "TvInputPlayer is null.");
-        }
-        mTvInputPlayer = null;
         super.onStop();
     }
 
@@ -320,66 +304,10 @@ public class MainPicker extends CumulusTvPlugin {
             return;
         }
         SurfaceView sv = (SurfaceView) viewHolder.getCustomView().findViewById(R.id.surface);
-        TvInputPlayer exoPlayer;
-        exoPlayer = new TvInputPlayer();
-        exoPlayer.setSurface(sv.getHolder().getSurface());
-        try {
-            exoPlayer.prepare(getApplicationContext(), Uri.parse(url),
-                    TvInputPlayer.SOURCE_TYPE_HLS);
-        } catch(Exception e) {
-            //Do nothing
-            Log.d(TAG, "IllegalArgumentException");
-        }
-        exoPlayer.setPlayWhenReady(true);
     }
 
     public void loadStream(IMainPicker viewHolder, final String url) {
         SurfaceView sv = (SurfaceView) viewHolder.getCustomView().findViewById(R.id.surface);
-        if (mTvInputPlayer == null) {
-            mTvInputPlayer = new TvInputPlayer();
-        }
-        mTvInputPlayer.setSurface(sv.getHolder().getSurface());
-        mTvInputPlayer.setVolume(1);
-        try {
-            mTvInputPlayer.prepare(getApplicationContext(), Uri.parse(url),
-                    TvInputPlayer.SOURCE_TYPE_HLS);
-        } catch (Exception e) {
-                e.printStackTrace();
-        }
-        mTvInputPlayer.addCallback(new TvInputPlayer.Callback() {
-            @Override
-            public void onPrepared() {
-
-            }
-
-            @Override
-            public void onPlayerStateChanged(boolean playWhenReady, int state) {
-                if (state == ExoPlayer.STATE_READY) {
-                    mPickerDialog.handlePlaybackSuccess();
-                }
-            }
-
-            @Override
-            public void onPlayWhenReadyCommitted() {
-
-            }
-
-            @Override
-            public void onPlayerError(ExoPlaybackException e) {
-                mPickerDialog.handlePlaybackError(e);
-            }
-
-            @Override
-            public void onDrawnToSurface(Surface surface) {
-
-            }
-
-            @Override
-            public void onText(String text) {
-
-            }
-        });
-        mTvInputPlayer.setPlayWhenReady(true);
     }
 
     public String getUrl() {

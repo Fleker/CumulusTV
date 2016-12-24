@@ -41,21 +41,6 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:logo="@drawable/c_banner_3_2">
-        <service
-            android:name="com.felkertech.cumulustv.tv.CumulusTvService"
-            android:enabled="true"
-            android:exported="true"
-            android:label="@string/sample_tv_input_name"
-            android:permission="android.permission.BIND_TV_INPUT">
-            <intent-filter>
-                <action android:name="android.media.tv.TvInputService" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.media.tv.input"
-                android:resource="@xml/channel_surfer_tv_input" />
-        </service>
-
         <activity
             android:name="com.felkertech.cumulustv.activities.CumulusTvPlayer"
             android:exported="true"
@@ -73,16 +58,6 @@
             </intent-filter>
             <meta-data android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
-        </activity>
-
-        <activity
-            android:name="com.felkertech.cumulustv.activities.CumulusChannelsSetup"
-            android:exported="true"
-            android:label="Setup Channels"
-            android:theme="@style/CompatTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
         </activity>
 
         <meta-data
@@ -283,14 +258,32 @@
             android:exported="true" />
 
         <service android:name="com.felkertech.cumulustv.services.CumulusJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
             android:enabled="true" />
 
         <receiver android:name="com.felkertech.cumulustv.receivers.TvBootReceiver"
-            android:enabled="true" />
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <activity android:name="com.felkertech.cumulustv.tv.activities.TifSetupActivity"
             android:enabled="true"
             android:exported="true" />
+
+        <service
+            android:name="com.felkertech.cumulustv.tv.CumulusTvTifService"
+            android:label="Cumulus TV Label"
+            android:permission="android.permission.BIND_TV_INPUT">
+            <!-- Required filter used by the system to launch our account service. -->
+            <intent-filter>
+                <action android:name="android.media.tv.TvInputService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.media.tv.input"
+                android:resource="@xml/tv_service" />
+        </service>
     </application>
 
 </manifest>

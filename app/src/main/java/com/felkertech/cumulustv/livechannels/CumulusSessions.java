@@ -17,7 +17,6 @@ import android.widget.Toast;
 import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.channelsurfer.service.SimpleSessionImpl;
 import com.felkertech.channelsurfer.service.TvInputProvider;
-import com.felkertech.cumulustv.tv.CumulusTvService;
 
 /**
  * Created by Nick on 5/4/2016.

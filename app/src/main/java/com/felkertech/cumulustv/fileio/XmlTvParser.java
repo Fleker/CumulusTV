@@ -7,7 +7,6 @@ import android.util.Xml;
 
 import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.channelsurfer.model.Program;
-import com.google.android.exoplayer.ParserException;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -97,8 +96,7 @@ public class XmlTvParser {
             parser.setInput(inputStream, null);
             int eventType = parser.next();
             if (eventType != XmlPullParser.START_TAG || !TAG_TV.equals(parser.getName())) {
-                throw new ParserException(
-                        "inputStream does not contain a xml tv description");
+                throw new RuntimeException("inputStream does not contain a xml tv description");
             }
             return parseTvListings(parser);
         } catch (XmlPullParserException | IOException | ParseException e) {
