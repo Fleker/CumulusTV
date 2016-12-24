@@ -7,6 +7,8 @@
     <!-- Required to do some Google Drive stuff and open files -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- Required to restart job service -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- For Daydream -->
     <uses-permission android:name="android.permission.BIND_DREAM_SERVICE" />
     <uses-permission android:name="com.android.providers.tv.permission.WRITE_EPG_DATA" />
@@ -279,6 +281,12 @@
             android:enabled="true"
             android:theme="@style/CompatTheme"
             android:exported="true" />
+
+        <service android:name="com.felkertech.cumulustv.services.CumulusJobService"
+            android:enabled="true" />
+
+        <receiver android:name="com.felkertech.cumulustv.receivers.TvBootReceiver"
+            android:enabled="true" />
     </application>
 
 </manifest>

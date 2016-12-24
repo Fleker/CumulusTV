@@ -3,19 +3,19 @@ package com.felkertech.cumulustv.model;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.media.tv.TvContentRating;
 import android.media.tv.TvContract;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.cumulustv.fileio.M3uParser;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.cumulustv.utils.ActivityUtils;
 import com.felkertech.cumulustv.utils.DriveSettingsManager;
 import com.felkertech.settingsmanager.SettingsManager;
+import com.google.android.media.tv.companionlibrary.model.Channel;
+import com.google.android.media.tv.companionlibrary.model.InternalProviderData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -91,6 +91,17 @@ public class ChannelDatabase {
         for (int i = 0; i < jsonChannelList.size(); i++) {
             JsonChannel jsonChannel = jsonChannelList.get(i);
             Channel channel = jsonChannel.toChannel();
+            channelList.add(channel);
+        }
+        return channelList;
+    }
+
+    public List<Channel> getChannels(InternalProviderData providerData) throws JSONException {
+        List<JsonChannel> jsonChannelList = getJsonChannels();
+        List<Channel> channelList = new ArrayList<>();
+        for (int i = 0; i < jsonChannelList.size(); i++) {
+            JsonChannel jsonChannel = jsonChannelList.get(i);
+            Channel channel = jsonChannel.toChannel(providerData);
             channelList.add(channel);
         }
         return channelList;

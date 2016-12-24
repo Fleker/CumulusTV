@@ -4,9 +4,11 @@ import android.content.ComponentName;
 import android.media.tv.TvContract;
 import android.support.annotation.NonNull;
 
-import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.settingsmanager.common.CommaArray;
+import com.google.android.media.tv.companionlibrary.model.Channel;
+import com.google.android.media.tv.companionlibrary.model.InternalProviderData;
+import com.google.android.media.tv.companionlibrary.utils.TvContractUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,13 +52,27 @@ public class JsonChannel extends CumulusChannel {
     }
 
     public Channel toChannel() {
-        Channel channel = new Channel();
-        channel.setNumber(getNumber());
-        channel.setName(getName());
-        channel.setLogoUrl(getLogo());
-        channel.setInternalProviderData(getMediaUrl());
-        channel.setOriginalNetworkId(getMediaUrl().hashCode());
-        return channel;
+        InternalProviderData ipd = new InternalProviderData();
+        ipd.setVideoUrl(getMediaUrl());
+        ipd.setVideoType(TvContractUtils.SOURCE_TYPE_HLS);
+        return new Channel.Builder()
+                .setDisplayName(getName())
+                .setDisplayNumber(getNumber())
+                .setChannelLogo(getLogo())
+                .setInternalProviderData(ipd)
+                .setOriginalNetworkId(getMediaUrl().hashCode())
+                .build();
+    }
+
+    public Channel toChannel(InternalProviderData providerData) {
+        providerData.setVideoUrl(getMediaUrl());
+        return new Channel.Builder()
+                .setDisplayName(getName())
+                .setDisplayNumber(getNumber())
+                .setChannelLogo(getLogo())
+                .setInternalProviderData(providerData)
+                .setOriginalNetworkId(getMediaUrl().hashCode())
+                .build();
     }
 
     public static JsonChannel getEmptyChannel() {
