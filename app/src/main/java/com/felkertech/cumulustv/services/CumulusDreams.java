@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.SurfaceView;
 import android.widget.TextView;
 
-import com.felkertech.channelsurfer.players.TvInputPlayer;
+import com.felkertech.cumulustv.player.CumulusTvPlayer;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.cumulustv.utils.DriveSettingsManager;
 import com.felkertech.cumulustv.activities.CumulusDreamsSettingsActivity;
@@ -58,16 +58,15 @@ public class CumulusDreams extends DreamService {
             }
             setContentView(R.layout.full_surfaceview);
             SurfaceView sv = (SurfaceView) findViewById(R.id.surface);
-            TvInputPlayer exoPlayer;
-            exoPlayer = new TvInputPlayer();
-            exoPlayer.setSurface(sv.getHolder().getSurface());
-            exoPlayer.setVolume(0); //No volume for daydream
+//            CumulusTvPlayer cumulusTvPlayer = new CumulusTvPlayer();
+//            exoPlayer.setSurface(sv.getHolder().getSurface());
+//            exoPlayer.setVolume(0); //No volume for daydream
 
-            try {
-                exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
-            } catch(Exception ignored) {
-            }
-            exoPlayer.setPlayWhenReady(true);
+//            try {
+//                exoPlayer.prepare(getApplicationContext(), Uri.parse(url), TvInputPlayer.SOURCE_TYPE_HLS);
+//            } catch(Exception ignored) {
+//            }
+//            exoPlayer.setPlayWhenReady(true);
         } else {
             TextView EMPTY_URL = new TextView(getApplicationContext());
             EMPTY_URL.setText("THIS URL IS EMPTY");

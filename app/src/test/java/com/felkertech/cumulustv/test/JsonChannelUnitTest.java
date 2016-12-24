@@ -2,10 +2,10 @@ package com.felkertech.cumulustv.test;
 
 import android.os.Build;
 
-import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.n.cumulustv.BuildConfig;
 import com.felkertech.cumulustv.model.JsonChannel;
+import com.google.android.media.tv.companionlibrary.model.Channel;
 
 import junit.framework.TestCase;
 
@@ -131,7 +131,7 @@ public class JsonChannelUnitTest extends TestCase {
                 .setSplashscreen(SPLASHSCREEN)
                 .build();
         Channel channel = jsonChannel.toChannel();
-        assertEquals(channel.getName(), jsonChannel.getName());
+        assertEquals(channel.getDisplayName(), jsonChannel.getName());
     }
 
     /**

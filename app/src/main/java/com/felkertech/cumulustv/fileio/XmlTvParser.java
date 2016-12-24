@@ -5,8 +5,9 @@ import android.media.tv.TvContentRating;
 import android.text.TextUtils;
 import android.util.Xml;
 
-import com.felkertech.channelsurfer.model.Channel;
-import com.felkertech.channelsurfer.model.Program;
+import com.google.android.media.tv.companionlibrary.model.Channel;
+import com.google.android.media.tv.companionlibrary.model.InternalProviderData;
+import com.google.android.media.tv.companionlibrary.model.Program;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -160,16 +161,12 @@ public class XmlTvParser {
         }
 
         int fakeOriginalNetworkId = Objects.hash(displayName, displayNumber);
-        return new Channel()
-                .setName(displayName)
-                .setNumber(displayNumber)
-//                .setLogoUrl((icon == null) ? null : icon.src)
-//                .setAppLinkIcon((appLink == null || appLink.icon == null) ? null : appLink.icon.src)
-//                .setAppLinkColor((appLink == null) ? null : appLink.color)
-//                .setAppLinkText((appLink == null) ? null : appLink.text)
-//                .setAppLinkIntent((appLink == null) ? null : appLink.intentUri)
-                .setOriginalNetworkId(fakeOriginalNetworkId);
-//                .setAppLinkPoster((appLink == null) ? null : appLink.posterUri);
+        return new Channel.Builder()
+                .setDisplayName(displayName)
+                .setDisplayNumber(displayNumber)
+                .setOriginalNetworkId(fakeOriginalNetworkId)
+                .setChannelLogo(icon.src)
+                .build();
     }
 
     private static Program parseProgram(XmlPullParser parser)
@@ -229,13 +226,16 @@ public class XmlTvParser {
                 || endTimeUtcMillis == null) {
             throw new IllegalArgumentException("channel, start, and end can not be null.");
         }
+        InternalProviderData ipd = new InternalProviderData();
+        ipd.setVideoType(videoType);
+        ipd.setVideoUrl(videoSrc);
         return new Program.Builder()
                 .setTitle(title)
                 .setDescription(description)
                 .setPosterArtUri(icon.src)
                 .setStartTimeUtcMillis(startTimeUtcMillis)
                 .setEndTimeUtcMillis(endTimeUtcMillis)
-                .setInternalProviderData(videoSrc)
+                .setInternalProviderData(ipd)
                 .setContentRatings(rating.toArray(new TvContentRating[rating.size()]))
                 .setCanonicalGenres(category.toArray(new String[category.size()]))
                 .build();
@@ -342,7 +342,7 @@ public class XmlTvParser {
         public List<Program> getProgramsFor(Channel channel) {
             List<Program> programs = new ArrayList<>();
             for (Program program : programs) {
-                if (program.getChannelId() == channel.getChannelId()) {
+                if (program.getChannelId() == channel.getId()) {
                     programs.add(program);
                 }
             }

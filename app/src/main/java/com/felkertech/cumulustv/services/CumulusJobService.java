@@ -29,6 +29,7 @@ public class CumulusJobService extends EpgSyncJobService {
 
     @Override
     public List<Channel> getChannels() {
+        // TODO Download from Drive
         // Build advertisement list for the channel.
         Advertisement channelAd = new Advertisement.Builder()
                 .setType(Advertisement.TYPE_VAST)

@@ -2,6 +2,7 @@ package com.felkertech.cumulustv.activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageInfo;
@@ -10,7 +11,6 @@ import android.media.tv.TvContract;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,20 +18,18 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
-import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.cumulustv.fileio.CloudStorageProvider;
+import com.felkertech.cumulustv.model.ChannelDatabase;
+import com.felkertech.cumulustv.model.JsonChannel;
+import com.felkertech.cumulustv.services.CumulusJobService;
+import com.felkertech.cumulustv.tv.activities.LeanbackActivity;
 import com.felkertech.cumulustv.utils.ActivityUtils;
 import com.felkertech.cumulustv.utils.AppUtils;
 import com.felkertech.cumulustv.utils.DriveSettingsManager;
-import com.felkertech.n.cumulustv.R;
-import com.felkertech.cumulustv.model.ChannelDatabase;
-import com.felkertech.cumulustv.model.JsonChannel;
 import com.felkertech.cumulustv.widgets.ChannelShortcut;
-import com.felkertech.cumulustv.fileio.XmlTvParser;
-import com.felkertech.cumulustv.tv.activities.LeanbackActivity;
+import com.felkertech.n.cumulustv.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -39,15 +37,10 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi;
 import com.google.android.gms.drive.MetadataChangeSet;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import com.google.android.media.tv.companionlibrary.EpgSyncJobService;
 
 import org.json.JSONException;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -225,7 +218,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void onActionFinished(boolean cloudToLocal) {
                 Log.d(TAG, "Sync req after drive action");
                 final String info = TvContract.buildInputId(ActivityUtils.TV_INPUT_SERVICE);
-                SyncUtils.requestSync(MainActivity.this, info);
+                EpgSyncJobService.requestImmediateSync(MainActivity.this, info,
+                        new ComponentName(MainActivity.this, CumulusJobService.class));
                 if (cloudToLocal) {
                     Toast.makeText(MainActivity.this, R.string.downloaded, Toast.LENGTH_SHORT).show();
                 } else {

@@ -1,6 +1,7 @@
 package com.felkertech.cumulustv.tv.fragments;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
@@ -29,9 +30,9 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.cumulustv.fileio.CloudStorageProvider;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
+import com.felkertech.cumulustv.services.CumulusJobService;
 import com.felkertech.cumulustv.utils.ActivityUtils;
 import com.felkertech.cumulustv.utils.DriveSettingsManager;
 import com.felkertech.n.cumulustv.R;
@@ -51,6 +52,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi;
 import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.media.tv.companionlibrary.EpgSyncJobService;
 
 import org.json.JSONException;
 
@@ -295,7 +297,8 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
             public void onActionFinished(boolean cloudToLocal) {
                 Log.d(TAG, "Sync req after drive action");
                 final String info = TvContract.buildInputId(ActivityUtils.TV_INPUT_SERVICE);
-                SyncUtils.requestSync(mActivity, info);
+                EpgSyncJobService.requestImmediateSync(mActivity, info,
+                        new ComponentName(mActivity, CumulusJobService.class));
                 if (cloudToLocal) {
                     Toast.makeText(getActivity(), R.string.download_complete, Toast.LENGTH_SHORT).show();
                 } else {

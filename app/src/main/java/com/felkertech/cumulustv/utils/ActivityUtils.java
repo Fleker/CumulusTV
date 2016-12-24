@@ -22,11 +22,11 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-import com.felkertech.channelsurfer.sync.SyncUtils;
 import com.felkertech.cumulustv.fileio.CloudStorageProvider;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.cumulustv.plugins.CumulusTvPlugin;
 import com.felkertech.cumulustv.Intro.Intro;
+import com.felkertech.cumulustv.services.CumulusJobService;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.cumulustv.activities.CumulusTvPlayer;
 import com.felkertech.cumulustv.activities.HomepageWebViewActivity;
@@ -44,6 +44,7 @@ import com.google.android.gms.drive.DriveApi;
 import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
+import com.google.android.media.tv.companionlibrary.EpgSyncJobService;
 
 import org.json.JSONException;
 
@@ -248,7 +249,8 @@ public class ActivityUtils {
                     GoogleDriveBroadcastReceiver.EVENT_UPLOAD_COMPLETE);
 
             final String info = TvContract.buildInputId(TV_INPUT_SERVICE);
-            SyncUtils.requestSync(context, info);
+            EpgSyncJobService.requestImmediateSync(context, info,
+                    new ComponentName(context, CumulusJobService.class));
             Log.d(TAG, "Data actually written");
 //            Toast.makeText(context, "Channels uploaded", Toast.LENGTH_SHORT).show();
         } catch(Exception e) {
@@ -275,7 +277,8 @@ public class ActivityUtils {
                 GoogleDriveBroadcastReceiver.EVENT_DOWNLOAD_COMPLETE);
 
         final String info = TvContract.buildInputId(TV_INPUT_SERVICE);
-        SyncUtils.requestSync(context, info);
+        EpgSyncJobService.requestImmediateSync(context, info,
+                new ComponentName(context, CumulusJobService.class));
     }
 
     public static void createDriveData(Activity activity, GoogleApiClient gapi,

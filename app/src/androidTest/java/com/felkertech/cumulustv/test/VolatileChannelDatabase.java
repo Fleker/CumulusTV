@@ -6,10 +6,10 @@ import android.database.Cursor;
 import android.media.tv.TvContract;
 import android.net.Uri;
 
-import com.felkertech.channelsurfer.model.Channel;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.model.JsonChannel;
+import com.google.android.media.tv.companionlibrary.model.Channel;
 
 import junit.framework.Assert;
 
@@ -78,7 +78,7 @@ public class VolatileChannelDatabase extends ChannelDatabase {
             public void run() {
                 ContentResolver contentResolver = context.getContentResolver();
                 Uri channelsUri = TvContract.buildChannelsUriForInput(
-                        TestTvProvider.INPUT_ID);
+                        "com.felkertech.cumulustv.tv.CumulusTvTifService");
                 Cursor cursor = contentResolver.query(channelsUri, null, null, null, null);
                 mDatabaseHashMap = new HashMap<>();
                 if (cursor != null) {

@@ -1,15 +1,14 @@
 package com.felkertech.cumulustv.plugins;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.media.tv.TvContract;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.felkertech.channelsurfer.sync.SyncUtils;
-import com.felkertech.cumulustv.plugins.CumulusChannel;
-import com.felkertech.cumulustv.plugins.CumulusTvPlugin;
+import com.felkertech.cumulustv.services.CumulusJobService;
 import com.felkertech.cumulustv.utils.ActivityUtils;
 import com.felkertech.cumulustv.utils.DriveSettingsManager;
 import com.felkertech.cumulustv.model.ChannelDatabase;
@@ -17,6 +16,7 @@ import com.felkertech.cumulustv.model.JsonChannel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
+import com.google.android.media.tv.companionlibrary.EpgSyncJobService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -126,7 +126,8 @@ public class DataReceiver extends BroadcastReceiver
         ActivityUtils.writeDriveData(mContext, gapi);
 
         final String info = TvContract.buildInputId(ActivityUtils.TV_INPUT_SERVICE);
-        SyncUtils.requestSync(mContext, info);
+        EpgSyncJobService.requestImmediateSync(mContext, info,
+                new ComponentName(mContext, CumulusJobService.class));
     }
 
     @Override

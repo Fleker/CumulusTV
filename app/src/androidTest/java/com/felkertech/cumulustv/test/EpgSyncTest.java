@@ -1,5 +1,6 @@
 package com.felkertech.cumulustv.test;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.database.Cursor;
 import android.media.tv.TvContract;
@@ -11,13 +12,14 @@ import android.support.test.runner.AndroidJUnit4;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
 
-import com.felkertech.channelsurfer.model.Channel;
-import com.felkertech.channelsurfer.model.Program;
 import com.felkertech.cumulustv.activities.MainActivity;
 import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.model.JsonChannel;
 import com.felkertech.cumulustv.fileio.XmlTvParser;
+import com.felkertech.cumulustv.services.CumulusJobService;
 import com.felkertech.n.cumulustv.R;
+import com.google.android.media.tv.companionlibrary.EpgSyncJobService;
+import com.google.android.media.tv.companionlibrary.model.Program;
 
 import junit.framework.Assert;
 
@@ -63,40 +65,9 @@ public class EpgSyncTest extends ActivityInstrumentationTestCase2<MainActivity> 
                         .setEpgUrl("http://example.com/epg.xml")
                         .setLogo("http://static-cdn1.ustream.tv/i/channel/picture/9/4/0/8/9408562/9408562_iss_hr_1330361780,256x144,r:1.jpg")
                         .build());
-        TestTvProvider.mTestFramework = new TestTvProvider.TestFramework() {
-            @Override
-            public List<Program> getProgramsForChannel(Context context, Uri channelUri,
-                        Channel channelInfo, long startTimeMs, long endTimeMs) {
-                // Load file
-                InputStream inputStream = null;
-                try {
-                    inputStream = getActivity().getContentResolver().openInputStream(
-                            Uri.parse("android.resource://" + context.getPackageName() + ".test/"
-                            + com.felkertech.n.cumulustv.test.R.raw.xmltv));
-                    Log.d(TAG, Uri.parse("android.resource://" + context.getPackageName() + ".test/"
-                            + com.felkertech.n.cumulustv.test.R.raw.xmltv).toString());
-                } catch (FileNotFoundException e) {
-                    Assert.fail(e.getMessage());
-                }
-                assertNotNull("The input stream is null.", inputStream);
-                XmlTvParser.TvListing tvListing =
-                         XmlTvParser.parse(new BufferedInputStream(inputStream));
-                assertNotNull("The Tv Listing is null!", tvListing);
-                assertEquals(2, tvListing.getAllPrograms().size());
-                return tvListing.getAllPrograms();
-            }
-        };
-
-        // Now let's sync
-        final TestSyncAdapter syncAdapter = new TestSyncAdapter(getActivity());
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                syncAdapter.mTvInputProvider = new TestTvProvider();
-                syncAdapter.doLocalSync();
-            }
-        });
-
+        EpgSyncJobService.requestImmediateSync(getActivity(),
+                "com.felkertech.cumulustv.tv.CumulusTvTifService",
+                new ComponentName(getActivity(), CumulusJobService.class));
         // Wait for sync to complete
         Thread.sleep(1000 * 10);
         ChannelDatabase channelDatabase = VolatileChannelDatabase.getMockedInstance(getActivity());

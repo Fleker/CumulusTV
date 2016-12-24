@@ -17,8 +17,6 @@ import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.felkertech.channelsurfer.players.TvInputPlayer;
-import com.felkertech.channelsurfer.players.WebInputPlayer;
 import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.model.JsonChannel;
 import com.felkertech.n.cumulustv.R;
@@ -37,7 +35,7 @@ public class CumulusTvPlayer extends AppCompatActivity {
     private VideoView myVideoView;
     private String TAG = "cumulus:CumulusTvPlayer";
     public static final String KEY_VIDEO_URL = "VIDEO_URL";
-    private TvInputPlayer exoPlayer;
+    private com.felkertech.cumulustv.player.CumulusTvPlayer mTvPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +77,8 @@ public class CumulusTvPlayer extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        exoPlayer.stop();
-        exoPlayer.release();
+        mTvPlayer.stop();
+        mTvPlayer.release();
     }
 
     private void updateLauncherShortcut() {

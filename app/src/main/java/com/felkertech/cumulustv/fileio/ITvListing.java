@@ -1,7 +1,7 @@
 package com.felkertech.cumulustv.fileio;
 
-import com.felkertech.channelsurfer.model.Channel;
-import com.felkertech.channelsurfer.model.Program;
+import com.google.android.media.tv.companionlibrary.model.Channel;
+import com.google.android.media.tv.companionlibrary.model.Program;
 
 import java.util.List;
 
