@@ -250,7 +250,7 @@ public class ActivityUtils {
             final String info = TvContract.buildInputId(TV_INPUT_SERVICE);
             SyncUtils.requestSync(context, info);
             Log.d(TAG, "Data actually written");
-            Toast.makeText(context, "Channels uploaded", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Channels uploaded", Toast.LENGTH_SHORT).show();
         } catch(Exception e) {
             // Probably invalid drive id. No worries, just let someone know
             Log.e(TAG, e.getMessage() + "");

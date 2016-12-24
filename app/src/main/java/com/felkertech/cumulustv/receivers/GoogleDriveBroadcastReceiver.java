@@ -3,6 +3,7 @@ package com.felkertech.cumulustv.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 /**
@@ -37,11 +38,13 @@ public abstract class GoogleDriveBroadcastReceiver extends BroadcastReceiver {
     }
 
     public static void changeStatus(Context context, String event) {
-        Intent statusChangedEvent = new Intent();
-        statusChangedEvent.setAction(ACTION_STATUS_CHANGED);
+        Intent statusChangedEvent = new Intent(ACTION_STATUS_CHANGED);
+//        statusChangedEvent.setAction();
         statusChangedEvent.putExtra(EXTRA_STATUS, event);
-        context.sendBroadcast(statusChangedEvent);
         Log.d(TAG, "Sending GDrive broadcast: " + event);
+        Log.d(TAG, statusChangedEvent.toString());
+        LocalBroadcastManager.getInstance(context).sendBroadcast(statusChangedEvent);
+        context.sendBroadcast(statusChangedEvent);
     }
 
     public abstract void onDownloadCompleted();

@@ -82,7 +82,8 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
     private DriveSettingsManager sm;
     public GoogleApiClient gapi;
     public Activity mActivity;
-    private GoogleDriveBroadcastReceiver broadcastReceiver = new GoogleDriveBroadcastReceiver() {
+    private final GoogleDriveBroadcastReceiver broadcastReceiver =
+            new GoogleDriveBroadcastReceiver() {
         @Override
         public void onDownloadCompleted() {
             refreshUI();
@@ -91,7 +92,7 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
 
         @Override
         public void onUploadCompleted() {
-
+            refreshUI(); // Probably need to reload anyway
         }
 
         @Override
@@ -118,7 +119,7 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
             Log.d(TAG, "onDestroy: " + mBackgroundTimer.toString());
             mBackgroundTimer.cancel();
         }
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
+//        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
     }
 
     @Override
@@ -126,6 +127,7 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
         super.onStart();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver,
                 new IntentFilter(GoogleDriveBroadcastReceiver.ACTION_STATUS_CHANGED));
+        Log.d(TAG, "Registered broadcast receiver");
         try {
             ChannelDatabase.getInstance(getActivity());
         } catch (ChannelDatabase.MalformedChannelDataException e) {
@@ -149,8 +151,8 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
 
         // My channels
         if(mActivity == null && Build.VERSION.SDK_INT >= 23) {
-            Toast.makeText(getContext(), R.string.toast_error_no_activity, Toast.LENGTH_SHORT)
-                    .show();
+            Toast.makeText(getContext(), R.string.toast_error_no_activity,
+                    Toast.LENGTH_SHORT).show();
             return;
         } else if(mActivity == null) {
             return;

@@ -15,7 +15,7 @@ import com.google.android.gms.drive.Drive;
 
 public class CloudStorageProvider {
     private static final String TAG = CloudStorageProvider.class.getSimpleName();
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     private static CloudStorageProvider mCloudStorageProvider;
     private GoogleApiClient mGoogleApiClient;
@@ -40,8 +40,8 @@ public class CloudStorageProvider {
                     .addOnConnectionFailedListener((GoogleApiClient.OnConnectionFailedListener)
                             activity)
                     .build();
-            mGoogleApiClient.connect();
         }
+        mGoogleApiClient.connect();
         return mGoogleApiClient;
     }
 
@@ -63,7 +63,8 @@ public class CloudStorageProvider {
 
     public boolean isDriveEnabled(Activity activity) {
         String gdriveId = new SettingsManager(activity).getString(R.string.sm_google_drive_id);
-        return gdriveId.isEmpty() && gdriveId.length() > 0;
+        Log.d(TAG, R.string.sm_google_drive_id + " " + gdriveId);
+        return !gdriveId.isEmpty() && gdriveId.length() > 0;
     }
 
     public boolean isDriveConnected() {
