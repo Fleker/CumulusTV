@@ -35,7 +35,7 @@ import com.google.android.media.tv.companionlibrary.utils.TvContractUtils;
  * An instance of {@link BaseTvInputService} which plays Cumulus Tv videos.
  */
 public class CumulusTvTifService extends BaseTvInputService {
-    private static final String TAG = "RichTvInputService";
+    private static final String TAG = CumulusTvTifService.class.getSimpleName();
     private static final boolean DEBUG = false;
     private static final long EPG_SYNC_DELAYED_PERIOD_MS = 1000 * 2; // 2 Seconds
 
@@ -82,6 +82,7 @@ public class CumulusTvTifService extends BaseTvInputService {
         @Override
         public View onCreateOverlayView() {
             LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+            // TODO website && splash
             return null;
         }
 
@@ -153,6 +154,12 @@ public class CumulusTvTifService extends BaseTvInputService {
 
             mPlayer = new CumulusTvPlayer(mContext, trackSelector, loadControl);
             mPlayer.startPlaying(videoUrl);
+            mPlayer.registerErrorListener(new CumulusTvPlayer.ErrorListener() {
+                @Override
+                public void onError(Exception error) {
+                    Log.e(TAG, error.getClass().getSimpleName() + " " + error.getMessage());
+                }
+            });
         }
 
         private void releasePlayer() {
