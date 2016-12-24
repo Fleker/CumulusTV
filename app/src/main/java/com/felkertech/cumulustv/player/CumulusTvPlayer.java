@@ -5,6 +5,7 @@ import android.media.PlaybackParams;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 import android.view.Surface;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -34,6 +35,8 @@ import java.util.List;
  */
 
 public class CumulusTvPlayer implements TvPlayer, ExoPlayer.EventListener {
+    private static final String TAG = CumulusTvPlayer.class.getSimpleName();
+
     private List<Callback> mTvCallbacks = new ArrayList<>();
     private List<ErrorListener> mErrorListeners = new ArrayList<>();
     private SimpleExoPlayer mSimpleExoPlayer;
@@ -55,6 +58,7 @@ public class CumulusTvPlayer implements TvPlayer, ExoPlayer.EventListener {
     public void setPlaybackParams(PlaybackParams params) {
         mSimpleExoPlayer.setPlaybackParams(params);
         mPlaybackSpeed = params.getSpeed();
+        Log.d(TAG, "Set params " + params.toString());
     }
 
     public float getPlaybackSpeed() {
@@ -148,6 +152,7 @@ public class CumulusTvPlayer implements TvPlayer, ExoPlayer.EventListener {
                 tvCallback.onStarted();
             }
         }
+        Log.d(TAG, "Player state changed to " + playbackState);
     }
 
     @Override
