@@ -2,11 +2,9 @@ package com.felkertech.cumulustv.tv;
 
 import android.content.ComponentName;
 import android.content.Context;
-import android.graphics.Point;
 import android.media.tv.TvContentRating;
 import android.media.tv.TvInputManager;
 import android.media.tv.TvInputService;
-import android.media.tv.TvTrackInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -14,17 +12,16 @@ import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.accessibility.CaptioningManager;
 
 import com.felkertech.cumulustv.player.CumulusTvPlayer;
 import com.felkertech.cumulustv.services.CumulusJobService;
-import com.felkertech.n.cumulustv.R;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.media.tv.companionlibrary.BaseTvInputService;
 import com.google.android.media.tv.companionlibrary.EpgSyncJobService;
 import com.google.android.media.tv.companionlibrary.TvPlayer;
@@ -103,7 +100,7 @@ public class CumulusTvTifService extends BaseTvInputService {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 notifyTimeShiftStatusChanged(TvInputManager.TIME_SHIFT_STATUS_AVAILABLE);
             }
-            mPlayer.setPlayWhenReady(true);
+            mPlayer.play();
             return true;
         }
 
@@ -118,7 +115,7 @@ public class CumulusTvTifService extends BaseTvInputService {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 notifyTimeShiftStatusChanged(TvInputManager.TIME_SHIFT_STATUS_AVAILABLE);
             }
-            mPlayer.setPlayWhenReady(true);
+            mPlayer.play();
             return true;
         }
 
@@ -149,8 +146,13 @@ public class CumulusTvTifService extends BaseTvInputService {
 
         private void createPlayer(int videoType, Uri videoUrl) {
             releasePlayer();
-            mPlayer = new CumulusTvPlayer(mContext);
-            mPlayer.prepare();
+            TrackSelector trackSelector = new DefaultTrackSelector();
+
+            // 2. Create a default LoadControl
+            LoadControl loadControl = new DefaultLoadControl();
+
+            mPlayer = new CumulusTvPlayer(mContext, trackSelector, loadControl);
+            mPlayer.startPlaying(videoUrl);
         }
 
         private void releasePlayer() {
@@ -174,37 +176,7 @@ public class CumulusTvTifService extends BaseTvInputService {
             releasePlayer();
         }
 
-        @Override
-        public void onStateChanged(boolean playWhenReady, int playbackState) {
-            if (mPlayer == null) {
-                return;
-            }
-
-            if (playWhenReady && playbackState == ExoPlayer.STATE_READY) {
-                notifyTracksChanged(getAllTracks());
-                String audioId = getTrackId(TvTrackInfo.TYPE_AUDIO,
-                        mPlayer.getSelectedTrack(TvTrackInfo.TYPE_AUDIO));
-                String videoId = getTrackId(TvTrackInfo.TYPE_VIDEO,
-                        mPlayer.getSelectedTrack(TvTrackInfo.TYPE_VIDEO));
-                String textId = getTrackId(TvTrackInfo.TYPE_SUBTITLE,
-                        mPlayer.getSelectedTrack(TvTrackInfo.TYPE_SUBTITLE));
-
-                notifyTrackSelected(TvTrackInfo.TYPE_AUDIO, audioId);
-                notifyTrackSelected(TvTrackInfo.TYPE_VIDEO, videoId);
-                notifyTrackSelected(TvTrackInfo.TYPE_SUBTITLE, textId);
-                notifyVideoAvailable();
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                    Math.abs(mPlayer.getPlaybackSpeed() - 1) < 0.1 &&
-                    playWhenReady && playbackState == ExoPlayer.STATE_BUFFERING) {
-                notifyVideoUnavailable(TvInputManager.VIDEO_UNAVAILABLE_REASON_BUFFERING);
-            }
-        }
-
-        public void onError(Exception e) {
-            Log.e(TAG, e.getMessage());
-        }
-
-        public void requestEpgSync(final Uri channelUri) {
+        private void requestEpgSync(final Uri channelUri) {
             EpgSyncJobService.requestImmediateSync(CumulusTvTifService.this, mInputId,
                     new ComponentName(CumulusTvTifService.this, CumulusJobService.class));
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
