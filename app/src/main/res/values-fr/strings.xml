@@ -13,13 +13,7 @@
     <string name="intro_title_4">"Commencer"</string>
     <string name="intro_msg_4">"Après la création de chaînes, allez dans l'application Chaînes en direct. Vous devez vous assurer que vos chaînes soient configurées. Puis, choisissez les chaînes que vous souhaitez visibles."</string>
 
-    <!--<string name="browse_title"><![CDATA[Videos by Your Company]]></string>-->
-    <!--<string name="vertical_grid_title"><![CDATA[Vertical Video Grid]]></string>-->
     <string name="about_app_description">"%1$s \nFond d\'écran par Marcelo Franceschini \n \nL\'application est open source et disponible sur GitHub."</string>
-    <string name="grid_view">"Grille"</string>
-    <string name="error_fragment">"Erreur de fragment"</string>
-    <string name="should_start">shouldStart</string>
-    <string name="start_position">"startPosition"</string>
     <string name="search_results">"Résultats de la recherche"</string>
 
     <!--Leanback Menu Items-->
@@ -129,7 +123,4 @@
     <string name="download_complete">@string/downloaded</string>
     <string name="upload_complete">@string/uploaded</string>
     <string name="export_m3u">Export M3u</string>
-    <string name="about_mlc" translatable="false"></string>
-    <string name="about_mlc_issues" translatable="false"></string>
-    <string name="about_mlc_summary" translatable="false"></string>
 </resources>
