@@ -49,7 +49,7 @@ public class SuggestedChannels {
                     .setName("ISS Stream")
                     .setNumber("101")
                     .build(),
-            new JsonChannel.Builder()
+            /*new JsonChannel.Builder()
                     .setGenres(TvContract.Programs.Genres.TECH_SCIENCE + "," +
                             TvContract.Programs.Genres.NEWS)
                     .setLogo("https://raw.githubusercontent.com/Fleker/CumulusTV/a576e4d49cec21ad" +
@@ -58,7 +58,7 @@ public class SuggestedChannels {
                             "t/live/high/playlist.m3u8")
                     .setName("TWiT.tv")
                     .setNumber("133")
-                    .build(),
+                    .build(),*/
             new JsonChannel.Builder()
                     .setLogo("http://static-cdn1.ustream.tv/i/channel/live/1_9600798,256x144,b:20" +
                             "15071514.jpg")

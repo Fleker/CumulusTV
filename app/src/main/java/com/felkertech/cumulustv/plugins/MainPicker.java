@@ -28,7 +28,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
-import com.felkertech.cumulustv.activities.CumulusTvPlayer;
+import com.felkertech.cumulustv.activities.CumulusVideoPlayback;
 import com.felkertech.cumulustv.fileio.AbstractFileParser;
 import com.felkertech.cumulustv.fileio.FileParserFactory;
 import com.felkertech.cumulustv.fileio.HttpFileParser;
@@ -504,8 +504,8 @@ public class MainPicker extends CumulusTvPlugin {
             mDialog.findViewById(R.id.stream_open).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent i = new Intent(MainPicker.this, CumulusTvPlayer.class);
-                    i.putExtra(CumulusTvPlayer.KEY_VIDEO_URL, getUrl());
+                    Intent i = new Intent(MainPicker.this, CumulusVideoPlayback.class);
+                    i.putExtra(CumulusVideoPlayback.KEY_VIDEO_URL, getUrl());
                     startActivity(i);
                 }
             });

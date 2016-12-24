@@ -22,13 +22,13 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+import com.felkertech.cumulustv.activities.CumulusVideoPlayback;
 import com.felkertech.cumulustv.fileio.CloudStorageProvider;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.cumulustv.plugins.CumulusTvPlugin;
 import com.felkertech.cumulustv.Intro.Intro;
 import com.felkertech.cumulustv.services.CumulusJobService;
 import com.felkertech.n.cumulustv.R;
-import com.felkertech.cumulustv.activities.CumulusTvPlayer;
 import com.felkertech.cumulustv.activities.HomepageWebViewActivity;
 import com.felkertech.cumulustv.activities.MainActivity;
 import com.felkertech.cumulustv.model.ChannelDatabase;
@@ -50,7 +50,6 @@ import org.json.JSONException;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -675,8 +674,8 @@ public class ActivityUtils {
     }
 
     public static void openStream(Activity activity, String url) {
-        Intent i = new Intent(activity, CumulusTvPlayer.class);
-        i.putExtra(CumulusTvPlayer.KEY_VIDEO_URL, url);
+        Intent i = new Intent(activity, CumulusVideoPlayback.class);
+        i.putExtra(CumulusVideoPlayback.KEY_VIDEO_URL, url);
         activity.startActivity(i);
     }
 

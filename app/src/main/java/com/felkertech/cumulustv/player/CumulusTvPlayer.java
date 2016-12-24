@@ -110,16 +110,8 @@ public class CumulusTvPlayer implements TvPlayer, ExoPlayer.EventListener {
     }
 
     public void startPlaying(Uri mediaUri) {
-        // Measures bandwidth during playback. Can be null if not required.
-        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-        // Produces DataSource instances through which media data is loaded.
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(mContext,
-                Util.getUserAgent(mContext, "yourApplicationName"), bandwidthMeter);
-        // Produces Extractor instances for parsing the media data.
-        ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
         // This is the MediaSource representing the media to be played.
-        MediaSource videoSource = new ExtractorMediaSource(mediaUri,
-                dataSourceFactory, extractorsFactory, null, null);
+        MediaSource videoSource = MediaSourceFactory.getMediaSourceFor(mContext, mediaUri);
         // Prepare the player with the source.
         mSimpleExoPlayer.prepare(videoSource);
     }

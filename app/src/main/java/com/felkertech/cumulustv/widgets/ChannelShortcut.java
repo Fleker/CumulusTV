@@ -14,7 +14,7 @@ import android.widget.RemoteViews;
 
 import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.R;
-import com.felkertech.cumulustv.activities.CumulusTvPlayer;
+import com.felkertech.cumulustv.activities.CumulusVideoPlayback;
 import com.felkertech.cumulustv.activities.WidgetSelectionActivity;
 import com.felkertech.cumulustv.model.JsonChannel;
 import com.squareup.picasso.Picasso;
@@ -101,8 +101,8 @@ public class ChannelShortcut extends AppWidgetProvider {
         }).start();
         Log.d(TAG, channel.getNumber() + " " + channel.getName());
         views.setTextViewText(R.id.widget_text, channel.getNumber() + " " + channel.getName());
-        Intent i = new Intent(context, CumulusTvPlayer.class);
-        i.putExtra(CumulusTvPlayer.KEY_VIDEO_URL, channel.getMediaUrl());
+        Intent i = new Intent(context, CumulusVideoPlayback.class);
+        i.putExtra(CumulusVideoPlayback.KEY_VIDEO_URL, channel.getMediaUrl());
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, i, 0);
         views.setOnClickPendingIntent(R.id.widget_image, pendingIntent);

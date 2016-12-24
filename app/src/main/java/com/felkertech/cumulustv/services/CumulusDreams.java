@@ -58,7 +58,7 @@ public class CumulusDreams extends DreamService {
             }
             setContentView(R.layout.full_surfaceview);
             SurfaceView sv = (SurfaceView) findViewById(R.id.surface);
-//            CumulusTvPlayer cumulusTvPlayer = new CumulusTvPlayer();
+//            CumulusVideoPlayback cumulusTvPlayer = new CumulusVideoPlayback();
 //            exoPlayer.setSurface(sv.getHolder().getSurface());
 //            exoPlayer.setVolume(0); //No volume for daydream
 

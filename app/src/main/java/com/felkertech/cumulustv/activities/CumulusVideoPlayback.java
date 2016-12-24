@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.MediaController;
@@ -19,21 +18,27 @@ import android.widget.VideoView;
 
 import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.model.JsonChannel;
+import com.felkertech.cumulustv.player.CumulusTvPlayer;
+import com.felkertech.cumulustv.player.CumulusWebPlayer;
 import com.felkertech.n.cumulustv.R;
-import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.media.tv.companionlibrary.TvPlayer;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * Created by Nick on 7/12/2015.
+ * Built-in video playback activity. Just pass URL in an intent.
  */
-@Deprecated
-public class CumulusTvPlayer extends AppCompatActivity {
+public class CumulusVideoPlayback extends AppCompatActivity {
+    private static final String TAG = CumulusVideoPlayback.class.getSimpleName();
+
     private String urlStream;
     private VideoView myVideoView;
-    private String TAG = "cumulus:CumulusTvPlayer";
     public static final String KEY_VIDEO_URL = "VIDEO_URL";
     private com.felkertech.cumulustv.player.CumulusTvPlayer mTvPlayer;
 
@@ -69,7 +74,40 @@ public class CumulusTvPlayer extends AppCompatActivity {
 
             urlStream = parameters.getStringExtra(KEY_VIDEO_URL);
             if(!urlStream.isEmpty()) {
+                TrackSelector trackSelector = new DefaultTrackSelector();
+                LoadControl loadControl = new DefaultLoadControl();
+                mTvPlayer = new CumulusTvPlayer(this, trackSelector, loadControl);
                 setContentView(R.layout.full_surfaceview);
+                SurfaceView sv = (SurfaceView) findViewById(R.id.surface);
+                mTvPlayer.setSurface(sv.getHolder().getSurface());
+                mTvPlayer.setVolume(1);
+                mTvPlayer.registerErrorListener(new CumulusTvPlayer.ErrorListener() {
+                    @Override
+                    public void onError(Exception error) {
+                        Log.e(TAG, error.toString());
+                        if(error.getMessage().contains("Extractor")) {
+                            Log.d(TAG, "Cannot play the stream, try loading it as a website");
+                            Toast.makeText(CumulusVideoPlayback.this,
+                                    "This is not a video stream, interpreting as a website",
+                                    Toast.LENGTH_SHORT).show();
+                            CumulusWebPlayer wv = new CumulusWebPlayer(CumulusVideoPlayback.this,
+                                    new CumulusWebPlayer.WebViewListener() {
+                                @Override
+                                public void onPageFinished() {
+                                    //Don't do anything
+                                }
+                            });
+                            wv.load(urlStream);
+                            setContentView(wv);
+                        }
+                    }
+                });
+                Log.d(TAG, "Start playing " + urlStream);
+                mTvPlayer.startPlaying(Uri.parse(urlStream));
+                mTvPlayer.play();
+            } else {
+                Toast.makeText(this, "No URL found", Toast.LENGTH_SHORT).show();
+                finish();
             }
         }
     }
@@ -97,10 +135,10 @@ public class CumulusTvPlayer extends AppCompatActivity {
                                 .get();
                         ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
                         shortcutManager.removeAllDynamicShortcuts();
-                        Intent playVideo = new Intent(getApplicationContext(), CumulusTvPlayer.class);
+                        Intent playVideo = new Intent(getApplicationContext(), CumulusVideoPlayback.class);
                         playVideo.setAction("play");
                         playVideo.putExtra(KEY_VIDEO_URL, urlStream);
-                        ShortcutInfo shortcut = new ShortcutInfo.Builder(CumulusTvPlayer.this, "id1")
+                        ShortcutInfo shortcut = new ShortcutInfo.Builder(CumulusVideoPlayback.this, "id1")
                                 .setShortLabel(jsonChannel.getName())
                                 .setLongLabel(jsonChannel.getNumber() + " - " + jsonChannel.getName())
                                 .setIcon(Icon.createWithBitmap(logoBitmap))
