@@ -88,6 +88,7 @@ public class CumulusTvTifService extends BaseTvInputService {
 
         @Override
         public boolean onPlayProgram(Program program, long startPosMs) {
+            Log.d(TAG, "Play program " + program.getTitle());
             if (program == null) {
                 requestEpgSync(getCurrentChannelUri());
                 notifyVideoUnavailable(TvInputManager.VIDEO_UNAVAILABLE_REASON_TUNING);
@@ -147,12 +148,8 @@ public class CumulusTvTifService extends BaseTvInputService {
 
         private void createPlayer(int videoType, Uri videoUrl) {
             releasePlayer();
-            TrackSelector trackSelector = new DefaultTrackSelector();
 
-            // 2. Create a default LoadControl
-            LoadControl loadControl = new DefaultLoadControl();
-
-            mPlayer = new CumulusTvPlayer(mContext, trackSelector, loadControl);
+            mPlayer = new CumulusTvPlayer(mContext);
             mPlayer.startPlaying(videoUrl);
             mPlayer.registerErrorListener(new CumulusTvPlayer.ErrorListener() {
                 @Override

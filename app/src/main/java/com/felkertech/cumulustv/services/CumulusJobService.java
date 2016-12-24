@@ -1,9 +1,12 @@
 package com.felkertech.cumulustv.services;
 
+import android.content.Intent;
 import android.net.Uri;
 
 import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.model.JsonChannel;
+import com.felkertech.cumulustv.tv.activities.PlaybackQuickSettingsActivity;
+import com.felkertech.n.cumulustv.R;
 import com.google.android.media.tv.companionlibrary.EpgSyncJobService;
 import com.google.android.media.tv.companionlibrary.model.Advertisement;
 import com.google.android.media.tv.companionlibrary.model.Channel;
@@ -44,7 +47,22 @@ public class CumulusJobService extends EpgSyncJobService {
         ipd.setVideoType(TvContractUtils.SOURCE_TYPE_HLS);
 
         try {
-            return ChannelDatabase.getInstance(this).getChannels(ipd);
+            List<Channel> channels = ChannelDatabase.getInstance(this).getChannels(ipd);
+            // Add app linking
+            for (int i = 0; i < channels.size(); i++) {
+                JsonChannel jsonChannel =
+                        ChannelDatabase.getInstance(this).findChannelByMediaUrl(
+                                channels.get(i).getInternalProviderData().getVideoUrl());
+                Channel channel = new Channel.Builder(channels.get(i))
+                    .setAppLinkText(getString(R.string.quick_settings))
+                    .setAppLinkIconUri("https://github.com/Fleker/CumulusTV/blob/master/app/src/m" +
+                        "ain/res/drawable-xhdpi/ic_play_action_normal.png?raw=true")
+                    .setAppLinkPosterArtUri(channels.get(i).getChannelLogo())
+                    .setAppLinkIntent(PlaybackQuickSettingsActivity.getIntent(this, jsonChannel))
+                    .build();
+                channels.set(i, channel);
+            }
+            return channels;
         } catch (JSONException e) {
             e.printStackTrace();
         }

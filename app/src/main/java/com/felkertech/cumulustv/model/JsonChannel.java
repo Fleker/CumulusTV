@@ -1,10 +1,12 @@
 package com.felkertech.cumulustv.model;
 
 import android.content.ComponentName;
+import android.content.Intent;
 import android.media.tv.TvContract;
 import android.support.annotation.NonNull;
 
 import com.felkertech.cumulustv.plugins.CumulusChannel;
+import com.felkertech.cumulustv.tv.activities.PlaybackQuickSettingsActivity;
 import com.felkertech.settingsmanager.common.CommaArray;
 import com.google.android.media.tv.companionlibrary.model.Channel;
 import com.google.android.media.tv.companionlibrary.model.InternalProviderData;

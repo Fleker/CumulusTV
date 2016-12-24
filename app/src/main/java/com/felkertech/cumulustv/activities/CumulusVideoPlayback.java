@@ -74,7 +74,7 @@ public class CumulusVideoPlayback extends AppCompatActivity {
 
             urlStream = parameters.getStringExtra(KEY_VIDEO_URL);
             if(!urlStream.isEmpty()) {
-               mTvPlayer = new CumulusTvPlayer(this);
+                mTvPlayer = new CumulusTvPlayer(this);
                 setContentView(R.layout.full_surfaceview);
                 SurfaceView sv = (SurfaceView) findViewById(R.id.surface);
                 mTvPlayer.setSurface(sv.getHolder().getSurface());
