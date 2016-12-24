@@ -36,10 +36,13 @@ import com.felkertech.cumulustv.fileio.LocalFileParser;
 import com.felkertech.cumulustv.fileio.M3uParser;
 import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.model.JsonChannel;
+import com.felkertech.cumulustv.player.CumulusTvPlayer;
 import com.felkertech.cumulustv.utils.AppUtils;
 import com.felkertech.cumulustv.utils.PermissionUtils;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.settingsmanager.common.CommaArray;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.media.tv.companionlibrary.TvPlayer;
 
 import org.json.JSONException;
 
@@ -66,6 +69,7 @@ public class MainPicker extends CumulusTvPlugin {
 
     private String label = "";
     private IMainPicker mPickerDialog;
+    private CumulusTvPlayer mTvPlayer;
     private TextWatcher filterTextWatcher = new TextWatcher() {
 
         @Override
@@ -170,6 +174,14 @@ public class MainPicker extends CumulusTvPlugin {
             SurfaceView sv = (SurfaceView) mPickerDialog.getCustomView().findViewById(R.id.surface);
             sv.getHolder().getSurface().release();
         }
+        if (mTvPlayer != null) {
+            mTvPlayer.setSurface(null);
+            mTvPlayer.stop();
+            mTvPlayer.release();
+        } else {
+            Log.w(TAG, "TvInputPlayer is null.");
+        }
+        mTvPlayer = null;
         super.onStop();
     }
 
@@ -304,10 +316,54 @@ public class MainPicker extends CumulusTvPlugin {
             return;
         }
         SurfaceView sv = (SurfaceView) viewHolder.getCustomView().findViewById(R.id.surface);
+        mTvPlayer = new CumulusTvPlayer(this);
+        mTvPlayer.setSurface(sv.getHolder().getSurface());
+        try {
+            mTvPlayer.startPlaying(Uri.parse(url));
+        } catch(Exception e) {
+            //Do nothing
+            Log.d(TAG, "IllegalArgumentException");
+        }
+        mTvPlayer.play();
+        mTvPlayer.registerCallback(new TvPlayer.Callback() {
+            @Override
+            public void onStarted() {
+                super.onStarted();
+                mPickerDialog.handlePlaybackSuccess();
+            }
+        });
+        mTvPlayer.registerErrorListener(new CumulusTvPlayer.ErrorListener() {
+            @Override
+            public void onError(Exception error) {
+                mPickerDialog.handlePlaybackError(error);
+            }
+        });
     }
 
     public void loadStream(IMainPicker viewHolder, final String url) {
         SurfaceView sv = (SurfaceView) viewHolder.getCustomView().findViewById(R.id.surface);
+        mTvPlayer = new CumulusTvPlayer(this);
+        mTvPlayer.setSurface(sv.getHolder().getSurface());
+        try {
+            mTvPlayer.startPlaying(Uri.parse(url));
+        } catch(Exception e) {
+            //Do nothing
+            Log.d(TAG, "IllegalArgumentException");
+        }
+        mTvPlayer.play();
+        mTvPlayer.registerCallback(new TvPlayer.Callback() {
+            @Override
+            public void onStarted() {
+                super.onStarted();
+                mPickerDialog.handlePlaybackSuccess();
+            }
+        });
+        mTvPlayer.registerErrorListener(new CumulusTvPlayer.ErrorListener() {
+            @Override
+            public void onError(Exception error) {
+                mPickerDialog.handlePlaybackError(error);
+            }
+        });
     }
 
     public String getUrl() {

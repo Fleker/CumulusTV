@@ -8,6 +8,7 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.Surface;
 
+import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -19,6 +20,7 @@ import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -42,6 +44,10 @@ public class CumulusTvPlayer implements TvPlayer, ExoPlayer.EventListener {
     private SimpleExoPlayer mSimpleExoPlayer;
     private float mPlaybackSpeed;
     private Context mContext;
+
+    public CumulusTvPlayer(Context context) {
+        this(context,  new DefaultTrackSelector(), new DefaultLoadControl());
+    }
 
     public CumulusTvPlayer(Context context, TrackSelector trackSelector, LoadControl loadControl) {
         mSimpleExoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector, loadControl);

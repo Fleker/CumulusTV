@@ -159,7 +159,7 @@
             android:layout_height="135dp" />
         <TextView
             android:layout_width="match_parent"
-            android:text="Cannot resolve URL."
+            android:text="."
             android:id="@+id/playback_error"
             android:textColor="@android:color/holo_orange_dark"
             android:layout_marginTop="16dp"
