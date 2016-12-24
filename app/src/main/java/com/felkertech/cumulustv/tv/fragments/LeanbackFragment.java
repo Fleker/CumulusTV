@@ -95,6 +95,7 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
         @Override
         public void onUploadCompleted() {
             refreshUI(); // Probably need to reload anyway
+            Toast.makeText(mActivity, "Data uploaded to Google Drive", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -159,7 +160,13 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
         } else if(mActivity == null) {
             return;
         }
-        ChannelDatabase cd = ChannelDatabase.getInstance(mActivity);
+        ChannelDatabase cd;
+        try {
+             cd = ChannelDatabase.getInstance(mActivity);
+        } catch (ChannelDatabase.MalformedChannelDataException e) {
+            ActivityUtils.handleMalformedChannelData(getActivity(), gapi, e);
+            return;
+        }
         Map<String, ListRow> genresListRows = new HashMap<>();
         try {
             CardPresenter channelCardPresenter = new CardPresenter();
@@ -168,7 +175,6 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
             for(JsonChannel jsonChannel : cd.getJsonChannels()) {
                 if (DEBUG) {
                     Log.d(TAG, "Got channels " + jsonChannel.getName());
-                    Log.d(TAG, jsonChannel.getLogo());
                 }
                 String[] genres = jsonChannel.getGenres();
                 for (String genre : genres) {
@@ -290,6 +296,7 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
 
     @Override
     public void onConnected(Bundle bundle) {
+        ActivityUtils.onConnected(gapi);
         Log.d(TAG, "onConnected");
 
         sm.setGoogleDriveSyncable(gapi, new DriveSettingsManager.GoogleDriveListener() {

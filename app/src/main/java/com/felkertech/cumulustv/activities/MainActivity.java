@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.d(TAG, "onCreate");
         sm = new DriveSettingsManager(this);
         ActivityUtils.openIntroIfNeeded(this);
+        CloudStorageProvider.getInstance().autoConnect(this);
         try {
             final ChannelDatabase channelDatabase = ChannelDatabase.getInstance(MainActivity.this);
             Fabric.with(this, new Crashlytics());
@@ -160,7 +161,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                     try {
                                         for (JsonChannel jsonChannel :
                                                 channelDatabase.getJsonChannels()) {
-                                            if (jsonChannel.getGenresString().contains(selectedGenre)) {
+                                            if (jsonChannel.getGenresString() != null
+                                                && jsonChannel.getGenresString()
+                                                    .contains(selectedGenre)) {
                                                 jsonChannelList.add(jsonChannel);
                                                 channelNames.add(jsonChannel.getNumber() + " " +
                                                         jsonChannel.getName());
@@ -202,6 +205,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(Bundle bundle) {
+        ActivityUtils.onConnected(gapi);
         Log.d(TAG, "onConnected");
         if(md != null) {
             if(md.isShowing()) {
@@ -241,14 +245,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         @Override
                         public void onPositive(MaterialDialog dialog) {
                             super.onPositive(dialog);
-                            Drive.DriveApi.newDriveContents(gapi)
+                            Drive.DriveApi.newDriveContents(ActivityUtils.getGoogleApiClient())
                                     .setResultCallback(driveContentsCallback);
                         }
                     })
                     .show();
         } else {
             //Great, user already has sync enabled, let's resync
-            ActivityUtils.readDriveData(MainActivity.this, gapi);
+            ActivityUtils.readDriveData(MainActivity.this, ActivityUtils.getGoogleApiClient());
         }
     }
 

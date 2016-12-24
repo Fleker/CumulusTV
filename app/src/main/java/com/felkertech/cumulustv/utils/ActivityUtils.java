@@ -752,4 +752,8 @@ public class ActivityUtils {
             e.printStackTrace();
         }
     }
+
+    public static void onConnected(GoogleApiClient gapi) {
+        mGoogleApiClient = gapi;
+    }
 }

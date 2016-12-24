@@ -125,6 +125,10 @@ public class CumulusVideoPlayback extends AppCompatActivity {
                 if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                     JsonChannel jsonChannel = ChannelDatabase.getInstance(getApplicationContext())
                             .findChannelByMediaUrl(urlStream);
+                    if (jsonChannel == null) {
+                        // Don't create a shortcut because we don't have metadata
+                        return;
+                    }
                     Log.d(TAG, "Adding dynamic shortcut to " + jsonChannel.getName());
                     String logo = ChannelDatabase.getNonNullChannelLogo(jsonChannel);
                     try {
@@ -137,7 +141,7 @@ public class CumulusVideoPlayback extends AppCompatActivity {
                         playVideo.setAction("play");
                         playVideo.putExtra(KEY_VIDEO_URL, urlStream);
                         ShortcutInfo shortcut = new ShortcutInfo.Builder(CumulusVideoPlayback.this, "id1")
-                                .setShortLabel(jsonChannel.getName())
+                                .setShortLabel(jsonChannel.getName()+"")
                                 .setLongLabel(jsonChannel.getNumber() + " - " + jsonChannel.getName())
                                 .setIcon(Icon.createWithBitmap(logoBitmap))
                                 .setIntent(playVideo)
