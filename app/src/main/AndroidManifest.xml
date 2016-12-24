@@ -287,6 +287,10 @@
 
         <receiver android:name="com.felkertech.cumulustv.receivers.TvBootReceiver"
             android:enabled="true" />
+
+        <activity android:name="com.felkertech.cumulustv.tv.activities.TifSetupActivity"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>
