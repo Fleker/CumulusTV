@@ -152,5 +152,7 @@
     <string name="error_sync_canceled">Sync canceled</string>
     <string name="error_sync_no_data">No data found</string>
     <string name="error_sync_default">"Scan error %1$d"</string>
+    <string name="streaming_audio">Streaming Audio</string>
+    <string name="msg_no_url_found">No URL found</string>
 </resources>
 

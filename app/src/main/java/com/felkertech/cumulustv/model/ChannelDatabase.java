@@ -301,7 +301,6 @@ public class ChannelDatabase {
 
     public void resetPossibleGenres() throws JSONException {
         JSONArray genres = new JSONArray();
-        genres.put(TvContract.Programs.Genres.ANIMAL_WILDLIFE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             genres.put(TvContract.Programs.Genres.ANIMAL_WILDLIFE);
             genres.put(TvContract.Programs.Genres.ARTS);
@@ -351,15 +350,19 @@ public class ChannelDatabase {
                 mDatabaseHashMap = new HashMap<>();
                 if (cursor != null) {
                     while (cursor.moveToNext()) {
-                        String mediaUrl = cursor.getString(cursor.getColumnIndex(
-                                TvContract.Channels.COLUMN_INTERNAL_PROVIDER_DATA));
-                        long rowId = cursor.getLong(cursor.getColumnIndex(TvContract.Channels._ID));
                         try {
+                            InternalProviderData ipd = new InternalProviderData(
+                                    cursor.getString(cursor.getColumnIndex(
+                                    TvContract.Channels.COLUMN_INTERNAL_PROVIDER_DATA)));
+                            String mediaUrl = ipd.getVideoUrl();
+                            long rowId = cursor.getLong(cursor.getColumnIndex(TvContract.Channels._ID));
                             for (JsonChannel jsonChannel : getJsonChannels()) {
                                 if (jsonChannel.getMediaUrl().equals(mediaUrl)) {
                                     mDatabaseHashMap.put(jsonChannel.getMediaUrl(), rowId);
                                 }
                             }
+                        } catch (InternalProviderData.ParseException e) {
+                            e.printStackTrace();
                         } catch (JSONException ignored) {
                         }
                     }

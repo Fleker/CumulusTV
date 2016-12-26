@@ -122,9 +122,15 @@ public class CumulusTvPlayer implements TvPlayer, ExoPlayer.EventListener {
 
     public void startPlaying(Uri mediaUri) {
         // This is the MediaSource representing the media to be played.
-        MediaSource videoSource = MediaSourceFactory.getMediaSourceFor(mContext, mediaUri);
-        // Prepare the player with the source.
-        mSimpleExoPlayer.prepare(videoSource);
+        try {
+            MediaSource videoSource = MediaSourceFactory.getMediaSourceFor(mContext, mediaUri);
+            // Prepare the player with the source.
+            mSimpleExoPlayer.prepare(videoSource);
+        } catch (MediaSourceFactory.NotMediaException e) {
+            for (ErrorListener listener : mErrorListeners) {
+                listener.onError(e);
+            }
+        }
     }
 
     public void stop() {
@@ -156,11 +162,11 @@ public class CumulusTvPlayer implements TvPlayer, ExoPlayer.EventListener {
         for (Callback tvCallback : mTvCallbacks) {
             if (playWhenReady && playbackState == ExoPlayer.STATE_ENDED) {
                 tvCallback.onCompleted();
-            } else if (playWhenReady && playbackState == ExoPlayer.STATE_READY) {
+            } else if (playWhenReady && playbackState == ExoPlayer.STATE_BUFFERING) {
                 tvCallback.onStarted();
             }
         }
-        Log.d(TAG, "Player state changed to " + playbackState);
+        Log.d(TAG, "Player state changed to " + playbackState + ", PWR: " + playWhenReady);
     }
 
     @Override
@@ -176,8 +182,6 @@ public class CumulusTvPlayer implements TvPlayer, ExoPlayer.EventListener {
     @Override
     public void onPositionDiscontinuity() {
     }
-
-
 
     public interface ErrorListener {
         void onError(Exception error);

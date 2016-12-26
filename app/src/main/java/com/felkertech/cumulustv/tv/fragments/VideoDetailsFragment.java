@@ -188,6 +188,7 @@ public class VideoDetailsFragment extends DetailsFragment
                 if(action.getId() == ACTION_EDIT) {
                     ActivityUtils.editChannel(getActivity(), jsonChannel.getMediaUrl());
                 } else if(action.getId() == ACTION_WATCH) {
+                    Log.d(TAG, ChannelDatabase.getInstance(getActivity()).getHashMap().toString());
                     if (ChannelDatabase.getInstance(getActivity()).getHashMap()
                             .containsKey(jsonChannel.getMediaUrl())) {
                         // Open in Live Channels
