@@ -275,10 +275,6 @@ public class CumulusTvTifService extends BaseTvInputService {
             return tuneTime;
         }
 
-        // FIXME Change initial playback time for live video
-        // FIXME Get player state to play
-        // FIXME Playing video should open in LC
-
         public TvPlayer getTvPlayer() {
             return mPlayer;
         }

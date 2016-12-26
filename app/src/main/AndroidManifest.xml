@@ -39,6 +39,7 @@
         android:allowBackup="true"
         android:banner="@drawable/c_banner_3_2"
         android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@drawable/ic_launcher_round"
         android:label="@string/app_name"
         android:logo="@drawable/c_banner_3_2">
         <activity
