@@ -138,6 +138,12 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mBackgroundManager.setDrawable(getResources().getDrawable(R.drawable.c_background5));
+    }
+
     public void refreshUI() {
         prepareBackgroundManager();
         setupUIElements();
@@ -274,6 +280,7 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
 
             // set fastLane (or headers) background color
             setBrandColor(getResources().getColor(R.color.colorPrimary));
+            mBackgroundManager.setDrawable(getResources().getDrawable(R.drawable.c_background5));
             // set search icon color
 //        setSearchAffordanceColor(getResources().getColor(R.color.search_opaque));
         } catch(Exception ignored) {

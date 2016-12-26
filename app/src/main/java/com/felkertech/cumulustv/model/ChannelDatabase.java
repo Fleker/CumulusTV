@@ -348,6 +348,7 @@ public class ChannelDatabase {
                         ActivityUtils.TV_INPUT_SERVICE.flattenToString());
                 Cursor cursor = contentResolver.query(channelsUri, null, null, null, null);
                 mDatabaseHashMap = new HashMap<>();
+                Log.d(TAG, "Initialize CD HashMap");
                 if (cursor != null) {
                     while (cursor.moveToNext()) {
                         try {
@@ -356,6 +357,7 @@ public class ChannelDatabase {
                                     TvContract.Channels.COLUMN_INTERNAL_PROVIDER_DATA)));
                             String mediaUrl = ipd.getVideoUrl();
                             long rowId = cursor.getLong(cursor.getColumnIndex(TvContract.Channels._ID));
+                            Log.d(TAG, "Try to match " + mediaUrl + " " + rowId);
                             for (JsonChannel jsonChannel : getJsonChannels()) {
                                 if (jsonChannel.getMediaUrl().equals(mediaUrl)) {
                                     mDatabaseHashMap.put(jsonChannel.getMediaUrl(), rowId);
