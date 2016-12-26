@@ -146,5 +146,11 @@
     <string name="loading_data">Loading data</string>
     <string name="export_m3u">Export M3u Playlist</string>
     <string name="search_results">Search results</string>
+    <string name="msg_open_web">This is not a video stream, interpreting as a website</string>
+    <string name="sync_channels">Sync channels</string>
+    <string name="in_progress">In Progress</string>
+    <string name="error_sync_canceled">Sync canceled</string>
+    <string name="error_sync_no_data">No data found</string>
+    <string name="error_sync_default">"Scan error %1$d"</string>
 </resources>
 

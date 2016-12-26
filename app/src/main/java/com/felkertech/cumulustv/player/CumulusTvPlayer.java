@@ -175,8 +175,9 @@ public class CumulusTvPlayer implements TvPlayer, ExoPlayer.EventListener {
 
     @Override
     public void onPositionDiscontinuity() {
-
     }
+
+
 
     public interface ErrorListener {
         void onError(Exception error);

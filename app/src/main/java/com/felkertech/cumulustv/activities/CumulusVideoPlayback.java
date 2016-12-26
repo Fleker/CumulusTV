@@ -86,7 +86,7 @@ public class CumulusVideoPlayback extends AppCompatActivity {
                         if(error.getMessage().contains("Extractor")) {
                             Log.d(TAG, "Cannot play the stream, try loading it as a website");
                             Toast.makeText(CumulusVideoPlayback.this,
-                                    "This is not a video stream, interpreting as a website",
+                                    R.string.msg_open_web,
                                     Toast.LENGTH_SHORT).show();
                             CumulusWebPlayer wv = new CumulusWebPlayer(CumulusVideoPlayback.this,
                                     new CumulusWebPlayer.WebViewListener() {
