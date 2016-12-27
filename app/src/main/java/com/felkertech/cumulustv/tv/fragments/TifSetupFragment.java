@@ -39,9 +39,9 @@ public class TifSetupFragment extends ChannelSetupFragment {
         setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark));
         setBadge(getResources().getDrawable(R.mipmap.ic_launcher));
         setChannelListVisibility(true);
-        setTitle("Cumulus TV");
+        setTitle(getString(R.string.app_name));
         setDescription("");
-        setButtonText("Sync channels");
+        setButtonText(getString(R.string.sync_channels));
         return fragmentView;
     }
 
@@ -54,7 +54,7 @@ public class TifSetupFragment extends ChannelSetupFragment {
         new SettingsManager(getActivity())
                 .setString(EpgSyncJobService.BUNDLE_KEY_INPUT_ID, mInputId);
 
-        setButtonText("In Progress");
+        setButtonText(getString(R.string.in_progress));
     }
 
     @Override
@@ -81,14 +81,14 @@ public class TifSetupFragment extends ChannelSetupFragment {
         mErrorFound = true;
         switch (reason) {
             case EpgSyncJobService.ERROR_EPG_SYNC_CANCELED:
-                setDescription("Sync canceled");
+                setDescription(getString(R.string.error_sync_canceled));
                 break;
             case EpgSyncJobService.ERROR_NO_PROGRAMS:
             case EpgSyncJobService.ERROR_NO_CHANNELS:
-                setDescription("No data found");
+                setDescription(getString(R.string.error_sync_no_data));
                 break;
             default:
-                setDescription("Scan error " + reason);
+                setDescription(getString(R.string.error_sync_default, reason));
                 break;
         }
     }

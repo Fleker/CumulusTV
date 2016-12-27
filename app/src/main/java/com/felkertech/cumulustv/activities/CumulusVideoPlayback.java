@@ -20,6 +20,7 @@ import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.model.JsonChannel;
 import com.felkertech.cumulustv.player.CumulusTvPlayer;
 import com.felkertech.cumulustv.player.CumulusWebPlayer;
+import com.felkertech.cumulustv.player.MediaSourceFactory;
 import com.felkertech.n.cumulustv.R;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.LoadControl;
@@ -83,10 +84,10 @@ public class CumulusVideoPlayback extends AppCompatActivity {
                     @Override
                     public void onError(Exception error) {
                         Log.e(TAG, error.toString());
-                        if(error.getMessage().contains("Extractor")) {
+                        if(error instanceof MediaSourceFactory.NotMediaException) {
                             Log.d(TAG, "Cannot play the stream, try loading it as a website");
                             Toast.makeText(CumulusVideoPlayback.this,
-                                    "This is not a video stream, interpreting as a website",
+                                    R.string.msg_open_web,
                                     Toast.LENGTH_SHORT).show();
                             CumulusWebPlayer wv = new CumulusWebPlayer(CumulusVideoPlayback.this,
                                     new CumulusWebPlayer.WebViewListener() {
@@ -104,7 +105,7 @@ public class CumulusVideoPlayback extends AppCompatActivity {
                 mTvPlayer.startPlaying(Uri.parse(urlStream));
                 mTvPlayer.play();
             } else {
-                Toast.makeText(this, "No URL found", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.msg_no_url_found, Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
@@ -125,6 +126,10 @@ public class CumulusVideoPlayback extends AppCompatActivity {
                 if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                     JsonChannel jsonChannel = ChannelDatabase.getInstance(getApplicationContext())
                             .findChannelByMediaUrl(urlStream);
+                    if (jsonChannel == null) {
+                        // Don't create a shortcut because we don't have metadata
+                        return;
+                    }
                     Log.d(TAG, "Adding dynamic shortcut to " + jsonChannel.getName());
                     String logo = ChannelDatabase.getNonNullChannelLogo(jsonChannel);
                     try {
@@ -137,7 +142,7 @@ public class CumulusVideoPlayback extends AppCompatActivity {
                         playVideo.setAction("play");
                         playVideo.putExtra(KEY_VIDEO_URL, urlStream);
                         ShortcutInfo shortcut = new ShortcutInfo.Builder(CumulusVideoPlayback.this, "id1")
-                                .setShortLabel(jsonChannel.getName())
+                                .setShortLabel(jsonChannel.getName()+"")
                                 .setLongLabel(jsonChannel.getNumber() + " - " + jsonChannel.getName())
                                 .setIcon(Icon.createWithBitmap(logoBitmap))
                                 .setIntent(playVideo)

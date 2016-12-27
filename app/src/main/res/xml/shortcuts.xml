@@ -2,7 +2,7 @@
     <shortcut
         android:shortcutId="newchannel"
         android:enabled="true"
-        android:icon="@drawable/ic_airplay_black"
+        android:icon="@drawable/icon_add_channel"
         android:shortcutShortLabel="@string/add_channel_txt"
         android:shortcutLongLabel="@string/add_channel_txt"
         android:shortcutDisabledMessage="@string/add_channel_txt">

@@ -39,6 +39,7 @@
         android:allowBackup="true"
         android:banner="@drawable/c_banner_3_2"
         android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@drawable/ic_launcher_round"
         android:label="@string/app_name"
         android:logo="@drawable/c_banner_3_2">
         <activity
@@ -274,7 +275,7 @@
 
         <service
             android:name="com.felkertech.cumulustv.tv.CumulusTvTifService"
-            android:label="Cumulus TV Label"
+            android:label="@string/app_name"
             android:permission="android.permission.BIND_TV_INPUT">
             <!-- Required filter used by the system to launch our account service. -->
             <intent-filter>

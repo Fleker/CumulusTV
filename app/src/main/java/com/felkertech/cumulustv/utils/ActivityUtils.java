@@ -68,7 +68,7 @@ public class ActivityUtils {
     public static final int REQUEST_CODE_OPENER = 104;
     public static final int PERMISSION_EXPORT_M3U = 201;
     public static final ComponentName TV_INPUT_SERVICE =
-            new ComponentName("com.felkertech.cumulustv.tv", ".CumulusTvService");
+            new ComponentName("com.felkertech.cumulustv.tv", ".CumulusTvTifService");
 
     public final static int LAST_GOOD_BUILD = 27;
 
@@ -751,5 +751,9 @@ public class ActivityUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void onConnected(GoogleApiClient gapi) {
+        mGoogleApiClient = gapi;
     }
 }

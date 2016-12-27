@@ -95,6 +95,7 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
         @Override
         public void onUploadCompleted() {
             refreshUI(); // Probably need to reload anyway
+            Toast.makeText(mActivity, "Data uploaded to Google Drive", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -137,6 +138,12 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mBackgroundManager.setDrawable(getResources().getDrawable(R.drawable.c_background5));
+    }
+
     public void refreshUI() {
         prepareBackgroundManager();
         setupUIElements();
@@ -159,7 +166,13 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
         } else if(mActivity == null) {
             return;
         }
-        ChannelDatabase cd = ChannelDatabase.getInstance(mActivity);
+        ChannelDatabase cd;
+        try {
+             cd = ChannelDatabase.getInstance(mActivity);
+        } catch (ChannelDatabase.MalformedChannelDataException e) {
+            ActivityUtils.handleMalformedChannelData(getActivity(), gapi, e);
+            return;
+        }
         Map<String, ListRow> genresListRows = new HashMap<>();
         try {
             CardPresenter channelCardPresenter = new CardPresenter();
@@ -168,7 +181,6 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
             for(JsonChannel jsonChannel : cd.getJsonChannels()) {
                 if (DEBUG) {
                     Log.d(TAG, "Got channels " + jsonChannel.getName());
-                    Log.d(TAG, jsonChannel.getLogo());
                 }
                 String[] genres = jsonChannel.getGenres();
                 for (String genre : genres) {
@@ -268,6 +280,7 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
 
             // set fastLane (or headers) background color
             setBrandColor(getResources().getColor(R.color.colorPrimary));
+            mBackgroundManager.setDrawable(getResources().getDrawable(R.drawable.c_background5));
             // set search icon color
 //        setSearchAffordanceColor(getResources().getColor(R.color.search_opaque));
         } catch(Exception ignored) {
@@ -290,6 +303,7 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
 
     @Override
     public void onConnected(Bundle bundle) {
+        ActivityUtils.onConnected(gapi);
         Log.d(TAG, "onConnected");
 
         sm.setGoogleDriveSyncable(gapi, new DriveSettingsManager.GoogleDriveListener() {
@@ -397,20 +411,11 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
                     CloudStorageProvider.getInstance().connect(mActivity);
                 } else if(title.equals(getString(R.string.settings_switch_google_drive))) {
                     CloudStorageProvider.getInstance().pickDriveFile(mActivity);
-                } else if(title.equals(getString(R.string.settings_switch_google_drive))) {
-                    CloudStorageProvider.getInstance().switchFile(mActivity);
                 } else if(title.equals(getString(R.string.settings_browse_plugins))) {
                     ActivityUtils.browsePlugins(mActivity);
                 } else if(title.equals(getString(R.string.settings_refresh_cloud_local))) {
+                    CloudStorageProvider.getInstance().connect(mActivity);
                     ActivityUtils.readDriveData(mActivity, gapi);
-                    Handler h = new Handler(Looper.myLooper()) {
-                        @Override
-                        public void handleMessage(Message msg) {
-                            super.handleMessage(msg);
-                            refreshUI();
-                        }
-                    };
-                    h.sendEmptyMessageDelayed(0, 4000);
                 } else if(title.equals(getString(R.string.settings_view_licenses))) {
                     ActivityUtils.oslClick(mActivity);
                 } else if(title.equals(getString(R.string.settings_reset_channel_data))) {

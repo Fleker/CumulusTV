@@ -2,6 +2,7 @@ package com.felkertech.cumulustv.tv.presenters;
 
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.Presenter;
+import android.support.v4.content.ContextCompat;
 import android.view.ContextThemeWrapper;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -30,7 +31,7 @@ public class OptionsCardPresenter extends CardPresenter {
         ImageCardView cardView = new ImageCardView(contextThemeWrapper);
         cardView.setFocusable(true);
         cardView.setFocusableInTouchMode(true);
-        cardView.setBackgroundColor(parent.getResources().getColor(R.color.colorPrimaryDark));
+        cardView.setBackgroundColor(parent.getResources().getColor(R.color.colorPrimary));
         return new ViewHolder(cardView);
     }
 
@@ -46,5 +47,7 @@ public class OptionsCardPresenter extends CardPresenter {
         cardView.setTitleText(option.getText());
         cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
         cardView.getMainImageView().setScaleType(ImageView.ScaleType.FIT_CENTER);
+        cardView.findViewById(R.id.info_field).setBackgroundColor(
+                ContextCompat.getColor(contextThemeWrapper, R.color.colorPrimaryDark));
     }
 }

@@ -1,0 +1,8 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_circle" />
+    <item android:drawable="@drawable/ic_airplay_purple"
+        android:left="6dp"
+        android:top="6dp"
+        android:height="12dp"
+        android:width="12dp" />
+</layer-list>

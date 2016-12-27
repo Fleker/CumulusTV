@@ -122,6 +122,12 @@ public class VideoDetailsFragment extends DetailsFragment
         mBackgroundManager.setDrawable(getResources().getDrawable(R.drawable.c_background5));
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateBackground();
+    }
+
     private void setupAdapter() {
         mPresenterSelector = new ClassPresenterSelector();
         mAdapter = new ArrayObjectAdapter(mPresenterSelector);
@@ -188,6 +194,7 @@ public class VideoDetailsFragment extends DetailsFragment
                 if(action.getId() == ACTION_EDIT) {
                     ActivityUtils.editChannel(getActivity(), jsonChannel.getMediaUrl());
                 } else if(action.getId() == ACTION_WATCH) {
+                    Log.d(TAG, ChannelDatabase.getInstance(getActivity()).getHashMap().toString());
                     if (ChannelDatabase.getInstance(getActivity()).getHashMap()
                             .containsKey(jsonChannel.getMediaUrl())) {
                         // Open in Live Channels

@@ -58,7 +58,7 @@ public class MediaSourceFactory {
                 return new ExtractorMediaSource(mediaUri, mediaDataSourceFactory,
                         new DefaultExtractorsFactory(), mainHandler, null);
             default: {
-                throw new IllegalStateException("Unsupported type: " + type);
+                throw new NotMediaException("Unsupported type: " + type);
             }
         }
     }
@@ -83,5 +83,11 @@ public class MediaSourceFactory {
              DefaultBandwidthMeter bandwidthMeter) {
         String userAgent = Util.getUserAgent(context, "ExoPlayerDemo");
         return new DefaultHttpDataSourceFactory(userAgent, bandwidthMeter);
+    }
+
+    public static class NotMediaException extends IllegalArgumentException {
+        public NotMediaException(String s) {
+            super(s);
+        }
     }
 }
