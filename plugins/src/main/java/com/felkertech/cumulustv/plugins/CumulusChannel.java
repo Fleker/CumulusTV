@@ -86,7 +86,7 @@ public class CumulusChannel implements JsonContainer {
         return splashscreen;
     }
 
-    public JSONObject toJSON() throws JSONException {
+    public JSONObject toJson() throws JSONException {
         JSONObject object = new JSONObject();
         object.put(KEY_AUDIO_ONLY, isAudioOnly());
         object.put(KEY_EPG_URL, getEpgUrl());
@@ -102,7 +102,7 @@ public class CumulusChannel implements JsonContainer {
 
     public String toString() {
         try {
-            return toJSON().toString();
+            return toJson().toString();
         } catch (JSONException e) {
             throw new RuntimeException(e.getMessage());
         }

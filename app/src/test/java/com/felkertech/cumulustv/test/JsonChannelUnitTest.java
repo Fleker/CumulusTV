@@ -74,7 +74,7 @@ public class JsonChannelUnitTest extends TestCase {
                 .setNumber(NUMBER)
                 .setSplashscreen(SPLASHSCREEN)
                 .build();
-        JSONObject jsonObject = channel.toJSON();
+        JSONObject jsonObject = channel.toJson();
         JsonChannel clonedChannel = new JsonChannel.Builder(jsonObject)
                 .build();
         assertEquals(channel, clonedChannel);

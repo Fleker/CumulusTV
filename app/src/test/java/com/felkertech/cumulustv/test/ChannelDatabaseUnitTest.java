@@ -2,6 +2,7 @@ package com.felkertech.cumulustv.test;
 
 import android.os.Build;
 
+import com.felkertech.cumulustv.model.JsonListing;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.n.cumulustv.BuildConfig;
 import com.felkertech.cumulustv.MockChannelDatabase;
@@ -81,7 +82,7 @@ public class ChannelDatabaseUnitTest extends TestCase {
         assertEquals(sampleChannel, jsonChannelList.get(0));
 
         JSONArray jsonArray = mockChannelDatabase.getJSONArray();
-        assertEquals(sampleChannel.toJSON().toString(), jsonArray.getJSONObject(0).toString());
+        assertEquals(sampleChannel.toJson().toString(), jsonArray.getJSONObject(0).toString());
 
         String[] channelNames = mockChannelDatabase.getChannelNames();
         assertEquals(sampleChannel.getNumber() + " " + sampleChannel.getName(), channelNames[0]);
@@ -108,5 +109,15 @@ public class ChannelDatabaseUnitTest extends TestCase {
         assertTrue(mockChannelDatabase.channelExists(sampleChannel));
         assertTrue(mockChannelDatabase.channelNumberExists(NUMBER));
         assertEquals(sampleChannel, mockChannelDatabase.findChannelByMediaUrl(MEDIA_URL));
+    }
+
+    @Test
+    public void testJsonListingParsing() throws JSONException {
+        MockChannelDatabase mockChannelDatabase =
+                MockChannelDatabase.getMockedInstance(RuntimeEnvironment.application);
+        JsonListing listing = new JsonListing.Builder()
+                .setUrl(JsonListingUnitTest.M3U_URL)
+                .build();
+        // TODO Need to add JSON Listings to database
     }
 }

@@ -57,8 +57,9 @@ public class JsonListing implements JsonContainer {
             }
         }
 
-        public void setUrl(String url) {
+        public Builder setUrl(String url) {
             mJsonListing.url = url;
+            return this;
         }
 
         public JsonListing build() {

@@ -54,6 +54,11 @@ public class ChannelDatabase {
     public static ChannelDatabase getInstance(Context context) {
         if (mChannelDatabase == null) {
             mChannelDatabase = new ChannelDatabase(context);
+            try {
+                mChannelDatabase.readJsonListings();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         mChannelDatabase.initializeHashMap(context);
         return mChannelDatabase;
@@ -200,7 +205,7 @@ public class ChannelDatabase {
                         .build();
             }
             JSONArray channels = mJsonObject.getJSONArray(KEY_CHANNELS);
-            channels.put(channel.toJSON());
+            channels.put(channel.toJson());
             save();
         }
     }
@@ -227,8 +232,8 @@ public class ChannelDatabase {
                                     Log.d(TAG, "Remove " + i[0] + " and put at " + i[0] + ": " +
                                             channel1.toString());
                                 }
-                                channels.put(i[0], channel1.toJSON());
-                                mJsonObject.getJSONArray(KEY_CHANNELS).put(i[0], channel1.toJSON());
+                                channels.put(i[0], channel1.toJson());
+                                mJsonObject.getJSONArray(KEY_CHANNELS).put(i[0], channel1.toJson());
                                 save();
                                 return;
                             }
@@ -257,7 +262,7 @@ public class ChannelDatabase {
                                 Log.d(TAG, "Remove " + i[0] + " and put at " + i[0] + ": " +
                                         channel.toString());
                             }
-                            channels.put(i[0], channel.toJSON());
+                            channels.put(i[0], channel.toJson());
                             mJsonObject.getJSONArray(KEY_CHANNELS).remove(i[0]);
                             save();
                             return;
@@ -455,7 +460,7 @@ public class ChannelDatabase {
      * Scans through user data to find all json listings and add them to a temporary object in
      * memory.
      */
-    private void readJsonListings() throws JSONException {
+    protected void readJsonListings() throws JSONException {
         JSONArray jsonArray = getJSONArray();
         for (int i = 0; i < jsonArray.length(); i++) {
             ChannelDatabaseFactory.parseType(jsonArray.getJSONObject(i), new ChannelDatabaseFactory.ChannelParser() {
