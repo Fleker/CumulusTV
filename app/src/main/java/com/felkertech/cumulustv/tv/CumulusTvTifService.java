@@ -242,15 +242,12 @@ public class CumulusTvTifService extends BaseTvInputService {
                     program.getInternalProviderData().getVideoUrl());
             createPlayer(program.getInternalProviderData().getVideoType(),
                     Uri.parse(program.getInternalProviderData().getVideoUrl()));
-            if (startPosMs > 0) {
-                mPlayer.seekTo(startPosMs);
-            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 notifyTimeShiftStatusChanged(TvInputManager.TIME_SHIFT_STATUS_AVAILABLE);
             }
             mPlayer.play();
             notifyVideoAvailable();
-            Log.d(TAG, "Play");
+            Log.d(TAG, "The video should start playing");
             return true;
         }
 
