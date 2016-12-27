@@ -1,9 +1,11 @@
 # CumulusTV
-Android TV Live Channel Plugin with user-entered stream files
+Android TV Live Channel Plugin with user-entered stream files, powered by the TIF Companion Library.
 
 <img src='https://cloud.githubusercontent.com/assets/3291635/9031614/2a2534ba-3983-11e5-900f-a8cb99f3bf40.png' width='640px'/>
 
 CumulusTV is a service that allows users to add `HLS` (HTTP Live Streaming) files or any website and play them through the Live Channels app on Android TV. Channels can be added through Android TV, or sync your data with Google Drive and edit the data on any computer.
+
+Everything can be found on the project's [website](http://cumulustv.herokuapp.com).
 
 ## Contributing
 This is a community project. I welcome any other developers to contribute to this project as well, whether in the form of a web app, a phone app, or on the Android TV app. Please submit a pull request.
@@ -19,14 +21,13 @@ where a user wanted to add user-defined channels using m3u8 files.
 
 ## To-Do
 * [ ] Find m3u streams to provide as samples
-* [ ] Get program guide data to supply streams if data exists
 
 
 ## Suggested Streams
 To help users quickly setup, I want a set of suggested streams (m3u8 files) that users can add. If you have a suggestion, add it as an issue for this project so I can add it to the list.
 
 ## JSON Format
-Google Drive syncs a JSON file between all your devices that can be easily edited. Here is the format:
+Google Drive syncs a JSON file between all your devices that can be easily edited. The format is below. Of course, you can easily import and export M3U playlists using the built-in parser from a local file or from the web.
 
     { 
       "channels":[      //JSON Array
@@ -50,6 +51,6 @@ To learn how to do this, read <a href="https://github.com/Fleker/CumulusTV/wiki/
 
 ## Photos
 <img src='https://cloud.githubusercontent.com/assets/3291635/9021048/00a04364-37fd-11e5-85be-1e550796d922.png' width='640px'/>
-
-<img src='https://raw.githubusercontent.com/Fleker/CumulusTV/master/device-2016-01-03-194333.png' width='640px'/>
+<br>
+<img src='https://raw.githubusercontent.com/Fleker/CumulusTV/master/store/screenshots/device-2016-01-03-194333.png' width='640px'/>
 Selecting <a href='http://time.is'>http://time.is</a> as a channel source
