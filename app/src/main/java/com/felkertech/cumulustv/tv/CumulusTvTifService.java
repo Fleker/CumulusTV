@@ -187,7 +187,7 @@ public class CumulusTvTifService extends BaseTvInputService {
                                                     R.id.indeterminate_progress_large_library))
                                                     .setBarColor(s.getRgb());
                                         } else if (p.getSwatches().size() > 0) {
-                                            //Go with default if no vibrant swatch exists
+                                            // Go with default if no vibrant swatch exists
                                             if (DEBUG) {
                                                 Log.d(TAG, "No vibrant swatch, " +
                                                         p.getSwatches().size() + " others");

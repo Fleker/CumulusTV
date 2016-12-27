@@ -163,6 +163,11 @@ public class ChannelDatabase {
 
     public void add(CumulusChannel channel) throws JSONException {
         if (mJsonObject != null) {
+            if (channel.getGenresString().isEmpty()) {
+                channel = new CumulusChannel.Builder(channel)
+                        .setGenres(TvContract.Programs.Genres.FAMILY_KIDS)
+                        .build();
+            }
             JSONArray channels = mJsonObject.getJSONArray(KEY_CHANNELS);
             channels.put(channel.toJSON());
             save();
@@ -170,26 +175,28 @@ public class ChannelDatabase {
     }
 
     public void update(CumulusChannel channel) throws JSONException {
+        if (channel.getGenresString().isEmpty()) {
+            channel = new CumulusChannel.Builder(channel)
+                    .setGenres(TvContract.Programs.Genres.FAMILY_KIDS)
+                    .build();
+        }
         if(!channelExists(channel)) {
             add(channel);
         } else {
             try {
                 JSONArray jsonArray = new JSONArray();
                 List<JsonChannel> jsonChannelList = getJsonChannels();
-                int finalindex = -1;
                 for (int i = 0; i < jsonChannelList.size(); i++) {
                     JsonChannel jsonChannel = jsonChannelList.get(i);
-                    if (finalindex >= 0) {
-//                        jsonArray.put(finalindex, ch.toJSON());
-                    } else if(jsonChannel.getMediaUrl().equals(channel.getMediaUrl())) {
+                    if(jsonChannel.getMediaUrl().equals(channel.getMediaUrl())) {
                         if (DEBUG) {
                             Log.d(TAG, "Remove " + i + " and put at " + i + ": " +
                                     channel.toString());
                         }
                         jsonArray.put(i, channel.toJSON());
-                        finalindex = i;
                         mJsonObject.getJSONArray(KEY_CHANNELS).put(i, channel.toJSON());
                         save();
+                        return;
                     }
                 }
             } catch (JSONException ignored) {
@@ -353,7 +360,7 @@ public class ChannelDatabase {
                     while (cursor.moveToNext()) {
                         try {
                             InternalProviderData ipd = new InternalProviderData(
-                                    cursor.getString(cursor.getColumnIndex(
+                                    cursor.getBlob(cursor.getColumnIndex(
                                     TvContract.Channels.COLUMN_INTERNAL_PROVIDER_DATA)));
                             String mediaUrl = ipd.getVideoUrl();
                             long rowId = cursor.getLong(cursor.getColumnIndex(TvContract.Channels._ID));

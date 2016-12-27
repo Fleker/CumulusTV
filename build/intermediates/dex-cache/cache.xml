@@ -39,66 +39,12 @@
     </item>
     <item
         is-multidex="true"
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="21.1.2"
-        sha1="6ec07c5c1c127bf2a73f7ec80f3b04e55b5d29a9">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_c3bd1fd953f464a08654bff215988b0e7eaf91b3\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\customtabs\25.1.0\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="21.1.2"
-        sha1="73591df4ec047e55db9415034d1dfab617fa9f3c">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-customtabs-25.1.0_8df9d5f4bfa4f56aa5d7844fcf6041b1867bcf59\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.crashlytics.sdk.android\crashlytics-core\2.3.4\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="21.1.2"
-        sha1="467417b1695583fbaee8de0e5f4202b6a2b578e1">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.crashlytics.sdk.android-crashlytics-core-2.3.4_adad32cd3238d43ed86bce0c44e82190c6514220\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
         jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-ads-lite\10.0.0\jars\classes.jar"
         jumboMode="true"
         optimize="true"
         revision="21.1.2"
         sha1="849da156edbc1201f5cd6e237524187442a62af3">
         <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.google.android.gms-play-services-ads-lite-10.0.0_f193f71a5816d7434ffc772425934a58121cb0f7\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\guest1\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\25.1.0\support-annotations-25.1.0.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="21.1.2"
-        sha1="64cb6b229a8bdfd907bc8dd46839a0053e4c018d">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-25.1.0_535ba5a7750d488693f01a2f216a3332f7cad55e\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\me.zhanghai.android.materialprogressbar\library\1.1.7\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="21.1.2"
-        sha1="1478a113f04bf0b679037b4f6bd88bd1837b96a3">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\me.zhanghai.android.materialprogressbar-library-1.1.7_54eb24e88af42e926a63742d07b4c68956782f5b\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.afollestad.material-dialogs\core\0.9.0.2\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="21.1.2"
-        sha1="d3f8ab57967a9149262ad36a46477fc2515f6ac8">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.afollestad.material-dialogs-core-0.9.0.2_698b5f838cbf84a0d241c41ed34bead3dca86355\classes.dex" />
     </item>
     <item
         is-multidex="true"
@@ -126,24 +72,6 @@
         revision="21.1.2"
         sha1="1630658fbc2d222b988603c27b4a4249586fbfe7">
         <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-appcompat-v7-25.1.0_58895b89b504137712f1baae866e1ba18f19f9ed\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.google.android.exoplayer\exoplayer\r2.1.1\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="21.1.2"
-        sha1="1b6a8c5921674faf26796e185a60d62065b4f157">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.google.android.exoplayer-exoplayer-r2.1.1_7d9d33875204f7795e21995215386a07f53ab2af\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.crashlytics.sdk.android\crashlytics\2.5.1\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="21.1.2"
-        sha1="2b1fb39b3c4feeb031b00744fbbe464e3d31a88d">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.crashlytics.sdk.android-crashlytics-2.5.1_cc480555bbe81e0348ed71d481ad23db7dfff58a\classes.dex" />
     </item>
     <item
         is-multidex="true"
@@ -192,24 +120,6 @@
     </item>
     <item
         is-multidex="true"
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\support-core-ui\25.1.0\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="21.1.2"
-        sha1="aee64634871d88a419d59eb743c1258a60f19700">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-core-ui-25.1.0_28939220973c2b502c53f824ce85591f6f054869\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\palette-v7\25.1.0\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="21.1.2"
-        sha1="6f68018b5ddc2493f5e5cecc5601c05d0539281a">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-palette-v7-25.1.0_747558679cba9638e274c30e8242cc65fc334982\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
         jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.github.fleker\settingsmanager-common\1.2.1\jars\classes.jar"
         jumboMode="true"
         optimize="true"
@@ -219,20 +129,11 @@
     </item>
     <item
         is-multidex="true"
-        jar="C:\Users\guest1\.gradle\caches\modules-2\files-2.1\com.squareup.okio\okio\1.4.0\5b72bf48563ea8410e650de14aa33ff69a3e8c35\okio-1.4.0.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="21.1.2"
-        sha1="5b72bf48563ea8410e650de14aa33ff69a3e8c35">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\okio-1.4.0_49508a8284a0425e4732c1ed6fb14da27b5bb90b\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
         jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
         jumboMode="true"
         optimize="true"
         revision="21.1.2"
-        sha1="b93f57543e8ad6b55e61f37fa305b85195196038">
+        sha1="f373a3a9d3833ff7c2fa5655080a9e1c41d87b4f">
         <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_4b4caa1b237803661472ec2209142847c8b83f84\classes.dex" />
     </item>
     <item
@@ -252,24 +153,6 @@
         revision="21.1.2"
         sha1="2a53c4f3518116b8c6aee0e477233f0f7da8616f">
         <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-fragment-25.1.0_0108e10acd6aab73432f25083e90e703aadeac5f\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\25.1.0\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="21.1.2"
-        sha1="e79aa3d9a16f8c9f16377c0608de70a8f31e5d80">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-vector-drawable-25.1.0_aab49efbc3176f52dc76f363c41b4d8da354012d\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.github.fleker\settingsmanager\1.3.5\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="21.1.2"
-        sha1="50ce22b7e4bbbf49900f49bb9f1d90432f8d629d">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.github.fleker-settingsmanager-1.3.5_e183b9b5be8cb64186e04ae85721ecb7e9710295\classes.dex" />
     </item>
     <item
         is-multidex="true"
@@ -309,24 +192,6 @@
     </item>
     <item
         is-multidex="true"
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\io.fabric.sdk.android\fabric\1.3.5\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="21.1.2"
-        sha1="6e65060ef2ec6ec98365250d2119d7968626fd3f">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\io.fabric.sdk.android-fabric-1.3.5_38585cb3aed0d68f632462b9a262e746f04946d9\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\guest1\.gradle\caches\modules-2\files-2.1\com.google.ads.interactivemedia.v3\interactivemedia\3.5.2\21246e1a6815dc499443d46f9f5dbe954fd2b746\interactivemedia-3.5.2.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="21.1.2"
-        sha1="21246e1a6815dc499443d46f9f5dbe954fd2b746">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\interactivemedia-3.5.2_11ae0d1d5b3b3b3014ffbd63edfbe09cf8d7cbc2\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
         jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-basement\10.0.0\jars\classes.jar"
         jumboMode="true"
         optimize="true"
@@ -363,6 +228,150 @@
     </item>
     <item
         is-multidex="true"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\25.1.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="21.1.2"
+        sha1="6fb6ac3e8d3b9013819920d9ea11f3803c4c0033">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-animated-vector-drawable-25.1.0_545462691a38e70a2de878ded24f3547e0528cc7\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="21.1.2"
+        sha1="86b562594992983d2b8987d51303b11e8870506f">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_c3bd1fd953f464a08654bff215988b0e7eaf91b3\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\customtabs\25.1.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="21.1.2"
+        sha1="73591df4ec047e55db9415034d1dfab617fa9f3c">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-customtabs-25.1.0_8df9d5f4bfa4f56aa5d7844fcf6041b1867bcf59\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.crashlytics.sdk.android\crashlytics-core\2.3.4\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="21.1.2"
+        sha1="467417b1695583fbaee8de0e5f4202b6a2b578e1">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.crashlytics.sdk.android-crashlytics-core-2.3.4_adad32cd3238d43ed86bce0c44e82190c6514220\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\guest1\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\25.1.0\support-annotations-25.1.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="21.1.2"
+        sha1="64cb6b229a8bdfd907bc8dd46839a0053e4c018d">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-25.1.0_535ba5a7750d488693f01a2f216a3332f7cad55e\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\me.zhanghai.android.materialprogressbar\library\1.1.7\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="21.1.2"
+        sha1="1478a113f04bf0b679037b4f6bd88bd1837b96a3">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\me.zhanghai.android.materialprogressbar-library-1.1.7_54eb24e88af42e926a63742d07b4c68956782f5b\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.afollestad.material-dialogs\core\0.9.0.2\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="21.1.2"
+        sha1="d3f8ab57967a9149262ad36a46477fc2515f6ac8">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.afollestad.material-dialogs-core-0.9.0.2_698b5f838cbf84a0d241c41ed34bead3dca86355\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.google.android.exoplayer\exoplayer\r2.1.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="21.1.2"
+        sha1="1b6a8c5921674faf26796e185a60d62065b4f157">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.google.android.exoplayer-exoplayer-r2.1.1_7d9d33875204f7795e21995215386a07f53ab2af\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.crashlytics.sdk.android\crashlytics\2.5.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="21.1.2"
+        sha1="2b1fb39b3c4feeb031b00744fbbe464e3d31a88d">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.crashlytics.sdk.android-crashlytics-2.5.1_cc480555bbe81e0348ed71d481ad23db7dfff58a\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\support-core-ui\25.1.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="21.1.2"
+        sha1="aee64634871d88a419d59eb743c1258a60f19700">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-core-ui-25.1.0_28939220973c2b502c53f824ce85591f6f054869\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\palette-v7\25.1.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="21.1.2"
+        sha1="6f68018b5ddc2493f5e5cecc5601c05d0539281a">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-palette-v7-25.1.0_747558679cba9638e274c30e8242cc65fc334982\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\guest1\.gradle\caches\modules-2\files-2.1\com.squareup.okio\okio\1.4.0\5b72bf48563ea8410e650de14aa33ff69a3e8c35\okio-1.4.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="21.1.2"
+        sha1="5b72bf48563ea8410e650de14aa33ff69a3e8c35">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\okio-1.4.0_49508a8284a0425e4732c1ed6fb14da27b5bb90b\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\25.1.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="21.1.2"
+        sha1="e79aa3d9a16f8c9f16377c0608de70a8f31e5d80">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-vector-drawable-25.1.0_aab49efbc3176f52dc76f363c41b4d8da354012d\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.github.fleker\settingsmanager\1.3.5\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="21.1.2"
+        sha1="50ce22b7e4bbbf49900f49bb9f1d90432f8d629d">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.github.fleker-settingsmanager-1.3.5_e183b9b5be8cb64186e04ae85721ecb7e9710295\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\io.fabric.sdk.android\fabric\1.3.5\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="21.1.2"
+        sha1="6e65060ef2ec6ec98365250d2119d7968626fd3f">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\io.fabric.sdk.android-fabric-1.3.5_38585cb3aed0d68f632462b9a262e746f04946d9\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\guest1\.gradle\caches\modules-2\files-2.1\com.google.ads.interactivemedia.v3\interactivemedia\3.5.2\21246e1a6815dc499443d46f9f5dbe954fd2b746\interactivemedia-3.5.2.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="21.1.2"
+        sha1="21246e1a6815dc499443d46f9f5dbe954fd2b746">
+        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\interactivemedia-3.5.2_11ae0d1d5b3b3b3014ffbd63edfbe09cf8d7cbc2\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.afollestad.material-dialogs\commons\0.9.0.2\jars\classes.jar"
         jumboMode="true"
         optimize="true"
@@ -378,15 +387,6 @@
         revision="21.1.2"
         sha1="b7a78990c10481f43cb4909f535ef4f11e60f1ab">
         <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.crashlytics.sdk.android-beta-1.1.3_012a3fb2689e37eab0e08f51447f9835efe5a79c\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\25.1.0\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="21.1.2"
-        sha1="6fb6ac3e8d3b9013819920d9ea11f3803c4c0033">
-        <dex dex="C:\Users\guest1\Development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-animated-vector-drawable-25.1.0_545462691a38e70a2de878ded24f3547e0528cc7\classes.dex" />
     </item>
 
 </items>
