@@ -1,15 +1,18 @@
 package com.felkertech.cumulustv.model;
 
+import com.felkertech.cumulustv.plugins.JsonContainer;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static com.felkertech.cumulustv.model.ChannelDatabaseFactory.KEY_TYPE;
+import static com.felkertech.cumulustv.model.ChannelDatabaseFactory.TYPE_JSON_LISTING;
 
 /**
  * A type of data structure that simply links to a Url. This Url can be an M3U playlist which is
  * updated every time the app syncs.
  */
-public class JsonListing {
-    private static final String KEY_TYPE = "type";
-    private static final String TYPE_JSON_LISTING = "jsonlisting";
+public class JsonListing implements JsonContainer {
     private static final String KEY_URL = "url";
 
     private String url;
@@ -45,6 +48,13 @@ public class JsonListing {
 
         public Builder(JsonListing listing) {
             mJsonListing.url = listing.url;
+        }
+
+        public Builder(JSONObject object) {
+            try {
+                mJsonListing.url = object.getString(KEY_URL);
+            } catch (JSONException ignored) {
+            }
         }
 
         public void setUrl(String url) {

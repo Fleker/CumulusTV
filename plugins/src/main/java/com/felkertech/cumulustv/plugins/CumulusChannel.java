@@ -15,7 +15,7 @@ import java.util.Objects;
  * @author Nick
  * @version 2016.09.04
  */
-public class CumulusChannel {
+public class CumulusChannel implements JsonContainer {
     private static final String KEY_AUDIO_ONLY = "audioOnly";
     private static final String KEY_EPG_URL = "epgUrl";
     private static final String KEY_GENRES = "genres";
