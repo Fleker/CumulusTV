@@ -6,46 +6,45 @@
     <string name="intro_msg_1">"CumulusTV vous permet de créer des chaînes personnalisés qui peuvent être lues via l'application Chaînes en direct. Vous ne savez pas quoi regarder ? Parcourez les chaînes suggérées."</string>
     <string name="intro_title_2">"Utilisez Google Drive"</string>
     <string name="intro_msg_2">"Vous pouvez créer un fichier JSON sur Google Drive et avoir vos chaînes synchronisées sur tous vos appareils."</string>
-    <string name="intro_title_21">Comment synchroniser</string>
-    <string name="intro_msg_21">"-Créer un fichier JSON synchronisable via Google Drive \n-Créer une chaîne \n-Le fichier devrait apparaître sur votre ordinateur. \n Vous pouvez ajouter plusieurs chaînes ici. \n-Modifier les noms, ou ajouter une URL de splashscreen... \nLes données sont synchronisées automatiquement périodiquement."</string>
-	<string name="intro_title_3">"Rapport de problèmes"</string>
-    <string name="intro_msg_3">"Vous pouvez parcourir le code source sur GitHub et signaler tout problème que vous rencontrez ou suggérer une fonctionnalité. Vous avez un problème avec le JSON ? Vous pouvez consulter le format là."</string>
+    <string name="intro_title_21">Comment synchroniser ?</string>
+    <string name="intro_msg_21">"- Créer un fichier JSON synchronisable via Google Drive \n- Créer une chaîne \n- Le fichier devrait apparaître sur votre ordinateur. \n Vous pouvez y ajouter plusieurs chaînes. \n- Modifier les noms, ou ajouter une URL de splashscreen... \nLes données seront synchronisées périodiquement."</string>
+    <string name="intro_title_3">"Rapport de problèmes"</string>
+    <string name="intro_msg_3">"Vous pouvez parcourir le code source sur GitHub et signaler tout problème que vous rencontrez ou suggérer une fonctionnalité. Vous avez un problème avec le JSON ? Vous pouvez y consulter le format."</string>
     <string name="intro_title_4">"Commencer"</string>
     <string name="intro_msg_4">"Après la création de chaînes, allez dans l'application Chaînes en direct. Vous devez vous assurer que vos chaînes soient configurées. Puis, choisissez les chaînes que vous souhaitez visibles."</string>
 
     <string name="about_app_description">"%1$s \nFond d\'écran par Marcelo Franceschini \n \nL\'application est open source et disponible sur GitHub."</string>
-    <string name="search_results">"Résultats de la recherche"</string>
 
     <!--Leanback Menu Items-->
-    <string name="manage_livechannels">"Ouvrir Chaînes TV en direct"</string>
+    <string name="manage_livechannels">"Ouvrir l\'appli Chaînes en direct"</string>
     <string name="manage_add_suggested">"Ajouter une chaîne proposée"</string>
     <string name="manage_add_new">"Ajouter une nouvelle chaîne"</string>
 
-    <string name="settings_sync_file">"File Sync avec Google Drive"</string>
+    <string name="settings_sync_file">"Synchroniser avec Google Drive"</string>
     <string name="settings_browse_plugins">"Parcourir les plugins"</string>
-    <string name="settings_switch_google_drive">"Importer depuis Google Drive"</string>
-    <string name="settings_refresh_cloud_local">Re-télécharger la liste des chaînes</string>
+    <string name="settings_switch_google_drive">"Importer de Google Drive"</string>
+    <string name="settings_refresh_cloud_local">Re-télécharger la liste</string>
     <string name="settings_view_licenses">"Licences des logiciels"</string>
-    <string name="settings_reset_channel_data">"Réinitialiser Data Channel"</string>
+    <string name="settings_reset_channel_data">"Réinit. données des chaînes"</string>
     <string name="settings_about">"À propos de Cumulus TV"</string>
     <string name="settings_read_xmltv">"Lire XMLTV (expérimental)"</string>
 
     <string name="more_actions">"Plus d'actions"</string>
     <string name="create_syncable_file">"Créez un fichier synchronisable"</string>
-    <string name="create_syncable_file_description">"Enregistrer les infos du canal dans Google Drive de sorte que vous pouvez toujours y accéder"</string>
+    <string name="create_syncable_file_description">"Enregistre les infos des châines dans Google Drive de sorte que vous pouvez toujours y accéder"</string>
     <string name="ok">"Ok"</string>
     <string name="yes">"Oui"</string>
     <string name="no">"Non"</string>
     <string name="no_live_channels">L\'application Chaînes en direct est-elle installée ? Email felker.tech@gmail.com"</string>
     <string name="update">Mettre à jour</string>
-    <string name="cancel">Annuler</string>	
+    <string name="cancel">Annuler</string>
     <string name="delete">Supprimer</string>
     <string name="create">Créer</string>
     <string name="done">Terminé</string>
     <string name="select_genres">Genres</string>
     <string name="edit_new_channel">Modifier la chaîne</string>
     <string name="try_again">Réessayer</string>
-	
+
     <string name="downloaded">"Téléchargement effectué"</string>
     <string name="uploaded">"Envoi effectué"</string>
     <string name="invalid_file">"Fichier Drive non valide. Veuillez choisir un fichier différent."</string>
@@ -54,13 +53,13 @@
     <string name="sync_local_cloud">"Écrire les données locales vers le cloud"</string>
 
     <string name="my_channels">"Mes chaînes"</string>
-    <string name="no_channels">"Vous avez pas de flux"</string>
+    <string name="no_channels">"Vous n'avez aucun flux"</string>
     <string name="channel_dupe">"Chaîne déjà ajoutée"</string>
     <string name="channel_added">"%1$s a été ajoutée"</string>
     <string name="here_are_suggested_channels">"Voici quelques chaînes proposées"</string>
     <string name="no_channels_find">"Trouvez quelques flux à ajouter"</string>
     <string name="version">"%1$s"</string>
-	
+
     <string name="permission_action_settings">Afficher les autorisations</string>
     <string name="permission_not_allowed_error">Action non autorisée</string>
     <string name="permission_not_allowed_text">CumulusTV n\'est pas autorisé à accéder à votre espace de stockage, la synchronisation est désactivée. L\'application continuera à fonctionner par elle-même.</string>
@@ -71,11 +70,9 @@
     <string name="import_bulk_wait">Veuillez patienter un moment</string>
 
     <string name="help">Afficher le tutoriel</string>
-	<string name="website">Visiter le site web</string>
+    <string name="website">Visiter le site web</string>
     <string name="daydream_select_channel">Sélectionner une chaîne</string>
     <string name="daydream_success">Daydream a été mis à jour</string>
-
-    <!-- MLC - Music Live Channels -->
 
     <string name="connect_drive">Connexion au Google Drive</string>
     <string name="toast_setup_complete">Configuration terminée. Assurez-vous d\'avoir activées ces chaînes dans la liste des chaînes.</string>
@@ -92,10 +89,10 @@
     <string name="create_sync_file_title">Créer un fichier synchronisable</string>
     <string name="create_sync_file_description">Synchronise la liste des chaînes sur votre Google Drive.</string>
     <string name="toast_error_driveid_invalid">Erreur : DriveId non valide</string>
-    <string name="toast_msg_channels_deleted">Chaînes supprimées</string>
+    <string name="toast_msg_channels_deleted">Données des chaînes supprimées</string>
     <string name="title_delete_all_channels">Supprimer toutes les données des chaînes ?</string>
     <string name="toast_msg_wait_google_api_client">Veuillez patienter jusqu\'à ce que le service Drive soit disponible</string>
-    <string name="software_licenses">Software Licenses</string>
+    <string name="software_licenses">Licences logicielles</string>
     <string name="choose_an_app">Choisissez une application</string>
     <string name="installed_plugins">Plugins installés</string>
     <string name="choose_default_app">Oui, s\'il n\'y a qu\'une seule application, par défaut à celui-là</string>
@@ -111,7 +108,7 @@
     <string name="toast_error_sorry">Désolé, une erreur s\'est produite.</string>
     <string name="edit_channel_name">Éditer les métadonnées de %1$s</string>
     <string name="open_cumulus_tv">Ouvrir Cumulus TV</string>
-    <string name="report_playback_issue">Signaler une erreur de lecture (envoi l\'Url)</string>
+    <string name="report_playback_issue">Signaler une erreur de lecture (envoi l\'URL)</string>
     <string name="quick_settings">Paramètres rapides</string>
     <string name="add_channel_txt">Ajouter une chaîne</string>
     <string name="channel_no_xxx">\"Chaîne # %1$s\"</string>
@@ -123,4 +120,13 @@
     <string name="download_complete">@string/downloaded</string>
     <string name="upload_complete">@string/uploaded</string>
     <string name="export_m3u">Export M3u</string>
+    <string name="search_results">"Résultats de la recherche"</string>
+    <string name="msg_open_web">"Aucun flux vidéo, interprétation comme un site web"</string>
+    <string name="sync_channels">Synchronisation des chaînes</string>
+    <string name="in_progress">En cours</string>
+    <string name="error_sync_canceled">Synchronisation annulée</string>
+    <string name="error_sync_no_data">Aucune donnée détectée</string>
+    <string name="error_sync_default">"Erreur lors du scan : %1$d"</string>
+    <string name="streaming_audio">Streaming audio</string>
+    <string name="msg_no_url_found">Aucune URL détectée</string>
 </resources>
