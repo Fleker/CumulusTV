@@ -411,20 +411,11 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
                     CloudStorageProvider.getInstance().connect(mActivity);
                 } else if(title.equals(getString(R.string.settings_switch_google_drive))) {
                     CloudStorageProvider.getInstance().pickDriveFile(mActivity);
-                } else if(title.equals(getString(R.string.settings_switch_google_drive))) {
-                    CloudStorageProvider.getInstance().switchFile(mActivity);
                 } else if(title.equals(getString(R.string.settings_browse_plugins))) {
                     ActivityUtils.browsePlugins(mActivity);
                 } else if(title.equals(getString(R.string.settings_refresh_cloud_local))) {
+                    CloudStorageProvider.getInstance().connect(mActivity);
                     ActivityUtils.readDriveData(mActivity, gapi);
-                    Handler h = new Handler(Looper.myLooper()) {
-                        @Override
-                        public void handleMessage(Message msg) {
-                            super.handleMessage(msg);
-                            refreshUI();
-                        }
-                    };
-                    h.sendEmptyMessageDelayed(0, 4000);
                 } else if(title.equals(getString(R.string.settings_view_licenses))) {
                     ActivityUtils.oslClick(mActivity);
                 } else if(title.equals(getString(R.string.settings_reset_channel_data))) {

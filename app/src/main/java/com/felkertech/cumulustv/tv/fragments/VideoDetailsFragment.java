@@ -122,6 +122,12 @@ public class VideoDetailsFragment extends DetailsFragment
         mBackgroundManager.setDrawable(getResources().getDrawable(R.drawable.c_background5));
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateBackground();
+    }
+
     private void setupAdapter() {
         mPresenterSelector = new ClassPresenterSelector();
         mAdapter = new ArrayObjectAdapter(mPresenterSelector);
