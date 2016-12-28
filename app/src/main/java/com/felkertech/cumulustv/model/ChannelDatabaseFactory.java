@@ -18,7 +18,7 @@ public class ChannelDatabaseFactory {
                 parser.ifJsonListing(new JsonListing.Builder(entry).build());
             }
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid JSON");
+            throw new IllegalArgumentException("Invalid JSON: " + e.getMessage());
         }
     }
 

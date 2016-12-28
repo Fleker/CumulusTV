@@ -41,6 +41,10 @@ public class MockChannelDatabase extends ChannelDatabase {
         mJsonObject = new JSONObject(jsonString);
     }
 
+    public void readMockJsonListings() throws JSONException {
+        mMockChannelDatabase.readJsonListings();
+    }
+
     @Override
     public void save() {
     }

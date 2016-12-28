@@ -47,10 +47,12 @@ public class JsonListing implements JsonContainer {
         }
 
         public Builder(JsonListing listing) {
+            mJsonListing = new JsonListing();
             mJsonListing.url = listing.url;
         }
 
         public Builder(JSONObject object) {
+            mJsonListing = new JsonListing();
             try {
                 mJsonListing.url = object.getString(KEY_URL);
             } catch (JSONException ignored) {

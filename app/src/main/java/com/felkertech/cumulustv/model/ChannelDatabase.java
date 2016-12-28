@@ -106,7 +106,7 @@ public class ChannelDatabase {
         // Add temporary channels to list
         if (mTemporaryObjects != null) {
             for (int i = 0; i < mTemporaryObjects.length(); i++) {
-                ChannelDatabaseFactory.parseType(channels.getJSONObject(i), new ChannelDatabaseFactory.ChannelParser() {
+                ChannelDatabaseFactory.parseType(mTemporaryObjects.getJSONObject(i), new ChannelDatabaseFactory.ChannelParser() {
                     @Override
                     public void ifJsonChannel(JsonChannel entry) {
                         channelList.add(entry);
@@ -199,23 +199,31 @@ public class ChannelDatabase {
 
     public void add(CumulusChannel channel) throws JSONException {
         if (mJsonObject != null) {
-            if (channel.getGenresString().isEmpty()) {
+            /*if (channel.getGenresString().isEmpty()) {
                 channel = new CumulusChannel.Builder(channel)
                         .setGenres(TvContract.Programs.Genres.FAMILY_KIDS)
                         .build();
-            }
+            }*/
             JSONArray channels = mJsonObject.getJSONArray(KEY_CHANNELS);
             channels.put(channel.toJson());
             save();
         }
     }
 
+    public void add(JsonListing listing) throws JSONException {
+        if (mJsonObject != null) {
+            JSONArray channels = mJsonObject.getJSONArray(KEY_CHANNELS);
+            channels.put(listing.toJson());
+            save();
+        }
+    }
+
     public void update(CumulusChannel channel) throws JSONException {
-        if (channel.getGenresString().isEmpty()) {
+        /*if (channel.getGenresString().isEmpty()) {
             channel = new CumulusChannel.Builder(channel)
                     .setGenres(TvContract.Programs.Genres.FAMILY_KIDS)
                     .build();
-        }
+        }*/
         final CumulusChannel channel1 = channel;
         if(!channelExists(channel)) {
             add(channel);
@@ -452,8 +460,8 @@ public class ChannelDatabase {
             if (mTemporaryObjects.get(i).equals(temp)) {
                 return;
             }
-            mTemporaryObjects.put(temp.toJson());
         }
+        mTemporaryObjects.put(temp.toJson());
     }
 
     /**
@@ -470,6 +478,7 @@ public class ChannelDatabase {
 
                 @Override
                 public void ifJsonListing(JsonListing entry) {
+                    Log.d(TAG, "Json listing " + entry.getUrl());
                     new HttpFileParser(entry.getUrl(), new AbstractFileParser.FileLoader() {
                         @Override
                         public void onFileLoaded(InputStream inputStream) {

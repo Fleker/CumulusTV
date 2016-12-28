@@ -48,6 +48,9 @@ public class CumulusChannel implements JsonContainer {
     }
 
     public String getGenresString() {
+        if (genres == null) {
+            return "";
+        }
         return genres;
     }
 
