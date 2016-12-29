@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@drawable/c_background5"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="640dp"
+        android:textSize="24sp"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:layout_marginTop="32dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:id="@+id/title"
+        android:text="@string/link_to_m3u"
+        android:background="@color/picker_background"
+        android:layout_height="wrap_content" />
+    <EditText
+        android:layout_width="match_parent"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp"
+        android:textSize="24sp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:hint="@string/m3u_url"
+        android:layout_height="wrap_content" />
+</LinearLayout>
