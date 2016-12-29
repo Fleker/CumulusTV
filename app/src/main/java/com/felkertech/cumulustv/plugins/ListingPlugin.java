@@ -32,7 +32,9 @@ public class ListingPlugin extends CumulusTvPlugin {
             importPlaylist(uri);
         } else {
             // The user wants to add / edit an existing item.
-            // TODO
+            if (areEditing()) {
+                populate();
+            }
         }
     }
 
@@ -50,5 +52,9 @@ public class ListingPlugin extends CumulusTvPlugin {
                     }
                 })
                 .show();
+    }
+
+    private void populate() {
+
     }
 }

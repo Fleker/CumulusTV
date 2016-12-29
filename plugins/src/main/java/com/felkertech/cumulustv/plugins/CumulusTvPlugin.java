@@ -163,6 +163,10 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * Returns the {@link CumulusChannel} that was sent from the 
+     * @return
+     */
     public CumulusChannel getChannel() {
         if(!telegram.hasExtra(INTENT_EXTRA_ACTION)) {
             return null;
@@ -182,6 +186,20 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+        return null;
+    }
+
+    /**
+     * For generic JSON Objects, or those of type {@link JsonContainer}, the raw JSON output can
+     * be returned.
+     *
+     * @return JSON data received from the item. Returns null if not found.
+     * @throws JSONException If the data is not properly formatted JSON.
+     */
+    public JSONObject getJson() throws JSONException {
+        if (telegram.hasExtra(INTENT_EXTRA_JSON)) {
+            return new JSONObject(telegram.getStringExtra(INTENT_EXTRA_JSON));
         }
         return null;
     }
