@@ -80,16 +80,11 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
                 telegram.getStringExtra(INTENT_EXTRA_ACTION).equals(INTENT_EXTRA_READ_ALL);
     }
 
-    /**
-     * Writes the data to the local file and then forces a data sync. Then the app closes.
-     * @param jsonChannel The jsonchannel you wanted to create or update
-     */
-    public void saveChannel(CumulusChannel jsonChannel) {
-        String jsonString = jsonChannel.toString();
+    public void save(JsonContainer container) {
         Intent i = new Intent();
         i.setClassName(CLASS_NAME, DATA_RECEIVER);
         i.setAction(ACTION_RECEIVER);
-        i.putExtra(INTENT_EXTRA_JSON, jsonString);
+        i.putExtra(INTENT_EXTRA_JSON, container.toString());
         if (proprietary) {
             i.putExtra(INTENT_EXTRA_SOURCE, getApplicationInfo().packageName + "," +
                     getApplicationInfo().name);
@@ -99,11 +94,19 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
         i.putExtra(INTENT_EXTRA_ACTION, INTENT_EXTRA_ACTION_WRITE);
         if (DEBUG) {
             Log.d(TAG, "   :");
-            Log.d(TAG, jsonString);
+            Log.d(TAG, container.toString());
             Log.d(TAG, "Saving changes");
         }
         sendBroadcast(i);
         finish();
+    }
+
+    /**
+     * Writes the data to the local file and then forces a data sync. Then the app closes.
+     * @param jsonChannel The channel you wanted to create or update
+     */
+    public void saveChannel(CumulusChannel jsonChannel) {
+        save(jsonChannel);
     }
 
     /**
