@@ -47,8 +47,8 @@ public class ChannelDatabase {
     public static ChannelDatabase getInstance(Context context) {
         if (mChannelDatabase == null) {
             mChannelDatabase = new ChannelDatabase(context);
+            mChannelDatabase.initializeHashMap(context);
         }
-        mChannelDatabase.initializeHashMap(context);
         return mChannelDatabase;
     }
 

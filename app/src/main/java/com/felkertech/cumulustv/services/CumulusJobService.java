@@ -1,7 +1,7 @@
 package com.felkertech.cumulustv.services;
 
-import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 
 import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.model.JsonChannel;
@@ -24,6 +24,7 @@ import java.util.List;
  * TIF database and local cache.
  */
 public class CumulusJobService extends EpgSyncJobService {
+    private static final String TAG = CumulusJobService.class.getSimpleName();
     private static String TEST_AD_REQUEST_URL =
             "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/" +
                     "single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast" +
@@ -32,7 +33,6 @@ public class CumulusJobService extends EpgSyncJobService {
 
     @Override
     public List<Channel> getChannels() {
-        // TODO Download from Drive
         // Build advertisement list for the channel.
         Advertisement channelAd = new Advertisement.Builder()
                 .setType(Advertisement.TYPE_VAST)
@@ -60,7 +60,8 @@ public class CumulusJobService extends EpgSyncJobService {
                     .setAppLinkPosterArtUri(channels.get(i).getChannelLogo())
                     .setAppLinkIntent(PlaybackQuickSettingsActivity.getIntent(this, jsonChannel))
                     .build();
-                channels.set(i, channel);
+                Log.d(TAG, "Adding channel " + channel.getDisplayName());
+                channels.add(i, channel);
             }
             return channels;
         } catch (JSONException e) {
