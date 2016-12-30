@@ -98,33 +98,29 @@ public class ActivityUtils {
                 }).show();
     }
 
-    public static void addChannel(final Activity mActivity, GoogleApiClient gapi,
+    public static void addChannel(final Activity activity, GoogleApiClient gapi,
         CumulusChannel jsonChannel) {
         if (DEBUG) {
             Log.d(TAG, "I've been told to add " + jsonChannel.toString());
         }
-        ChannelDatabase cd = ChannelDatabase.getInstance(mActivity);
+        ChannelDatabase cd = ChannelDatabase.getInstance(activity);
         if(cd.channelExists(jsonChannel)) {
-            Toast.makeText(mActivity, R.string.channel_dupe, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, R.string.channel_dupe, Toast.LENGTH_SHORT).show();
         } else {
             try {
                 if(jsonChannel.getName() != null) {
-                    Toast.makeText(mActivity, mActivity.getString(R.string.channel_added,
+                    Toast.makeText(activity, activity.getString(R.string.channel_added,
                             jsonChannel.getName()), Toast.LENGTH_SHORT).show();
                 }
                 cd.add(jsonChannel);
-                ActivityUtils.writeDriveData(mActivity, gapi);
+                if (CloudStorageProvider.getInstance().isDriveConnected()) {
+                    ActivityUtils.writeDriveData(activity, gapi);
+                }
+                GoogleDriveBroadcastReceiver.changeStatus(activity,
+                        GoogleDriveBroadcastReceiver.EVENT_DOWNLOAD_COMPLETE);
                 if (DEBUG) {
                     Log.d(TAG, "Added");
                 }
-                /*new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Resync
-                        SyncUtils.requestSync(mActivity,
-                                ActivityUtils.TV_INPUT_SERVICE.flattenToString());
-                    }
-                }).start();*/
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -324,20 +320,22 @@ public class ActivityUtils {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
                         super.onPositive(dialog);
-                        sm.setString(ChannelDatabase.KEY, "{'channels':[]}");
-                        try {
-                            DriveId did = DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id));
-                            sm.writeToGoogleDrive(did,
-                                    sm.getString(ChannelDatabase.KEY));
-                        } catch (Exception e) {
-                            Toast.makeText(activity, R.string.toast_error_driveid_invalid,
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                        sm.setString(R.string.sm_google_drive_id, "");
-                        Toast.makeText(activity, R.string.toast_msg_channels_deleted,
-                                Toast.LENGTH_SHORT).show();
+                        ChannelDatabase.getInstance(activity).eraseData();
                         GoogleDriveBroadcastReceiver.changeStatus(activity,
                                 GoogleDriveBroadcastReceiver.EVENT_DOWNLOAD_COMPLETE);
+                        if (CloudStorageProvider.getInstance().isDriveConnected()) {
+                            try {
+                                DriveId did = DriveId.decodeFromString(sm.getString(R.string.sm_google_drive_id));
+                                sm.writeToGoogleDrive(did,
+                                        sm.getString(ChannelDatabase.KEY));
+                            } catch (Exception e) {
+                                Toast.makeText(activity, R.string.toast_error_driveid_invalid,
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                            sm.setString(R.string.sm_google_drive_id, "");
+                        }
+                        Toast.makeText(activity, R.string.toast_msg_channels_deleted,
+                                Toast.LENGTH_SHORT).show();
                     }
                 })
                 .show();

@@ -374,6 +374,17 @@ public class ChannelDatabase {
         }).start();
     }
 
+    public void eraseData() {
+        mSettingsManager.setString(ChannelDatabase.KEY, getDefaultJsonString());
+        Log.d(TAG, "Erasing data");
+        try {
+            mJsonObject.put(KEY_CHANNELS, new JSONArray());
+            Log.d(TAG, getJSONArray().toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static String[] getAllGenres() {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             return new String[] {

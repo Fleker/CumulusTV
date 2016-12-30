@@ -52,7 +52,7 @@ import java.io.IOException;
  */
 public class CumulusTvTifService extends BaseTvInputService {
     private static final String TAG = CumulusTvTifService.class.getSimpleName();
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private static final long EPG_SYNC_DELAYED_PERIOD_MS = 1000 * 2; // 2 Seconds
 
     private CaptioningManager mCaptioningManager;
@@ -101,6 +101,7 @@ public class CumulusTvTifService extends BaseTvInputService {
 
         @Override
         public View onCreateOverlayView() {
+            Log.d(TAG, "Create overlay view");
             LayoutInflater inflater = (LayoutInflater) getApplicationContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             try {

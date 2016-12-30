@@ -48,6 +48,13 @@ public class LeanbackActivity extends Activity implements
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        lbf.refreshUI();
+    }
+
+    @Override
     public void onConnected(@Nullable Bundle bundle) {
         lbf.onConnected(bundle);
     }
