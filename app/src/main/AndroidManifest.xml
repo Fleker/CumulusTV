@@ -52,7 +52,7 @@
             android:name="com.felkertech.cumulustv.activities.MainActivity"
             android:exported="true"
             android:label="CumulusTV"
-            android:theme="@style/CompatTheme">
+            android:theme="@style/CompatThemeActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

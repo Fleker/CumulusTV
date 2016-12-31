@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.ColorDrawable;
 import android.media.tv.TvContract;
 import android.net.Uri;
 import android.os.Build;
@@ -14,6 +15,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -352,13 +356,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void moreClick() {
         String[] actions = new String[] {
                 getString(R.string.settings_browse_plugins),
-                getString(R.string.settings_switch_google_drive),
                 getString(R.string.export_m3u),
                 getString(R.string.settings_refresh_cloud_local),
-                getString(R.string.settings_view_licenses),
-                getString(R.string.settings_reset_channel_data),
-                getString(R.string.settings_about)/*,
-                getString(R.string.about_mlc)*/
             };
         new MaterialDialog.Builder(this)
                 .title(R.string.more_actions)
@@ -370,10 +369,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             case 0:
                                 ActivityUtils.browsePlugins(MainActivity.this);
                                 break;
-                            case 1:
-                                ActivityUtils.switchGoogleDrive(MainActivity.this, gapi);
-                                break;
-                            case 2: // Export data as M3u
+                            case 1: // Export data as M3u
                                 if (Build.VERSION.SDK_INT >= 23) {
                                     // Check if we're allowed to do this
                                     if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -386,17 +382,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                 }
                                 ActivityUtils.exportM3uPlaylist(MainActivity.this);
                                 break;
-                            case 3:
+                            case 2:
                                 ActivityUtils.readDriveData(MainActivity.this, gapi);
-                                break;
-                            case 4:
-                                ActivityUtils.oslClick(MainActivity.this);
-                                break;
-                            case 5:
-                                ActivityUtils.deleteChannelData(MainActivity.this, gapi);
-                                break;
-                            case 6:
-                                ActivityUtils.openAbout(MainActivity.this);
                                 break;
                             case 7:
                                 new MaterialDialog.Builder(MainActivity.this)
@@ -438,5 +425,34 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     }
                 })
                 .show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_mobile, menu);
+        getSupportActionBar().show();
+        getSupportActionBar().setBackgroundDrawable(
+                new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_import:
+                ActivityUtils.switchGoogleDrive(MainActivity.this, gapi);
+                break;
+            case R.id.menu_licenses:
+                ActivityUtils.oslClick(MainActivity.this);
+                break;
+            case R.id.menu_reset_data:
+                ActivityUtils.deleteChannelData(MainActivity.this, gapi);
+                break;
+            case R.id.menu_about:
+                ActivityUtils.openAbout(MainActivity.this);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

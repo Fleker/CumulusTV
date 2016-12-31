@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:drawable="@drawable/ic_circle_purple" />
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_circle_purple"
+        android:width="24dp"
+        android:height="24dp" />
     <item android:drawable="@mipmap/ic_launcher"
         android:width="16dp"
         android:height="16dp"
