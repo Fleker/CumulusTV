@@ -12,6 +12,15 @@ This is a community project. I welcome any other developers to contribute to thi
 
 If you can't develop, you can create an issue here, or send inquires @HandNF on Twitter.
 
+## Create a Plugin
+CumulusTV supports a plugin infrastructure to make it easier to setup certain types of sources when the URL may change.
+
+The docs for this will be out at some point. In the meantime, you can set up JitPack and add this line:
+
+`compile 'com.github.Fleker:CumulusTV:+'`
+
+(Yes, I'll be doing the docs)
+
 ## Download it Now
 The app is available for free on <a href="https://play.google.com/apps/testing/com.felkertech.n.cumulustv">Google Play</a> as a beta. Anyone who downloads and uses the beta will be using the most recent <a href="https://github.com/Fleker/CumulusTV/releases">release</a>.
 
