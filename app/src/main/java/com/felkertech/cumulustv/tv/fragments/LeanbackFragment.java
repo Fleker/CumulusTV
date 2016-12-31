@@ -32,6 +32,9 @@ import android.widget.Toast;
 
 import com.felkertech.cumulustv.fileio.CloudStorageProvider;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
+import com.felkertech.cumulustv.plugins.CumulusTvPlugin;
+import com.felkertech.cumulustv.plugins.ListingPlugin;
+import com.felkertech.cumulustv.plugins.MainPicker;
 import com.felkertech.cumulustv.services.CumulusJobService;
 import com.felkertech.cumulustv.utils.ActivityUtils;
 import com.felkertech.cumulustv.utils.DriveSettingsManager;
@@ -237,7 +240,9 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
         gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_airplay),
                 getString(R.string.manage_add_new)));
         gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_airplay),
-                "Add JsonListing"));
+                getString(R.string.add_jsonlisting)));
+        gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_airplay),
+                getString(R.string.installed_plugins)));
         mRowsAdapter.add(new ListRow(gridHeader, gridRowAdapter));
 
         // Settings will become its own activity
@@ -407,6 +412,14 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
                 } else if(title.equals(getString(R.string.manage_add_suggested))) {
                    ActivityUtils.openSuggestedChannels(mActivity, gapi);
                 } else if(title.equals(getString(R.string.manage_add_new))) {
+                    Intent i = new Intent(getActivity(), MainPicker.class);
+                    i.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
+                    startActivity(i);
+                } else if (title.equals(getString(R.string.add_jsonlisting))) {
+                    Intent i = new Intent(getActivity(), ListingPlugin.class);
+                    i.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
+                    startActivity(i);
+                } else if (title.equals(getString(R.string.installed_plugins))) {
                     ActivityUtils.openPluginPicker(true, mActivity);
                 } else if(title.equals(getString(R.string.connect_drive))) {
                     CloudStorageProvider.getInstance().connect(mActivity);

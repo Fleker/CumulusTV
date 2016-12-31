@@ -16,6 +16,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Toast;
 
@@ -451,7 +452,7 @@ public class ActivityUtils {
             }
             activity.startActivity(intent);
         } else {
-            new MaterialDialog.Builder(activity)
+            new MaterialDialog.Builder(new ContextThemeWrapper(activity, R.style.CompatTheme))
                     .items(plugin_names2)
                     .title(R.string.choose_an_app)
                     .content(R.string.choose_default_app)
@@ -501,7 +502,7 @@ public class ActivityUtils {
         }
         String[] plugin_names2 = plugin_names.toArray(new String[plugin_names.size()]);
 
-        new MaterialDialog.Builder(activity)
+        new MaterialDialog.Builder(new ContextThemeWrapper(activity, R.style.CompatTheme))
                 .title(R.string.installed_plugins)
                 .items(plugin_names2)
                 .itemsCallback(new MaterialDialog.ListCallback() {

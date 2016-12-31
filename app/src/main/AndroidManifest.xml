@@ -165,12 +165,6 @@
             </intent-filter>
         </activity>
 
-<!--        <activity
-            android:name="com.felkertech.n.plugins.CumulusTvPlugin"
-            android:enabled="true"
-            android:exported="true"
-            android:theme="@style/CompatTheme"></activity>-->
-
         <receiver
             android:name="com.felkertech.cumulustv.plugins.DataReceiver"
             android:enabled="true"
@@ -285,6 +279,42 @@
                 android:name="android.media.tv.input"
                 android:resource="@xml/tv_service" />
         </service>
+
+        <activity android:name="com.felkertech.cumulustv.plugins.ListingPlugin"
+            android:theme="@style/CompatTheme"
+            android:label="@string/add_jsonlisting"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.felkertech.cumulustv.ADD_CHANNEL" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <!-- Can import .m3u files -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="https" />
+                <data android:host="*" />
+                <data android:pathPattern=".*\\.m3u" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="http" />
+                <data android:host="*" />
+                <data android:pathPattern=".*\\.m3u" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="file" />
+                <data android:host="*" />
+                <data android:pathPattern=".*\\.m3u" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

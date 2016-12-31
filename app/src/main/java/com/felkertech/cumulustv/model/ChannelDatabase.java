@@ -213,10 +213,9 @@ public class ChannelDatabase {
     public void add(JsonListing listing) throws JSONException {
         if (mJsonObject != null) {
             JSONArray channels = mJsonObject.getJSONArray(KEY_CHANNELS);
-            channels.put(channel.toJson());
+            channels.put(listing.toJson());
             save();
         }
-    }
     }
 
     public void update(CumulusChannel channel) throws JSONException {

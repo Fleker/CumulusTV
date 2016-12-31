@@ -73,10 +73,13 @@ public class ListingPlugin extends CumulusTvPlugin {
         findViewById(R.id.button_update).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                JsonListing newListing = new JsonListing.Builder()
-                        .setUrl(((EditText) findViewById(R.id.edit_url)).getText().toString())
-                        .build();
-                save(newListing);
+                String url = ((EditText) findViewById(R.id.edit_url)).getText().toString();
+                if (!url.isEmpty()) {
+                    JsonListing newListing = new JsonListing.Builder()
+                            .setUrl(url)
+                            .build();
+                    save(newListing);
+                }
             }
         });
     }
