@@ -236,6 +236,8 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
                 getString(R.string.manage_livechannels)));
         gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_airplay),
                 getString(R.string.manage_add_new)));
+        gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_airplay),
+                "Add JsonListing"));
         mRowsAdapter.add(new ListRow(gridHeader, gridRowAdapter));
 
         // Settings will become its own activity
@@ -243,7 +245,6 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
         OptionsCardPresenter mGridPresenter2 = new OptionsCardPresenter();
         ArrayObjectAdapter gridRowAdapter2 = new ArrayObjectAdapter(mGridPresenter2);
         /*
-        FIXME Plugin browser hidden due to #165
         gridRowAdapter2.add(new Option(getResources().getDrawable(R.drawable.ic_animation),
                     getString(R.string.settings_browse_plugins)));
                     */
