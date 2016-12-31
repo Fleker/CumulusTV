@@ -18,7 +18,6 @@ import io.fabric.sdk.android.Fabric;
 import com.felkertech.n.cumulustv.R;
 
 import org.json.JSONException;
-
 /**
  * A simple plugin that alows a user to add a URL pointing to an M3U file which will be continually
  * updated.
