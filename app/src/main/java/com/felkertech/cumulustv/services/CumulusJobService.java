@@ -36,7 +36,7 @@ import java.util.List;
  */
 public class CumulusJobService extends EpgSyncJobService {
     private static final String TAG = CumulusJobService.class.getSimpleName();
-    private static String TEST_AD_REQUEST_URL =
+    private static final String TEST_AD_REQUEST_URL =
             "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/" +
                     "single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast" +
                     "&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct" +
@@ -75,7 +75,7 @@ public class CumulusJobService extends EpgSyncJobService {
         channelAdList.add(channelAd);
 
         InternalProviderData ipd = new InternalProviderData();
-        ipd.setAds(channelAdList);
+//        ipd.setAds(channelAdList);
         ipd.setRepeatable(true);
         ipd.setVideoType(TvContractUtils.SOURCE_TYPE_HLS);
 
@@ -106,7 +106,7 @@ public class CumulusJobService extends EpgSyncJobService {
     @Override
     public List<Program> getProgramsForChannel(Uri channelUri, Channel channel, long startMs,
            long endMs) {
-        List<Program> programs = new ArrayList();
+        List<Program> programs = new ArrayList<>();
         ChannelDatabase channelDatabase = ChannelDatabase.getInstance(this);
         JsonChannel jsonChannel = channelDatabase.findChannelByMediaUrl(
                 channel.getInternalProviderData().getVideoUrl());
