@@ -94,7 +94,7 @@ public class CumulusJobService extends EpgSyncJobService {
                     .setAppLinkIntent(PlaybackQuickSettingsActivity.getIntent(this, jsonChannel))
                     .build();
                 Log.d(TAG, "Adding channel " + channel.getDisplayName());
-                channels.add(i, channel);
+                channels.set(i, channel);
             }
             return channels;
         } catch (JSONException e) {

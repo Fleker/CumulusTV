@@ -453,9 +453,9 @@ public class ActivityUtils {
             activity.startActivity(intent);
         } else {
             new MaterialDialog.Builder(new ContextThemeWrapper(activity, R.style.CompatTheme))
-                    .items(plugin_names2)
                     .title(R.string.choose_an_app)
                     .content(R.string.choose_default_app)
+                    .items(plugin_names2)
                     .itemsCallback(new MaterialDialog.ListCallback() {
                         @Override
                         public void onSelection(MaterialDialog materialDialog, View view, int i,
