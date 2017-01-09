@@ -316,6 +316,15 @@
                 <data android:pathPattern=".*\\.m3u" />
             </intent-filter>
         </activity>
+
+        <activity android:name="com.felkertech.cumulustv.activities.SettingsActivity"
+            android:theme="@style/LeanbackPreferences"
+            android:exported="true"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

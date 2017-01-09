@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -48,6 +49,7 @@ public class ChannelDatabase {
     private JSONArray mTemporaryObjects;
     private SettingsManager mSettingsManager;
     protected HashMap<String, Long> mDatabaseHashMap;
+    private JSONArray mChannelsJsonArray;
 
     private static ChannelDatabase mChannelDatabase;
 
@@ -84,7 +86,10 @@ public class ChannelDatabase {
     }
 
     public JSONArray getJSONArray() throws JSONException {
-        return mJsonObject.getJSONArray(KEY_CHANNELS);
+        if (mChannelsJsonArray == null) {
+            mChannelsJsonArray = mJsonObject.getJSONArray(KEY_CHANNELS);
+        }
+        return mChannelsJsonArray;
     }
 
     public List<JsonChannel> getJsonChannels() throws JSONException {
@@ -117,6 +122,9 @@ public class ChannelDatabase {
                     }
                 });
             }
+        }
+        if (mSettingsManager.getBoolean("SORT_BY_NUMBER")) {
+            Collections.sort(channelList); // Optionally reorder
         }
         return channelList;
     }
@@ -291,6 +299,7 @@ public class ChannelDatabase {
             setLastModified();
             mSettingsManager.setString(KEY, toString());
             initializeHashMap(mSettingsManager.getContext());
+            mChannelsJsonArray = null;
         } catch (JSONException e) {
             e.printStackTrace();
         }

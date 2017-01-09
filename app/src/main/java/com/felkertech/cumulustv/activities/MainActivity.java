@@ -452,6 +452,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             case R.id.menu_about:
                 ActivityUtils.openAbout(MainActivity.this);
                 break;
+            case R.id.menu_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

@@ -30,6 +30,15 @@
     </item>
     <item
         is-multidex="true"
+        jar="C:\Users\firem\development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\preference-v7\25.1.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="21.1.2"
+        sha1="378c0fefdd7adedd0ea74d7607b3d4a251b29d78">
+        <dex dex="C:\Users\firem\development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-preference-v7-25.1.0_f8e420ebc255cd02aac11f17e54438d83b6aebc0\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="C:\Users\firem\development\CumulusTV\app\build\intermediates\exploded-aar\com.google.android.media.tv\companionlibrary\1.0.1\jars\classes.jar"
         jumboMode="true"
         optimize="true"
@@ -124,7 +133,7 @@
         jumboMode="true"
         optimize="true"
         revision="21.1.2"
-        sha1="56eaaf7259e444fe3fce211616c4486b032f8885">
+        sha1="9ec28db60fd3f57f3ad018e97bde6b63629dad33">
         <dex dex="C:\Users\firem\development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_25545f4b8122ed8e3e5467d1d8d27a3424b58917\classes.dex" />
     </item>
     <item
@@ -207,6 +216,15 @@
         revision="21.1.2"
         sha1="ca75c062ed024385befef143a03e158bcdf86f59">
         <dex dex="C:\Users\firem\development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.github.Fleker-settingsmanager-common-1.2.1_c9d25de1dddc8a6a3d62f05109400812bff0e71d\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\firem\development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\preference-v14\25.1.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="21.1.2"
+        sha1="2703eaeda14f8680d8b88547c373fde0e1cb66aa">
+        <dex dex="C:\Users\firem\development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-preference-v14-25.1.0_9be7fb1315466091f193180aaa9683b8e333d207\classes.dex" />
     </item>
     <item
         is-multidex="true"
@@ -324,6 +342,15 @@
         revision="21.1.2"
         sha1="e79aa3d9a16f8c9f16377c0608de70a8f31e5d80">
         <dex dex="C:\Users\firem\development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-vector-drawable-25.1.0_540305697153a81c88cac15354bc698ece1f629d\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\firem\development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\preference-leanback-v17\25.1.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="21.1.2"
+        sha1="0864efa886a954b5880b3007078477ed3e57409c">
+        <dex dex="C:\Users\firem\development\CumulusTV\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-preference-leanback-v17-25.1.0_15f5466df117b967e250d1b1bd92dc2bec611179\classes.dex" />
     </item>
     <item
         is-multidex="true"

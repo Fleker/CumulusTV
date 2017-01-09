@@ -66,6 +66,7 @@ public class PlaybackQuickSettingsActivity extends Activity {
                 }
             };
 
+            // Sends a crash report
             quickSettings[2] = new QuickSetting(getString(R.string.report_playback_issue)) {
                 @Override
                 public void onClick() {
