@@ -36,10 +36,17 @@
         android:layout_below="@id/stream"
         android:hint="@string/channel_splashscreen"
         android:inputType="text|textUri" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/epg"
+        android:layout_below="@id/splash"
+        android:hint="@string/channel_epg"
+        android:inputType="text|textUri" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/splash"
+        android:layout_below="@id/epg"
         android:text="@string/select_genres"
         android:id="@+id/genres"/>
     <LinearLayout
