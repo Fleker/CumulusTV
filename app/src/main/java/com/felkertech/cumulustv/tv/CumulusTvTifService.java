@@ -287,6 +287,7 @@ public class CumulusTvTifService extends BaseTvInputService {
             tuneTime = System.currentTimeMillis();
             stillTuning = true;
             setOverlayViewEnabled(false);
+            notifyVideoAvailable();
             setOverlayViewEnabled(true);
             return super.onTune(channelUri);
         }
