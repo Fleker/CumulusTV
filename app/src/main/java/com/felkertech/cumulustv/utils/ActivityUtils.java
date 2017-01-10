@@ -2,8 +2,10 @@ package com.felkertech.cumulustv.utils;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageInfo;
@@ -452,20 +454,18 @@ public class ActivityUtils {
             }
             activity.startActivity(intent);
         } else {
-            new MaterialDialog.Builder(new ContextThemeWrapper(activity, R.style.CompatTheme))
-                    .title(R.string.choose_an_app)
-                    .content(R.string.choose_default_app)
-                    .items(plugin_names2)
-                    .itemsCallback(new MaterialDialog.ListCallback() {
+            new AlertDialog.Builder(new ContextThemeWrapper(activity, R.style.CompatTheme))
+                    .setTitle(R.string.choose_an_app)
+                    .setMessage(R.string.choose_default_app)
+                    .setItems(plugin_names2, new DialogInterface.OnClickListener() {
                         @Override
-                        public void onSelection(MaterialDialog materialDialog, View view, int i,
-                                CharSequence charSequence) {
+                        public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent();
                             if (newChannel) {
                                 if (DEBUG) {
                                     Log.d(TAG, "Try to start");
                                 }
-                                ResolveInfo plugin_info = plugins.get(i);
+                                ResolveInfo plugin_info = plugins.get(which);
                                 if (DEBUG) {
                                     Log.d(TAG, plugin_info.activityInfo.applicationInfo.packageName
                                             + " " + plugin_info.activityInfo.name);
@@ -477,7 +477,7 @@ public class ActivityUtils {
                                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION,
                                         CumulusTvPlugin.INTENT_ADD);
                             } else {
-                                ResolveInfo plugin_info = plugins.get(i);
+                                ResolveInfo plugin_info = plugins.get(which);
                                 intent.setClassName(plugin_info.activityInfo.applicationInfo.packageName,
                                         plugin_info.activityInfo.name);
                                 intent.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION,
@@ -487,7 +487,8 @@ public class ActivityUtils {
                             }
                             activity.startActivity(intent);
                         }
-                    }).show();
+                    })
+                    .show();
         }
     }
 

@@ -55,7 +55,7 @@ public class CumulusChannel implements JsonContainer {
     }
 
     public boolean hasLogo() {
-        return !getLogo().isEmpty();
+        return getLogo() != null && !getLogo().isEmpty();
     }
 
     public String getLogo() {
