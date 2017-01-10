@@ -1,5 +1,6 @@
 package com.felkertech.cumulustv.tv;
 
+import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -107,6 +108,9 @@ public class CumulusTvTifService extends BaseTvInputService {
             try {
                 final View v = inflater.inflate(R.layout.loading, null);
                 if(!stillTuning && jsonChannel.isAudioOnly()) {
+                    if (DEBUG) {
+                        Log.d(TAG, "Audio-only stream, show a foreground");
+                    }
                     ((TextView) v.findViewById(R.id.channel_msg)).setText(R.string.streaming_audio);
                 }
                 if (DEBUG) {
@@ -114,7 +118,7 @@ public class CumulusTvTifService extends BaseTvInputService {
                 }
                 if (jsonChannel == null) {
                     if (DEBUG) {
-                        Log.d(TAG, "Cannot find channel");
+                        Log.w(TAG, "Cannot find channel");
                     }
                     ((TextView) v.findViewById(R.id.channel)).setText("");
                     ((TextView) v.findViewById(R.id.title)).setText("");
@@ -188,7 +192,7 @@ public class CumulusTvTifService extends BaseTvInputService {
                                                     R.id.indeterminate_progress_large_library))
                                                     .setBarColor(s.getRgb());
                                         } else if (p.getSwatches().size() > 0) {
-                                            //Go with default if no vibrant swatch exists
+                                            // Go with default if no vibrant swatch exists
                                             if (DEBUG) {
                                                 Log.d(TAG, "No vibrant swatch, " +
                                                         p.getSwatches().size() + " others");
@@ -219,7 +223,9 @@ public class CumulusTvTifService extends BaseTvInputService {
                         }).start();
                     }
                 }
-                Log.d(TAG, "Overlay");
+                if (DEBUG) {
+                    Log.d(TAG, "Overlay " + v.toString());
+                }
                 return v;
             } catch (Exception e) {
                 if (DEBUG) {
@@ -228,6 +234,16 @@ public class CumulusTvTifService extends BaseTvInputService {
                 }
                 return null;
             }
+        }
+
+        @TargetApi(Build.VERSION_CODES.M)
+        @RequiresApi(api = Build.VERSION_CODES.M)
+        @Override
+        public long onTimeShiftGetCurrentPosition() {
+            long currentMs = tuneTime + mPlayer.getCurrentPosition();
+            Log.d(TAG, currentMs + "  " + onTimeShiftGetStartPosition() + " start position");
+            Log.d(TAG, (currentMs - onTimeShiftGetStartPosition()) + " diff start position");
+            return currentMs;
         }
 
         @Override
@@ -286,7 +302,9 @@ public class CumulusTvTifService extends BaseTvInputService {
             releasePlayer();
             tuneTime = System.currentTimeMillis();
             stillTuning = true;
+            notifyVideoAvailable();
             setOverlayViewEnabled(false);
+            onCreateOverlayView();
             setOverlayViewEnabled(true);
             return super.onTune(channelUri);
         }
@@ -314,6 +332,9 @@ public class CumulusTvTifService extends BaseTvInputService {
                     stillTuning = false;
                     notifyVideoAvailable();
                     setOverlayViewEnabled(false);
+                    if (jsonChannel.isAudioOnly()) {
+                        setOverlayViewEnabled(true);
+                    }
                 }
             });
             mPlayer.registerErrorListener(new CumulusTvPlayer.ErrorListener() {

@@ -34,10 +34,10 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
     private static final String CLASS_NAME = "com.felkertech.n.cumulustv";
     private static final String DATA_RECEIVER = "com.felkertech.n.plugins.DataReceiver";
 
-    private boolean isEdit = false;
     private boolean proprietary = true;
     private Intent telegram;
     private String label;
+    private String mAction;
 
     /**
      * Starts the activity. You can override this to inflate a layout and setup anything else
@@ -48,7 +48,7 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         telegram = getIntent();
         if (telegram.hasExtra(INTENT_EXTRA_ACTION)) {
-            isEdit = telegram.getStringExtra(INTENT_EXTRA_ACTION).equals(INTENT_EDIT);
+            mAction = telegram.getStringExtra(INTENT_EXTRA_ACTION);
         }
         if (DEBUG) {
             Log.d(TAG, "Initialized");
@@ -68,7 +68,11 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
      * @return
      */
     public boolean areEditing() {
-        return isEdit;
+        return mAction != null && mAction.equals(INTENT_EDIT);
+    }
+
+    public boolean areAdding() {
+        return mAction != null && mAction.equals(INTENT_ADD);
     }
 
     /**
@@ -80,16 +84,11 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
                 telegram.getStringExtra(INTENT_EXTRA_ACTION).equals(INTENT_EXTRA_READ_ALL);
     }
 
-    /**
-     * Writes the data to the local file and then forces a data sync. Then the app closes.
-     * @param jsonChannel The jsonchannel you wanted to create or update
-     */
-    public void saveChannel(CumulusChannel jsonChannel) {
-        String jsonString = jsonChannel.toString();
+    public void save(JsonContainer container) {
         Intent i = new Intent();
         i.setClassName(CLASS_NAME, DATA_RECEIVER);
         i.setAction(ACTION_RECEIVER);
-        i.putExtra(INTENT_EXTRA_JSON, jsonString);
+        i.putExtra(INTENT_EXTRA_JSON, container.toString());
         if (proprietary) {
             i.putExtra(INTENT_EXTRA_SOURCE, getApplicationInfo().packageName + "," +
                     getApplicationInfo().name);
@@ -99,11 +98,19 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
         i.putExtra(INTENT_EXTRA_ACTION, INTENT_EXTRA_ACTION_WRITE);
         if (DEBUG) {
             Log.d(TAG, "   :");
-            Log.d(TAG, jsonString);
+            Log.d(TAG, container.toString());
             Log.d(TAG, "Saving changes");
         }
         sendBroadcast(i);
         finish();
+    }
+
+    /**
+     * Writes the data to the local file and then forces a data sync. Then the app closes.
+     * @param jsonChannel The channel you wanted to create or update
+     */
+    public void saveChannel(CumulusChannel jsonChannel) {
+        save(jsonChannel);
     }
 
     /**
@@ -160,6 +167,10 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * Returns the {@link CumulusChannel} that was sent from the 
+     * @return
+     */
     public CumulusChannel getChannel() {
         if(!telegram.hasExtra(INTENT_EXTRA_ACTION)) {
             return null;
@@ -179,6 +190,20 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+        return null;
+    }
+
+    /**
+     * For generic JSON Objects, or those of type {@link JsonContainer}, the raw JSON output can
+     * be returned.
+     *
+     * @return JSON data received from the item. Returns null if not found.
+     * @throws JSONException If the data is not properly formatted JSON.
+     */
+    public JSONObject getJson() throws JSONException {
+        if (telegram.hasExtra(INTENT_EXTRA_JSON)) {
+            return new JSONObject(telegram.getStringExtra(INTENT_EXTRA_JSON));
         }
         return null;
     }

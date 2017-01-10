@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="main_button">
-        <item name="android:layout_marginLeft">80dp</item>
-        <item name="android:layout_marginRight">80dp</item>
+        <item name="android:layout_marginLeft">24dp</item>
+        <item name="android:layout_marginRight">24dp</item>
         <item name="android:layout_marginBottom">8dp</item>
         <item name="android:fontFamily">sans-serif</item>
-        <item name="android:layout_width">300dp</item>
+        <item name="android:layout_width">180dp</item>
         <item name="android:layout_height">60dp</item>
         <item name="android:textSize">18sp</item>
     </style>

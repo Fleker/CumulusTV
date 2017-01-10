@@ -28,7 +28,7 @@ import java.util.Iterator;
  * @author Nick
  * @version 2016.09.04
  */
-public class JsonChannel extends CumulusChannel {
+public class JsonChannel extends CumulusChannel implements Comparable {
 
     private JsonChannel() {
     }
@@ -80,6 +80,11 @@ public class JsonChannel extends CumulusChannel {
 
     public static JsonChannel getEmptyChannel() {
         return new JsonChannel();
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return getNumber().compareTo(((JsonChannel) o).getNumber());
     }
 
     public static class Builder extends CumulusChannel.Builder {

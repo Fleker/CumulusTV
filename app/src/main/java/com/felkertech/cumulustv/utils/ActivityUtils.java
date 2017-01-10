@@ -16,6 +16,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Toast;
 
@@ -67,8 +68,8 @@ public class ActivityUtils {
     public static final int REQUEST_CODE_CREATOR = 102;
     public static final int REQUEST_CODE_OPENER = 104;
     public static final int PERMISSION_EXPORT_M3U = 201;
-    public static final ComponentName TV_INPUT_SERVICE =
-            new ComponentName("com.felkertech.cumulustv.tv", ".CumulusTvTifService");
+    public static final ComponentName TV_INPUT_SERVICE = new ComponentName("com.felkertech.n.cumulustv",
+            "com.felkertech.cumulustv.tv.CumulusTvTifService");
 
     public final static int LAST_GOOD_BUILD = 27;
 
@@ -451,10 +452,10 @@ public class ActivityUtils {
             }
             activity.startActivity(intent);
         } else {
-            new MaterialDialog.Builder(activity)
-                    .items(plugin_names2)
+            new MaterialDialog.Builder(new ContextThemeWrapper(activity, R.style.CompatTheme))
                     .title(R.string.choose_an_app)
                     .content(R.string.choose_default_app)
+                    .items(plugin_names2)
                     .itemsCallback(new MaterialDialog.ListCallback() {
                         @Override
                         public void onSelection(MaterialDialog materialDialog, View view, int i,
@@ -501,7 +502,7 @@ public class ActivityUtils {
         }
         String[] plugin_names2 = plugin_names.toArray(new String[plugin_names.size()]);
 
-        new MaterialDialog.Builder(activity)
+        new MaterialDialog.Builder(new ContextThemeWrapper(activity, R.style.CompatTheme))
                 .title(R.string.installed_plugins)
                 .items(plugin_names2)
                 .itemsCallback(new MaterialDialog.ListCallback() {

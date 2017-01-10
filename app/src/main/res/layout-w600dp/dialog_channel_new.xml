@@ -8,11 +8,12 @@
         android:layout_width="640dp"
         android:textSize="24sp"
         android:paddingStart="32dp"
+        android:paddingEnd="32dp"
         android:layout_marginTop="32dp"
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
         android:id="@+id/title"
-        android:text="Edit Channel"
+        android:text="@string/edit_channel"
         android:visibility="gone"
         android:background="@color/picker_background"
         android:layout_height="wrap_content" />
@@ -30,37 +31,37 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:text="Channel Number"/>
+            android:text="@string/channel_number"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:layout_marginTop="22dp"
-            android:text="Channel Name"/>
+            android:text="@string/channel_name"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:layout_marginTop="21dp"
-            android:text="Logo Url"/>
+            android:text="@string/channel_logo"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:layout_marginTop="20dp"
-            android:text="Media Url"/>
+            android:text="@string/channel_media"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:layout_marginTop="22dp"
-            android:text="Splashscreen Url"/>
+            android:text="@string/channel_splashscreen"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:layout_marginTop="24dp"
-            android:text="Epg Url"/>
+            android:text="@string/channel_epg"/>
     </LinearLayout>
 
     <LinearLayout
@@ -111,12 +112,12 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Select Genres"
+            android:text="@string/select_genres"
             android:id="@+id/genres"/>
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Open Stream"
+            android:text="@string/open_stream"
             android:id="@+id/stream_open"/>
     </LinearLayout>
 
@@ -138,7 +139,7 @@
             android:layout_height="225dp" />
         <TextView
             android:layout_width="match_parent"
-            android:text="Cannot resolve URL."
+            android:text="."
             android:id="@+id/playback_error"
             android:textColor="@android:color/holo_orange_dark"
             android:layout_marginTop="16dp"

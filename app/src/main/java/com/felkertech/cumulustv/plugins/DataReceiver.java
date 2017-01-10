@@ -8,6 +8,8 @@ import android.media.tv.TvContract;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.felkertech.cumulustv.model.ChannelDatabaseFactory;
+import com.felkertech.cumulustv.model.JsonListing;
 import com.felkertech.cumulustv.services.CumulusJobService;
 import com.felkertech.cumulustv.utils.ActivityUtils;
 import com.felkertech.cumulustv.utils.DriveSettingsManager;
@@ -28,6 +30,7 @@ public class DataReceiver extends BroadcastReceiver
 
     private GoogleApiClient gapi;
     private Context mContext;
+    private Intent mIntent;
 
     public DataReceiver() {
     }
@@ -35,6 +38,7 @@ public class DataReceiver extends BroadcastReceiver
     @Override
     public void onReceive(Context context, Intent intent) {
         mContext = context;
+        mIntent = intent;
         gapi = new GoogleApiClient.Builder(context)
                 .addApi(Drive.API)
                 .addScope(Drive.SCOPE_FILE)
@@ -57,38 +61,10 @@ public class DataReceiver extends BroadcastReceiver
             } else if (action.equals(CumulusTvPlugin.INTENT_EXTRA_ACTION_WRITE)) {
                 Log.d(TAG, "Received " + jsonString);
                 DriveSettingsManager sm = new DriveSettingsManager(context);
-                ChannelDatabase cdn = ChannelDatabase.getInstance(context);
                 try {
                     JSONObject jo = new JSONObject(jsonString);
-                    CumulusChannel jsonChannel;
-                    CumulusChannel.Builder builder = new JsonChannel.Builder(jo).setPluginSource(
-                            intent.getStringExtra(CumulusTvPlugin.INTENT_EXTRA_SOURCE));
-                    if (intent.hasExtra(CumulusTvPlugin.INTENT_EXTRA_ORIGINAL_JSON)) {
-                        // Clearly edited a stream
-                        JsonChannel original = new JsonChannel.Builder(
-                                new JSONObject(intent.getStringExtra(
-                                        CumulusTvPlugin.INTENT_EXTRA_ORIGINAL_JSON)))
-                                .build();
-                        for(int i = 0; i < cdn.getJsonChannels().size(); i++) {
-                            JsonChannel item = cdn.getJsonChannels().get(i);
-                            if(original.equals(item) && DEBUG) {
-                                Log.d(TAG, "Found a match");
-                            }
-                        }
-                    }
-                    jsonChannel = builder.build();
-                    if (cdn.channelExists(jsonChannel)) {
-                        //Channel exists, so let's update
-                        cdn.update(jsonChannel);
-                        if (DEBUG) {
-                            Log.d(TAG, "Channel updated");
-                        }
-                    } else {
-                        cdn.add(jsonChannel);
-                        if (DEBUG) {
-                            Log.d(TAG, "Channel added");
-                        }
-                    }
+                    handle(jo);
+
                     gapi.connect();
                 } catch (JSONException e) {
                     if (DEBUG) {
@@ -128,6 +104,48 @@ public class DataReceiver extends BroadcastReceiver
         final String info = TvContract.buildInputId(ActivityUtils.TV_INPUT_SERVICE);
         EpgSyncJobService.requestImmediateSync(mContext, info,
                 new ComponentName(mContext, CumulusJobService.class));
+    }
+
+    private void handle(JSONObject jsonObject) {
+        final ChannelDatabase cdn = ChannelDatabase.getInstance(mContext);
+        ChannelDatabaseFactory.parseType(jsonObject, new ChannelDatabaseFactory.ChannelParser() {
+            @Override
+            public void ifJsonChannel(JsonChannel entry) {
+                JsonChannel.Builder builder = new JsonChannel.Builder(entry).setPluginSource(
+                        mIntent.getStringExtra(CumulusTvPlugin.INTENT_EXTRA_SOURCE));
+                if (mIntent.hasExtra(CumulusTvPlugin.INTENT_EXTRA_ORIGINAL_JSON)) {
+                    // Clearly edited a stream
+                    try {
+                        entry = builder.build();
+                        if (cdn.channelExists(entry)) {
+                            // Channel exists, so let's update.
+                            cdn.update(entry);
+                            if (DEBUG) {
+                                Log.d(TAG, "Channel updated");
+                            }
+                        } else {
+                            // No channel exists, so add it.
+                            cdn.add(entry);
+                            if (DEBUG) {
+                                Log.d(TAG, "Channel added");
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void ifJsonListing(JsonListing entry) {
+                try {
+                    cdn.add(entry);
+                    // TODO Doesn't update
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override

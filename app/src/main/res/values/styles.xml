@@ -11,6 +11,12 @@
         <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="android:colorAccent">@color/colorAccent</item>
     </style>
+    <style name="CompatThemeActionBar" parent="Theme.AppCompat">
+        <item name="android:colorPrimary">@color/colorPrimary</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:colorAccent">@color/colorAccent</item>
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+    </style>
     <style name="main_button">
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:layout_marginRight">16dp</item>
@@ -91,5 +97,9 @@
     <style name="TvPickerEditText">
         <item name="android:layout_marginBottom">22dp</item>
         <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="MyActionBar" parent="@style/Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/colorPrimary</item>
     </style>
 </resources>

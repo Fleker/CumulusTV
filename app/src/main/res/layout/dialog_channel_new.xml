@@ -6,13 +6,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/number"
-        android:hint="Channel Number"
+        android:hint="@string/channel_number"
         android:inputType="number" />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/name"
-        android:hint="Channel Name"
+        android:hint="@string/channel_name"
         android:layout_below="@+id/number"
         android:inputType="text|textCapWords" />
     <EditText
@@ -20,13 +20,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/logo"
         android:layout_below="@id/name"
-        android:hint="Channel Logo Url"
+        android:hint="@string/channel_logo"
         android:inputType="text|textUri" />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/stream"
-        android:hint="Stream Url"
+        android:hint="@string/channel_media"
         android:layout_below="@id/logo"
         android:inputType="text|textUri" />
     <EditText
@@ -34,13 +34,20 @@
         android:layout_height="wrap_content"
         android:id="@+id/splash"
         android:layout_below="@id/stream"
-        android:hint="Splashscreen Url"
+        android:hint="@string/channel_splashscreen"
+        android:inputType="text|textUri" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/epg"
+        android:layout_below="@id/splash"
+        android:hint="@string/channel_epg"
         android:inputType="text|textUri" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/splash"
-        android:text="SELECT Genres"
+        android:layout_below="@id/epg"
+        android:text="@string/select_genres"
         android:id="@+id/genres"/>
     <LinearLayout
         android:layout_width="wrap_content"
@@ -60,5 +67,5 @@
         android:id="@+id/stream_open"
         android:layout_height="wrap_content"
         android:layout_below="@id/surface_player"
-        android:text="Open Stream"/>
+        android:text="@string/open_stream"/>
 </RelativeLayout>

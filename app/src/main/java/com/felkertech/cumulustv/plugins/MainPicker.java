@@ -497,6 +497,8 @@ public class MainPicker extends CumulusTvPlugin {
                                     .getText().toString();
                             String genres = ((Button) l.findViewById(R.id.genres))
                                     .getText().toString();
+                            String epgUrl = ((EditText) l.findViewById(R.id.epg))
+                                    .getText().toString();
 
                             if(number.length() == 0) {
                                 Toast.makeText(MainPicker.this,
@@ -516,6 +518,7 @@ public class MainPicker extends CumulusTvPlugin {
                                         .setNumber(number)
                                         .setMediaUrl(mediaUrl)
                                         .setLogo(logo)
+                                        .setEpgUrl(epgUrl)
                                         .setSplashscreen(splash)
                                         .setGenres(genres)
                                         .build();
@@ -597,6 +600,7 @@ public class MainPicker extends CumulusTvPlugin {
                         ((EditText) l.findViewById(R.id.name)).setText(cumulusChannel.getName());
                         ((EditText) l.findViewById(R.id.logo)).setText(cumulusChannel.getLogo());
                         ((EditText) l.findViewById(R.id.stream)).setText(cumulusChannel.getMediaUrl());
+                        ((EditText) l.findViewById(R.id.epg)).setText(cumulusChannel.getEpgUrl());
                         ((Button) l.findViewById(R.id.genres)).setText(cumulusChannel.getGenresString());
                     }
                     loadStream(MobilePickerDialog.this);
@@ -711,6 +715,7 @@ public class MainPicker extends CumulusTvPlugin {
                     String logo = ((EditText) findViewById(R.id.logo)).getText().toString();
                     String mediaUrl = ((EditText) findViewById(R.id.stream)).getText().toString();
                     String splash = ((EditText) findViewById(R.id.splash)).getText().toString();
+                    String epgUrl = ((EditText) findViewById(R.id.epg)).getText().toString();
                     String genres = ((Button) findViewById(R.id.genres)).getText().toString();
 
                     if(number.length() == 0) {
@@ -730,6 +735,7 @@ public class MainPicker extends CumulusTvPlugin {
                                 .setName(name)
                                 .setNumber(number)
                                 .setMediaUrl(mediaUrl)
+                                .setEpgUrl(epgUrl)
                                 .setLogo(logo)
                                 .setSplashscreen(splash)
                                 .setGenres(genres)
@@ -794,6 +800,7 @@ public class MainPicker extends CumulusTvPlugin {
                 ((EditText) findViewById(R.id.name)).setText(cumulusChannel.getName());
                 ((EditText) findViewById(R.id.logo)).setText(cumulusChannel.getLogo());
                 ((EditText) findViewById(R.id.stream)).setText(cumulusChannel.getMediaUrl());
+                ((EditText) findViewById(R.id.epg)).setText(cumulusChannel.getEpgUrl());
                 ((Button) findViewById(R.id.genres)).setText(cumulusChannel.getGenresString());
             }
 
