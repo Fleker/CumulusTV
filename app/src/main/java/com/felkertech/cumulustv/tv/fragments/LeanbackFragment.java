@@ -241,9 +241,9 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
         gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_airplay),
                 getString(R.string.manage_add_new)));
         gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_airplay),
-                getString(R.string.add_jsonlisting)));
+                getString(R.string.add_jsonlisting)));/*
         gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_airplay),
-                getString(R.string.installed_plugins)));
+                getString(R.string.installed_plugins)));*/
         mRowsAdapter.add(new ListRow(gridHeader, gridRowAdapter));
 
         // Settings will become its own activity

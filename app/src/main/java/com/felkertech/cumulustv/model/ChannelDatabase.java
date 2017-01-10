@@ -49,7 +49,7 @@ public class ChannelDatabase {
     private JSONArray mTemporaryObjects;
     private SettingsManager mSettingsManager;
     protected HashMap<String, Long> mDatabaseHashMap;
-    private JSONArray mChannelsJsonArray;
+    private List<JsonChannel> mJsonChannelsList;
 
     private static ChannelDatabase mChannelDatabase;
 
@@ -86,32 +86,16 @@ public class ChannelDatabase {
     }
 
     public JSONArray getJSONArray() throws JSONException {
-        if (mChannelsJsonArray == null) {
-            mChannelsJsonArray = mJsonObject.getJSONArray(KEY_CHANNELS);
-        }
-        return mChannelsJsonArray;
+        return mJsonObject.getJSONArray(KEY_CHANNELS);
     }
 
     public List<JsonChannel> getJsonChannels() throws JSONException {
-        JSONArray channels = getJSONArray();
-        final List<JsonChannel> channelList = new ArrayList<>();
-        // Add all the normal channels
-        for (int i = 0; i < channels.length(); i++) {
-            ChannelDatabaseFactory.parseType(channels.getJSONObject(i), new ChannelDatabaseFactory.ChannelParser() {
-                @Override
-                public void ifJsonChannel(JsonChannel entry) {
-                    channelList.add(entry);
-                }
-
-                @Override
-                public void ifJsonListing(JsonListing entry) {
-                }
-            });
-        }
-        // Add temporary channels to list
-        if (mTemporaryObjects != null) {
-            for (int i = 0; i < mTemporaryObjects.length(); i++) {
-                ChannelDatabaseFactory.parseType(mTemporaryObjects.getJSONObject(i), new ChannelDatabaseFactory.ChannelParser() {
+        if (mJsonChannelsList == null) {
+            JSONArray channels = getJSONArray();
+            final List<JsonChannel> channelList = new ArrayList<>();
+            // Add all the normal channels
+            for (int i = 0; i < channels.length(); i++) {
+                ChannelDatabaseFactory.parseType(channels.getJSONObject(i), new ChannelDatabaseFactory.ChannelParser() {
                     @Override
                     public void ifJsonChannel(JsonChannel entry) {
                         channelList.add(entry);
@@ -122,11 +106,27 @@ public class ChannelDatabase {
                     }
                 });
             }
+            // Add temporary channels to list
+            if (mTemporaryObjects != null) {
+                for (int i = 0; i < mTemporaryObjects.length(); i++) {
+                    ChannelDatabaseFactory.parseType(mTemporaryObjects.getJSONObject(i), new ChannelDatabaseFactory.ChannelParser() {
+                        @Override
+                        public void ifJsonChannel(JsonChannel entry) {
+                            channelList.add(entry);
+                        }
+
+                        @Override
+                        public void ifJsonListing(JsonListing entry) {
+                        }
+                    });
+                }
+            }
+            if (mSettingsManager.getBoolean("SORT_BY_NUMBER")) {
+                Collections.sort(channelList); // Optionally reorder
+            }
+            mJsonChannelsList = channelList;
         }
-        if (mSettingsManager.getBoolean("SORT_BY_NUMBER")) {
-            Collections.sort(channelList); // Optionally reorder
-        }
-        return channelList;
+        return mJsonChannelsList;
     }
 
     public List<Channel> getChannels() throws JSONException {
@@ -299,7 +299,7 @@ public class ChannelDatabase {
             setLastModified();
             mSettingsManager.setString(KEY, toString());
             initializeHashMap(mSettingsManager.getContext());
-            mChannelsJsonArray = null;
+            mJsonChannelsList = null;
         } catch (JSONException e) {
             e.printStackTrace();
         }

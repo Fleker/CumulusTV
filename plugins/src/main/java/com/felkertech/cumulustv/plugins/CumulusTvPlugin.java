@@ -34,10 +34,10 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
     private static final String CLASS_NAME = "com.felkertech.n.cumulustv";
     private static final String DATA_RECEIVER = "com.felkertech.n.plugins.DataReceiver";
 
-    private boolean isEdit = false;
     private boolean proprietary = true;
     private Intent telegram;
     private String label;
+    private String mAction;
 
     /**
      * Starts the activity. You can override this to inflate a layout and setup anything else
@@ -48,7 +48,7 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         telegram = getIntent();
         if (telegram.hasExtra(INTENT_EXTRA_ACTION)) {
-            isEdit = telegram.getStringExtra(INTENT_EXTRA_ACTION).equals(INTENT_EDIT);
+            mAction = telegram.getStringExtra(INTENT_EXTRA_ACTION);
         }
         if (DEBUG) {
             Log.d(TAG, "Initialized");
@@ -68,7 +68,11 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
      * @return
      */
     public boolean areEditing() {
-        return isEdit;
+        return mAction != null && mAction.equals(INTENT_EDIT);
+    }
+
+    public boolean areAdding() {
+        return mAction != null && mAction.equals(INTENT_ADD);
     }
 
     /**

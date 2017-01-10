@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="news.androidtv.familycalendar.fragments.SettingsFragment"
+        android:name="com.felkertech.cumulustv.fragments.SettingsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></fragment>
 </RelativeLayout>

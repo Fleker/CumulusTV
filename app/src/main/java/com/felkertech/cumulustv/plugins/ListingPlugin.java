@@ -38,13 +38,16 @@ public class ListingPlugin extends CumulusTvPlugin {
             importPlaylist(uri);
         } else {
             // The user wants to add / edit an existing item.
-            if (areEditing()) {
+            if (areEditing() || areAdding()) {
                 try {
                     populate();
                 } catch (JSONException e) {
                     Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     finish();
                 }
+            } else {
+                Toast.makeText(this, "Unsupported action", Toast.LENGTH_SHORT).show();
+                finish();
             }
         }
     }
@@ -79,6 +82,8 @@ public class ListingPlugin extends CumulusTvPlugin {
                             .setUrl(url)
                             .build();
                     save(newListing);
+                } else {
+                    Toast.makeText(ListingPlugin.this, "Url is empty", Toast.LENGTH_SHORT).show();
                 }
             }
         });
