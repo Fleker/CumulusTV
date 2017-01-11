@@ -8,20 +8,9 @@
         android:scaleType="centerCrop"
         android:src="@drawable/c_background5"/>
 
-    <Button android:text="@string/manage_add_new" android:layout_width="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="112dp"
-        style="@style/main_button"
-        android:id="@+id/add"/>
-    <Button android:text="@string/manage_add_suggested" android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/add"
-        style="@style/main_button"
-        android:id="@+id/suggested"/>
     <Button android:text="@string/my_channels" android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/suggested"
+        android:layout_marginTop="112dp"
         style="@style/main_button"
         android:id="@+id/view"/>
     <Button android:text="Categories" android:layout_width="match_parent"

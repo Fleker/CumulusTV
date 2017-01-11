@@ -107,12 +107,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     public void updateUi() {
         final ChannelDatabase channelDatabase = ChannelDatabase.getInstance(MainActivity.this);
-        findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ActivityUtils.openPluginPicker(true, MainActivity.this);
-            }
-        });
+
         findViewById(R.id.view).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -185,12 +180,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
-        });
-        findViewById(R.id.suggested).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ActivityUtils.openSuggestedChannels(MainActivity.this, gapi);
             }
         });
         findViewById(R.id.gdrive).setOnClickListener(new View.OnClickListener() {
@@ -440,6 +429,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_add:
+                ActivityUtils.openPluginPicker(true, MainActivity.this);
+                break;
+            case R.id.menu_add_suggested:
+                ActivityUtils.openSuggestedChannels(MainActivity.this, gapi);
+                break;
             case R.id.menu_import:
                 ActivityUtils.switchGoogleDrive(MainActivity.this, gapi);
                 break;

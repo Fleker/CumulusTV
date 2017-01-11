@@ -456,7 +456,7 @@ public class ActivityUtils {
         } else {
             new AlertDialog.Builder(new ContextThemeWrapper(activity, R.style.CompatTheme))
                     .setTitle(R.string.choose_an_app)
-                    .setMessage(R.string.choose_default_app)
+//                    .setMessage(R.string.choose_default_app)
                     .setItems(plugin_names2, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
