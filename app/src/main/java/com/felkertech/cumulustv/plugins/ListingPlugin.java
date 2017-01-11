@@ -4,13 +4,20 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
+import com.felkertech.cumulustv.fileio.AbstractFileParser;
+import com.felkertech.cumulustv.fileio.HttpFileParser;
+import com.felkertech.cumulustv.fileio.M3uParser;
 import com.felkertech.cumulustv.model.JsonListing;
 
 import io.fabric.sdk.android.Fabric;
@@ -18,6 +25,11 @@ import io.fabric.sdk.android.Fabric;
 import com.felkertech.n.cumulustv.R;
 
 import org.json.JSONException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
 /**
  * A simple plugin that alows a user to add a URL pointing to an M3U file which will be continually
  * updated.
@@ -73,6 +85,38 @@ public class ListingPlugin extends CumulusTvPlugin {
             JsonListing listing = new JsonListing.Builder(getJson()).build();
             ((EditText) findViewById(R.id.edit_url)).setText(listing.getUrl());
         }
+
+        ((EditText) findViewById(R.id.edit_url)).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String url = editable.toString();
+                new HttpFileParser(url, new AbstractFileParser.FileLoader() {
+                    @Override
+                    public void onFileLoaded(InputStream inputStream) {
+                        try {
+                            List<M3uParser.M3uTvChannel> channels =
+                                    M3uParser.parse(inputStream).channels;
+                            ((TextView) findViewById(R.id.channel_count)).setText(
+                                    channels.size() + " channels found"
+                            );
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
+
         findViewById(R.id.button_update).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
