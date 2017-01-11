@@ -49,7 +49,7 @@ public class ChannelDatabase {
     private JSONArray mTemporaryObjects;
     private SettingsManager mSettingsManager;
     protected HashMap<String, Long> mDatabaseHashMap;
-    private List<JsonChannel> mJsonChannelsList;
+    protected List<JsonChannel> mJsonChannelsList;
 
     private static ChannelDatabase mChannelDatabase;
 

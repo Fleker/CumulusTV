@@ -47,5 +47,6 @@ public class MockChannelDatabase extends ChannelDatabase {
 
     @Override
     public void save() {
+        mJsonChannelsList = null;
     }
 }

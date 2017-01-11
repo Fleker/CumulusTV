@@ -94,8 +94,14 @@ public class M3uParser {
                         valueEnd = channelAttributes.indexOf("\"", valueIndex + 1);
                         variableEnd = valueEnd + 2; // '" '
                     }
-                    String value = channelAttributes.substring(valueIndex, valueEnd);
-                    channel.put(attribute, value);
+                    try {
+                        String value = channelAttributes.substring(valueIndex, valueEnd);
+                        channel.put(attribute, value);
+                    } catch (StringIndexOutOfBoundsException e) {
+                        throw new StringIndexOutOfBoundsException("Parsing error: " + channelAttributes
+                            + " does not fit into founds " + valueIndex + " - " + valueEnd + " for" +
+                                "line " + line);
+                    }
                     if (variableEnd > channelAttributes.length()) {
                         channelAttributes = "";
                     } else {

@@ -53,7 +53,7 @@ import java.io.IOException;
  */
 public class CumulusTvTifService extends BaseTvInputService {
     private static final String TAG = CumulusTvTifService.class.getSimpleName();
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static final long EPG_SYNC_DELAYED_PERIOD_MS = 1000 * 2; // 2 Seconds
 
     private CaptioningManager mCaptioningManager;
@@ -240,9 +240,14 @@ public class CumulusTvTifService extends BaseTvInputService {
         @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public long onTimeShiftGetCurrentPosition() {
+            if (mPlayer == null) {
+                return TvInputManager.TIME_SHIFT_INVALID_TIME;
+            }
             long currentMs = tuneTime + mPlayer.getCurrentPosition();
-            Log.d(TAG, currentMs + "  " + onTimeShiftGetStartPosition() + " start position");
-            Log.d(TAG, (currentMs - onTimeShiftGetStartPosition()) + " diff start position");
+            if (DEBUG) {
+                Log.d(TAG, currentMs + "  " + onTimeShiftGetStartPosition() + " start position");
+                Log.d(TAG, (currentMs - onTimeShiftGetStartPosition()) + " diff start position");
+            }
             return currentMs;
         }
 
@@ -302,10 +307,6 @@ public class CumulusTvTifService extends BaseTvInputService {
             releasePlayer();
             tuneTime = System.currentTimeMillis();
             stillTuning = true;
-            notifyVideoAvailable();
-            setOverlayViewEnabled(false);
-            onCreateOverlayView();
-            setOverlayViewEnabled(true);
             return super.onTune(channelUri);
         }
 

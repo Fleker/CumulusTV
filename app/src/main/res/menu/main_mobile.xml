@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/menu_add"
+        android:title="@string/add_channel_txt"
+        android:icon="@drawable/ic_add"
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/menu_add_suggested"
+        android:title="@string/suggested_channels"
+        android:icon="@drawable/ic_playlist_plus"
+        app:showAsAction="ifRoom" />
     <item android:id="@+id/menu_import"
         android:title="@string/settings_switch_google_drive"
         android:icon="@drawable/ic_google_drive_folder"

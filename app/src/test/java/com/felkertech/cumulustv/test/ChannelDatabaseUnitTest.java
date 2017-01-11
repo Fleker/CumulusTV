@@ -116,6 +116,11 @@ public class ChannelDatabaseUnitTest extends TestCase {
         assertEquals(sampleChannel, mockChannelDatabase.findChannelByMediaUrl(MEDIA_URL));
     }
 
+    /**
+     * Adds a JSON Listing and then tries to read data from it shortly after.
+     * @throws JSONException
+     * @throws InterruptedException
+     */
     @Test
     public void testJsonListingParsing() throws JSONException, InterruptedException {
         MockChannelDatabase mockChannelDatabase =

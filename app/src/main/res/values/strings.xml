@@ -163,6 +163,6 @@
     <string name="open_stream">Open Stream</string>
     <string name="link_to_m3u">Link to an M3u Playlist</string>
     <string name="m3u_url">M3u Url</string>
-    <string name="add_jsonlisting">Add JsonListing</string>
+    <string name="add_jsonlisting">Link to M3U Playlist</string>
 </resources>
 

@@ -165,7 +165,7 @@ public class XmlTvParser {
                 .setDisplayName(displayName)
                 .setDisplayNumber(displayNumber)
                 .setOriginalNetworkId(fakeOriginalNetworkId)
-                .setChannelLogo(icon.src)
+                .setChannelLogo(icon == null ? "" : icon.src)
                 .build();
     }
 
@@ -232,7 +232,7 @@ public class XmlTvParser {
         return new Program.Builder()
                 .setTitle(title)
                 .setDescription(description)
-                .setPosterArtUri(icon.src)
+                .setPosterArtUri(icon == null ? "" : icon.src)
                 .setStartTimeUtcMillis(startTimeUtcMillis)
                 .setEndTimeUtcMillis(endTimeUtcMillis)
                 .setInternalProviderData(ipd)
