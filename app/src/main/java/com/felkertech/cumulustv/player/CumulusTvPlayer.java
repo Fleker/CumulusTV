@@ -8,6 +8,7 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.Surface;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -35,9 +36,9 @@ import java.util.List;
 /**
  * Created by guest1 on 12/23/2016.
  */
-
 public class CumulusTvPlayer implements TvPlayer, ExoPlayer.EventListener {
     private static final String TAG = CumulusTvPlayer.class.getSimpleName();
+    private static final boolean DEBUG = false;
 
     private List<Callback> mTvCallbacks = new ArrayList<>();
     private List<ErrorListener> mErrorListeners = new ArrayList<>();
@@ -53,6 +54,7 @@ public class CumulusTvPlayer implements TvPlayer, ExoPlayer.EventListener {
         mSimpleExoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector, loadControl);
         mContext = context;
         mSimpleExoPlayer.addListener(this);
+        mSimpleExoPlayer.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT);
     }
 
     @Override
@@ -65,7 +67,9 @@ public class CumulusTvPlayer implements TvPlayer, ExoPlayer.EventListener {
     public void setPlaybackParams(PlaybackParams params) {
         mSimpleExoPlayer.setPlaybackParams(params);
         mPlaybackSpeed = params.getSpeed();
-        Log.d(TAG, "Set params " + params.toString());
+        if (DEBUG) {
+            Log.d(TAG, "Set params " + params.toString());
+        }
     }
 
     public float getPlaybackSpeed() {
@@ -74,7 +78,7 @@ public class CumulusTvPlayer implements TvPlayer, ExoPlayer.EventListener {
 
     @Override
     public long getCurrentPosition() {
-        return mSimpleExoPlayer.getCurrentPosition();
+        return mSimpleExoPlayer.getBufferedPosition();
     }
 
     @Override
@@ -89,7 +93,7 @@ public class CumulusTvPlayer implements TvPlayer, ExoPlayer.EventListener {
 
     @Override
     public void setVolume(float volume) {
-
+        mSimpleExoPlayer.setVolume(volume);
     }
 
     @Override
@@ -162,7 +166,7 @@ public class CumulusTvPlayer implements TvPlayer, ExoPlayer.EventListener {
         for (Callback tvCallback : mTvCallbacks) {
             if (playWhenReady && playbackState == ExoPlayer.STATE_ENDED) {
                 tvCallback.onCompleted();
-            } else if (playWhenReady && playbackState == ExoPlayer.STATE_BUFFERING) {
+            } else if (playWhenReady && playbackState == ExoPlayer.STATE_READY) {
                 tvCallback.onStarted();
             }
         }

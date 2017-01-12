@@ -15,7 +15,7 @@ import java.util.Objects;
  * @author Nick
  * @version 2016.09.04
  */
-public class CumulusChannel {
+public class CumulusChannel implements JsonContainer {
     private static final String KEY_AUDIO_ONLY = "audioOnly";
     private static final String KEY_EPG_URL = "epgUrl";
     private static final String KEY_GENRES = "genres";
@@ -48,11 +48,14 @@ public class CumulusChannel {
     }
 
     public String getGenresString() {
+        if (genres == null) {
+            return "";
+        }
         return genres;
     }
 
     public boolean hasLogo() {
-        return !getLogo().isEmpty();
+        return getLogo() != null && !getLogo().isEmpty();
     }
 
     public String getLogo() {
@@ -86,7 +89,7 @@ public class CumulusChannel {
         return splashscreen;
     }
 
-    public JSONObject toJSON() throws JSONException {
+    public JSONObject toJson() throws JSONException {
         JSONObject object = new JSONObject();
         object.put(KEY_AUDIO_ONLY, isAudioOnly());
         object.put(KEY_EPG_URL, getEpgUrl());
@@ -102,7 +105,7 @@ public class CumulusChannel {
 
     public String toString() {
         try {
-            return toJSON().toString();
+            return toJson().toString();
         } catch (JSONException e) {
             throw new RuntimeException(e.getMessage());
         }

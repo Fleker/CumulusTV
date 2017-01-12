@@ -129,4 +129,14 @@
     <string name="error_sync_default">"Erreur lors du scan : %1$d"</string>
     <string name="streaming_audio">Streaming audio</string>
     <string name="msg_no_url_found">Aucune URL détectée</string>
+    <string name="add_jsonlisting">Link to M3U Playlist</string>
+    <string name="channel_epg">Epg Url</string>
+    <string name="channel_logo">Logo Url</string>
+    <string name="channel_media">Media Url</string>
+    <string name="channel_name">Channel Name</string>
+    <string name="channel_number">Channel Number</string>
+    <string name="channel_splashscreen">Splashscreen Url</string>
+    <string name="link_to_m3u">Link to an M3u Playlist</string>
+    <string name="m3u_url">M3u Url</string>
+    <string name="open_stream">Open Stream</string>
 </resources>

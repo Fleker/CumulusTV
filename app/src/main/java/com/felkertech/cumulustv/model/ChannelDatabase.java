@@ -9,8 +9,12 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.felkertech.cumulustv.fileio.AbstractFileParser;
+import com.felkertech.cumulustv.fileio.FileParserFactory;
+import com.felkertech.cumulustv.fileio.HttpFileParser;
 import com.felkertech.cumulustv.fileio.M3uParser;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
+import com.felkertech.cumulustv.plugins.JsonContainer;
 import com.felkertech.cumulustv.utils.ActivityUtils;
 import com.felkertech.cumulustv.utils.DriveSettingsManager;
 import com.felkertech.settingsmanager.SettingsManager;
@@ -21,7 +25,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -39,8 +46,10 @@ public class ChannelDatabase {
     private static final String KEY_MODIFIED = "modified";
 
     private JSONObject mJsonObject;
+    private JSONArray mTemporaryObjects;
     private SettingsManager mSettingsManager;
     protected HashMap<String, Long> mDatabaseHashMap;
+    protected List<JsonChannel> mJsonChannelsList;
 
     private static ChannelDatabase mChannelDatabase;
 
@@ -48,6 +57,11 @@ public class ChannelDatabase {
         if (mChannelDatabase == null) {
             mChannelDatabase = new ChannelDatabase(context);
             mChannelDatabase.initializeHashMap(context);
+            try {
+                mChannelDatabase.readJsonListings();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         return mChannelDatabase;
     }
@@ -76,13 +90,43 @@ public class ChannelDatabase {
     }
 
     public List<JsonChannel> getJsonChannels() throws JSONException {
-        JSONArray channels = getJSONArray();
-        List<JsonChannel> channelList = new ArrayList<>();
-        for (int i = 0; i < channels.length(); i++) {
-            JsonChannel channel = new JsonChannel.Builder(channels.getJSONObject(i)).build();
-            channelList.add(channel);
+        if (mJsonChannelsList == null) {
+            JSONArray channels = getJSONArray();
+            final List<JsonChannel> channelList = new ArrayList<>();
+            // Add all the normal channels
+            for (int i = 0; i < channels.length(); i++) {
+                ChannelDatabaseFactory.parseType(channels.getJSONObject(i), new ChannelDatabaseFactory.ChannelParser() {
+                    @Override
+                    public void ifJsonChannel(JsonChannel entry) {
+                        channelList.add(entry);
+                    }
+
+                    @Override
+                    public void ifJsonListing(JsonListing entry) {
+                    }
+                });
+            }
+            // Add temporary channels to list
+            if (mTemporaryObjects != null) {
+                for (int i = 0; i < mTemporaryObjects.length(); i++) {
+                    ChannelDatabaseFactory.parseType(mTemporaryObjects.getJSONObject(i), new ChannelDatabaseFactory.ChannelParser() {
+                        @Override
+                        public void ifJsonChannel(JsonChannel entry) {
+                            channelList.add(entry);
+                        }
+
+                        @Override
+                        public void ifJsonListing(JsonListing entry) {
+                        }
+                    });
+                }
+            }
+            if (mSettingsManager.getBoolean("SORT_BY_NUMBER")) {
+                Collections.sort(channelList); // Optionally reorder
+            }
+            mJsonChannelsList = channelList;
         }
-        return channelList;
+        return mJsonChannelsList;
     }
 
     public List<Channel> getChannels() throws JSONException {
@@ -163,56 +207,90 @@ public class ChannelDatabase {
 
     public void add(CumulusChannel channel) throws JSONException {
         if (mJsonObject != null) {
+            /*if (channel.getGenresString().isEmpty()) {
+                channel = new CumulusChannel.Builder(channel)
+                        .setGenres(TvContract.Programs.Genres.FAMILY_KIDS)
+                        .build();
+            }*/
             JSONArray channels = mJsonObject.getJSONArray(KEY_CHANNELS);
-            channels.put(channel.toJSON());
+            channels.put(channel.toJson());
+            save();
+        }
+    }
+
+    public void add(JsonListing listing) throws JSONException {
+        if (mJsonObject != null) {
+            JSONArray channels = mJsonObject.getJSONArray(KEY_CHANNELS);
+            channels.put(listing.toJson());
             save();
         }
     }
 
     public void update(CumulusChannel channel) throws JSONException {
+        /*if (channel.getGenresString().isEmpty()) {
+            channel = new CumulusChannel.Builder(channel)
+                    .setGenres(TvContract.Programs.Genres.FAMILY_KIDS)
+                    .build();
+        }*/
+        final CumulusChannel channel1 = channel;
         if(!channelExists(channel)) {
             add(channel);
         } else {
-            try {
-                JSONArray jsonArray = new JSONArray();
-                List<JsonChannel> jsonChannelList = getJsonChannels();
-                int finalindex = -1;
-                for (int i = 0; i < jsonChannelList.size(); i++) {
-                    JsonChannel jsonChannel = jsonChannelList.get(i);
-                    if (finalindex >= 0) {
-//                        jsonArray.put(finalindex, ch.toJSON());
-                    } else if(jsonChannel.getMediaUrl().equals(channel.getMediaUrl())) {
-                        if (DEBUG) {
-                            Log.d(TAG, "Remove " + i + " and put at " + i + ": " +
-                                    channel.toString());
+            final JSONArray channels = getJSONArray();
+            final int[] i = new int[1];
+            for (i[0] = 0; i[0] < channels.length(); i[0]++) {
+                ChannelDatabaseFactory.parseType(channels.getJSONObject(i[0]), new ChannelDatabaseFactory.ChannelParser() {
+                    @Override
+                    public void ifJsonChannel(JsonChannel entry) {
+                        try {
+                            if (entry.getMediaUrl().equals(channel1.getMediaUrl())) {
+                                if (DEBUG) {
+                                    Log.d(TAG, "Remove " + i[0] + " and put at " + i[0] + ": " +
+                                            channel1.toString());
+                                }
+                                channels.put(i[0], channel1.toJson());
+                                mJsonObject.getJSONArray(KEY_CHANNELS).put(i[0], channel1.toJson());
+                                save();
+                                return;
+                            }
+                        } catch (JSONException ignored) {
                         }
-                        jsonArray.put(i, channel.toJSON());
-                        finalindex = i;
-                        mJsonObject.getJSONArray(KEY_CHANNELS).put(i, channel.toJSON());
-                        save();
                     }
-                }
-            } catch (JSONException ignored) {
+
+                    @Override
+                    public void ifJsonListing(JsonListing entry) {
+                    }
+                });
             }
         }
     }
 
-    public void delete(CumulusChannel channel) throws JSONException {
-        if(!channelExists(channel)) {
-            add(channel);
-        } else {
-            try {
-                List<JsonChannel> jsonChannelList = getJsonChannels();
-                for (int i = 0; i < jsonChannelList.size(); i++) {
-                    JsonChannel jsonChannel = jsonChannelList.get(i);
-                    if(jsonChannel.getMediaUrl() != null &&
-                            jsonChannel.getMediaUrl().equals(channel.getMediaUrl())) {
-                        mJsonObject.getJSONArray(KEY_CHANNELS).remove(i);
-                        save();
+    public void delete(final CumulusChannel channel) throws JSONException {
+        final JSONArray channels = getJSONArray();
+        final int[] i = new int[1];
+        for (i[0] = 0; i[0] < channels.length(); i[0]++) {
+            ChannelDatabaseFactory.parseType(channels.getJSONObject(i[0]), new ChannelDatabaseFactory.ChannelParser() {
+                @Override
+                public void ifJsonChannel(JsonChannel entry) {
+                    try {
+                        if (entry.getMediaUrl().equals(channel.getMediaUrl())) {
+                            if (DEBUG) {
+                                Log.d(TAG, "Remove " + i[0] + " and put at " + i[0] + ": " +
+                                        channel.toString());
+                            }
+                            channels.put(i[0], channel.toJson());
+                            mJsonObject.getJSONArray(KEY_CHANNELS).remove(i[0]);
+                            save();
+                            return;
+                        }
+                    } catch (JSONException ignored) {
                     }
                 }
-            } catch (JSONException ignored) {
-            }
+
+                @Override
+                public void ifJsonListing(JsonListing entry) {
+                }
+            });
         }
     }
 
@@ -221,6 +299,7 @@ public class ChannelDatabase {
             setLastModified();
             mSettingsManager.setString(KEY, toString());
             initializeHashMap(mSettingsManager.getContext());
+            mJsonChannelsList = null;
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -353,7 +432,7 @@ public class ChannelDatabase {
                     while (cursor.moveToNext()) {
                         try {
                             InternalProviderData ipd = new InternalProviderData(
-                                    cursor.getString(cursor.getColumnIndex(
+                                    cursor.getBlob(cursor.getColumnIndex(
                                     TvContract.Channels.COLUMN_INTERNAL_PROVIDER_DATA)));
                             String mediaUrl = ipd.getVideoUrl();
                             long rowId = cursor.getLong(cursor.getColumnIndex(TvContract.Channels._ID));
@@ -382,6 +461,61 @@ public class ChannelDatabase {
             Log.d(TAG, getJSONArray().toString());
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Adds temporary channels to the database, which live solely in memory and are wiped when the
+     * app memory is deleted. These can interface with {@link JsonListing} objects to add channels
+     * that are displayed but not saved.
+     *
+     * @param temp The channel to add.
+     * @throws JSONException
+     */
+    public void addTemporaryChannel(JsonContainer temp) throws JSONException {
+        if (mTemporaryObjects == null) {
+            mTemporaryObjects = new JSONArray();
+        }
+        for (int i = 0; i < mTemporaryObjects.length(); i++) {
+            if (mTemporaryObjects.get(i).equals(temp)) {
+                return;
+            }
+        }
+        mTemporaryObjects.put(temp.toJson());
+    }
+
+    /**
+     * Scans through user data to find all json listings and add them to a temporary object in
+     * memory.
+     */
+    protected void readJsonListings() throws JSONException {
+        JSONArray jsonArray = getJSONArray();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            ChannelDatabaseFactory.parseType(jsonArray.getJSONObject(i), new ChannelDatabaseFactory.ChannelParser() {
+                @Override
+                public void ifJsonChannel(JsonChannel entry) {
+                }
+
+                @Override
+                public void ifJsonListing(JsonListing entry) {
+                    Log.d(TAG, "Json listing " + entry.getUrl());
+                    new HttpFileParser(entry.getUrl(), new AbstractFileParser.FileLoader() {
+                        @Override
+                        public void onFileLoaded(InputStream inputStream) {
+                            try {
+                                List<M3uParser.M3uTvChannel> channels =
+                                        M3uParser.parse(inputStream).channels;
+                                for (M3uParser.M3uTvChannel c : channels) {
+                                    Log.d(TAG, "Reading " + c.url + " from JSON Listing");
+                                    addTemporaryChannel(c.toJsonChannel());
+                                }
+                            } catch (IOException | JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            });
         }
     }
 

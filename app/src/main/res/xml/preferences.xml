@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Channels">
+        <SwitchPreference
+            android:title="Sort by Number"
+            android:key="SORT_BY_NUMBER" />
+    </PreferenceCategory>
+</PreferenceScreen>

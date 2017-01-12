@@ -22,6 +22,7 @@ public class MockChannelDatabase extends ChannelDatabase {
     public static MockChannelDatabase getMockedInstance(Context context) throws JSONException {
         if (mMockChannelDatabase == null) {
             mMockChannelDatabase = new MockChannelDatabase(context);
+            mMockChannelDatabase.readJsonListings();
         }
         return mMockChannelDatabase;
     }
@@ -40,7 +41,12 @@ public class MockChannelDatabase extends ChannelDatabase {
         mJsonObject = new JSONObject(jsonString);
     }
 
+    public void readMockJsonListings() throws JSONException {
+        mMockChannelDatabase.readJsonListings();
+    }
+
     @Override
     public void save() {
+        mJsonChannelsList = null;
     }
 }

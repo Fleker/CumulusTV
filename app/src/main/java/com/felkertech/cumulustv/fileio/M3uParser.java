@@ -23,6 +23,7 @@ import static com.felkertech.cumulustv.fileio.M3uParser.Constants.CH_NUMBER;
 import static com.felkertech.cumulustv.fileio.M3uParser.Constants.CH_PLUGIN;
 import static com.felkertech.cumulustv.fileio.M3uParser.Constants.CH_SPLASH;
 import static com.felkertech.cumulustv.fileio.M3uParser.Constants.CH_SPLASH_ALT1;
+import static com.felkertech.cumulustv.fileio.M3uParser.Constants.KEY_COUNTRY;
 
 /**
  * This class is responsible to converting between M3u playlists and the application model.
@@ -93,8 +94,14 @@ public class M3uParser {
                         valueEnd = channelAttributes.indexOf("\"", valueIndex + 1);
                         variableEnd = valueEnd + 2; // '" '
                     }
-                    String value = channelAttributes.substring(valueIndex, valueEnd);
-                    channel.put(attribute, value);
+                    try {
+                        String value = channelAttributes.substring(valueIndex, valueEnd);
+                        channel.put(attribute, value);
+                    } catch (StringIndexOutOfBoundsException e) {
+                        throw new StringIndexOutOfBoundsException("Parsing error: " + channelAttributes
+                            + " does not fit into founds " + valueIndex + " - " + valueEnd + " for" +
+                                "line " + line);
+                    }
                     if (variableEnd > channelAttributes.length()) {
                         channelAttributes = "";
                     } else {
@@ -112,8 +119,12 @@ public class M3uParser {
 
                 // Set channel properties
                 channel.displayName = channelName;
+                channel.m3uAttributes.putAll(globalAttributes);
                 channel.put("count", String.valueOf(channels.size()));
                 channels.add(channel);
+            } else if (line.startsWith("##")) {
+                // Interpret as a country-group
+                globalAttributes.put(KEY_COUNTRY, line.replaceAll("#", "").trim());
             }
         }
         TvListing tvl = new TvListing(channels);
@@ -178,7 +189,8 @@ public class M3uParser {
             return new JsonChannel.Builder()
                     .setAudioOnly(getKey(m3uAttributes, CH_AUDIO_ONLY) != null)
                     .setEpgUrl(getKey(m3uAttributes, CH_EPG_URL))
-                    .setGenres(getKey(m3uAttributes, CH_GENRES, CH_GENRES_ALT1))
+                    .setGenres(getKey(m3uAttributes, CH_GENRES, CH_GENRES_ALT1) +
+                            "," + getKey(m3uAttributes, KEY_COUNTRY))
                     .setLogo(getKey(m3uAttributes, CH_LOGO))
                     .setName(displayName)
                     .setNumber(getKey(m3uAttributes, "#EXTINF:", CH_NUMBER, "count"))
@@ -206,5 +218,7 @@ public class M3uParser {
         public static final String CH_PLUGIN = "cumulus-plugin";
         public static final String CH_SPLASH = "splashscreen";
         public static final String CH_SPLASH_ALT1 = "tvg-splashscreen";
+
+        public static final String KEY_COUNTRY = "country";
     }
 }
