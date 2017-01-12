@@ -109,6 +109,10 @@ public class CloudStorageProvider {
         }
     }
 
+    public GoogleApiClient getClient() {
+        return mGoogleApiClient;
+    }
+
     public interface CloudProviderCallback {
         void actionCompleted(int status);
     }

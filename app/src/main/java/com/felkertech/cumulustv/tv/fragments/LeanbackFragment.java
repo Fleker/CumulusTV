@@ -30,8 +30,12 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.felkertech.cumulustv.activities.SettingsActivity;
 import com.felkertech.cumulustv.fileio.CloudStorageProvider;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
+import com.felkertech.cumulustv.plugins.CumulusTvPlugin;
+import com.felkertech.cumulustv.plugins.ListingPlugin;
+import com.felkertech.cumulustv.plugins.MainPicker;
 import com.felkertech.cumulustv.services.CumulusJobService;
 import com.felkertech.cumulustv.utils.ActivityUtils;
 import com.felkertech.cumulustv.utils.DriveSettingsManager;
@@ -45,6 +49,7 @@ import com.felkertech.cumulustv.tv.Utils;
 import com.felkertech.cumulustv.tv.activities.DetailsActivity;
 import com.felkertech.cumulustv.tv.presenters.CardPresenter;
 import com.felkertech.cumulustv.tv.presenters.OptionsCardPresenter;
+import com.google.android.exoplayer2.C;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -82,7 +87,6 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
     private Timer mBackgroundTimer;
     private BackgroundManager mBackgroundManager;
     private DriveSettingsManager sm;
-    public GoogleApiClient gapi;
     public Activity mActivity;
     private final GoogleDriveBroadcastReceiver broadcastReceiver =
             new GoogleDriveBroadcastReceiver() {
@@ -131,11 +135,6 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver,
                 new IntentFilter(GoogleDriveBroadcastReceiver.ACTION_STATUS_CHANGED));
         Log.d(TAG, "Registered broadcast receiver");
-        try {
-            ChannelDatabase.getInstance(getActivity());
-        } catch (ChannelDatabase.MalformedChannelDataException e) {
-            ActivityUtils.handleMalformedChannelData(getActivity(), gapi, e);
-        }
     }
 
     @Override
@@ -170,7 +169,8 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
         try {
              cd = ChannelDatabase.getInstance(mActivity);
         } catch (ChannelDatabase.MalformedChannelDataException e) {
-            ActivityUtils.handleMalformedChannelData(getActivity(), gapi, e);
+            ActivityUtils.handleMalformedChannelData(getActivity(),
+                    CloudStorageProvider.getInstance().getClient(), e);
             return;
         }
         Map<String, ListRow> genresListRows = new HashMap<>();
@@ -236,6 +236,10 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
                 getString(R.string.manage_livechannels)));
         gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_airplay),
                 getString(R.string.manage_add_new)));
+        gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_airplay),
+                getString(R.string.add_jsonlisting)));
+        gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_airplay),
+                getString(R.string.installed_plugins)));
         mRowsAdapter.add(new ListRow(gridHeader, gridRowAdapter));
 
         // Settings will become its own activity
@@ -243,7 +247,6 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
         OptionsCardPresenter mGridPresenter2 = new OptionsCardPresenter();
         ArrayObjectAdapter gridRowAdapter2 = new ArrayObjectAdapter(mGridPresenter2);
         /*
-        FIXME Plugin browser hidden due to #165
         gridRowAdapter2.add(new Option(getResources().getDrawable(R.drawable.ic_animation),
                     getString(R.string.settings_browse_plugins)));
                     */
@@ -253,6 +256,8 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
                 getString(R.string.settings_reset_channel_data)));
         gridRowAdapter2.add(new Option(getResources().getDrawable(R.drawable.ic_help_circle_fill),
                 getString(R.string.about_app)));
+        gridRowAdapter2.add(new Option(getResources().getDrawable(R.drawable.ic_cog),
+                getString(R.string.settings)));
         mRowsAdapter.add(new ListRow(gridHeader2, gridRowAdapter2));
 
         setAdapter(mRowsAdapter);
@@ -273,7 +278,7 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
     private void setupUIElements() {
         try {
             setBadgeDrawable(getActivity().getResources().getDrawable(R.mipmap.ic_launcher));
-            setTitle(getString(R.string.app_name)); // Badge, when set, takes precedent
+//            setTitle(getString(R.string.app_name)); // Badge, when set, takes precedent
             // over title
             setHeadersState(HEADERS_ENABLED);
             setHeadersTransitionOnBackEnabled(true);
@@ -303,10 +308,10 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
 
     @Override
     public void onConnected(Bundle bundle) {
-        ActivityUtils.onConnected(gapi);
+        ActivityUtils.onConnected(CloudStorageProvider.getInstance().getClient());
         Log.d(TAG, "onConnected");
 
-        sm.setGoogleDriveSyncable(gapi, new DriveSettingsManager.GoogleDriveListener() {
+        sm.setGoogleDriveSyncable(CloudStorageProvider.getInstance().getClient(), new DriveSettingsManager.GoogleDriveListener() {
             @Override
             public void onActionFinished(boolean cloudToLocal) {
                 Log.d(TAG, "Sync req after drive action");
@@ -323,10 +328,11 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
         Log.d(TAG, sm.getString(R.string.sm_google_drive_id) + "<< for onConnected");
         if(sm.getString(R.string.sm_google_drive_id).isEmpty()) {
             //We need a new file
-            ActivityUtils.createDriveData(mActivity, gapi, driveContentsCallback);
+            ActivityUtils.createDriveData(mActivity, CloudStorageProvider.getInstance().getClient(),
+                    driveContentsCallback);
         } else {
             //Great, user already has sync enabled, let's resync
-            ActivityUtils.readDriveData(mActivity, gapi);
+            ActivityUtils.readDriveData(mActivity, CloudStorageProvider.getInstance().getClient());
             Handler h = new Handler(Looper.getMainLooper()){
                 @Override
                 public void handleMessage(Message msg) {
@@ -350,7 +356,7 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
                             .setActivityTitle("cumulustv_channels.json")
                             .setInitialMetadata(metadataChangeSet)
                             .setInitialDriveContents(result.getDriveContents())
-                            .build(ActivityUtils.getGoogleApiClient());
+                            .build(CloudStorageProvider.getInstance().getClient());
                     try {
                         mActivity.startIntentSenderForResult(
                                 intentSender, REQUEST_CODE_CREATOR, null, 0, 0, 0);
@@ -404,8 +410,17 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
                 if(title.equals(getString(R.string.manage_livechannels))) {
                     ActivityUtils.launchLiveChannels(mActivity);
                 } else if(title.equals(getString(R.string.manage_add_suggested))) {
-                   ActivityUtils.openSuggestedChannels(mActivity, gapi);
+                   ActivityUtils.openSuggestedChannels(mActivity,
+                           CloudStorageProvider.getInstance().getClient());
                 } else if(title.equals(getString(R.string.manage_add_new))) {
+                    Intent i = new Intent(getActivity(), MainPicker.class);
+                    i.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
+                    startActivity(i);
+                } else if (title.equals(getString(R.string.add_jsonlisting))) {
+                    Intent i = new Intent(getActivity(), ListingPlugin.class);
+                    i.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
+                    startActivity(i);
+                } else if (title.equals(getString(R.string.installed_plugins))) {
                     ActivityUtils.openPluginPicker(true, mActivity);
                 } else if(title.equals(getString(R.string.connect_drive))) {
                     CloudStorageProvider.getInstance().connect(mActivity);
@@ -415,13 +430,18 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
                     ActivityUtils.browsePlugins(mActivity);
                 } else if(title.equals(getString(R.string.settings_refresh_cloud_local))) {
                     CloudStorageProvider.getInstance().connect(mActivity);
-                    ActivityUtils.readDriveData(mActivity, gapi);
+                    ActivityUtils.readDriveData(mActivity,
+                            CloudStorageProvider.getInstance().getClient());
                 } else if(title.equals(getString(R.string.settings_view_licenses))) {
                     ActivityUtils.oslClick(mActivity);
                 } else if(title.equals(getString(R.string.settings_reset_channel_data))) {
-                    ActivityUtils.deleteChannelData(mActivity, gapi);
+                    ActivityUtils.deleteChannelData(mActivity,
+                            CloudStorageProvider.getInstance().getClient());
                 } else if(title.equals(getString(R.string.about_app))) {
                     ActivityUtils.openAbout(mActivity);
+                } else if (title.equals(getString(R.string.settings))) {
+                    Intent i = new Intent(getActivity(), SettingsActivity.class);
+                    startActivity(i);
                 } else {
                     Toast.makeText(mActivity, ((String) item), Toast.LENGTH_SHORT)
                             .show();
