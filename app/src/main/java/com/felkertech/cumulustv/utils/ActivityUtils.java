@@ -275,8 +275,10 @@ public class ActivityUtils {
                 GoogleDriveBroadcastReceiver.EVENT_DOWNLOAD_COMPLETE);
 
         final String info = TvContract.buildInputId(TV_INPUT_SERVICE);
-        EpgSyncJobService.requestImmediateSync(context, info,
-                new ComponentName(context, CumulusJobService.class));
+        if (AppUtils.isTV(context)) {
+            EpgSyncJobService.requestImmediateSync(context, info,
+                    new ComponentName(context, CumulusJobService.class));
+        }
     }
 
     public static void createDriveData(Activity activity, GoogleApiClient gapi,

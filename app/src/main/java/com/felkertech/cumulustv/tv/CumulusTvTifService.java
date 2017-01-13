@@ -307,6 +307,18 @@ public class CumulusTvTifService extends BaseTvInputService {
             releasePlayer();
             tuneTime = System.currentTimeMillis();
             stillTuning = true;
+
+            // Update our channel
+            for (String mediaUrl : ChannelDatabase.getInstance(mContext).getHashMap().keySet()) {
+                if (ChannelDatabase.getInstance(mContext).getHashMap().get(mediaUrl) ==
+                        Long.parseLong(channelUri.getLastPathSegment())) {
+                    jsonChannel = ChannelDatabase.getInstance(mContext)
+                            .findChannelByMediaUrl(mediaUrl);
+                }
+            }
+            notifyVideoAvailable();
+            setOverlayViewEnabled(false);
+            setOverlayViewEnabled(true);
             return super.onTune(channelUri);
         }
 

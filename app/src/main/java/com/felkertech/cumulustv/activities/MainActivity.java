@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private static final int RESOLVE_CONNECTION_REQUEST_CODE = 100;
     private static final int REQUEST_CODE_CREATOR = 102;
 
-    private GoogleApiClient gapi;
     private DriveSettingsManager sm;
     private MaterialDialog md;
 
@@ -101,7 +100,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
             updateUi();
         } catch (ChannelDatabase.MalformedChannelDataException e) {
-            ActivityUtils.handleMalformedChannelData(MainActivity.this, gapi, e);
+            ActivityUtils.handleMalformedChannelData(MainActivity.this,
+                    CloudStorageProvider.getInstance().getClient(), e);
         }
     }
 
@@ -123,7 +123,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                 public void onPositive(MaterialDialog dialog) {
                                     super.onPositive(dialog);
                                     dialog.cancel();
-                                    findViewById(R.id.suggested).performClick();
+                                    ActivityUtils.openSuggestedChannels(MainActivity.this,
+                                            CloudStorageProvider.getInstance().getClient());
                                 }
                             })
                             .show();
@@ -185,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         findViewById(R.id.gdrive).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gapi = CloudStorageProvider.getInstance().connect(MainActivity.this);
+                CloudStorageProvider.getInstance().connect(MainActivity.this);
             }
         });
         findViewById(R.id.more_actions).setOnClickListener(new View.OnClickListener() {
@@ -198,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(Bundle bundle) {
-        ActivityUtils.onConnected(gapi);
+        ActivityUtils.onConnected(CloudStorageProvider.getInstance().getClient());
         Log.d(TAG, "onConnected");
         if(md != null) {
             if(md.isShowing()) {
@@ -210,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         }
         CloudStorageProvider.getInstance().onConnected(Activity.RESULT_OK);
-        sm.setGoogleDriveSyncable(gapi, new DriveSettingsManager.GoogleDriveListener() {
+        sm.setGoogleDriveSyncable(CloudStorageProvider.getInstance().getClient(), new DriveSettingsManager.GoogleDriveListener() {
             @Override
             public void onActionFinished(boolean cloudToLocal) {
                 Log.d(TAG, "Sync req after drive action");
@@ -302,7 +303,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        ActivityUtils.onActivityResult(MainActivity.this, gapi, requestCode, resultCode, data);
+        ActivityUtils.onActivityResult(MainActivity.this,
+                CloudStorageProvider.getInstance().getClient(), requestCode, resultCode, data);
     }
 
     @Override
@@ -333,7 +335,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             .setActivityTitle("cumulustv_channels.json")
                             .setInitialMetadata(metadataChangeSet)
                             .setInitialDriveContents(result.getDriveContents())
-                            .build(gapi);
+                            .build(CloudStorageProvider.getInstance().getClient());
                     try {
                         startIntentSenderForResult(
                                 intentSender, REQUEST_CODE_CREATOR, null, 0, 0, 0);
@@ -372,7 +374,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                 ActivityUtils.exportM3uPlaylist(MainActivity.this);
                                 break;
                             case 2:
-                                ActivityUtils.readDriveData(MainActivity.this, gapi);
+                                ActivityUtils.readDriveData(MainActivity.this,
+                                        CloudStorageProvider.getInstance().getClient());
                                 break;
                             case 7:
                                 new MaterialDialog.Builder(MainActivity.this)
@@ -433,16 +436,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 ActivityUtils.openPluginPicker(true, MainActivity.this);
                 break;
             case R.id.menu_add_suggested:
-                ActivityUtils.openSuggestedChannels(MainActivity.this, gapi);
+                ActivityUtils.openSuggestedChannels(MainActivity.this,
+                        CloudStorageProvider.getInstance().getClient());
                 break;
             case R.id.menu_import:
-                ActivityUtils.switchGoogleDrive(MainActivity.this, gapi);
+                ActivityUtils.switchGoogleDrive(MainActivity.this,
+                        CloudStorageProvider.getInstance().getClient());
                 break;
             case R.id.menu_licenses:
                 ActivityUtils.oslClick(MainActivity.this);
                 break;
             case R.id.menu_reset_data:
-                ActivityUtils.deleteChannelData(MainActivity.this, gapi);
+                ActivityUtils.deleteChannelData(MainActivity.this,
+                        CloudStorageProvider.getInstance().getClient());
                 break;
             case R.id.menu_about:
                 ActivityUtils.openAbout(MainActivity.this);
