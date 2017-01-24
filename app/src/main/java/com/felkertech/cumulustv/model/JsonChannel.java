@@ -87,6 +87,11 @@ public class JsonChannel extends CumulusChannel implements Comparable {
         return getNumber().compareTo(((JsonChannel) o).getNumber());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return getMediaUrl().equals(((JsonChannel) o).getMediaUrl());
+    }
+
     public static class Builder extends CumulusChannel.Builder {
         private JsonChannel jsonChannel;
 

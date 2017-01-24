@@ -113,7 +113,9 @@ public class ChannelDatabase {
                     ChannelDatabaseFactory.parseType(mTemporaryObjects.getJSONObject(i), new ChannelDatabaseFactory.ChannelParser() {
                         @Override
                         public void ifJsonChannel(JsonChannel entry) {
-                            channelList.add(entry);
+                            if (!channelList.contains(entry)) {
+                                channelList.add(entry);
+                            }
                         }
 
                         @Override

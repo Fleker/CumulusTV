@@ -59,6 +59,7 @@ public class CumulusJobService extends EpgSyncJobService {
             new EpgDataSyncThread(this, new EpgDataCallback() {
                 @Override
                 public void onComplete() {
+                    Log.d(TAG, "Epg data syncing is complete");
                     EpgSyncTask epgSyncTask = new EpgSyncTask(params);
                     epgSyncTask.execute();
                 }
@@ -99,10 +100,12 @@ public class CumulusJobService extends EpgSyncJobService {
                 Log.d(TAG, "Adding channel " + channel.getDisplayName());
                 channels.set(i, channel);
             }
+            Log.d(TAG, "Returning with " + channels.size() + " channels");
             return channels;
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        Log.w(TAG, "No channels found");
         return null;
     }
 
