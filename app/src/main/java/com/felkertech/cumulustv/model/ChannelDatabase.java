@@ -311,6 +311,7 @@ public class ChannelDatabase {
             mSettingsManager.setString(KEY, toString());
             initializeHashMap(mSettingsManager.getContext());
             mJsonChannelsList = null;
+            readJsonListings();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -520,6 +521,8 @@ public class ChannelDatabase {
                                     Log.d(TAG, "Reading " + c.url + " from JSON Listing");
                                     addTemporaryChannel(c.toJsonChannel());
                                 }
+                                // Make sure these get loaded
+                                mJsonChannelsList = null;
                             } catch (IOException | JSONException e) {
                                 e.printStackTrace();
                             }
