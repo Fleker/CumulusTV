@@ -107,12 +107,12 @@ public class DataReceiver extends BroadcastReceiver
     }
 
     private void handle(JSONObject jsonObject) {
+        Log.d(TAG, "Handle " + jsonObject.toString());
         final ChannelDatabase cdn = ChannelDatabase.getInstance(mContext);
         ChannelDatabaseFactory.parseType(jsonObject, new ChannelDatabaseFactory.ChannelParser() {
             @Override
             public void ifJsonChannel(JsonChannel entry) {
-                JsonChannel.Builder builder = new JsonChannel.Builder(entry).setPluginSource(
-                        mIntent.getStringExtra(CumulusTvPlugin.INTENT_EXTRA_SOURCE));
+                JsonChannel.Builder builder = new JsonChannel.Builder(entry);
                 if (mIntent.hasExtra(CumulusTvPlugin.INTENT_EXTRA_ORIGINAL_JSON)) {
                     // Clearly edited a stream
                     try {
