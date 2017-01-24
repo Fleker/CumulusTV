@@ -106,6 +106,7 @@ public class ChannelDatabase {
                     }
                 });
             }
+            Log.d(TAG, "There are " + channelList.size() + " items");
             // Add temporary channels to list
             if (mTemporaryObjects != null) {
                 for (int i = 0; i < mTemporaryObjects.length(); i++) {
@@ -120,6 +121,7 @@ public class ChannelDatabase {
                         }
                     });
                 }
+                Log.d(TAG, "Plus more " + channelList.size() + " channels");
             }
             if (mSettingsManager.getBoolean("SORT_BY_NUMBER")) {
                 Collections.sort(channelList); // Optionally reorder
@@ -207,13 +209,7 @@ public class ChannelDatabase {
 
     public void add(CumulusChannel channel) throws JSONException {
         if (mJsonObject != null) {
-            /*if (channel.getGenresString().isEmpty()) {
-                channel = new CumulusChannel.Builder(channel)
-                        .setGenres(TvContract.Programs.Genres.FAMILY_KIDS)
-                        .build();
-            }*/
-            JSONArray channels = mJsonObject.getJSONArray(KEY_CHANNELS);
-            channels.put(channel.toJson());
+            mJsonObject.getJSONArray(KEY_CHANNELS).put(channel.toJson());
             save();
         }
     }
@@ -221,7 +217,8 @@ public class ChannelDatabase {
     public void add(JsonListing listing) throws JSONException {
         if (mJsonObject != null) {
             JSONArray channels = mJsonObject.getJSONArray(KEY_CHANNELS);
-            channels.put(listing.toJson());
+            mJsonObject.getJSONArray(KEY_CHANNELS).put(listing.toJson());
+            Log.d(TAG, channels.toString());
             save();
         }
     }
@@ -265,7 +262,7 @@ public class ChannelDatabase {
         }
     }
 
-    public void delete(final CumulusChannel channel) throws JSONException {
+    public void delete(final JsonContainer container) throws JSONException {
         final JSONArray channels = getJSONArray();
         final int[] i = new int[1];
         for (i[0] = 0; i[0] < channels.length(); i[0]++) {
@@ -273,12 +270,12 @@ public class ChannelDatabase {
                 @Override
                 public void ifJsonChannel(JsonChannel entry) {
                     try {
-                        if (entry.getMediaUrl().equals(channel.getMediaUrl())) {
+                        if (entry.getMediaUrl().equals(((JsonChannel) container).getMediaUrl())) {
                             if (DEBUG) {
                                 Log.d(TAG, "Remove " + i[0] + " and put at " + i[0] + ": " +
-                                        channel.toString());
+                                        entry.toString());
                             }
-                            channels.put(i[0], channel.toJson());
+//                            channels.put(i[0], entry.toJson());
                             mJsonObject.getJSONArray(KEY_CHANNELS).remove(i[0]);
                             save();
                             return;
@@ -289,6 +286,20 @@ public class ChannelDatabase {
 
                 @Override
                 public void ifJsonListing(JsonListing entry) {
+                    if (entry.getUrl().equals(((JsonListing) container).getUrl())) {
+                        if (DEBUG) {
+                            Log.d(TAG, "Remove " + i[0] + " and put at " + i[0] + ": " +
+                                    entry.toString());
+                        }
+                        try {
+//                            channels.put(i[0], entry.toJson());
+                            mJsonObject.getJSONArray(KEY_CHANNELS).remove(i[0]);
+                            save();
+                            return;
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             });
         }
@@ -300,6 +311,7 @@ public class ChannelDatabase {
             mSettingsManager.setString(KEY, toString());
             initializeHashMap(mSettingsManager.getContext());
             mJsonChannelsList = null;
+            readJsonListings();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -509,6 +521,8 @@ public class ChannelDatabase {
                                     Log.d(TAG, "Reading " + c.url + " from JSON Listing");
                                     addTemporaryChannel(c.toJsonChannel());
                                 }
+                                // Make sure these get loaded
+                                mJsonChannelsList = null;
                             } catch (IOException | JSONException e) {
                                 e.printStackTrace();
                             }

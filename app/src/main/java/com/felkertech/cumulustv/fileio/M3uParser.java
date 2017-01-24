@@ -68,10 +68,22 @@ public class M3uParser {
     }
 
     public static TvListing parse(InputStream inputStream) throws IOException {
+        if (inputStream == null) {
+            return null;
+        }
         BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
         String line;
         List<M3uTvChannel> channels = new ArrayList<>();
         Map<String, String> globalAttributes = new HashMap<>(); // Unused for now
+        // Check the first line.
+        line = in.readLine();
+        Log.d(TAG, "First line is " + line);
+        if (line.startsWith("#EXTM3U")) {
+            // Parse global attributes
+        } else {
+            // Not an M3u playlist
+            return null;
+        }
 
         while ((line = in.readLine()) != null) {
             if (line.startsWith("#EXTINF:")) { // This is a channel
@@ -89,12 +101,12 @@ public class M3uParser {
                     if (valueEnd == -1) {
                         valueEnd = channelAttributes.length(); // We're at the end
                     }
-                    if (channelAttributes.charAt(valueDivider + 1) == '"') {
-                        valueIndex++;
-                        valueEnd = channelAttributes.indexOf("\"", valueIndex + 1);
-                        variableEnd = valueEnd + 2; // '" '
-                    }
                     try {
+                        if (channelAttributes.charAt(valueDivider + 1) == '"') {
+                            valueIndex++;
+                            valueEnd = channelAttributes.indexOf("\"", valueIndex + 1);
+                            variableEnd = valueEnd + 2; // '" '
+                        }
                         String value = channelAttributes.substring(valueIndex, valueEnd);
                         channel.put(attribute, value);
                     } catch (StringIndexOutOfBoundsException e) {

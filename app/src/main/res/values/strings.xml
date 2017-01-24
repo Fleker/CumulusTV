@@ -164,5 +164,14 @@
     <string name="link_to_m3u">Link to an M3u Playlist</string>
     <string name="m3u_url">M3u Url</string>
     <string name="add_jsonlisting">Link to M3U Playlist</string>
+    <string name="msg_url_empty">Url is empty</string>
+    <string name="msg_unsupported_action">Unsupported action</string>
+    <string name="json_link_confirmation">Add a reference to %1$s? This will continually be updated.</string>
+    <string name="x_channels_found">%1$d channels found</string>
+    <string name="close_pretty">~ Close ~</string>
+    <string name="show_all">Show All</string>
+    <string name="debug">Debug</string>
+    <string name="option_sort_by_number">Sort by Number</string>
+    <string name="print_database">Print Database</string>
 </resources>
 

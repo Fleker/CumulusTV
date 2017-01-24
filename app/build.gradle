@@ -22,8 +22,8 @@ android {
         applicationId "com.felkertech.n.cumulustv"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 58
-        versionName '1.7.2'
+        versionCode 59
+        versionName '1.7.3'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         testApplicationId 'com.felkertech.n.cumulustv.test'
     }

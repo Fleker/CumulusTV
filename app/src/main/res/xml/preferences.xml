@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="Channels">
+    <PreferenceCategory android:title="@string/tif_channel_scan">
         <SwitchPreference
-            android:title="Sort by Number"
+            android:title="@string/option_sort_by_number"
             android:key="SORT_BY_NUMBER" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/debug">
+        <Preference
+            android:title="@string/print_database"
+            android:key="PRINT_DATABASE" />
     </PreferenceCategory>
 </PreferenceScreen>

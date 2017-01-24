@@ -32,7 +32,7 @@ public abstract class CumulusTvPlugin extends AppCompatActivity {
     public static final String ACTION_RECEIVER = "com.felkertech.cumulustv.RECEIVER";
 
     private static final String CLASS_NAME = "com.felkertech.n.cumulustv";
-    private static final String DATA_RECEIVER = "com.felkertech.n.plugins.DataReceiver";
+    private static final String DATA_RECEIVER = "com.felkertech.cumulustv.plugins.DataReceiver";
 
     private boolean proprietary = true;
     private Intent telegram;
