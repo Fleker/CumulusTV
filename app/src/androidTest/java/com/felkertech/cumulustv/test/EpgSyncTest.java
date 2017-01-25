@@ -65,8 +65,8 @@ public class EpgSyncTest extends ActivityInstrumentationTestCase2<MainActivity> 
                         .setEpgUrl("http://example.com/epg.xml")
                         .setLogo("http://static-cdn1.ustream.tv/i/channel/picture/9/4/0/8/9408562/9408562_iss_hr_1330361780,256x144,r:1.jpg")
                         .build());
-        EpgSyncJobService.requestImmediateSync(getActivity(),
-                "com.felkertech.cumulustv.tv.CumulusTvTifService",
+        CumulusJobService.requestImmediateSync1(getActivity(),
+                "com.felkertech.cumulustv.tv.CumulusTvTifService", CumulusJobService.DEFAULT_IMMEDIATE_EPG_DURATION_MILLIS,
                 new ComponentName(getActivity(), CumulusJobService.class));
         // Wait for sync to complete
         Thread.sleep(1000 * 10);

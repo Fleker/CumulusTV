@@ -173,5 +173,6 @@
     <string name="debug">Debug</string>
     <string name="option_sort_by_number">Sort by Number</string>
     <string name="print_database">Print Database</string>
+    <string name="currently_streaming">Currently streaming</string>
 </resources>
 

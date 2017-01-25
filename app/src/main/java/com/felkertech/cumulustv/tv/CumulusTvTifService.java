@@ -387,7 +387,7 @@ public class CumulusTvTifService extends BaseTvInputService {
         }
 
         private void requestEpgSync(final Uri channelUri) {
-            EpgSyncJobService.requestImmediateSync(CumulusTvTifService.this, mInputId,
+            CumulusJobService.requestImmediateSync1(CumulusTvTifService.this, mInputId, CumulusJobService.DEFAULT_IMMEDIATE_EPG_DURATION_MILLIS,
                     new ComponentName(CumulusTvTifService.this, CumulusJobService.class));
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override

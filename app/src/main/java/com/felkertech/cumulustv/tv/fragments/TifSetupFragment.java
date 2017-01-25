@@ -49,7 +49,7 @@ public class TifSetupFragment extends ChannelSetupFragment {
     @Override
     public void onScanStarted() {
         EpgSyncJobService.cancelAllSyncRequests(getActivity());
-        EpgSyncJobService.requestImmediateSync(getActivity(), mInputId,
+        CumulusJobService.requestImmediateSync1(getActivity(), mInputId, CumulusJobService.DEFAULT_IMMEDIATE_EPG_DURATION_MILLIS,
                 new ComponentName(getActivity(), CumulusJobService.class));
 
         new SettingsManager(getActivity())

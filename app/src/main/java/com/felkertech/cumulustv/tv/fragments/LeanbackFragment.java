@@ -316,7 +316,7 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
             public void onActionFinished(boolean cloudToLocal) {
                 Log.d(TAG, "Sync req after drive action");
                 final String info = TvContract.buildInputId(ActivityUtils.TV_INPUT_SERVICE);
-                EpgSyncJobService.requestImmediateSync(mActivity, info,
+                CumulusJobService.requestImmediateSync1(mActivity, info, CumulusJobService.DEFAULT_IMMEDIATE_EPG_DURATION_MILLIS,
                         new ComponentName(mActivity, CumulusJobService.class));
                 if (cloudToLocal) {
                     Toast.makeText(getActivity(), R.string.download_complete, Toast.LENGTH_SHORT).show();

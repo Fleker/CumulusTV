@@ -9,5 +9,8 @@
         <Preference
             android:title="@string/print_database"
             android:key="PRINT_DATABASE" />
+        <Preference
+            android:title="Print System Data"
+            android:key="PRINT_SYSTEM" />
     </PreferenceCategory>
 </PreferenceScreen>

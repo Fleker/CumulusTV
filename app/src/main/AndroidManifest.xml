@@ -61,10 +61,6 @@
                 android:resource="@xml/shortcuts" />
         </activity>
 
-        <meta-data
-            android:name="TvInputService"
-            android:value="com.felkertech.cumulustv.tv.CumulusTvService" />
-
         <!-- Plugin -->
         <activity
             android:name="com.felkertech.cumulustv.plugins.MainPicker"

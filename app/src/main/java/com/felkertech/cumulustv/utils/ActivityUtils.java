@@ -247,7 +247,7 @@ public class ActivityUtils {
                     GoogleDriveBroadcastReceiver.EVENT_UPLOAD_COMPLETE);
 
             final String info = TvContract.buildInputId(TV_INPUT_SERVICE);
-            EpgSyncJobService.requestImmediateSync(context, info,
+            CumulusJobService.requestImmediateSync1(context, info, CumulusJobService.DEFAULT_IMMEDIATE_EPG_DURATION_MILLIS,
                     new ComponentName(context, CumulusJobService.class));
             Log.d(TAG, "Data actually written");
 //            Toast.makeText(context, "Channels uploaded", Toast.LENGTH_SHORT).show();
@@ -276,7 +276,7 @@ public class ActivityUtils {
 
         final String info = TvContract.buildInputId(TV_INPUT_SERVICE);
         if (AppUtils.isTV(context)) {
-            EpgSyncJobService.requestImmediateSync(context, info,
+            CumulusJobService.requestImmediateSync1(context, info, CumulusJobService.DEFAULT_IMMEDIATE_EPG_DURATION_MILLIS,
                     new ComponentName(context, CumulusJobService.class));
         }
     }

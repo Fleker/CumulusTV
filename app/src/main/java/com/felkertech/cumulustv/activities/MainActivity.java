@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void onActionFinished(boolean cloudToLocal) {
                 Log.d(TAG, "Sync req after drive action");
                 final String info = TvContract.buildInputId(ActivityUtils.TV_INPUT_SERVICE);
-                EpgSyncJobService.requestImmediateSync(MainActivity.this, info,
+                CumulusJobService.requestImmediateSync1(MainActivity.this, info, CumulusJobService.DEFAULT_IMMEDIATE_EPG_DURATION_MILLIS,
                         new ComponentName(MainActivity.this, CumulusJobService.class));
                 if (cloudToLocal) {
                     Toast.makeText(MainActivity.this, R.string.downloaded, Toast.LENGTH_SHORT).show();

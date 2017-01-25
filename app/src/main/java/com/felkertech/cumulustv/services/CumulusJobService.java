@@ -1,9 +1,18 @@
 package com.felkertech.cumulustv.services;
 
+import android.app.job.JobInfo;
 import android.app.job.JobParameters;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.os.PersistableBundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -19,6 +28,8 @@ import com.google.android.media.tv.companionlibrary.model.Channel;
 import com.google.android.media.tv.companionlibrary.model.InternalProviderData;
 import com.google.android.media.tv.companionlibrary.model.Program;
 import com.google.android.media.tv.companionlibrary.utils.TvContractUtils;
+
+import junit.framework.Assert;
 
 import org.json.JSONException;
 
@@ -43,6 +54,7 @@ public class CumulusJobService extends EpgSyncJobService {
                     "&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct" +
                     "%3Dlinear&correlator=";
     private static HashMap<String, XmlTvParser.TvListing> epgData;
+    public static final long DEFAULT_IMMEDIATE_EPG_DURATION_MILLIS = 1000 * 60 * 60; // 1 Hour
 
     /**
      * This method needs to be overridden so that we can do asynchronous actions beforehand.
@@ -52,6 +64,7 @@ public class CumulusJobService extends EpgSyncJobService {
         // Broadcast status
         Intent intent = new Intent(ACTION_SYNC_STATUS_CHANGED);
         intent.putExtra(BUNDLE_KEY_INPUT_ID, params.getExtras().getString(BUNDLE_KEY_INPUT_ID));
+        Log.d(TAG, "Sync program data for " + params.getExtras().getString(BUNDLE_KEY_INPUT_ID));
         intent.putExtra(SYNC_STATUS, SYNC_STARTED);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
@@ -60,8 +73,16 @@ public class CumulusJobService extends EpgSyncJobService {
                 @Override
                 public void onComplete() {
                     Log.d(TAG, "Epg data syncing is complete");
-                    EpgSyncTask epgSyncTask = new EpgSyncTask(params);
-                    epgSyncTask.execute();
+                    Handler h = new Handler(Looper.getMainLooper()) {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            super.handleMessage(msg);
+                            Log.d(TAG, "Run in main thread");
+                            EpgSyncTask epgSyncTask = new EpgSyncTask(params);
+                            epgSyncTask.execute();
+                        }
+                    };
+                    h.sendEmptyMessage(0);
                 }
             }).start();
         }
@@ -114,11 +135,12 @@ public class CumulusJobService extends EpgSyncJobService {
            long endMs) {
         List<Program> programs = new ArrayList<>();
         ChannelDatabase channelDatabase = ChannelDatabase.getInstance(this);
+        Log.d(TAG, "Get programs for " + channel.toString());
         JsonChannel jsonChannel = channelDatabase.findChannelByMediaUrl(
                 channel.getInternalProviderData().getVideoUrl());
 
-        if (jsonChannel.getEpgUrl() != null && !jsonChannel.getEpgUrl().isEmpty() &&
-                epgData.containsKey(jsonChannel.getEpgUrl())) {
+        if (jsonChannel != null && jsonChannel.getEpgUrl() != null &&
+                !jsonChannel.getEpgUrl().isEmpty() && epgData.containsKey(jsonChannel.getEpgUrl())) {
             List<Program> programForGivenTime = new ArrayList<>();
             XmlTvParser.TvListing tvListing = epgData.get(jsonChannel.getEpgUrl());
             List<Program> programList = tvListing.getAllPrograms();
@@ -158,7 +180,7 @@ public class CumulusJobService extends EpgSyncJobService {
             programs.add(new Program.Builder()
                     .setInternalProviderData(channel.getInternalProviderData())
                     .setTitle(channel.getDisplayName() + " Live")
-                    .setDescription("Currently streaming")
+                    .setDescription(getString(R.string.currently_streaming))
                     .setPosterArtUri(channel.getChannelLogo())
                     .setThumbnailUri(channel.getChannelLogo())
                     .setCanonicalGenres(jsonChannel.getGenres())
@@ -213,5 +235,37 @@ public class CumulusJobService extends EpgSyncJobService {
 
     private interface EpgDataCallback {
         void onComplete();
+    }
+
+    @Deprecated
+    public static void requestImmediateSync1(Context context, String inputId, long syncDuration,
+            ComponentName jobServiceComponent) {
+        if (jobServiceComponent.getClass().isAssignableFrom(EpgSyncJobService.class)) {
+            throw new IllegalArgumentException("This class does not extend EpgSyncJobService");
+        }
+        PersistableBundle persistableBundle = new PersistableBundle();
+        if (Build.VERSION.SDK_INT >= 22) {
+            persistableBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+            persistableBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        }
+        persistableBundle.putString(EpgSyncJobService.BUNDLE_KEY_INPUT_ID, inputId);
+        persistableBundle.putLong("bundle_key_sync_period", syncDuration);
+        JobInfo.Builder builder = new JobInfo.Builder(1, jobServiceComponent);
+        JobInfo jobInfo = builder
+                .setExtras(persistableBundle)
+                .setOverrideDeadline(1000)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .build();
+        scheduleJob(context, jobInfo);
+        Log.d(TAG, "Single job scheduled");
+    }
+
+    /** Send the job to JobScheduler. */
+    private static void scheduleJob(Context context, JobInfo job) {
+        JobScheduler jobScheduler =
+                (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        int result = jobScheduler.schedule(job);
+        Assert.assertEquals(result, JobScheduler.RESULT_SUCCESS);
+        Log.d(TAG, "Scheduling result is " + result);
     }
 }

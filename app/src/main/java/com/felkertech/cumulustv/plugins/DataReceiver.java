@@ -102,7 +102,7 @@ public class DataReceiver extends BroadcastReceiver
         ActivityUtils.writeDriveData(mContext, gapi);
 
         final String info = TvContract.buildInputId(ActivityUtils.TV_INPUT_SERVICE);
-        EpgSyncJobService.requestImmediateSync(mContext, info,
+        CumulusJobService.requestImmediateSync1(mContext, info, CumulusJobService.DEFAULT_IMMEDIATE_EPG_DURATION_MILLIS,
                 new ComponentName(mContext, CumulusJobService.class));
     }
 
