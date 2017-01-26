@@ -45,4 +45,18 @@ public class M3uParserUnitTest {
         assertEquals("http://y.cdn.entutele.com/media/channels/big/foro-tv-hd.gif",
                 listing.channels.get(1).toJsonChannel().getLogo());
     }
+
+    @Test
+    public void testFile2() throws IOException {
+        M3uParser.TvListing listing = M3uParser.parse(openFile("m3u_test2.m3u"));
+        assertEquals(1, listing.channels.size());
+        assertEquals("http://s.xxx.com:8000/live/xxx/xxx/1.ts", listing.channels.get(0).toJsonChannel().getMediaUrl());
+    }
+
+    @Test
+    public void testFile3() throws IOException {
+        M3uParser.TvListing listing = M3uParser.parse(openFile("m3u_test3.m3u"));
+        assertEquals(1, listing.channels.size());
+        assertEquals("http://s.xxx.com:8000/live/xxx/xxx/1.ts", listing.channels.get(0).toJsonChannel().getMediaUrl());
+    }
 }

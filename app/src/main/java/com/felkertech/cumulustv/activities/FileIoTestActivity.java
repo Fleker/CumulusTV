@@ -1,10 +1,8 @@
 package com.felkertech.cumulustv.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.renderscript.ScriptGroup;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
@@ -35,7 +33,9 @@ public class FileIoTestActivity extends AppCompatActivity {
     private ImportedFile[] files = new ImportedFile[] {
         new ImportedFile("Test Open", ""),
         new ImportedFile("Print M3U", ""),
-        new ImportedFile("M3U 1", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test1.m3u")
+        new ImportedFile("M3U 1", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test1.m3u"),
+        new ImportedFile("M3U 1", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test2.m3u"),
+        new ImportedFile("M3U 1", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test3.m3u")
     };
 
     @Override
