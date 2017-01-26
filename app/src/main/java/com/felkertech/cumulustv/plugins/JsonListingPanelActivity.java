@@ -1,24 +1,47 @@
 package com.felkertech.cumulustv.plugins;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v17.leanback.widget.VerticalGridView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.felkertech.cumulustv.model.ChannelDatabase;
+import com.felkertech.cumulustv.model.ChannelDatabaseFactory;
+import com.felkertech.cumulustv.model.JsonChannel;
+import com.felkertech.cumulustv.model.JsonListing;
 import com.felkertech.cumulustv.model.RecyclerViewItem;
-import com.felkertech.cumulustv.tv.activities.PlaybackQuickSettingsActivity;
-import com.felkertech.cumulustv.utils.ActivityUtils;
-import com.felkertech.n.cumulustv.*;
+import com.felkertech.cumulustv.ui.RecyclerViewColumnAdapter;
 import com.felkertech.n.cumulustv.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Nick on 1/25/2017.
  */
 
 public class JsonListingPanelActivity extends Activity {
+    private static final String TAG = JsonListingPanelActivity.class.getSimpleName();
+
+    private VerticalGridView mAppLinkMenuList;
+    private RecyclerViewItem[] items;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,45 +50,41 @@ public class JsonListingPanelActivity extends Activity {
             getActionBar().hide();
         }
         setContentView(com.felkertech.n.cumulustv.R.layout.activity_quick_settings);
-        PlaybackQuickSettingsActivity.QuickSetting[] quickSettings = new PlaybackQuickSettingsActivity.QuickSetting[3];
+        ((TextView) findViewById(R.id.title)).setText(getString(R.string.link_to_m3u));
+
+        // Sets the size and position of dialog activity.
+        WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+        layoutParams.gravity = Gravity.END | Gravity.CENTER_VERTICAL;
+        layoutParams.width = getResources().getDimensionPixelSize(R.dimen.side_panel_width);
+        layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        getWindow().setAttributes(layoutParams);
+
+        refreshUi();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                refreshUi();
+            }
+        }.sendEmptyMessageDelayed(0, 50);
     }
 
     /**
      * Adapter class that provides the app link menu list.
      */
-    private class AppLinkMenuAdapter extends RecyclerView.Adapter<PlaybackQuickSettingsActivity.ViewHolder> {
-        private PlaybackQuickSettingsActivity.QuickSetting[] mQuickSettings;
-
-        public AppLinkMenuAdapter(PlaybackQuickSettingsActivity.QuickSetting[] quickSettings) {
-            mQuickSettings = quickSettings;
+    private class AppLinkMenuAdapter extends RecyclerViewColumnAdapter {
+        public AppLinkMenuAdapter(Activity activities, RecyclerViewItem[] quickSettings) {
+            super(activities, quickSettings);
         }
 
         @Override
-        public PlaybackQuickSettingsActivity.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            View view = getLayoutInflater().inflate(viewType, mAppLinkMenuList, false);
-            return new PlaybackQuickSettingsActivity.ViewHolder(view);
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return R.layout.item_quick_setting;
-        }
-
-        @Override
-        public void onBindViewHolder(PlaybackQuickSettingsActivity.ViewHolder viewHolder, final int position) {
-            TextView view = (TextView) viewHolder.itemView;
-            view.setText(mQuickSettings[position].title);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mQuickSettings[position].onClick();
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return mQuickSettings.length;
+        public RecyclerView.ViewHolder createNewViewHolder(View view) {
+            return new ViewHolder(view);
         }
     }
 
@@ -75,9 +94,82 @@ public class JsonListingPanelActivity extends Activity {
         }
     }
 
-    private abstract class QuickSetting extends RecyclerViewItem {
-        public QuickSetting(String title) {
-            super(title);
+    private JsonListing[] getUrls() throws JSONException {
+        final List<JsonListing> listings = new ArrayList<>();
+        JSONArray channelData = ChannelDatabase.getInstance(this).getJSONArray();
+        for (int i = 0; i < channelData.length(); i++) {
+            ChannelDatabaseFactory.parseType(channelData.getJSONObject(i), new ChannelDatabaseFactory.ChannelParser() {
+                @Override
+                public void ifJsonChannel(JsonChannel entry) {
+
+                }
+
+                @Override
+                public void ifJsonListing(JsonListing entry) {
+                    listings.add(entry);
+                }
+            });
         }
+        Log.d(TAG, listings.toString());
+        return listings.toArray(new JsonListing[listings.size()]);
+    }
+
+    private void showEditDialog(final JsonListing listing) {
+        new MaterialDialog.Builder(this)
+                .title(R.string.link_to_m3u)
+                .content(listing.getUrl())
+                .negativeText(R.string.delete)
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        try {
+                            Log.d(TAG, "Try deleting " + listing.toString());
+                            ChannelDatabase.getInstance(JsonListingPanelActivity.this).delete(listing);
+                            new Handler(Looper.getMainLooper()) {
+                                @Override
+                                public void handleMessage(Message msg) {
+                                    super.handleMessage(msg);
+                                    refreshUi();
+                                }
+                            }.sendEmptyMessageDelayed(0, 50);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                })
+                .positiveText(R.string.cancel)
+                .show();
+    }
+
+    private void refreshUi() {
+        try {
+            final JsonListing[] names = getUrls();
+            items = new RecyclerViewItem[names.length + 1];
+            items[0] = new RecyclerViewItem(getString(R.string.add_new_link)) {
+                @Override
+                public void onClick() {
+                    Intent i = new Intent(JsonListingPanelActivity.this, ListingPlugin.class);
+                    i.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
+                    startActivity(i);
+                }
+            };
+            if (names.length > 0) {
+                for (int i = 1; i < items.length; i++) {
+                    final int finalI = i;
+                    Log.d(TAG, "Poll " + finalI);
+                    items[i] = new RecyclerViewItem(names[finalI - 1].getUrl()) {
+                        @Override
+                        public void onClick() {
+                            showEditDialog(names[finalI - 1]);
+                        }
+                    };
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        mAppLinkMenuList = (VerticalGridView) findViewById(R.id.list);
+        mAppLinkMenuList.setAdapter(new AppLinkMenuAdapter(this, items));
     }
 }

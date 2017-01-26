@@ -31,6 +31,11 @@ public class JsonListing implements JsonContainer {
         return object;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof JsonListing && getUrl().equals(((JsonListing) obj).getUrl());
+    }
+
     public String toString() {
         try {
             return toJson().toString();

@@ -89,7 +89,7 @@ public class JsonChannel extends CumulusChannel implements Comparable {
 
     @Override
     public boolean equals(Object o) {
-        return getMediaUrl().equals(((JsonChannel) o).getMediaUrl());
+        return o instanceof JsonChannel && getMediaUrl().equals(((JsonChannel) o).getMediaUrl());
     }
 
     public static class Builder extends CumulusChannel.Builder {

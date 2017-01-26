@@ -69,30 +69,11 @@ public class ListingPlugin extends CumulusTvPlugin {
                     finish();
                 }
             } else if (areAdding()) {
-                new MaterialDialog.Builder(this)
-                        .positiveText(R.string.add_jsonlisting)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                try {
-                                    populate();
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        })
-                        .negativeText(R.string.show_all)
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                try {
-                                    showLinks();
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        })
-                        .show();
+                try {
+                    populate();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             } else if (areReadingAll()) {
                 // Show items
                 try {

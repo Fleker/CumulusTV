@@ -272,7 +272,7 @@ public class ChannelDatabase {
                 @Override
                 public void ifJsonChannel(JsonChannel entry) {
                     try {
-                        if (entry.getMediaUrl().equals(((JsonChannel) container).getMediaUrl())) {
+                        if (entry.equals(container)) {
                             if (DEBUG) {
                                 Log.d(TAG, "Remove " + i[0] + " and put at " + i[0] + ": " +
                                         entry.toString());
@@ -288,7 +288,7 @@ public class ChannelDatabase {
 
                 @Override
                 public void ifJsonListing(JsonListing entry) {
-                    if (entry.getUrl().equals(((JsonListing) container).getUrl())) {
+                    if (entry.equals(container)) {
                         if (DEBUG) {
                             Log.d(TAG, "Remove " + i[0] + " and put at " + i[0] + ": " +
                                     entry.toString());
@@ -516,9 +516,16 @@ public class ChannelDatabase {
                     new HttpFileParser(entry.getUrl(), new AbstractFileParser.FileLoader() {
                         @Override
                         public void onFileLoaded(InputStream inputStream) {
+                            if (inputStream == null) {
+                                return;
+                            }
                             try {
+                                M3uParser.TvListing listing = M3uParser.parse(inputStream);
+                                if (listing == null) {
+                                    return;
+                                }
                                 List<M3uParser.M3uTvChannel> channels =
-                                        M3uParser.parse(inputStream).channels;
+                                        listing.channels;
                                 for (M3uParser.M3uTvChannel c : channels) {
                                     Log.d(TAG, "Reading " + c.url + " from JSON Listing");
                                     addTemporaryChannel(c.toJsonChannel());

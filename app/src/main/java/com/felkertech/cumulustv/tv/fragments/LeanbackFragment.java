@@ -34,6 +34,7 @@ import com.felkertech.cumulustv.activities.SettingsActivity;
 import com.felkertech.cumulustv.fileio.CloudStorageProvider;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.cumulustv.plugins.CumulusTvPlugin;
+import com.felkertech.cumulustv.plugins.JsonListingPanelActivity;
 import com.felkertech.cumulustv.plugins.ListingPlugin;
 import com.felkertech.cumulustv.plugins.MainPicker;
 import com.felkertech.cumulustv.services.CumulusJobService;
@@ -417,8 +418,7 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
                     i.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
                     startActivity(i);
                 } else if (title.equals(getString(R.string.add_jsonlisting))) {
-                    Intent i = new Intent(getActivity(), ListingPlugin.class);
-                    i.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
+                    Intent i = new Intent(getActivity(), JsonListingPanelActivity.class);
                     startActivity(i);
                 } else if (title.equals(getString(R.string.installed_plugins))) {
                     ActivityUtils.openPluginPicker(true, mActivity);

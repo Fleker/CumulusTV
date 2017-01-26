@@ -177,5 +177,6 @@
     <string name="msg_help">Help</string>
     <string name="print_system_data">Print System Data</string>
     <string name="about">About</string>
+    <string name="add_new_link">Add new link</string>
 </resources>
 
