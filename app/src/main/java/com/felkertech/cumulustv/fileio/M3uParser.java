@@ -80,12 +80,15 @@ public class M3uParser {
         Log.d(TAG, "First line is " + line);
         if (line.startsWith("#EXTM3U")) {
             // Parse global attributes
+        } else if (line.startsWith("#EXTINF")) {
+            // This file has no header. It does have channels. We need to reset our read.
         } else {
             // Not an M3u playlist
             return null;
         }
 
         while ((line = in.readLine()) != null) {
+            Log.d(TAG, "Next line: " + line);
             if (line.startsWith("#EXTINF:")) { // This is a channel
                 M3uTvChannel channel = new M3uTvChannel();
                 String channelAttributes = line.substring(0, getLastComma(line));
