@@ -5,7 +5,10 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.media.tv.TvContract;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -25,6 +28,7 @@ import android.util.SparseArray;
 import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.services.CumulusJobService;
 import com.felkertech.cumulustv.tv.CumulusTvTifService;
+import com.felkertech.cumulustv.utils.ActivityUtils;
 import com.felkertech.n.cumulustv.R;
 import com.google.android.media.tv.companionlibrary.BaseTvInputService;
 import com.google.android.media.tv.companionlibrary.model.Channel;
@@ -88,6 +92,13 @@ public class SettingsFragment extends LeanbackSettingsFragment
             int prefResId = getArguments().getInt(PREFERENCE_RESOURCE_ID);
             if (root == null) {
                 addPreferencesFromResource(prefResId);
+                try {
+                    findPreference("VERSION").setTitle("v" +
+                            getActivity().getPackageManager().getPackageInfo(
+                                    getActivity().getPackageName(), 0).versionName);
+                } catch (PackageManager.NameNotFoundException | NullPointerException e) {
+                    e.printStackTrace();
+                }
             } else {
                 setPreferencesFromResource(prefResId, root);
             }
@@ -120,14 +131,22 @@ public class SettingsFragment extends LeanbackSettingsFragment
                 } else {
                     cursor.moveToFirst();
                 }
-                while (cursor != null && cursor.moveToNext()) {
-                    builder.append(cursor.getString(cursor.getColumnIndex(TvContract.Channels.COLUMN_DISPLAY_NAME)) + "\n");
+                while (cursor != null) {
+                    try {
+                        builder.append(cursor.getString(cursor.getColumnIndex(TvContract.Channels.COLUMN_DISPLAY_NAME)) + "\n");
+                        cursor.moveToNext();
+                    } catch (CursorIndexOutOfBoundsException e) {
+                        e.printStackTrace();
+                        break;
+                    }
                 }
                 new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.Theme_AppCompat_Dialog))
                         .setTitle(R.string.print_database)
                         .setMessage(builder.toString())
                         .show();
                 return true;
+            } else if (preference.getKey().equals("HELP")) {
+                ActivityUtils.launchWebsite(getActivity());
             }
             return super.onPreferenceTreeClick(preference);
         }

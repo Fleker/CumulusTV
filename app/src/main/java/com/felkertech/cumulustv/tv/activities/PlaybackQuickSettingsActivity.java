@@ -100,7 +100,7 @@ public class PlaybackQuickSettingsActivity extends Activity {
     /**
      * Adapter class that provides the app link menu list.
      */
-    public class AppLinkMenuAdapter extends RecyclerView.Adapter<ViewHolder> {
+    private class AppLinkMenuAdapter extends RecyclerView.Adapter<ViewHolder> {
         private QuickSetting[] mQuickSettings;
 
         public AppLinkMenuAdapter(QuickSetting[] quickSettings) {
@@ -136,7 +136,7 @@ public class PlaybackQuickSettingsActivity extends Activity {
         }
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    private class ViewHolder extends RecyclerView.ViewHolder {
         public ViewHolder(View itemView) {
             super(itemView);
         }

@@ -174,5 +174,8 @@
     <string name="option_sort_by_number">Sort by Number</string>
     <string name="print_database">Print Database</string>
     <string name="currently_streaming">Currently streaming</string>
+    <string name="msg_help">Help</string>
+    <string name="print_system_data">Print System Data</string>
+    <string name="about">About</string>
 </resources>
 

@@ -5,12 +5,21 @@
             android:title="@string/option_sort_by_number"
             android:key="SORT_BY_NUMBER" />
     </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/about">
+        <Preference
+            android:title="@string/msg_help"
+            android:key="HELP" />
+        <Preference
+            android:title="VERSION"
+            android:key="VERSION" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/debug">
         <Preference
             android:title="@string/print_database"
             android:key="PRINT_DATABASE" />
         <Preference
-            android:title="Print System Data"
+            android:title="@string/print_system_data"
             android:key="PRINT_SYSTEM" />
     </PreferenceCategory>
 </PreferenceScreen>

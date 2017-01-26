@@ -651,16 +651,7 @@ public class ActivityUtils {
                         @Override
                         public void onPositive(MaterialDialog dialog) {
                             super.onPositive(dialog);
-                            String url = activity.getString(R.string.website_url);
-                            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                            CustomTabsIntent customTabsIntent = builder.build();
-                            try {
-                                customTabsIntent.launchUrl(activity, Uri.parse(url));
-                            } catch (Exception e) {
-                                // There is no way to view the website.
-                                activity.startActivity(new Intent(activity,
-                                        HomepageWebViewActivity.class));
-                            }
+                            launchWebsite(activity);
                         }
 
                         @Override
@@ -672,6 +663,19 @@ public class ActivityUtils {
                     .show();
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void launchWebsite(Activity activity) {
+        String url = activity.getString(R.string.website_url);
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        CustomTabsIntent customTabsIntent = builder.build();
+        try {
+            customTabsIntent.launchUrl(activity, Uri.parse(url));
+        } catch (Exception e) {
+            // There is no way to view the website.
+            activity.startActivity(new Intent(activity,
+                    HomepageWebViewActivity.class));
         }
     }
 
