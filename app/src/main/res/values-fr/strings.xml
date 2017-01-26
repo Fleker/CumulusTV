@@ -139,4 +139,18 @@
     <string name="link_to_m3u">Lier à une playlist M3u</string>
     <string name="m3u_url">Url du fichier M3u</string>
     <string name="open_stream">Ouvrir le flux</string>
+    <string name="msg_url_empty">l\'Url est vide</string>
+    <string name="msg_unsupported_action">Action non supportée</string>
+    <string name="json_link_confirmation">Ajouter une référence à %1$s ? Sera continuellement mis à jour.</string>
+    <string name="x_channels_found">%1$d cannaux trouvés</string>
+    <string name="close_pretty">~ Fermer ~</string>
+    <string name="show_all">Tout afficher</string>
+    <string name="debug">Débogage</string>
+    <string name="option_sort_by_number">Trier par numéro</string>
+    <string name="print_database">Afficher la base de données</string>
+    <string name="currently_streaming">Diffusion en cours</string>   
+    <string name="msg_help">Aide</string>
+    <string name="print_system_data">Afficher les données système</string>
+    <string name="about">À Propos</string>
+    <string name="add_new_link">Ajouter un nouveau lien</string>
 </resources>
