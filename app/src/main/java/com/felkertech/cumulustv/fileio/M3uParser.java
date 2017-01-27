@@ -107,15 +107,15 @@ public class M3uParser {
                     try {
                         if (channelAttributes.charAt(valueDivider + 1) == '"') {
                             valueIndex++;
-                            valueEnd = channelAttributes.indexOf("\"", valueIndex + 1);
+                            valueEnd = channelAttributes.indexOf("\"", valueIndex);
                             variableEnd = valueEnd + 2; // '" '
                         }
                         String value = channelAttributes.substring(valueIndex, valueEnd);
                         channel.put(attribute, value);
                     } catch (StringIndexOutOfBoundsException e) {
-                        throw new StringIndexOutOfBoundsException("Parsing error: " + channelAttributes
-                            + " does not fit into founds " + valueIndex + " - " + valueEnd + " for" +
-                                "line " + line);
+                        throw new StringIndexOutOfBoundsException("Parsing error: '" + channelAttributes
+                            + "' does not fit into range " + valueIndex + " - " + valueEnd +
+                                " for line " + line);
                     }
                     if (variableEnd > channelAttributes.length()) {
                         channelAttributes = "";
