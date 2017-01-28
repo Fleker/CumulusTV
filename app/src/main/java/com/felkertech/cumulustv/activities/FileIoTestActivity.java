@@ -1,16 +1,20 @@
 package com.felkertech.cumulustv.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.renderscript.ScriptGroup;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.felkertech.cumulustv.fileio.AbstractFileParser;
 import com.felkertech.cumulustv.fileio.AssetsFileParser;
@@ -35,7 +39,9 @@ public class FileIoTestActivity extends AppCompatActivity {
     private ImportedFile[] files = new ImportedFile[] {
         new ImportedFile("Test Open", ""),
         new ImportedFile("Print M3U", ""),
-        new ImportedFile("M3U 1", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test1.m3u")
+        new ImportedFile("M3U 1", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test1.m3u"),
+        new ImportedFile("M3U 2", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test2.m3u"),
+        new ImportedFile("M3U 3", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test3.m3u")
     };
 
     @Override
@@ -134,22 +140,45 @@ public class FileIoTestActivity extends AppCompatActivity {
 
     private void parse(String uri, InputStream inputStream) throws IOException {
         String extension = FileParserFactory.getFileExtension(uri);
-        String result;
+        final String result;
         if (extension.equals("xml")) {
             XmlTvParser.TvListing listing = XmlTvParser.parse(inputStream);
             result = listing.toString();
         } else if (extension.equals("m3u")) {
             M3uParser.TvListing listing = M3uParser.parse(inputStream);
+            if (listing == null) {
+                new Handler(Looper.getMainLooper()) {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        super.handleMessage(msg);
+                        Toast.makeText(FileIoTestActivity.this, "Null listing", Toast.LENGTH_SHORT).show();
+                    }
+                }.sendEmptyMessage(0);
+                return;
+            }
             result = listing.toString();
             Log.d(TAG, listing.getChannelList()+"<");
         } else {
             result = "This file has no parser";
         }
         Log.d(TAG, "Obtained " + result);
-        new MaterialDialog.Builder(this)
-                .title("Parsing Result")
-                .content(result)
-                .show();
+        new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                new MaterialDialog.Builder(FileIoTestActivity.this)
+                        .title("Parsing Result")
+                        .content(result)
+                        .negativeText("Restart")
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                startActivity(new Intent(FileIoTestActivity.this, FileIoTestActivity.class));
+                            }
+                        })
+                        .show();
+            }
+        }.sendEmptyMessage(0);
     }
 
     private class ImportedFile extends Pair<String, String> {

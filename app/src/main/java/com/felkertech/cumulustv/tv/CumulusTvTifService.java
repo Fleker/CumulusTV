@@ -22,6 +22,7 @@ import android.view.accessibility.CaptioningManager;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.felkertech.cumulustv.activities.CumulusVideoPlayback;
 import com.felkertech.cumulustv.model.ChannelDatabase;
@@ -262,15 +263,21 @@ public class CumulusTvTifService extends BaseTvInputService {
                     program.getInternalProviderData().getVideoUrl());
             Log.d(TAG, "Play program " + program.getTitle() + " " +
                     program.getInternalProviderData().getVideoUrl());
-            createPlayer(program.getInternalProviderData().getVideoType(),
-                    Uri.parse(program.getInternalProviderData().getVideoUrl()));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                notifyTimeShiftStatusChanged(TvInputManager.TIME_SHIFT_STATUS_AVAILABLE);
+            if (program.getInternalProviderData().getVideoUrl() == null) {
+                Toast.makeText(mContext, getString(R.string.msg_no_url_found), Toast.LENGTH_SHORT).show();
+                notifyVideoUnavailable(TvInputManager.VIDEO_UNAVAILABLE_REASON_UNKNOWN);
+                return false;
+            } else {
+                createPlayer(program.getInternalProviderData().getVideoType(),
+                        Uri.parse(program.getInternalProviderData().getVideoUrl()));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    notifyTimeShiftStatusChanged(TvInputManager.TIME_SHIFT_STATUS_AVAILABLE);
+                }
+                mPlayer.play();
+                notifyVideoAvailable();
+                Log.d(TAG, "The video should start playing");
+                return true;
             }
-            mPlayer.play();
-            notifyVideoAvailable();
-            Log.d(TAG, "The video should start playing");
-            return true;
         }
 
         @RequiresApi(api = Build.VERSION_CODES.N)
