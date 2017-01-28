@@ -94,13 +94,13 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
         @Override
         public void onDownloadCompleted() {
             refreshUI();
-            Toast.makeText(mActivity, "Data downloaded from Google Drive", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, R.string.toast_sync_data_downloaded, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onUploadCompleted() {
             refreshUI(); // Probably need to reload anyway
-            Toast.makeText(mActivity, "Data uploaded to Google Drive", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, R.string.toast_sync_data_uploaded, Toast.LENGTH_SHORT).show();
         }
 
         @Override

@@ -71,10 +71,10 @@ public class TifSetupFragment extends ChannelSetupFragment {
                     new ComponentName(getActivity(), CumulusJobService.class),
                     FULL_SYNC_FREQUENCY_MILLIS, FULL_SYNC_WINDOW_SEC);
             getActivity().setResult(Activity.RESULT_OK);
-            Toast.makeText(getActivity(), "Channels have been added.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.toast_scan_channels_added, Toast.LENGTH_SHORT).show();
         } else {
             getActivity().setResult(Activity.RESULT_CANCELED);
-            Toast.makeText(getActivity(), "Error found: " + mErrorFound, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.toast_scan_error_found + mErrorFound, Toast.LENGTH_SHORT).show();
         }
         getActivity().finish();
     }
