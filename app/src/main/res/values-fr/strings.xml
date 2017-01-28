@@ -3,7 +3,7 @@
     <string name="action_settings">"Paramètres"</string>
 
     <string name="intro_title_1">"Bienvenue dans CumulusTV"</string>
-    <string name="intro_msg_1">"CumulusTV vous permet de créer des chaînes personnalisés qui peuvent être lues via l'application Chaînes en direct. Vous ne savez pas quoi regarder ? Parcourez les chaînes suggérées."</string>
+    <string name="intro_msg_1">"CumulusTV vous permet de créer des chaînes personnalisées qui peuvent être lues via l'application Chaînes en direct. Vous ne savez pas quoi regarder ? Parcourez les chaînes suggérées."</string>
     <string name="intro_title_2">"Utilisez Google Drive"</string>
     <string name="intro_msg_2">"Vous pouvez créer un fichier JSON sur Google Drive et avoir vos chaînes synchronisées sur tous vos appareils."</string>
     <string name="intro_title_21">Comment synchroniser ?</string>
@@ -26,7 +26,7 @@
     <string name="settings_refresh_cloud_local">Re-télécharger la liste</string>
     <string name="settings_view_licenses">"Licences des logiciels"</string>
     <string name="settings_reset_channel_data">"Réinit. données des chaînes"</string>
-    <string name="settings_about">"À propos de Cumulus TV"</string>
+    <string name="settings_about">"À propos de CumulusTV"</string>
     <string name="settings_read_xmltv">"Lire XMLTV (expérimental)"</string>
 
     <string name="more_actions">"Plus d'actions"</string>
@@ -107,7 +107,7 @@
     <string name="play">Regarder</string>
     <string name="toast_error_sorry">Désolé, une erreur s\'est produite.</string>
     <string name="edit_channel_name">Éditer les métadonnées de %1$s</string>
-    <string name="open_cumulus_tv">Ouvrir Cumulus TV</string>
+    <string name="open_cumulus_tv">Ouvrir CumulusTV</string>
     <string name="report_playback_issue">Signaler une erreur de lecture (envoi l\'URL)</string>
     <string name="quick_settings">Paramètres rapides</string>
     <string name="add_channel_txt">Ajouter une chaîne</string>
@@ -119,7 +119,7 @@
     <string name="loading_data">Chargement des données</string>
     <string name="download_complete">@string/downloaded</string>
     <string name="upload_complete">@string/uploaded</string>
-    <string name="export_m3u">Export M3u</string>
+    <string name="export_m3u">Export m3u</string>
     <string name="search_results">"Résultats de la recherche"</string>
     <string name="msg_open_web">"Aucun flux vidéo, interprétation comme un site web"</string>
     <string name="sync_channels">Synchronisation des chaînes</string>
@@ -127,30 +127,34 @@
     <string name="error_sync_canceled">Synchronisation annulée</string>
     <string name="error_sync_no_data">Aucune donnée détectée</string>
     <string name="error_sync_default">"Erreur lors du scan : %1$d"</string>
-    <string name="streaming_audio">Streaming audio</string>
+    <string name="streaming_audio">Diffusion audio</string>
     <string name="msg_no_url_found">Aucune URL détectée</string>
-    <string name="add_jsonlisting">Link to M3U Playlist</string>
-    <string name="channel_epg">Url de l\'EPG</string>
-    <string name="channel_logo">Url du logo</string>
-    <string name="channel_media">Url du média</string>
+    <string name="add_jsonlisting">Lier une playlist m3u</string>
+    <string name="channel_epg">URL de l\'EPG</string>
+    <string name="channel_logo">URL du logo</string>
+    <string name="channel_media">URL du média</string>
     <string name="channel_name">Nom de chaîne</string>
     <string name="channel_number">Numéro de chaîne</string>
-    <string name="channel_splashscreen">Url du splashscreen</string>
-    <string name="link_to_m3u">Lier à une playlist M3u</string>
-    <string name="m3u_url">Url du fichier M3u</string>
+    <string name="channel_splashscreen">URL du splashscreen</string>
+    <string name="link_to_m3u">Lier une playlist m3u</string>
+    <string name="m3u_url">URL du fichier m3u</string>
     <string name="open_stream">Ouvrir le flux</string>
-    <string name="msg_url_empty">l\'Url est vide</string>
+    <string name="msg_url_empty">L\'URL est vide</string>
     <string name="msg_unsupported_action">Action non supportée</string>
     <string name="json_link_confirmation">Ajouter une référence à %1$s ? Sera continuellement mis à jour.</string>
-    <string name="x_channels_found">%1$d cannaux trouvés</string>
+    <string name="x_channels_found">%1$d chaînes trouvées</string>
     <string name="close_pretty">~ Fermer ~</string>
     <string name="show_all">Tout afficher</string>
     <string name="debug">Débogage</string>
     <string name="option_sort_by_number">Trier par numéro</string>
     <string name="print_database">Afficher la base de données</string>
-    <string name="currently_streaming">Diffusion en cours</string>   
+    <string name="currently_streaming">Diffusion en cours</string>
     <string name="msg_help">Aide</string>
     <string name="print_system_data">Afficher les données système</string>
-    <string name="about">À Propos</string>
+    <string name="about">À propos</string>
     <string name="add_new_link">Ajouter un nouveau lien</string>
+    <string name="toast_sync_data_downloaded">Données des chaines téléchargées depuis Google Drive</string>
+    <string name="toast_sync_data_uploaded">Données des chaines uploadées vers Google Drive</string>
+    <string name="toast_scan_error_found">"Erreur détectée : "</string>"
+    <string name="toast_scan_channels_added">Les chaînes ont été ajoutées</string>"
 </resources>
