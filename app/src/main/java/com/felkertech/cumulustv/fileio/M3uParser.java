@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static com.felkertech.cumulustv.fileio.M3uParser.Constants.CH_AUDIO_ONLY;
 import static com.felkertech.cumulustv.fileio.M3uParser.Constants.CH_EPG_URL;
@@ -51,7 +52,7 @@ public class M3uParser {
 
     private static String getKey(HashMap<String, String> map, String... keys) {
         for (String k : keys) {
-            if (map.containsKey(k)) {
+            if (map.containsKey(k) && !map.get(k).isEmpty()) {
                 return map.get(k);
             }
         }
@@ -61,8 +62,21 @@ public class M3uParser {
     private static int getLastComma(String haystack) {
         int comma = -1;
         for (int i = 0; i < haystack.length(); i++) {
+//            Log.d(TAG, "gLC " + i + " " + comma);
             int c2 = haystack.indexOf(",", comma + 1);
-            comma = (c2 > comma) ? c2 : comma;
+            /*Log.d(TAG, c2 + " " + haystack.substring(c2 - 1) + Pattern.matches("[\\\" (-1)],(?!\\\")", haystack.substring(c2 - 1)));
+            Log.d(TAG, Pattern.compile("[\\\" (-1)],(?!\\\")").toString());
+            Log.d(TAG, ""  + Pattern.matches("[,]", "\","));*/
+            String commaAfter = haystack.substring(c2 - 1);
+            Log.d(TAG, "cA " + commaAfter);
+            if ((commaAfter.substring(0,1).equals("\"") || commaAfter.substring(0,1).equals(" ") || commaAfter.substring(0,1).equals("1") ) &&
+                    commaAfter.substring(1,2).equals(",") && commaAfter.indexOf("\"", 2) == -1) {
+                Log.d(TAG, "Update comma to " + c2 + " from " + comma);
+                comma = (c2 > comma) ? c2 : comma;
+                return comma;
+            } else {
+                comma = (c2 > comma) ? c2 : comma;
+            }
         }
         return comma;
     }
@@ -75,21 +89,12 @@ public class M3uParser {
         String line;
         List<M3uTvChannel> channels = new ArrayList<>();
         Map<String, String> globalAttributes = new HashMap<>(); // Unused for now
-        // Check the first line.
-        line = in.readLine();
-        Log.d(TAG, "First line is " + line);
-        if (line.startsWith("#EXTM3U")) {
-            // Parse global attributes
-        } else if (line.startsWith("#EXTINF")) {
-            // This file has no header. It does have channels. We need to reset our read.
-        } else {
-            // Not an M3u playlist
-            return null;
-        }
+        boolean isM3u = false;
 
         while ((line = in.readLine()) != null) {
             Log.d(TAG, "Next line: " + line);
             if (line.startsWith("#EXTINF:")) { // This is a channel
+                isM3u = true;
                 M3uTvChannel channel = new M3uTvChannel();
                 String channelAttributes = line.substring(0, getLastComma(line));
                 String channelName = line.substring(getLastComma(line) + 1).trim()
@@ -140,11 +145,16 @@ public class M3uParser {
             } else if (line.startsWith("##")) {
                 // Interpret as a country-group
                 globalAttributes.put(KEY_COUNTRY, line.replaceAll("#", "").trim());
+            } else if (line.startsWith("#EXTM3U")) {
+                isM3u = true;
             }
         }
         TvListing tvl = new TvListing(channels);
         Log.d(TAG, "Done parsing");
         Log.d(TAG, tvl.toString());
+        if (!isM3u) {
+            return null;
+        }
         return new TvListing(channels);
     }
 

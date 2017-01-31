@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -33,6 +34,7 @@ import java.io.InputStream;
 /**
  * Created by Nick on 12/16/2016.
  */
+@VisibleForTesting
 public class FileIoTestActivity extends AppCompatActivity {
     private static final String TAG = FileIoTestActivity.class.getSimpleName();
 
@@ -41,7 +43,9 @@ public class FileIoTestActivity extends AppCompatActivity {
         new ImportedFile("Print M3U", ""),
         new ImportedFile("M3U 1", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test1.m3u"),
         new ImportedFile("M3U 2", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test2.m3u"),
-        new ImportedFile("M3U 3", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test3.m3u")
+        new ImportedFile("M3U 3", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test3.m3u"),
+        new ImportedFile("M3U 4", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test4.m3u"),
+        new ImportedFile("M3U 5", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test5.m3u")
     };
 
     @Override
@@ -144,7 +148,7 @@ public class FileIoTestActivity extends AppCompatActivity {
         if (extension.equals("xml")) {
             XmlTvParser.TvListing listing = XmlTvParser.parse(inputStream);
             result = listing.toString();
-        } else if (extension.equals("m3u")) {
+        } else if (extension.equals("m3u") || uri.contains("m3u")) {
             M3uParser.TvListing listing = M3uParser.parse(inputStream);
             if (listing == null) {
                 new Handler(Looper.getMainLooper()) {
