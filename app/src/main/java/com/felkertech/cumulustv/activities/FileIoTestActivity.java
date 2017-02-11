@@ -23,7 +23,7 @@ import com.felkertech.cumulustv.fileio.FileParserFactory;
 import com.felkertech.cumulustv.fileio.HttpFileParser;
 import com.felkertech.cumulustv.fileio.LocalFileParser;
 import com.felkertech.cumulustv.fileio.M3uParser;
-import com.felkertech.cumulustv.fileio.XmlTvParser;
+import com.felkertech.cumulustv.fileio.CumulusXmlParser;
 import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.R;
 
@@ -144,10 +144,15 @@ public class FileIoTestActivity extends AppCompatActivity {
 
     private void parse(String uri, InputStream inputStream) throws IOException {
         String extension = FileParserFactory.getFileExtension(uri);
-        final String result;
+        String result;
         if (extension.equals("xml")) {
-            XmlTvParser.TvListing listing = XmlTvParser.parse(inputStream);
-            result = listing.toString();
+            CumulusXmlParser.TvListing listing = null;
+            try {
+                listing = CumulusXmlParser.parse(inputStream);
+                result = listing.toString();
+            } catch (CumulusXmlParser.XmlTvParseException e) {
+                result = e.getMessage();
+            }
         } else if (extension.equals("m3u") || uri.contains("m3u")) {
             M3uParser.TvListing listing = M3uParser.parse(inputStream);
             if (listing == null) {
@@ -166,13 +171,14 @@ public class FileIoTestActivity extends AppCompatActivity {
             result = "This file has no parser";
         }
         Log.d(TAG, "Obtained " + result);
+        final String finalResult = result;
         new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 new MaterialDialog.Builder(FileIoTestActivity.this)
                         .title("Parsing Result")
-                        .content(result)
+                        .content(finalResult)
                         .negativeText("Restart")
                         .onNegative(new MaterialDialog.SingleButtonCallback() {
                             @Override

@@ -264,6 +264,15 @@
     </item>
     <item
         is-multidex="false"
+        jar="C:\Users\Nick\.gradle\caches\modules-2\files-2.1\com.github.bumptech.glide\glide\3.7.0\9e9eeaf9948ee4d6c3ab354e8dc14368f16994a4\glide-3.7.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="21.1.2"
+        sha1="9e9eeaf9948ee4d6c3ab354e8dc14368f16994a4">
+        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\debug\glide-3.7.0_f3f1cef93ad07752069bfe44db3c221dae73da10.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="C:\Users\Nick\.gradle\caches\modules-2\files-2.1\com.google.ads.interactivemedia.v3\interactivemedia\3.5.2\21246e1a6815dc499443d46f9f5dbe954fd2b746\interactivemedia-3.5.2.jar"
         jumboMode="false"
         optimize="true"
@@ -297,15 +306,6 @@
         revision="21.1.2"
         sha1="fb0229499e600b485a276d4e31161a3ae31c144c">
         <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-clearcut-10.0.0_83e7cf5136b4322fd4d6973458ac3fd6f064a042.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="C:\Users\Nick\.gradle\caches\modules-2\files-2.1\com.github.bumptech.glide\glide\3.4.0\82552712133e094bbb565289fb2bc2d2952ba551\glide-3.4.0.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="21.1.2"
-        sha1="82552712133e094bbb565289fb2bc2d2952ba551">
-        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\debug\glide-3.4.0_cdfa03dda7688b54df6db71458d1c5c919fbf05d.jar" />
     </item>
     <item
         is-multidex="false"
