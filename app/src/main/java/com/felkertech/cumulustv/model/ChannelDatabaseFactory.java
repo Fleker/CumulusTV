@@ -23,7 +23,8 @@ public class ChannelDatabaseFactory {
             }
         } catch (Exception e) {
             Log.e(TAG, entry.toString());
-            throw new IllegalArgumentException("Invalid JSON: " + e.getMessage());
+            throw new IllegalArgumentException("Invalid JSON: " + entry.toString() + "    " +
+                    e.getMessage());
         }
     }
 

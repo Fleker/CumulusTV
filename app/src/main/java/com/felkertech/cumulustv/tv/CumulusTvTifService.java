@@ -352,7 +352,7 @@ public class CumulusTvTifService extends BaseTvInputService {
                     stillTuning = false;
                     notifyVideoAvailable();
                     setOverlayViewEnabled(false);
-                    if (jsonChannel.isAudioOnly()) {
+                    if (jsonChannel != null && jsonChannel.isAudioOnly()) {
                         setOverlayViewEnabled(true);
                     }
                 }

@@ -143,6 +143,9 @@ public class CumulusJobService extends EpgSyncJobService {
                 !jsonChannel.getEpgUrl().isEmpty() && epgData.containsKey(jsonChannel.getEpgUrl())) {
             List<Program> programForGivenTime = new ArrayList<>();
             XmlTvParser.TvListing tvListing = epgData.get(jsonChannel.getEpgUrl());
+            if (tvListing == null) {
+                return programs; // Return empty programs.
+            }
             List<Program> programList = tvListing.getAllPrograms();
             // If repeat-programs is on, schedule the programs sequentially in a loop. To make
             // every device play the same program in a given channel and time, we assumes the
@@ -183,7 +186,7 @@ public class CumulusJobService extends EpgSyncJobService {
                     .setDescription(getString(R.string.currently_streaming))
                     .setPosterArtUri(channel.getChannelLogo())
                     .setThumbnailUri(channel.getChannelLogo())
-                    .setCanonicalGenres(jsonChannel.getGenres())
+                    .setCanonicalGenres(jsonChannel != null ? jsonChannel.getGenres() : null)
                     .setStartTimeUtcMillis(startMs)
                     .setEndTimeUtcMillis(startMs + 1000 * 60 * 60) // 60 minutes
                     .build());
@@ -205,7 +208,12 @@ public class CumulusJobService extends EpgSyncJobService {
         public void run() {
             super.run();
             epgData = new HashMap<>();
-            ChannelDatabase cdn = ChannelDatabase.getInstance(mContext);
+            ChannelDatabase cdn;
+            try {
+                cdn = ChannelDatabase.getInstance(mContext);
+            } catch (ChannelDatabase.MalformedChannelDataException e) {
+                return; // Stop execution now.
+            }
             try {
                 List<JsonChannel> channels = cdn.getJsonChannels();
                 for (JsonChannel jsonChannel : channels) {
