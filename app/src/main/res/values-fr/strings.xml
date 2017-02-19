@@ -103,7 +103,6 @@
     <string name="open_in_another_plugin">Ouvrir un autre plugin</string>
     <string name="toast_error_no_activity">Uh-oh, quelque chose ne fonctionne pas : loadRows has no activity</string>
     <string name="add">Ajouter</string>
-    <string name="edit_channel">Éditer la chaîne</string>
     <string name="play">Regarder</string>
     <string name="toast_error_sorry">Désolé, une erreur s\'est produite.</string>
     <string name="edit_channel_name">Éditer les métadonnées de %1$s</string>
@@ -157,4 +156,6 @@
     <string name="toast_sync_data_uploaded">Données des chaines uploadées vers Google Drive</string>
     <string name="toast_scan_error_found">"Erreur détectée : "</string>
     <string name="toast_scan_channels_added">Les chaînes ont été ajoutées</string>
+    <string name="edit_channel">Éditer la chaîne</string>
+    <string name="drive_error_not_valid_json">Vous ne pouvez importer qu\'un fichier JSON valide via Google Drive</string>
 </resources>

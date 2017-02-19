@@ -22,9 +22,6 @@ import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
 import com.felkertech.cumulustv.activities.CumulusVideoPlayback;
 import com.felkertech.cumulustv.fileio.CloudStorageProvider;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
@@ -89,16 +86,16 @@ public class ActivityUtils {
             channeltext.add(j.getName());
         }
         final String[] channelList = channeltext.toArray(new String[channeltext.size()]);
-        new MaterialDialog.Builder(mActivity)
-                .title(R.string.here_are_suggested_channels)
-                .items(channelList)
-                .itemsCallback(new MaterialDialog.ListCallback() {
+        new AlertDialog.Builder(mActivity)
+                .setTitle(R.string.here_are_suggested_channels)
+                .setItems(channelList, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         CumulusChannel j = channels[i];
                         addChannel(mActivity, gapi, j);
                     }
-                }).show();
+                })
+                .show();
     }
 
     public static void addChannel(final Activity activity, GoogleApiClient gapi,
@@ -164,28 +161,26 @@ public class ActivityUtils {
                 activity.startActivity(intent);
             }
             catch (PackageManager.NameNotFoundException e) {
-                new MaterialDialog.Builder(activity)
-                        .title(activity.getString(R.string.plugin_not_installed_title,
+                new AlertDialog.Builder(activity)
+                        .setTitle(activity.getString(R.string.plugin_not_installed_title,
                                 jsonChannel.getPluginSource().getPackageName()))
-                        .content(R.string.plugin_not_installed_question)
-                        .positiveText(R.string.download_app)
-                        .negativeText(R.string.open_in_another_plugin)
-                        .callback(new MaterialDialog.ButtonCallback() {
+                        .setMessage(R.string.plugin_not_installed_question)
+                        .setPositiveButton(R.string.download_app, new DialogInterface.OnClickListener() {
                             @Override
-                            public void onPositive(MaterialDialog dialog) {
-                                super.onPositive(dialog);
+                            public void onClick(DialogInterface dialogInterface, int which) {
                                 Intent i = new Intent(Intent.ACTION_VIEW);
                                 i.setData(Uri.parse("http://play.google.com/store/apps/details?id="
                                         + jsonChannel.getPluginSource().getPackageName()));
                                 activity.startActivity(i);
                             }
-
+                        })
+                        .setNegativeButton(R.string.open_in_another_plugin, new DialogInterface.OnClickListener() {
                             @Override
-                            public void onNegative(MaterialDialog dialog) {
-                                super.onNegative(dialog);
+                            public void onClick(DialogInterface dialogInterface, int i) {
                                 openPluginPicker(false, channelUrl, activity);
                             }
-                        }).show();
+                        })
+                        .show();
                 Toast.makeText(activity, activity.getString(R.string.toast_msg_pack_not_installed,
                         jsonChannel.getPluginSource().getPackageName()),
                         Toast.LENGTH_SHORT).show();
@@ -206,22 +201,20 @@ public class ActivityUtils {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 context.getString(R.string.permission_storage_rationale));
         if (PermissionUtils.isDisabled(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            new MaterialDialog.Builder(context)
-                    .title(R.string.permission_not_allowed_error)
-                    .content(R.string.permission_not_allowed_text)
-                    .positiveText(R.string.permission_action_settings)
-                    .negativeText(R.string.ok)
-                    .callback(new MaterialDialog.ButtonCallback() {
+            new AlertDialog.Builder(context)
+                    .setTitle(R.string.permission_not_allowed_error)
+                    .setMessage(R.string.permission_not_allowed_text)
+                    .setPositiveButton(R.string.permission_action_settings, new DialogInterface.OnClickListener() {
                         @Override
-                        public void onPositive(MaterialDialog dialog) {
-                            super.onPositive(dialog);
+                        public void onClick(DialogInterface dialogInterface, int i) {
                             Intent intent = new Intent();
                             intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                             Uri uri = Uri.fromParts("package", context.getPackageName(), null);
                             intent.setData(uri);
                         }
                     })
-                    .build();
+                    .setNegativeButton(R.string.ok, null)
+                    .show();
         } else {
             actuallyWriteData(context, gapi);
         }
@@ -294,19 +287,17 @@ public class ActivityUtils {
             gapi = mCloudStorageProvider.connect(activity);
         try {
             final GoogleApiClient finalGapi = gapi;
-            new MaterialDialog.Builder(activity)
-                    .title(R.string.create_sync_file_title)
-                    .content(R.string.create_sync_file_description)
-                    .positiveText(R.string.ok)
-                    .negativeText(R.string.no)
-                    .callback(new MaterialDialog.ButtonCallback() {
+            new AlertDialog.Builder(activity)
+                    .setTitle(R.string.create_sync_file_title)
+                    .setMessage(R.string.create_sync_file_description)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
-                        public void onPositive(MaterialDialog dialog) {
-                            super.onPositive(dialog);
+                        public void onClick(DialogInterface dialogInterface, int i) {
                             Drive.DriveApi.newDriveContents(finalGapi)
                                     .setResultCallback(driveContentsCallback);
                         }
                     })
+                    .setNegativeButton(R.string.no, null)
                     .show();
         } catch(Exception ignored) {
             Toast.makeText(activity, "Error creating drive data: " + ignored.getMessage(),
@@ -321,14 +312,11 @@ public class ActivityUtils {
     public static void deleteChannelData(final Activity activity, GoogleApiClient gapi) {
         final DriveSettingsManager sm = new DriveSettingsManager(activity);
         sm.setGoogleDriveSyncable(gapi, null);
-        new MaterialDialog.Builder(activity)
-                .title(R.string.title_delete_all_channels)
-                .positiveText(R.string.yes)
-                .negativeText(R.string.no)
-                .callback(new MaterialDialog.ButtonCallback() {
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.title_delete_all_channels)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        super.onPositive(dialog);
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         ChannelDatabase.getInstance(activity).eraseData();
                         GoogleDriveBroadcastReceiver.changeStatus(activity,
                                 GoogleDriveBroadcastReceiver.EVENT_DOWNLOAD_COMPLETE);
@@ -347,6 +335,7 @@ public class ActivityUtils {
                                 Toast.LENGTH_SHORT).show();
                     }
                 })
+                .setNegativeButton(R.string.no, null)
                 .show();
     }
 
@@ -389,9 +378,9 @@ public class ActivityUtils {
 
     /* LICENSES */
     public static void oslClick(Activity activity) {
-        new MaterialDialog.Builder(activity)
-                .title(R.string.software_licenses)
-                .content(GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(activity))
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.software_licenses)
+                .setMessage(GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(activity))
                 .show();
     }
 
@@ -509,12 +498,11 @@ public class ActivityUtils {
         }
         String[] plugin_names2 = plugin_names.toArray(new String[plugin_names.size()]);
 
-        new MaterialDialog.Builder(new ContextThemeWrapper(activity, R.style.CompatTheme))
-                .title(R.string.installed_plugins)
-                .items(plugin_names2)
-                .itemsCallback(new MaterialDialog.ListCallback() {
+        new AlertDialog.Builder(new ContextThemeWrapper(activity, R.style.CompatTheme))
+                .setTitle(R.string.installed_plugins)
+                .setItems(plugin_names2, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         // Load the given plugin with some additional info
                         ChannelDatabase cd = ChannelDatabase.getInstance(activity);
                         String s = cd.toString();
@@ -534,16 +522,16 @@ public class ActivityUtils {
                         activity.startActivity(intent);
                     }
                 })
-                .positiveText(R.string.download_more_plugins)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                .setPositiveButton(R.string.download_more_plugins, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    public void onClick(DialogInterface dialogInterface, int wh) {
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse(
                                 "http://play.google.com/store/search?q=cumulustv&c=apps"));
                         activity.startActivity(i);
                     }
-                }).show();
+                })
+                .show();
     }
 
     /* ACTIVITY CLONES */
@@ -575,18 +563,17 @@ public class ActivityUtils {
                         Log.d(TAG, "App cannot connect");
                     }
                     final GoogleApiClient finalGapi = gapi;
-                    new MaterialDialog.Builder(activity)
-                            .title(R.string.connection_issue_title)
-                            .content(R.string.connection_issue_description)
-                            .positiveText(R.string.ok)
-                            .negativeText(R.string.try_again)
-                            .callback(new MaterialDialog.ButtonCallback() {
+                    new AlertDialog.Builder(activity)
+                            .setTitle(R.string.connection_issue_title)
+                            .setMessage(R.string.connection_issue_description)
+                            .setPositiveButton(R.string.ok, null)
+                            .setNegativeButton(R.string.try_again, new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onNegative(MaterialDialog dialog) {
-                                    super.onNegative(dialog);
+                                public void onClick(DialogInterface dialogInterface, int i) {
                                     finalGapi.connect();
                                 }
-                            }).show();
+                            })
+                            .show();
                 }
                 break;
             case REQUEST_CODE_CREATOR:
@@ -619,20 +606,17 @@ public class ActivityUtils {
                 }
                 sm.setString(R.string.sm_google_drive_id, driveId.encodeToString());
                 final GoogleApiClient finalGapi1 = gapi;
-                new MaterialDialog.Builder(activity)
-                        .title(R.string.sync_initial)
-                        .positiveText(R.string.sync_cloud_local)
-                        .negativeText(R.string.sync_local_cloud)
-                        .callback(new MaterialDialog.ButtonCallback() {
+                new AlertDialog.Builder(activity)
+                        .setTitle(R.string.sync_initial)
+                        .setPositiveButton(R.string.sync_cloud_local, new DialogInterface.OnClickListener() {
                             @Override
-                            public void onPositive(MaterialDialog dialog) {
-                                super.onPositive(dialog);
+                            public void onClick(DialogInterface dialogInterface, int i) {
                                 ActivityUtils.readDriveData(activity, finalGapi1);
                             }
-
+                        })
+                        .setNegativeButton(R.string.sync_local_cloud, new DialogInterface.OnClickListener() {
                             @Override
-                            public void onNegative(MaterialDialog dialog) {
-                                super.onNegative(dialog);
+                            public void onClick(DialogInterface dialogInterface, int i) {
                                 ActivityUtils.writeDriveData(activity, finalGapi1);
                             }
                         })
@@ -645,22 +629,18 @@ public class ActivityUtils {
         try {
             PackageInfo pInfo = activity.getPackageManager().getPackageInfo(
                     activity.getPackageName(), 0);
-            new MaterialDialog.Builder(activity)
-                    .title(R.string.app_name)
-                    .theme(Theme.DARK)
-                    .content(activity.getString(R.string.about_app_description, pInfo.versionName))
-                    .positiveText(R.string.website)
-                    .negativeText(R.string.help)
-                    .callback(new MaterialDialog.ButtonCallback() {
+            new AlertDialog.Builder(activity)
+                    .setTitle(R.string.app_name)
+                    .setMessage(activity.getString(R.string.about_app_description, pInfo.versionName))
+                    .setPositiveButton(R.string.website, new DialogInterface.OnClickListener() {
                         @Override
-                        public void onPositive(MaterialDialog dialog) {
-                            super.onPositive(dialog);
+                        public void onClick(DialogInterface dialogInterface, int i) {
                             launchWebsite(activity);
                         }
-
+                    })
+                    .setNegativeButton(R.string.help, new DialogInterface.OnClickListener() {
                         @Override
-                        public void onNegative(MaterialDialog dialog) {
-                            super.onNegative(dialog);
+                        public void onClick(DialogInterface dialogInterface, int i) {
                             ActivityUtils.openIntroVoluntarily(activity);
                         }
                     })
@@ -712,23 +692,19 @@ public class ActivityUtils {
     public static void handleMalformedChannelData(final Activity activity,
           final GoogleApiClient googleApiClient, ChannelDatabase.MalformedChannelDataException e) {
         // Give users the option to reset
-        new MaterialDialog.Builder(activity)
-                .title("Issue with your channel data")
-                .content("An error has been found loading your data. This may be due to a " +
-                        "syntax error. Local data can be cleared to allow the app to continue" +
-                        "working. Do you want to do this?\n\nError below:\n\n" + e.getMessage())
-                .positiveText("Clear Local Data")
-                .negativeText("Exit App")
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.chdb_issue_title)
+                .setMessage(activity.getString(R.string.chdb_issue_info, e.getMessage()))
+                .setPositiveButton(R.string.action_clear_local_data, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         ActivityUtils.deleteChannelData(activity, googleApiClient);
                         activity.startActivity(new Intent(activity, MainActivity.class));
                     }
                 })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                .setNegativeButton(R.string.exit_app, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         activity.finish();
                     }
                 })

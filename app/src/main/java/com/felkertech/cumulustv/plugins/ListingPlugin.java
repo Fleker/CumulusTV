@@ -16,8 +16,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 import com.felkertech.cumulustv.fileio.AbstractFileParser;
 import com.felkertech.cumulustv.fileio.HttpFileParser;
@@ -87,16 +85,15 @@ public class ListingPlugin extends CumulusTvPlugin {
     }
 
     private void importPlaylist(final Uri uri) {
-        new MaterialDialog.Builder(this)
-                .title(R.string.link_to_m3u)
-                .content(getString(R.string.json_link_confirmation, uri))
-                .positiveText(R.string.ok)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.link_to_m3u)
+                .setMessage(getString(R.string.json_link_confirmation, uri))
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         save(new JsonListing.Builder()
-                            .setUrl(String.valueOf(uri))
-                            .build());
+                                .setUrl(String.valueOf(uri))
+                                .build());
                     }
                 })
                 .show();
@@ -211,13 +208,12 @@ public class ListingPlugin extends CumulusTvPlugin {
     }
 
     private void showEditDialog(final JsonListing listing) {
-        new MaterialDialog.Builder(this)
-                .title(R.string.link_to_m3u)
-                .content(listing.getUrl())
-                .negativeText(R.string.delete)
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.link_to_m3u)
+                .setMessage(listing.getUrl())
+                .setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         try {
                             ChannelDatabase.getInstance(ListingPlugin.this).delete(listing);
                         } catch (JSONException e) {
@@ -225,7 +221,7 @@ public class ListingPlugin extends CumulusTvPlugin {
                         }
                     }
                 })
-                .negativeText(R.string.cancel)
+                .setNeutralButton(R.string.cancel, null)
                 .show();
 
     }

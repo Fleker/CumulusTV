@@ -1,14 +1,15 @@
 package com.felkertech.cumulustv.activities;
 
 import android.annotation.TargetApi;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.felkertech.cumulustv.utils.DriveSettingsManager;
 import com.felkertech.cumulustv.services.CumulusDreams;
 import com.felkertech.n.cumulustv.R;
@@ -40,12 +41,11 @@ public class CumulusDreamsSettingsActivity extends PreferenceActivity {
             super.onCreate(savedInstanceState);
 //            addPreferencesFromResource(R.xml.cumulus_dreams_prefs);
             final ChannelDatabase channelDatabase = ChannelDatabase.getInstance(getActivity());
-            new MaterialDialog.Builder(getActivity())
-                    .title(R.string.daydream_select_channel)
-                    .items(channelDatabase.getChannelNames())
-                    .itemsCallback(new MaterialDialog.ListCallback() {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.daydream_select_channel)
+                    .setItems(channelDatabase.getChannelNames(), new DialogInterface.OnClickListener() {
                         @Override
-                        public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                        public void onClick(DialogInterface dialogInterface, int which) {
                             DriveSettingsManager sm = new DriveSettingsManager(getActivity());
                             try {
                                 sm.setString(R.string.daydream_url,

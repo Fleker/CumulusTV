@@ -19,12 +19,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.accessibility.CaptioningManager;
-import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.felkertech.cumulustv.activities.CumulusVideoPlayback;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
 import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.model.JsonChannel;
 import com.felkertech.cumulustv.player.CumulusTvPlayer;
@@ -32,21 +32,16 @@ import com.felkertech.cumulustv.player.CumulusWebPlayer;
 import com.felkertech.cumulustv.player.MediaSourceFactory;
 import com.felkertech.cumulustv.services.CumulusJobService;
 import com.felkertech.n.cumulustv.R;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.media.tv.companionlibrary.BaseTvInputService;
-import com.google.android.media.tv.companionlibrary.EpgSyncJobService;
 import com.google.android.media.tv.companionlibrary.TvPlayer;
 import com.google.android.media.tv.companionlibrary.model.Advertisement;
 import com.google.android.media.tv.companionlibrary.model.Program;
 import com.google.android.media.tv.companionlibrary.model.RecordedProgram;
 import com.google.android.media.tv.companionlibrary.utils.TvContractUtils;
 import com.pnikosis.materialishprogress.ProgressWheel;
-import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -138,7 +133,7 @@ public class CumulusTvTifService extends BaseTvInputService {
                         Log.d(TAG, "User supplied splashscreen");
                     }
                     ImageView iv = new ImageView(getApplicationContext());
-                    Picasso.with(getApplicationContext()).load(jsonChannel.getSplashscreen()).into(iv);
+                    Glide.with(getApplicationContext()).load(jsonChannel.getSplashscreen()).into(iv);
                     return iv;
                 } else {
                     if (DEBUG) {
@@ -213,11 +208,13 @@ public class CumulusTvTifService extends BaseTvInputService {
                                     }
                                 };
                                 try {
-                                    bitmap[0] = Picasso.with(getApplicationContext())
+                                    bitmap[0] = Glide.with(getApplicationContext())
                                             .load(ChannelDatabase.getNonNullChannelLogo(jsonChannel))
+                                            .asBitmap()
+                                            .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                                             .get();
                                     h.sendEmptyMessage(0);
-                                } catch (IOException e) {
+                                } catch (InterruptedException | ExecutionException e) {
                                     e.printStackTrace();
                                 }
                             }

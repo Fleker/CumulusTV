@@ -1,6 +1,7 @@
 package com.felkertech.cumulustv.plugins;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +10,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v17.leanback.widget.VerticalGridView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
@@ -17,8 +19,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.model.ChannelDatabaseFactory;
 import com.felkertech.cumulustv.model.JsonChannel;
@@ -115,13 +115,12 @@ public class JsonListingPanelActivity extends Activity {
     }
 
     private void showEditDialog(final JsonListing listing) {
-        new MaterialDialog.Builder(this)
-                .title(R.string.link_to_m3u)
-                .content(listing.getUrl())
-                .negativeText(R.string.delete)
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.link_to_m3u)
+                .setMessage(listing.getUrl())
+                .setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         try {
                             Log.d(TAG, "Try deleting " + listing.toString());
                             ChannelDatabase.getInstance(JsonListingPanelActivity.this).delete(listing);
@@ -137,7 +136,7 @@ public class JsonListingPanelActivity extends Activity {
                         }
                     }
                 })
-                .positiveText(R.string.cancel)
+                .setPositiveButton(R.string.cancel, null)
                 .show();
     }
 

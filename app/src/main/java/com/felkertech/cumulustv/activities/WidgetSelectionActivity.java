@@ -2,14 +2,15 @@ package com.felkertech.cumulustv.activities;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.RemoteViews;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.model.JsonChannel;
@@ -47,12 +48,11 @@ public class WidgetSelectionActivity extends AppCompatActivity {
 
     private void displayChannelPicker(final List<JsonChannel> jsonChannels, String[] channelNames,
               String label) {
-        new MaterialDialog.Builder(WidgetSelectionActivity.this)
-                .title(label)
-                .items(channelNames)
-                .itemsCallback(new MaterialDialog.ListCallback() {
+        new AlertDialog.Builder(WidgetSelectionActivity.this)
+                .setTitle(label)
+                .setItems(channelNames, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onSelection(MaterialDialog materialDialog, View view, final int i, CharSequence charSequence) {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         JsonChannel jsonChannel = jsonChannels.get(i);
                         SettingsManager settingsManager =
                                 new SettingsManager(WidgetSelectionActivity.this);

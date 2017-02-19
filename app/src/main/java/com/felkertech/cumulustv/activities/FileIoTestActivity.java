@@ -1,5 +1,6 @@
 package com.felkertech.cumulustv.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,13 +11,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.util.Pair;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.felkertech.cumulustv.fileio.AbstractFileParser;
 import com.felkertech.cumulustv.fileio.AssetsFileParser;
 import com.felkertech.cumulustv.fileio.FileParserFactory;
@@ -59,13 +59,11 @@ public class FileIoTestActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        new MaterialDialog.Builder(this)
-                .title("Choose a file")
-                .items(getTitles())
-                .itemsCallback(new MaterialDialog.ListCallback() {
+        new AlertDialog.Builder(this)
+                .setTitle("Choose a file")
+                .setItems(getTitles(), new DialogInterface.OnClickListener() {
                     @Override
-                    public void onSelection(MaterialDialog dialog, View itemView, int position,
-                                            CharSequence text) {
+                    public void onClick(DialogInterface dialogInterface, int position) {
                         if (position > 1) {
                             readFile(position);
                         } else if (position == 0) {
@@ -74,9 +72,10 @@ public class FileIoTestActivity extends AppCompatActivity {
                                     "TV/master/app/src/test/resources/m3u_test1.m3u"));
                             startActivity(i);
                         } else if (position == 1) {
-                            new MaterialDialog.Builder(FileIoTestActivity.this)
-                                    .title("Here's how your Channel Data Looks:")
-                                    .content(ChannelDatabase.getInstance(FileIoTestActivity.this).toM3u())
+                            new AlertDialog.Builder(FileIoTestActivity.this)
+                                    .setTitle("Here's how your Channel Data Looks:")
+                                    .setMessage(ChannelDatabase.getInstance(FileIoTestActivity.this)
+                                            .toM3u())
                                     .show();
                         }
                     }
@@ -176,14 +175,14 @@ public class FileIoTestActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                new MaterialDialog.Builder(FileIoTestActivity.this)
-                        .title("Parsing Result")
-                        .content(finalResult)
-                        .negativeText("Restart")
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                new AlertDialog.Builder(FileIoTestActivity.this)
+                        .setTitle("Parsing Result")
+                        .setMessage(finalResult)
+                        .setNegativeButton("Restart", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                startActivity(new Intent(FileIoTestActivity.this, FileIoTestActivity.class));
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                startActivity(new Intent(FileIoTestActivity.this,
+                                        FileIoTestActivity.class));
                             }
                         })
                         .show();

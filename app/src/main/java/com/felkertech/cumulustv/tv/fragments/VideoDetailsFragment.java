@@ -21,6 +21,7 @@ import android.support.v17.leanback.widget.OnActionClickedListener;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import com.bumptech.glide.Glide;
 import com.felkertech.cumulustv.utils.ActivityUtils;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.cumulustv.activities.MainActivity;
@@ -33,11 +34,11 @@ import com.felkertech.cumulustv.tv.presenters.DetailsDescriptionPresenter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 /*
  * LeanbackDetailsFragment extends DetailsFragment, a Wrapper fragment for leanback details screens.
@@ -145,11 +146,12 @@ public class VideoDetailsFragment extends DetailsFragment
             @Override
             public void run() {
                 try {
-                    final Bitmap bitmap = Picasso.with(getActivity())
+                    final Bitmap bitmap = Glide.with(getActivity())
                             .load(ChannelDatabase.getNonNullChannelLogo(jsonChannel))
-                            .centerInside()
+                            .asBitmap()
+                            .fitCenter()
                             .error(R.drawable.c_background5)
-                            .resize(DETAIL_THUMB_WIDTH, DETAIL_THUMB_HEIGHT)
+                            .into(DETAIL_THUMB_WIDTH, DETAIL_THUMB_HEIGHT)
                             .get();
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
@@ -158,7 +160,7 @@ public class VideoDetailsFragment extends DetailsFragment
                             mAdapter.notifyArrayItemRangeChanged(0, mAdapter.size());
                         }
                     });
-                } catch (IOException e) {
+                } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
             }

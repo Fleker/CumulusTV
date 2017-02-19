@@ -135,7 +135,7 @@
     <string name="add_channel_txt">Add Channel</string>
     <string name="channel_no_xxx">\"Channel # %1$s\"</string>
     <string name="suggested_channels">Suggested Channels</string>
-    <string name="google_drive_sync">Google Drive Sync</string>
+    <string name="google_drive_sync">Vous ne pouvez importer qu\'un fichier JSON valide via Google Drive</string>
     <string name="manage">Manage</string>
     <string name="settings">Settings</string>
     <string name="download_complete">Download complete</string>
@@ -183,5 +183,10 @@
     <string name="toast_scan_error_found">"Error found: "</string>
     <string name="toast_scan_channels_added">Channels have been added.</string>
     <string name="drive_error_not_valid_json">You can only import a valid JSON file through Google Drive</string>
+    <string name="chdb_issue_title">Issue with your channel data</string>
+    <string name="chdb_issue_info">"An error has been found loading your data. This may be due to a syntax error. Local data can be cleared to allow the app to continue working. Do you want to do this?\n\nError below:\n\n%1$s"</string>
+    <string name="action_clear_local_data">Clear Local Data</string>
+    <string name="exit_app">Exit App</string>
+    <string name="request_permission">Request Permission</string>
 </resources>
 
