@@ -67,7 +67,13 @@ public class M3uParser {
             /*Log.d(TAG, c2 + " " + haystack.substring(c2 - 1) + Pattern.matches("[\\\" (-1)],(?!\\\")", haystack.substring(c2 - 1)));
             Log.d(TAG, Pattern.compile("[\\\" (-1)],(?!\\\")").toString());
             Log.d(TAG, ""  + Pattern.matches("[,]", "\","));*/
-            String commaAfter = haystack.substring(c2 - 1);
+            String commaAfter = "";
+            try {
+                commaAfter = haystack.substring(c2 - 1);
+            } catch (StringIndexOutOfBoundsException e) {
+                throw new StringIndexOutOfBoundsException(e.getMessage() +
+                        "; Error occured for '" + haystack + "', " + c2 + " was best guess");
+            }
             Log.d(TAG, "cA " + commaAfter);
             if ((commaAfter.substring(0,1).equals("\"") || commaAfter.substring(0,1).equals(" ") || commaAfter.substring(0,1).equals("1") ) &&
                     commaAfter.substring(1,2).equals(",") && commaAfter.indexOf("\"", 2) == -1) {

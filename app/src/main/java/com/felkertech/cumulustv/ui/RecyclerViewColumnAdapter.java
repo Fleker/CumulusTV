@@ -56,6 +56,9 @@ public abstract class RecyclerViewColumnAdapter
 
     @Override
     public int getItemCount() {
+        if (mItems == null) {
+            return 0;
+        }
         return mItems.length;
     }
 }

@@ -20,6 +20,7 @@
             android:key="PRINT_DATABASE" />
         <Preference
             android:title="@string/print_system_data"
+            android:enabled="@bool/is_tv"
             android:key="PRINT_SYSTEM" />
     </PreferenceCategory>
 </PreferenceScreen>

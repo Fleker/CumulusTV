@@ -58,7 +58,12 @@ public class HttpFileParser extends AbstractFileParser {
         // Only display the first 500 characters of the retrieved
         // web page content.
         URL url = new URL(myurl);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        HttpURLConnection conn;
+        try {
+             conn = (HttpURLConnection) url.openConnection();
+        } catch (ClassCastException e) {
+            throw new ClassCastException(e.getMessage() + " occurs for " + myurl);
+        }
         conn.setReadTimeout(28000 /* milliseconds */);
         //set back to 15000, 10000
         conn.setConnectTimeout(30000 /* milliseconds */);

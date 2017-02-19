@@ -124,7 +124,6 @@ public class SettingsFragment extends LeanbackSettingsFragment
                 Cursor cursor = getActivity().getContentResolver().query(
                         TvContract.buildChannelsUriForInput("com.felkertech.n.cumulustv/com.felkertech.cumulustv.tv.CumulusTvTifService"), null, null, null, null);
                 Log.d("S", "Query from " + TvContract.buildChannelsUriForInput("com.felkertech.n.cumulustv/com.felkertech.cumulustv.tv.CumulusTvTifService"));
-                Log.d("S", cursor.toString() + "");
                 StringBuilder builder = new StringBuilder();
                 if (cursor == null) {
                     builder.append("null");
