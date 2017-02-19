@@ -270,7 +270,11 @@ public class ActivityUtils {
                     Toast.LENGTH_SHORT).show();
             return;
         }
-        sm.readFromGoogleDrive(did, ChannelDatabase.KEY);
+        try {
+            sm.readFromGoogleDrive(did, ChannelDatabase.KEY);
+        } catch (ChannelDatabase.MalformedChannelDataException e) {
+            Toast.makeText(context, R.string.drive_error_not_valid_json, Toast.LENGTH_SHORT).show();
+        }
         GoogleDriveBroadcastReceiver.changeStatus(context,
                 GoogleDriveBroadcastReceiver.EVENT_DOWNLOAD_COMPLETE);
 

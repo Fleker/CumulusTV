@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
+import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.settingsmanager.SettingsManager;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -15,6 +16,9 @@ import com.google.android.gms.drive.DriveApi;
 import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveId;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -99,6 +103,14 @@ public class DriveSettingsManager extends SettingsManager {
                                 Log.d(TAG, "From " + contents.getDriveId());
                                 Log.d(TAG, "Retrieved " + contentsAsString);
                             }
+                            // Step 2.5, check if it is valid
+                            try {
+                                JSONObject tempJson = new JSONObject(contentsAsString);
+                            } catch (JSONException e) {
+                                throw new ChannelDatabase.MalformedChannelDataException(
+                                        e.getMessage());
+                            }
+
                             //Step 3, write to SM
                             setString(resId, contentsAsString);
 

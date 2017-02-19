@@ -182,5 +182,6 @@
     <string name="toast_sync_data_uploaded">Data uploaded to Google Drive</string>
     <string name="toast_scan_error_found">"Error found: "</string>
     <string name="toast_scan_channels_added">Channels have been added.</string>
+    <string name="drive_error_not_valid_json">You can only import a valid JSON file through Google Drive</string>
 </resources>
 

@@ -133,11 +133,22 @@ public class DataReceiver extends BroadcastReceiver
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    // No previous data exists, so add it.
+                    try {
+                        cdn.add(entry);
+                        if (DEBUG) {
+                            Log.d(TAG, "Channel added");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
             @Override
             public void ifJsonListing(JsonListing entry) {
+                Log.d(TAG, "Identified stream as JSON Listing");
                 try {
                     cdn.add(entry);
                     // TODO Doesn't update
