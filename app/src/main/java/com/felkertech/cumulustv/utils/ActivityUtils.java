@@ -742,4 +742,15 @@ public class ActivityUtils {
     public static void onConnected(GoogleApiClient gapi) {
         mGoogleApiClient = gapi;
     }
+
+    public static void onChannelsChanged(Context context) {
+        // Send broadcast to update UI
+        GoogleDriveBroadcastReceiver.changeStatus(context,
+                GoogleDriveBroadcastReceiver.EVENT_DOWNLOAD_COMPLETE);
+        // Re-request a TIF sync
+        CumulusJobService.requestImmediateSync1(context,
+                ActivityUtils.TV_INPUT_SERVICE.flattenToString(),
+                CumulusJobService.DEFAULT_IMMEDIATE_EPG_DURATION_MILLIS,
+                new ComponentName(context, CumulusJobService.class));
+    }
 }

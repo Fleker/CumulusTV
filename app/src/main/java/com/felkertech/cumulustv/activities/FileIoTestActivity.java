@@ -45,7 +45,8 @@ public class FileIoTestActivity extends AppCompatActivity {
         new ImportedFile("M3U 2", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test2.m3u"),
         new ImportedFile("M3U 3", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test3.m3u"),
         new ImportedFile("M3U 4", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test4.m3u"),
-        new ImportedFile("M3U 5", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test5.m3u")
+        new ImportedFile("M3U 5", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test5.m3u"),
+        new ImportedFile("M3U 5", "https://raw.githubusercontent.com/Fleker/CumulusTV/master/app/src/test/resources/m3u_test6.m3u")
     };
 
     @Override

@@ -1,5 +1,6 @@
 package com.felkertech.cumulustv.model;
 
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -15,6 +16,8 @@ import com.felkertech.cumulustv.fileio.HttpFileParser;
 import com.felkertech.cumulustv.fileio.M3uParser;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.cumulustv.plugins.JsonContainer;
+import com.felkertech.cumulustv.receivers.GoogleDriveBroadcastReceiver;
+import com.felkertech.cumulustv.services.CumulusJobService;
 import com.felkertech.cumulustv.utils.ActivityUtils;
 import com.felkertech.cumulustv.utils.DriveSettingsManager;
 import com.felkertech.settingsmanager.SettingsManager;
@@ -314,6 +317,9 @@ public class ChannelDatabase {
             initializeHashMap(mSettingsManager.getContext());
             mJsonChannelsList = null;
             readJsonListings();
+
+            // Tell the system that there's been changes.
+            ActivityUtils.onChannelsChanged(mSettingsManager.getContext());
         } catch (JSONException e) {
             e.printStackTrace();
         }
