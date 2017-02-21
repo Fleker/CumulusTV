@@ -4,10 +4,11 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.afollestad.materialdialogs.MaterialDialog;
+import com.felkertech.n.cumulustv.R;
 
 /**
  * Created by N on 7/1/2015.
@@ -52,13 +53,13 @@ public class PermissionUtils {
                 }
                 if (activity.shouldShowRequestPermissionRationale(permission)
                         && !rationale.isEmpty()) {
-                    new MaterialDialog.Builder(activity)
-                            .title("Request Permission")
-                            .content(rationale)
-                            .positiveText("OK")
-                            .dismissListener(new DialogInterface.OnDismissListener() {
+                    new AlertDialog.Builder(activity)
+                            .setTitle(R.string.request_permission)
+                            .setMessage(rationale)
+                            .setPositiveButton(R.string.ok, null)
+                            .setOnDismissListener(new DialogInterface.OnDismissListener() {
                                 @Override
-                                public void onDismiss(DialogInterface dialog) {
+                                public void onDismiss(DialogInterface dialogInterface) {
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                         activity.requestPermissions(new String[]{permission},
                                                 MY_PERMISSIONS_RETURN);
@@ -92,13 +93,13 @@ public class PermissionUtils {
                 }
                 if(mActivity.shouldShowRequestPermissionRationale(permission)
                         && !rationale.isEmpty()) {
-                    new MaterialDialog.Builder(mActivity)
-                            .title("Request Permission")
-                            .content(rationale)
-                            .positiveText("OK")
-                            .dismissListener(new DialogInterface.OnDismissListener() {
+                    new AlertDialog.Builder(mActivity)
+                            .setTitle(R.string.request_permission)
+                            .setMessage(rationale)
+                            .setPositiveButton(R.string.ok, null)
+                            .setOnDismissListener(new DialogInterface.OnDismissListener() {
                                 @Override
-                                public void onDismiss(DialogInterface dialog) {
+                                public void onDismiss(DialogInterface dialogInterface) {
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                         mActivity.requestPermissions(new String[]{permission},
                                                 MY_PERMISSIONS_RETURN);

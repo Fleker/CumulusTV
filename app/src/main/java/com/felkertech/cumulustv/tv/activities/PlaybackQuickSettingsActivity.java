@@ -3,6 +3,7 @@ package com.felkertech.cumulustv.tv.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.icu.util.RangeValueIterator;
 import android.os.Bundle;
 import android.support.v17.leanback.widget.VerticalGridView;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,8 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.felkertech.cumulustv.model.RecyclerViewItem;
+import com.felkertech.cumulustv.ui.RecyclerViewColumnAdapter;
 import com.felkertech.cumulustv.utils.ActivityUtils;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.cumulustv.exceptions.PlaybackIssueException;
@@ -39,7 +42,7 @@ public class PlaybackQuickSettingsActivity extends Activity {
         }
         setContentView(R.layout.activity_quick_settings);
 
-        QuickSetting[] quickSettings = new QuickSetting[3];
+        RecyclerViewItem[] quickSettings = new RecyclerViewItem[3];
         try {
             final JsonChannel jsonChannel = new JsonChannel.Builder(getIntent()
                     .getStringExtra(EXTRA_JSON_CHANNEL)).build();
@@ -48,7 +51,7 @@ public class PlaybackQuickSettingsActivity extends Activity {
             ((TextView) findViewById(R.id.title)).setText(jsonChannel.getName());
 
             // Open this channel in the editor
-            quickSettings[0] = new QuickSetting(
+            quickSettings[0] = new RecyclerViewItem(
                     getString(R.string.edit_channel_name, jsonChannel.getName())) {
                 @Override
                 public void onClick() {
@@ -58,7 +61,7 @@ public class PlaybackQuickSettingsActivity extends Activity {
             };
 
             // Open CumulusTV
-            quickSettings[1] = new QuickSetting(getString(R.string.open_cumulus_tv)) {
+            quickSettings[1] = new RecyclerViewItem(getString(R.string.open_cumulus_tv)) {
                 @Override
                 public void onClick() {
                     startActivity(new Intent(PlaybackQuickSettingsActivity.this,
@@ -67,7 +70,7 @@ public class PlaybackQuickSettingsActivity extends Activity {
             };
 
             // Sends a crash report
-            quickSettings[2] = new QuickSetting(getString(R.string.report_playback_issue)) {
+            quickSettings[2] = new RecyclerViewItem(getString(R.string.report_playback_issue)) {
                 @Override
                 public void onClick() {
                     throw new PlaybackIssueException("Issue found with playback: " +
@@ -88,7 +91,7 @@ public class PlaybackQuickSettingsActivity extends Activity {
         getWindow().setAttributes(layoutParams);
 
         mAppLinkMenuList = (VerticalGridView) findViewById(R.id.list);
-        mAppLinkMenuList.setAdapter(new AppLinkMenuAdapter(quickSettings));
+        mAppLinkMenuList.setAdapter(new AppLinkMenuAdapter(this, quickSettings));
     }
 
     public static Intent getIntent(Context context, JsonChannel jsonChannel) {
@@ -100,54 +103,20 @@ public class PlaybackQuickSettingsActivity extends Activity {
     /**
      * Adapter class that provides the app link menu list.
      */
-    public class AppLinkMenuAdapter extends RecyclerView.Adapter<ViewHolder> {
-        private QuickSetting[] mQuickSettings;
-
-        public AppLinkMenuAdapter(QuickSetting[] quickSettings) {
-            mQuickSettings = quickSettings;
+    private class AppLinkMenuAdapter extends RecyclerViewColumnAdapter {
+        public AppLinkMenuAdapter(Activity activities, RecyclerViewItem[] quickSettings) {
+            super(activities, quickSettings);
         }
 
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            View view = getLayoutInflater().inflate(viewType, mAppLinkMenuList, false);
+        public RecyclerView.ViewHolder createNewViewHolder(View view) {
             return new ViewHolder(view);
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return R.layout.item_quick_setting;
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-            TextView view = (TextView) viewHolder.itemView;
-            view.setText(mQuickSettings[position].title);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mQuickSettings[position].onClick();
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return mQuickSettings.length;
         }
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    private class ViewHolder extends RecyclerView.ViewHolder {
         public ViewHolder(View itemView) {
             super(itemView);
         }
-    }
-
-    private abstract class QuickSetting {
-        public final String title;
-
-        public QuickSetting(String title) {
-            this.title = title;
-        }
-        public abstract void onClick();
     }
 }

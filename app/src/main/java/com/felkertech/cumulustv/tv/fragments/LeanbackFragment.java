@@ -34,6 +34,7 @@ import com.felkertech.cumulustv.activities.SettingsActivity;
 import com.felkertech.cumulustv.fileio.CloudStorageProvider;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.cumulustv.plugins.CumulusTvPlugin;
+import com.felkertech.cumulustv.plugins.JsonListingPanelActivity;
 import com.felkertech.cumulustv.plugins.ListingPlugin;
 import com.felkertech.cumulustv.plugins.MainPicker;
 import com.felkertech.cumulustv.services.CumulusJobService;
@@ -93,13 +94,13 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
         @Override
         public void onDownloadCompleted() {
             refreshUI();
-            Toast.makeText(mActivity, "Data downloaded from Google Drive", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, R.string.toast_sync_data_downloaded, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onUploadCompleted() {
             refreshUI(); // Probably need to reload anyway
-            Toast.makeText(mActivity, "Data uploaded to Google Drive", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, R.string.toast_sync_data_uploaded, Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -316,7 +317,7 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
             public void onActionFinished(boolean cloudToLocal) {
                 Log.d(TAG, "Sync req after drive action");
                 final String info = TvContract.buildInputId(ActivityUtils.TV_INPUT_SERVICE);
-                EpgSyncJobService.requestImmediateSync(mActivity, info,
+                CumulusJobService.requestImmediateSync1(mActivity, info, CumulusJobService.DEFAULT_IMMEDIATE_EPG_DURATION_MILLIS,
                         new ComponentName(mActivity, CumulusJobService.class));
                 if (cloudToLocal) {
                     Toast.makeText(getActivity(), R.string.download_complete, Toast.LENGTH_SHORT).show();
@@ -417,8 +418,7 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
                     i.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
                     startActivity(i);
                 } else if (title.equals(getString(R.string.add_jsonlisting))) {
-                    Intent i = new Intent(getActivity(), ListingPlugin.class);
-                    i.putExtra(CumulusTvPlugin.INTENT_EXTRA_ACTION, CumulusTvPlugin.INTENT_ADD);
+                    Intent i = new Intent(getActivity(), JsonListingPanelActivity.class);
                     startActivity(i);
                 } else if (title.equals(getString(R.string.installed_plugins))) {
                     ActivityUtils.openPluginPicker(true, mActivity);

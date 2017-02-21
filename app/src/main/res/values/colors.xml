@@ -27,4 +27,7 @@
     <color name="default_background">#3d3d3d</color>
     <!--<color name="selected_background">#ffaa3f</color>-->
     <color name="selected_background">@color/colorPrimary</color>
+
+    <color name="md_material_blue_600">#1E88E5</color>
+    <color name="md_material_blue_800">#1565C0</color>
 </resources>

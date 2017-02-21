@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.felkertech.cumulustv.services.CumulusJobService;
 import com.felkertech.n.cumulustv.R;
@@ -24,7 +25,7 @@ public class TifSetupFragment extends ChannelSetupFragment {
     private static final long FULL_SYNC_WINDOW_SEC = 1000 * 60 * 60 * 24 * 14;  // 2 weeks
 
     private String mInputId = null;
-    private boolean mErrorFound;
+    private int mErrorFound = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,7 @@ public class TifSetupFragment extends ChannelSetupFragment {
     @Override
     public void onScanStarted() {
         EpgSyncJobService.cancelAllSyncRequests(getActivity());
-        EpgSyncJobService.requestImmediateSync(getActivity(), mInputId,
+        CumulusJobService.requestImmediateSync1(getActivity(), mInputId, CumulusJobService.DEFAULT_IMMEDIATE_EPG_DURATION_MILLIS,
                 new ComponentName(getActivity(), CumulusJobService.class));
 
         new SettingsManager(getActivity())
@@ -64,21 +65,23 @@ public class TifSetupFragment extends ChannelSetupFragment {
 
     @Override
     public void onScanFinished() {
-        if (!mErrorFound) {
+        if (mErrorFound == -1) {
             EpgSyncJobService.cancelAllSyncRequests(getActivity());
             EpgSyncJobService.setUpPeriodicSync(getActivity(), mInputId,
                     new ComponentName(getActivity(), CumulusJobService.class),
                     FULL_SYNC_FREQUENCY_MILLIS, FULL_SYNC_WINDOW_SEC);
             getActivity().setResult(Activity.RESULT_OK);
+            Toast.makeText(getActivity(), R.string.toast_scan_channels_added, Toast.LENGTH_SHORT).show();
         } else {
             getActivity().setResult(Activity.RESULT_CANCELED);
+            Toast.makeText(getActivity(), R.string.toast_scan_error_found + mErrorFound, Toast.LENGTH_SHORT).show();
         }
         getActivity().finish();
     }
 
     @Override
     public void onScanError(int reason) {
-        mErrorFound = true;
+        mErrorFound = reason;
         switch (reason) {
             case EpgSyncJobService.ERROR_EPG_SYNC_CANCELED:
                 setDescription(getString(R.string.error_sync_canceled));

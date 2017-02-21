@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
+import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.services.CumulusJobService;
 import com.google.android.media.tv.companionlibrary.EpgSyncJobService;
 
@@ -42,5 +43,8 @@ public class TvBootReceiver extends BroadcastReceiver {
                 }
             }
         }
+
+        // Initialize the ChannelDatabase now
+        ChannelDatabase.getInstance(context);
     }
 }

@@ -16,21 +16,17 @@ import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
 import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.model.JsonChannel;
 import com.felkertech.cumulustv.player.CumulusTvPlayer;
 import com.felkertech.cumulustv.player.CumulusWebPlayer;
 import com.felkertech.cumulustv.player.MediaSourceFactory;
 import com.felkertech.n.cumulustv.R;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.media.tv.companionlibrary.TvPlayer;
-import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Built-in video playback activity. Just pass URL in an intent.
@@ -133,8 +129,10 @@ public class CumulusVideoPlayback extends AppCompatActivity {
                     Log.d(TAG, "Adding dynamic shortcut to " + jsonChannel.getName());
                     String logo = ChannelDatabase.getNonNullChannelLogo(jsonChannel);
                     try {
-                        Bitmap logoBitmap = Picasso.with(getApplicationContext())
+                        Bitmap logoBitmap = Glide.with(getApplicationContext())
                                 .load(logo)
+                                .asBitmap()
+                                .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                                 .get();
                         ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
                         shortcutManager.removeAllDynamicShortcuts();
@@ -148,7 +146,7 @@ public class CumulusVideoPlayback extends AppCompatActivity {
                                 .setIntent(playVideo)
                                 .build();
                         shortcutManager.setDynamicShortcuts(Arrays.asList(shortcut));
-                    } catch (IOException e) {
+                    } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
                     }
                 }

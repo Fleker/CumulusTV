@@ -12,14 +12,16 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
 import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.cumulustv.activities.CumulusVideoPlayback;
 import com.felkertech.cumulustv.activities.WidgetSelectionActivity;
 import com.felkertech.cumulustv.model.JsonChannel;
-import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * A widget implementation which provides a shortcut to a user selected channel on mobile and
@@ -82,9 +84,11 @@ public class ChannelShortcut extends AppWidgetProvider {
             public void run() {
                 try {
                     Log.d(TAG, "Loading the image " + channel.getLogo());
-                    final Bitmap logo = Picasso.with(context)
+                    final Bitmap logo = Glide.with(context)
                             .load(ChannelDatabase.getNonNullChannelLogo(channel))
+                            .asBitmap()
                             .placeholder(R.drawable.c_banner_3_2)
+                            .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                             .get();
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
@@ -94,7 +98,7 @@ public class ChannelShortcut extends AppWidgetProvider {
                             appWidgetManager.updateAppWidget(appWidgetId, views);
                         }
                     });
-                } catch (IOException e) {
+                } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
             }

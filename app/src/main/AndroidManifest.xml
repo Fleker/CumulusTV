@@ -61,10 +61,6 @@
                 android:resource="@xml/shortcuts" />
         </activity>
 
-        <meta-data
-            android:name="TvInputService"
-            android:value="com.felkertech.cumulustv.tv.CumulusTvService" />
-
         <!-- Plugin -->
         <activity
             android:name="com.felkertech.cumulustv.plugins.MainPicker"
@@ -319,10 +315,18 @@
 
         <activity android:name="com.felkertech.cumulustv.activities.SettingsActivity"
             android:theme="@style/LeanbackPreferences"
-            android:exported="true"
-            >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="com.felkertech.cumulustv.plugins.JsonListingPanelActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Panel"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
     </application>

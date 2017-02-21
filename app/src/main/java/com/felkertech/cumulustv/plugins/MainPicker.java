@@ -14,6 +14,7 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -25,8 +26,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 import com.felkertech.cumulustv.activities.CumulusVideoPlayback;
 import com.felkertech.cumulustv.fileio.AbstractFileParser;
@@ -190,14 +189,12 @@ public class MainPicker extends CumulusTvPlugin {
             Log.d(TAG, "Parse channels");
             final M3uParser.TvListing listings = M3uParser.parse(input);
             Log.d(TAG, "Import " + listings.channels.size() + " channels");
-            new MaterialDialog.Builder(MainPicker.this)
-                    .title(getString(R.string.import_bulk_title, listings.channels.size()))
-                    .content(listings.getChannelList())
-                    .positiveText(R.string.ok)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+            new AlertDialog.Builder(MainPicker.this)
+                    .setTitle(getString(R.string.import_bulk_title, listings.channels.size()))
+                    .setMessage(listings.getChannelList())
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(@NonNull MaterialDialog dialog,
-                                @NonNull DialogAction which) {
+                        public void onClick(DialogInterface dialogInterface, int i) {
                             Toast.makeText(MainPicker.this, R.string.import_bulk_wait,
                                     Toast.LENGTH_SHORT).show();
                             new Thread(new Runnable() {
@@ -231,11 +228,9 @@ public class MainPicker extends CumulusTvPlugin {
                             }).start();
                         }
                     })
-                    .negativeText(R.string.no)
-                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(@NonNull MaterialDialog dialog,
-                                @NonNull DialogAction which) {
+                        public void onClick(DialogInterface dialogInterface, int i) {
                             finish();
                         }
                     })
@@ -276,34 +271,26 @@ public class MainPicker extends CumulusTvPlugin {
                 new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<Integer> selections = new ArrayList<>();
-                int index = 0;
-                for(String g: ChannelDatabase.getAllGenres()) {
-                    if(gString.contains(g)) {
-                        selections.add(index);
-                    }
-                    index++;
+                boolean[] selections = new boolean[ChannelDatabase.getAllGenres().length];
+                for (int i = 0; i < ChannelDatabase.getAllGenres().length; i++) {
+                    selections[i] = gString.contains(ChannelDatabase.getAllGenres()[i]);
                 }
-
-                new MaterialDialog.Builder(MainPicker.this)
-                        .title(R.string.select_genres)
-                        .items(ChannelDatabase.getAllGenres())
-                        .itemsCallbackMultiChoice(selections.toArray(
-                                new Integer[selections.size()]),
-                                new MaterialDialog.ListCallbackMultiChoice() {
+                final CommaArray genres = new CommaArray("");
+                new AlertDialog.Builder(MainPicker.this)
+                        .setTitle(R.string.select_genres)
+                        .setMultiChoiceItems(ChannelDatabase.getAllGenres(), selections, new DialogInterface.OnMultiChoiceClickListener() {
                             @Override
-                            public boolean onSelection(MaterialDialog materialDialog,
-                                    Integer[] integers, CharSequence[] charSequences) {
-                                CommaArray genres = new CommaArray("");
-                                for (CharSequence g : charSequences) {
-                                    genres.add(g.toString());
+                            public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+                                if (b) {
+                                    genres.add(ChannelDatabase.getAllGenres()[i]);
+                                } else {
+                                    genres.remove(ChannelDatabase.getAllGenres()[i]);
                                 }
                                 ((Button) picker.getCustomView().findViewById(R.id.genres))
                                         .setText(genres.toString());
-                                return false;
                             }
                         })
-                        .positiveText(R.string.done)
+                        .setPositiveButton(R.string.done, null)
                         .show();
             }
         });
@@ -408,7 +395,7 @@ public class MainPicker extends CumulusTvPlugin {
     }
 
     private class MobilePickerDialog extends PickerDialog {
-        private MaterialDialog mDialog;
+        private AlertDialog mDialog;
         private Context mContext;
         private boolean mIsNewChannel;
 
@@ -418,72 +405,106 @@ public class MainPicker extends CumulusTvPlugin {
         public void loadValidation() {
             boolean isValid = true;
             String number = String.valueOf(
-                    ((EditText) mDialog.getCustomView().findViewById(R.id.number)).getText());
+                    ((EditText) mDialog.getWindow().findViewById(R.id.number)).getText());
             if(number.length() == 0) {
-                mDialog.getCustomView().findViewById(R.id.number).setBackgroundColor(getResources()
+                mDialog.getWindow().findViewById(R.id.number).setBackgroundColor(getResources()
                         .getColor(android.R.color.holo_red_dark));
                 isValid = false;
             } else {
-                mDialog.getCustomView().findViewById(R.id.number).setBackgroundColor(getResources()
+                mDialog.getWindow().findViewById(R.id.number).setBackgroundColor(getResources()
                         .getColor(android.R.color.transparent));
             }
 
             String name = String.valueOf(
-                    ((EditText) mDialog.getCustomView().findViewById(R.id.name)).getText());
+                    ((EditText) mDialog.getWindow().findViewById(R.id.name)).getText());
             if(name.length() == 0) {
-                mDialog.getCustomView().findViewById(R.id.name).setBackgroundColor(getResources()
+                mDialog.getWindow().findViewById(R.id.name).setBackgroundColor(getResources()
                         .getColor(android.R.color.holo_red_dark));
                 isValid = false;
             } else {
-                mDialog.getCustomView().findViewById(R.id.name).setBackgroundColor(getResources()
+                mDialog.getWindow().findViewById(R.id.name).setBackgroundColor(getResources()
                         .getColor(android.R.color.transparent));
             }
 
             String mediaUrl = String.valueOf(
-                    ((EditText) mDialog.getCustomView().findViewById(R.id.stream)).getText());
+                    ((EditText) mDialog.getWindow().findViewById(R.id.stream)).getText());
             if(mediaUrl.length() == 0) {
-                mDialog.getCustomView().findViewById(R.id.stream).setBackgroundColor(getResources()
+                mDialog.getWindow().findViewById(R.id.stream).setBackgroundColor(getResources()
                         .getColor(android.R.color.holo_red_dark));
                 isValid = false;
             } else {
                 loadStream(MobilePickerDialog.this, getUrl());
-                mDialog.getCustomView().findViewById(R.id.stream).setBackgroundColor(getResources()
+                mDialog.getWindow().findViewById(R.id.stream).setBackgroundColor(getResources()
                         .getColor(android.R.color.transparent));
             }
 
             Log.d(TAG, "'" + number + "', '" + name + "', '" + mediaUrl + "'");
 
             if (isValid) {
-                mDialog.setActionButton(DialogAction.POSITIVE,
-                        mIsNewChannel ? mContext.getString(R.string.create) :
-                                mContext.getString(R.string.update));
+                mDialog.setButton(DialogInterface.BUTTON_POSITIVE,
+                        mIsNewChannel ? mContext.getString(R.string.create) : mContext.getString(R.string.update), new Message());
                 Log.w(TAG, "Yes this is a valid channel.");
             } else {
-                mDialog.setActionButton(DialogAction.POSITIVE, null);
+                mDialog.setButton(DialogInterface.BUTTON_POSITIVE, "", new Message());
                 Log.w(TAG, "This is not a valid channel.");
             }
         }
 
-        private MaterialDialog build(Context context, boolean isNewChannel) {
+        private String getPositiveButtonText() {
+            return mIsNewChannel ? mContext.getString(R.string.create) :
+                    mContext.getString(R.string.update);
+        }
+
+        private AlertDialog build(Context context, boolean isNewChannel) {
             mContext = context;
             mIsNewChannel = isNewChannel;
-            mDialog = new MaterialDialog.Builder(context)
-                    .title(isNewChannel ? context.getString(R.string.manage_add_new) :
+            mDialog = new AlertDialog.Builder(context)
+                    .setTitle(isNewChannel ? context.getString(R.string.manage_add_new) :
                             context.getString(R.string.edit_channel))
-                    .neutralText(context.getString(R.string.cancel))
-                    .negativeText(isNewChannel ? null : context.getString(R.string.delete))
-                    .dismissListener(new MaterialDialog.OnDismissListener() {
+                    .setNeutralButton(context.getString(R.string.cancel), null)
+                    .setNegativeButton(isNewChannel ? null : context.getString(R.string.delete), new DialogInterface.OnClickListener() {
                         @Override
-                        public void onDismiss(DialogInterface dialog) {
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            RelativeLayout l = (RelativeLayout) mDialog.getWindow().getDecorView();
+                            String number = ((EditText) l.findViewById(R.id.stream)).getText()
+                                    .toString();
+                            if (DEBUG) {
+                                Log.d(TAG, "Channel " + number);
+                                Log.d(TAG, "DEL Channel " + number);
+                            }
+                            String name = ((EditText) l.findViewById(R.id.name)).getText()
+                                    .toString();
+                            String logo = ((EditText) l.findViewById(R.id.logo)).getText()
+                                    .toString();
+                            String stream = ((EditText) l.findViewById(R.id.stream)).getText()
+                                    .toString();
+                            String splash = ((EditText) l.findViewById(R.id.splash)).getText()
+                                    .toString();
+                            String genres = ((Button) l.findViewById(R.id.genres)).getText()
+                                    .toString();
+
+                            CumulusChannel jsonChannel = new JsonChannel.Builder()
+                                    .setNumber(number)
+                                    .setName(name)
+                                    .setMediaUrl(stream)
+                                    .setLogo(logo)
+                                    .setSplashscreen(splash)
+                                    .setGenres(genres)
+                                    .build();
+                            deleteChannel(jsonChannel);
+                        }
+                    })
+                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
                             finish();
                         }
                     })
-                    .customView(R.layout.dialog_channel_new, true)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    .setView(R.layout.dialog_channel_new)
+                    .setPositiveButton(getPositiveButtonText(), new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(@NonNull MaterialDialog dialog,
-                                @NonNull DialogAction which) {
-                            RelativeLayout l = (RelativeLayout) dialog.getCustomView();
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            RelativeLayout l = (RelativeLayout) mDialog.getWindow().getDecorView();
                             String number = ((EditText) l.findViewById(R.id.number))
                                     .getText().toString();
                             Log.d(TAG, "Channel " + number);
@@ -526,40 +547,7 @@ public class MainPicker extends CumulusTvPlugin {
                             }
                         }
                     })
-                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog,
-                                @NonNull DialogAction which) {
-                            RelativeLayout l = (RelativeLayout) dialog.getCustomView();
-                            String number = ((EditText) l.findViewById(R.id.stream)).getText()
-                                    .toString();
-                            if (DEBUG) {
-                                Log.d(TAG, "Channel " + number);
-                                Log.d(TAG, "DEL Channel " + number);
-                            }
-                            String name = ((EditText) l.findViewById(R.id.name)).getText()
-                                    .toString();
-                            String logo = ((EditText) l.findViewById(R.id.logo)).getText()
-                                    .toString();
-                            String stream = ((EditText) l.findViewById(R.id.stream)).getText()
-                                    .toString();
-                            String splash = ((EditText) l.findViewById(R.id.splash)).getText()
-                                    .toString();
-                            String genres = ((Button) l.findViewById(R.id.genres)).getText()
-                                    .toString();
-
-                            CumulusChannel jsonChannel = new JsonChannel.Builder()
-                                    .setNumber(number)
-                                    .setName(name)
-                                    .setMediaUrl(stream)
-                                    .setLogo(logo)
-                                    .setSplashscreen(splash)
-                                    .setGenres(genres)
-                                    .build();
-                            deleteChannel(jsonChannel);
-                        }
-                    })
-                    .build();
+                    .create();
             mDialog.findViewById(R.id.stream_open).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -569,7 +557,7 @@ public class MainPicker extends CumulusTvPlugin {
                 }
             });
             if (AppUtils.isTV(context)) {
-                mDialog.getCustomView().findViewById(R.id.stream_open)
+                mDialog.getWindow().findViewById(R.id.stream_open)
                         .setVisibility(View.GONE);
             }
             final CumulusChannel cumulusChannel = getChannel();
@@ -579,17 +567,17 @@ public class MainPicker extends CumulusTvPlugin {
                 includeGenrePicker(MobilePickerDialog.this, "");
             }
 
-            ((EditText) mDialog.getCustomView().findViewById(R.id.number))
+            ((EditText) mDialog.getWindow().findViewById(R.id.number))
                     .addTextChangedListener(filterTextWatcher);
-            ((EditText) mDialog.getCustomView().findViewById(R.id.name))
+            ((EditText) mDialog.getWindow().findViewById(R.id.name))
                     .addTextChangedListener(filterTextWatcher);
-            ((EditText) mDialog.getCustomView().findViewById(R.id.stream))
+            ((EditText) mDialog.getWindow().findViewById(R.id.stream))
                     .addTextChangedListener(filterTextWatcher);
 
             mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface dialog) {
-                    RelativeLayout l = (RelativeLayout) mDialog.getCustomView();
+                    RelativeLayout l = (RelativeLayout) mDialog.getWindow().getDecorView();
                     if (DEBUG) {
                         Log.d(TAG, "Populate the form?");
                         Log.d(TAG, (cumulusChannel != null) + "  " + (getChannel() != null));
@@ -618,12 +606,12 @@ public class MainPicker extends CumulusTvPlugin {
         public MainPicker.IMainPicker show(Context context, boolean isNewChannel) {
             mDialog = build(context, isNewChannel);
             mDialog.show();
-            streamView = mDialog.getCustomView().findViewById(R.id.stream);
+            streamView = mDialog.getWindow().findViewById(R.id.stream);
             return this;
         }
 
         public View getCustomView() {
-            return mDialog.getCustomView();
+            return mDialog.getWindow().getDecorView();
         }
 
         @Override

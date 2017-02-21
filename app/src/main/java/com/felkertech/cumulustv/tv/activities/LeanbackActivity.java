@@ -9,6 +9,7 @@ import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.felkertech.cumulustv.fileio.CloudStorageProvider;
 import com.felkertech.cumulustv.utils.ActivityUtils;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.cumulustv.tv.fragments.LeanbackFragment;
@@ -41,7 +42,8 @@ public class LeanbackActivity extends Activity implements
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         Log.d(TAG, "Got " + requestCode + " " + resultCode + " from activity");
-        ActivityUtils.onActivityResult(this, lbf.gapi, requestCode, resultCode, data);
+        ActivityUtils.onActivityResult(this, CloudStorageProvider.getInstance().getClient(),
+                requestCode, resultCode, data);
         if (requestCode == RESULT_CODE_REFRESH_UI) {
             lbf.refreshUI();
         }

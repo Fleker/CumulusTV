@@ -3,6 +3,7 @@ package com.felkertech.cumulustv.activities;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageInfo;
@@ -13,6 +14,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -22,7 +24,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
 import com.felkertech.cumulustv.fileio.CloudStorageProvider;
 import com.felkertech.cumulustv.model.ChannelDatabase;
@@ -41,7 +42,6 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi;
 import com.google.android.gms.drive.MetadataChangeSet;
-import com.google.android.media.tv.companionlibrary.EpgSyncJobService;
 
 import org.json.JSONException;
 
@@ -65,12 +65,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private static final int REQUEST_CODE_CREATOR = 102;
 
     private DriveSettingsManager sm;
-    private MaterialDialog md;
+    private AlertDialog md;
 
-    private MaterialDialog.ListCallback genreSelectionCallback = new MaterialDialog.ListCallback() {
+    private AlertDialog.OnClickListener genreSelectionCallback = new DialogInterface.OnClickListener() {
         @Override
-        public void onSelection(MaterialDialog dialog, View itemView,
-                int position, CharSequence text) {
+        public void onClick(DialogInterface dialogInterface, int i) {
 
         }
     };
@@ -113,20 +112,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void onClick(View v) {
                 String[] channelnames = channelDatabase.getChannelNames();
                 if(channelnames.length == 0) {
-                    new MaterialDialog.Builder(MainActivity.this)
-                            .title(R.string.no_channels)
-                            .content(R.string.no_channels_find)
-                            .positiveText(R.string.ok)
-                            .negativeText(R.string.no)
-                            .callback(new MaterialDialog.ButtonCallback() {
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle(R.string.no_channels)
+                            .setMessage(R.string.no_channels_find)
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onPositive(MaterialDialog dialog) {
-                                    super.onPositive(dialog);
-                                    dialog.cancel();
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.cancel();
                                     ActivityUtils.openSuggestedChannels(MainActivity.this,
                                             CloudStorageProvider.getInstance().getClient());
                                 }
                             })
+                            .setNegativeButton(R.string.no, null)
                             .show();
                 } else {
                     try {
@@ -147,13 +144,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         Collections.addAll(genreSet, jsonChannel.getGenres());
                     }
                     final String[] genreArray = genreSet.toArray(new String[genreSet.size()]);
-                    new MaterialDialog.Builder(MainActivity.this)
-                            .title(R.string.select_genres)
-                            .items(genreArray)
-                            .itemsCallback(new MaterialDialog.ListCallback() {
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle(R.string.select_genres)
+                            .setItems(genreArray, new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onSelection(MaterialDialog dialog, View itemView,
-                                                        int position, CharSequence text) {
+                                public void onClick(DialogInterface dialogInterface, int position) {
                                     // Now only get certain channels
                                     String selectedGenre = genreArray[position];
                                     List<JsonChannel> jsonChannelList = new ArrayList<>();
@@ -162,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                         for (JsonChannel jsonChannel :
                                                 channelDatabase.getJsonChannels()) {
                                             if (jsonChannel.getGenresString() != null
-                                                && jsonChannel.getGenresString()
+                                                    && jsonChannel.getGenresString()
                                                     .contains(selectedGenre)) {
                                                 jsonChannelList.add(jsonChannel);
                                                 channelNames.add(jsonChannel.getNumber() + " " +
@@ -216,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void onActionFinished(boolean cloudToLocal) {
                 Log.d(TAG, "Sync req after drive action");
                 final String info = TvContract.buildInputId(ActivityUtils.TV_INPUT_SERVICE);
-                EpgSyncJobService.requestImmediateSync(MainActivity.this, info,
+                CumulusJobService.requestImmediateSync1(MainActivity.this, info, CumulusJobService.DEFAULT_IMMEDIATE_EPG_DURATION_MILLIS,
                         new ComponentName(MainActivity.this, CumulusJobService.class));
                 if (cloudToLocal) {
                     Toast.makeText(MainActivity.this, R.string.downloaded, Toast.LENGTH_SHORT).show();
@@ -229,20 +224,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             Log.d(TAG, sm.getString(R.string.sm_google_drive_id) + "<< for onConnected");
         }
         if(sm.getString(R.string.sm_google_drive_id).isEmpty()) {
-            //We need a new file
-            new MaterialDialog.Builder(MainActivity.this)
-                    .title(R.string.create_syncable_file)
-                    .content(R.string.create_syncable_file_description)
-                    .positiveText(R.string.ok)
-                    .negativeText(R.string.no)
-                    .callback(new MaterialDialog.ButtonCallback() {
+            // We need a new file
+            new AlertDialog.Builder(MainActivity.this)
+                    .setTitle(R.string.create_syncable_file)
+                    .setMessage(R.string.create_syncable_file_description)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
-                        public void onPositive(MaterialDialog dialog) {
-                            super.onPositive(dialog);
+                        public void onClick(DialogInterface dialogInterface, int i) {
                             Drive.DriveApi.newDriveContents(ActivityUtils.getGoogleApiClient())
                                     .setResultCallback(driveContentsCallback);
                         }
                     })
+                    .setNegativeButton(R.string.no, null)
                     .show();
         } else {
             //Great, user already has sync enabled, let's resync
@@ -276,8 +269,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
         if(md != null) {
             if (md.isShowing()) {
-                ((TextView) md.getCustomView().findViewById(R.id.message))
-                        .setText("Error connecting: " + connectionResult.toString());
+                Toast.makeText(this, "Error connecting: " + connectionResult.toString(),
+                        Toast.LENGTH_SHORT).show();
             }
         }
         Toast.makeText(MainActivity.this, "Connection issue (" + connectionResult.getErrorCode() +
@@ -350,12 +343,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 getString(R.string.export_m3u),
                 getString(R.string.settings_refresh_cloud_local),
             };
-        new MaterialDialog.Builder(this)
-                .title(R.string.more_actions)
-                .items(actions)
-                .itemsCallback(new MaterialDialog.ListCallback() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.more_actions)
+                .setItems(actions, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         switch (i) {
                             case 0:
                                 ActivityUtils.browsePlugins(MainActivity.this);
@@ -364,9 +356,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                 if (Build.VERSION.SDK_INT >= 23) {
                                     // Check if we're allowed to do this
                                     if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                        == PERMISSION_DENIED) {
+                                            == PERMISSION_DENIED) {
                                         requestPermissions(new String[]
-                                                {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                                        {Manifest.permission.WRITE_EXTERNAL_STORAGE},
                                                 ActivityUtils.PERMISSION_EXPORT_M3U);
                                         break;
                                     }
@@ -378,14 +370,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                         CloudStorageProvider.getInstance().getClient());
                                 break;
                             case 7:
-                                new MaterialDialog.Builder(MainActivity.this)
-                                        .title(R.string.about_mlc)
-                                        .content(R.string.about_mlc_summary)
-                                        .positiveText(R.string.about_mlc_issues)
-                                        .callback(new MaterialDialog.ButtonCallback() {
+                                new AlertDialog.Builder(MainActivity.this)
+                                        .setTitle(R.string.about_mlc)
+                                        .setMessage(R.string.about_mlc_summary)
+                                        .setPositiveButton(R.string.about_mlc_issues, new DialogInterface.OnClickListener() {
                                             @Override
-                                            public void onPositive(MaterialDialog dialog) {
-                                                super.onPositive(dialog);
+                                            public void onClick(DialogInterface dialogInterface, int i) {
                                                 Intent gi = new Intent(Intent.ACTION_VIEW);
                                                 gi.setData(Uri.parse("https://bitbucket.org/fleke" +
                                                         "r/mlc-music-live-channels"));
@@ -405,13 +395,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     public void displayChannelPicker(final List<JsonChannel> jsonChannels, String[] channelNames,
              String label) {
-        new MaterialDialog.Builder(MainActivity.this)
-                .title(label)
-                .items(channelNames)
-                .itemsCallback(new MaterialDialog.ListCallback() {
+        new AlertDialog.Builder(MainActivity.this)
+                .setTitle(label)
+                .setItems(channelNames, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onSelection(MaterialDialog materialDialog, View view, final int i,
-                            CharSequence charSequence) {
+                    public void onClick(DialogInterface dialogInterface, int i) {
                         JsonChannel jsonChannel = jsonChannels.get(i);
                         ActivityUtils.editChannel(MainActivity.this, jsonChannel.getMediaUrl());
                     }

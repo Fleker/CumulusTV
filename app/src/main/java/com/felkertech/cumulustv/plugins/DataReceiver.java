@@ -6,10 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.tv.TvContract;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.felkertech.cumulustv.model.ChannelDatabaseFactory;
 import com.felkertech.cumulustv.model.JsonListing;
+import com.felkertech.cumulustv.receivers.GoogleDriveBroadcastReceiver;
 import com.felkertech.cumulustv.services.CumulusJobService;
 import com.felkertech.cumulustv.utils.ActivityUtils;
 import com.felkertech.cumulustv.utils.DriveSettingsManager;
@@ -102,17 +104,17 @@ public class DataReceiver extends BroadcastReceiver
         ActivityUtils.writeDriveData(mContext, gapi);
 
         final String info = TvContract.buildInputId(ActivityUtils.TV_INPUT_SERVICE);
-        EpgSyncJobService.requestImmediateSync(mContext, info,
+        CumulusJobService.requestImmediateSync1(mContext, info, CumulusJobService.DEFAULT_IMMEDIATE_EPG_DURATION_MILLIS,
                 new ComponentName(mContext, CumulusJobService.class));
     }
 
     private void handle(JSONObject jsonObject) {
+        Log.d(TAG, "Handle " + jsonObject.toString());
         final ChannelDatabase cdn = ChannelDatabase.getInstance(mContext);
         ChannelDatabaseFactory.parseType(jsonObject, new ChannelDatabaseFactory.ChannelParser() {
             @Override
             public void ifJsonChannel(JsonChannel entry) {
-                JsonChannel.Builder builder = new JsonChannel.Builder(entry).setPluginSource(
-                        mIntent.getStringExtra(CumulusTvPlugin.INTENT_EXTRA_SOURCE));
+                JsonChannel.Builder builder = new JsonChannel.Builder(entry);
                 if (mIntent.hasExtra(CumulusTvPlugin.INTENT_EXTRA_ORIGINAL_JSON)) {
                     // Clearly edited a stream
                     try {
@@ -133,11 +135,22 @@ public class DataReceiver extends BroadcastReceiver
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    // No previous data exists, so add it.
+                    try {
+                        cdn.add(entry);
+                        if (DEBUG) {
+                            Log.d(TAG, "Channel added");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
             @Override
             public void ifJsonListing(JsonListing entry) {
+                Log.d(TAG, "Identified stream as JSON Listing");
                 try {
                     cdn.add(entry);
                     // TODO Doesn't update

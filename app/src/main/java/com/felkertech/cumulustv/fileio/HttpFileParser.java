@@ -30,7 +30,9 @@ public class HttpFileParser extends AbstractFileParser {
             // params comes from the execute() call: params[0] is the url.
             Log.d(TAG, "Download from "+urls[0]);
             try {
-                return downloadUrl(urls[0]);
+                InputStream result = downloadUrl(urls[0]);
+                fileLoader.onFileLoaded(result);
+                return result;
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;
@@ -40,7 +42,7 @@ public class HttpFileParser extends AbstractFileParser {
         @Override
         protected void onPostExecute(InputStream result) {
             Log.d(TAG, "Posting execution");
-            fileLoader.onFileLoaded(result);
+
         }
     }
     /**
@@ -56,7 +58,12 @@ public class HttpFileParser extends AbstractFileParser {
         // Only display the first 500 characters of the retrieved
         // web page content.
         URL url = new URL(myurl);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        HttpURLConnection conn;
+        try {
+             conn = (HttpURLConnection) url.openConnection();
+        } catch (ClassCastException e) {
+            throw new ClassCastException(e.getMessage() + " occurs for " + myurl);
+        }
         conn.setReadTimeout(28000 /* milliseconds */);
         //set back to 15000, 10000
         conn.setConnectTimeout(30000 /* milliseconds */);

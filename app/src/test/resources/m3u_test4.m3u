@@ -1,0 +1,33 @@
+#EXTM3U
+#EXTINF:0 tvg-id="" tvg-name="&tv HD UK" tvg-logo="" group-title="Rapid" parent-code="",&tv HD
+http://example.com/15062.ts
+#EXTINF:0 tvg-id="3e UK" tvg-name="3e UK" tvg-logo="http://example.com/3e.png" group-title="Rapid" parent-code="",3e
+http://example.com/3953.ts
+#EXTINF:0 tvg-id="" tvg-name="4Music UK" tvg-logo="http://example.com/vivo.png" group-title="Rapid" parent-code="",4Music
+http://example.com/1951.ts
+#EXTINF:0 tvg-id="4seven UK" tvg-name="4seven UK" tvg-logo="http://example.com/4seven.png" group-title="Rapid" parent-code="",4seven
+http://example.com/3961.ts
+#EXTINF:0 tvg-id="" tvg-name="5 USA+1 UK" tvg-logo="" group-title="Rapid" parent-code="",5 A+1
+http://example.com/14731.ts
+#EXTINF:0 tvg-id="" tvg-name="5 STAR+1 UK" tvg-logo="" group-title="Rapid" parent-code="",5 STAR+1
+http://example.com/14732.ts
+#EXTINF:0 tvg-id="5 StarMAX Eastern US" tvg-name="5 StarMAX US" tvg-logo="http://example.com/5starmax.png" group-title="Rapid" parent-code="",5 StarMAX
+http://example.com/13681.ts
+#EXTINF:0 tvg-id="5USA UK" tvg-name="5USA UK" tvg-logo="http://example.com/5usa.png" group-title="Rapid" parent-code="",5A
+http://example.com/2652.ts
+#EXTINF:0 tvg-id="Starz Kids and Family US" tvg-name="Starz Kids & Family US" tvg-logo="http://example.com/starzkidsandfamily.png" group-title="Rapid" parent-code="",Starz Kids & Family
+http://example.com/13674.ts
+#EXTINF:0 tvg-id="" tvg-name="TLC +1 UK" tvg-logo="" group-title="Rapid" parent-code="",TLC +1
+http://example.com/14819.ts
+#EXTINF:0 tvg-id="TNT US" tvg-name="TNT US" tvg-logo="http://example.com/tntchannel.png" group-title="Rapid" parent-code="",TNT
+http://example.com/15366.ts
+#EXTINF:0 tvg-id="TNT US" tvg-name="TNT HD US" tvg-logo="http://example.com/tnthd.png" group-title="Rapid" parent-code="",TNT HD
+http://example.com/13094.ts
+#EXTINF:0 tvg-id="" tvg-name="Travel Channel UK" tvg-logo="" group-title="Rapid" parent-code="",Travel Channel
+http://example.com/14818.ts
+#EXTINF:0 tvg-id="" tvg-name="Travel Channel +1 UK" tvg-logo="" group-title="Rapid" parent-code="",Travel Channel +1
+http://example.com/14784.ts
+#EXTINF:0 tvg-id="" tvg-name="W +1 UK" tvg-logo="" group-title="Rapid" parent-code="",W +1
+http://example.com/14815.ts
+#EXTINF:0 tvg-id="W UK" tvg-name="W Ireland UK" tvg-logo="http://example.com/watch.png" group-title="Rapid" parent-code="",W Ireland
+http://example.com/11427.ts

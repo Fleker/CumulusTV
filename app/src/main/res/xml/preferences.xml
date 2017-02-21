@@ -1,8 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="Channels">
+    <PreferenceCategory android:title="@string/tif_channel_scan">
         <SwitchPreference
-            android:title="Sort by Number"
+            android:title="@string/option_sort_by_number"
             android:key="SORT_BY_NUMBER" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/about">
+        <Preference
+            android:title="@string/msg_help"
+            android:key="HELP" />
+        <Preference
+            android:title="VERSION"
+            android:key="VERSION" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/debug">
+        <Preference
+            android:title="@string/print_database"
+            android:key="PRINT_DATABASE" />
+        <Preference
+            android:title="@string/print_system_data"
+            android:enabled="@bool/is_tv"
+            android:key="PRINT_SYSTEM" />
     </PreferenceCategory>
 </PreferenceScreen>

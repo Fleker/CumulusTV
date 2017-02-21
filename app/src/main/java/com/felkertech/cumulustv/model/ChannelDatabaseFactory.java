@@ -1,5 +1,7 @@
 package com.felkertech.cumulustv.model;
 
+import android.util.Log;
+
 import org.json.JSONObject;
 
 /**
@@ -7,6 +9,8 @@ import org.json.JSONObject;
  * useful methods for parsing
  */
 public class ChannelDatabaseFactory {
+    private static final String TAG = ChannelDatabaseFactory.class.getSimpleName();
+
     public static final String KEY_TYPE = "type";
     public static final String TYPE_JSON_LISTING = "jsonlisting";
 
@@ -18,7 +22,9 @@ public class ChannelDatabaseFactory {
                 parser.ifJsonListing(new JsonListing.Builder(entry).build());
             }
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid JSON: " + e.getMessage());
+            Log.e(TAG, entry.toString());
+            throw new IllegalArgumentException("Invalid JSON: " + entry.toString() + "    " +
+                    e.getMessage());
         }
     }
 

@@ -11,15 +11,14 @@ import android.support.v7.graphics.Palette;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.plugins.CumulusChannel;
 import com.felkertech.n.cumulustv.R;
-import com.felkertech.cumulustv.model.JsonChannel;
-import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 /*
  * A CardPresenter is used to generate Views and bind Objects to them on demand. 
@@ -73,11 +72,12 @@ public class CardPresenter extends Presenter {
                 @Override
                 public void run() {
                     try {
-                        final Bitmap logo = Picasso.with(mContext)
+                        final Bitmap logo = Glide.with(mContext)
                                 .load(ChannelDatabase.getNonNullChannelLogo(jsonChannel))
+                                .asBitmap()
                                 .error(R.drawable.c_banner_3_2)
-                                .centerInside()
-                                .resize(CARD_WIDTH, CARD_HEIGHT)
+                                .fitCenter()
+                                .into(CARD_WIDTH, CARD_HEIGHT)
                                 .get();
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
@@ -107,7 +107,7 @@ public class CardPresenter extends Presenter {
                                 }
                             }
                         });
-                    } catch (IOException e) {
+                    } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
                     }
                 }

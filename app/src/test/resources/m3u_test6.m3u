@@ -1,0 +1,7 @@
+#EXTM3U
+
+#EXTINF:-1,GOLF A
+http://tvgolf.sports/prog.m3u8|X-Forwarded-For=127.0.0.1
+#EXTINF:-1,GOLF B
+http://tvgolf.sports/prog.m3u8|X-Forwarded-For=127.0.0.1
+

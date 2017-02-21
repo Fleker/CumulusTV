@@ -164,5 +164,29 @@
     <string name="link_to_m3u">Link to an M3u Playlist</string>
     <string name="m3u_url">M3u Url</string>
     <string name="add_jsonlisting">Link to M3U Playlist</string>
+    <string name="msg_url_empty">Url is empty</string>
+    <string name="msg_unsupported_action">Unsupported action</string>
+    <string name="json_link_confirmation">Add a reference to %1$s? This will continually be updated.</string>
+    <string name="x_channels_found">%1$d channels found</string>
+    <string name="close_pretty">~ Close ~</string>
+    <string name="show_all">Show All</string>
+    <string name="debug">Debug</string>
+    <string name="option_sort_by_number">Sort by Number</string>
+    <string name="print_database">Print Database</string>
+    <string name="currently_streaming">Currently streaming</string>
+    <string name="msg_help">Help</string>
+    <string name="print_system_data">Print System Data</string>
+    <string name="about">About</string>
+    <string name="add_new_link">Add new link</string>
+    <string name="toast_sync_data_downloaded">Data downloaded from Google Drive</string>
+    <string name="toast_sync_data_uploaded">Data uploaded to Google Drive</string>
+    <string name="toast_scan_error_found">"Error found: "</string>
+    <string name="toast_scan_channels_added">Channels have been added.</string>
+    <string name="drive_error_not_valid_json">You can only import a valid JSON file through Google Drive</string>
+    <string name="chdb_issue_title">Issue with your channel data</string>
+    <string name="chdb_issue_info">"An error has been found loading your data. This may be due to a syntax error. Local data can be cleared to allow the app to continue working. Do you want to do this?\n\nError below:\n\n%1$s"</string>
+    <string name="action_clear_local_data">Clear Local Data</string>
+    <string name="exit_app">Exit App</string>
+    <string name="request_permission">Request Permission</string>
 </resources>
 
