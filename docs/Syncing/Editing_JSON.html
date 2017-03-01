@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>       <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>          <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>          <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->  <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+    <title>Editing JSON - CumulusTV</title>
+    <meta name="description" content="Your Personal Cable Network" />
+    <meta name="author" content="Nick Felker - Felker Tech">
+    <meta charset="UTF-8">
+    <link rel="icon" href="../themes/daux/img/favicon-blue.png" type="image/x-icon">
+    <!-- Mobile -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Font -->
+    <link href='//fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700&subset=latin,cyrillic-ext,cyrillic' rel='stylesheet' type='text/css'>
+    <!-- CSS -->
+    <link href='../themes/daux/css/theme.min.css' rel='stylesheet' type='text/css'><link href='../themes/daux/css/theme-blue.min.css' rel='stylesheet' type='text/css'>
+            <!-- Tipue Search -->
+        <link href="../tipuesearch/tipuesearch.css" rel="stylesheet">
+    
+    <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+<body class="">
+    
+    <a href="https://github.com/fleker/cumulustv" target="_blank" id="github-ribbon" class="github-ribbon hidden-print"><img src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+<div class="container-fluid fluid-height wrapper">
+    <div class="navbar navbar-static-top hidden-print">
+        <div class="container-fluid">
+            <a class="brand navbar-brand pull-left" href="../index.html">CumulusTV</a>
+
+    <div class="navbar-right navbar-form search">
+        <i class="glyphicon glyphicon-search search__icon">&nbsp;</i>
+        <input type="search" id="tipue_search_input" class="form-control search__field" placeholder="Search..." autocomplete="on" results=25 autosave=text_search>
+    </div>
+        </div>
+    </div>
+    <div class="row columns content">
+        <div class="left-column article-tree col-sm-3 hidden-print">
+            <!-- For Mobile -->
+            <div class="responsive-collapse">
+                <button type="button" class="btn btn-sidebar" id="menu-spinner-button">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div id="sub-nav-collapse" class="sub-nav-collapse">
+                <!-- Navigation -->
+                <ul class='nav nav-list'><li class=''><a href="../Getting_Started.html">Getting Started</a></li><li class='open has-children'><a href="#" class="aj-nav folder"><i class="arrow">&nbsp;</i>Syncing</a><ul class='nav nav-list'><li class=''><a href="../Syncing/Setting_Up_Google_Drive.html">Setting Up Google Drive</a></li><li class=''><a href="../Syncing/Setting_Up_Live_Channels.html">Setting Up Live Channels</a></li><li class=''><a href="../Syncing/Importing_Streams.html">Importing Streams</a></li><li class='active'><a href="../Syncing/Editing_JSON.html">Editing JSON</a></li></ul></li><li class=' has-children'><a href="#" class="aj-nav folder"><i class="arrow">&nbsp;</i>EPG</a><ul class='nav nav-list'><li class=''><a href="../EPG/Creating_a_Program_Guide.html">Creating a Program Guide</a></li><li class=''><a href="../EPG/XMLTV_Parser.html">XMLTV Parser</a></li></ul></li><li class=' has-children'><a href="#" class="aj-nav folder"><i class="arrow">&nbsp;</i>Features</a><ul class='nav nav-list'><li class=''><a href="../Features/Quick_Settings.html">Quick Settings</a></li><li class=''><a href="../Features/Exporting_M3u_Playlist.html">Exporting M3u Playlist</a></li></ul></li><li class=' has-children'><a href="#" class="aj-nav folder"><i class="arrow">&nbsp;</i>IPTV Channels</a><ul class='nav nav-list'><li class=''><a href="../IPTV_Channels/How_to_find_Channels.html">How to find Channels</a></li><li class=''><a href="../IPTV_Channels/Loading_Website.html">Loading Website</a></li><li class=''><a href="../IPTV_Channels/Radio.html">Radio</a></li><li class=''><a href="../IPTV_Channels/Parsing_M3U_Playlists.html">Parsing M3U Playlists</a></li><li class=''><a href="../IPTV_Channels/Linking_to_M3u_Playlist.html">Linking to M3u Playlist</a></li><li class=''><a href="../IPTV_Channels/Genres.html">Genres</a></li></ul></li><li class=''><a href="../Privacy_Policy.html">Privacy Policy</a></li><li class=' has-children'><a href="#" class="aj-nav folder"><i class="arrow">&nbsp;</i>Plugin API</a><ul class='nav nav-list'><li class=''><a href="../Plugin_API/Introduction.html">Introduction</a></li><li class=''><a href="../Plugin_API/Release_Notes.html">Release Notes</a></li></ul></li><li class=' has-children'><a href="#" class="aj-nav folder"><i class="arrow">&nbsp;</i>Troubleshooting</a><ul class='nav nav-list'><li class=''><a href="../Troubleshooting/Common_Issues.html">Common Issues</a></li></ul></li></ul>
+
+                <div class="sidebar-links">
+                    
+                        <!-- Links -->
+                        <a href="http://reddit.com/r/cumulustv" target="_blank">Reddit Forum</a><br><a href="https://play.google.com/apps/testing/com.felkertech.n.cumulustv" target="_blank">Register for Beta</a><br><a href="https://play.google.com/store/apps/details?id=com.felkertech.n.cumulustv" target="_blank">Download on Google Play</a><br><a href="https://github.com/fleker/cumulustv" target="_blank">GitHub Repo</a><br><a href="https://github.com/googlesamples/androidtv-sample-inputs" target="_blank">TIF Companion Library</a><br>
+                        <div id="toggleCodeBlock">
+                                                    <a id="toggleCodeBlockBtn" href="#" onclick="toggleCodeBlocks();">Show Code Blocks Inline</a><br>
+                                                </div>
+
+                        <!-- Twitter -->
+                                                    <div class="twitter">
+                                <hr/>
+                                <iframe allowtransparency="true" frameborder="0" scrolling="no" style="width:162px; height:20px;" src="https://platform.twitter.com/widgets/follow_button.html?screen_name=handnf&amp;show_count=false"></iframe>
+                            </div>
+                        
+                        <hr/>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="right-column  content-area col-sm-9">
+
+            <div class="content-page">
+                                    <div id="tipue_search_content" style="display:none"></div>
+                
+                <div class="doc_content">
+                    <article>
+            <div class="page-header sub-header clearfix">
+            <h1><a href="../Syncing/Setting_Up_Google_Drive.html">Syncing</a> <i class="glyphicon glyphicon-chevron-right"></i> <a href="../Syncing/Editing_JSON.html">Editing JSON</a></h1>
+            <span style="float: left; font-size: 10px; color: gray;">
+                Tuesday, January 10, 2017            </span>
+            <span style="float: right; font-size: 10px; color: gray;">
+                5:09 PM            </span>
+        </div>
+    
+    <h2 id="page_JSON">JSON</h2>
+<p>The JavaScript Object Notation (JSON) format is a common format that is easy to pick up. Objects are stored in key-value pairs and can be stored in arrays.</p>
+<h2 id="page_Get_Started">Get Started</h2>
+<h3 id="page_Create_a_File">Create a File</h3>
+<p>To get started with syncing, you need to have a file to store your data. If you don't have one, you can create one in the app. Select that option. You may need to authenticate with your Google account. Then you can navigate to the folder you want and give this new file a name. After that is done, your app will be synced.</p>
+<h3 id="page_Select_Pre_Existing_File">Select Pre-Existing File</h3>
+<p>If you already have data from the app that you want to import, you can select <code>Import File</code>. You may need to authenticate with your Google account. After doing so, a dialog will appear where you'll be able to select the file for import.</p>
+<p>After selecting that file you will see a second dialog. This asks you how you want the sync process to occur: did you make modifications locally that you want saved to the file, or do you want to overwrite your local channels with the contents of that file. Select the option you want and then the file will be synced.</p>
+<h3 id="page_Automatic_Syncing">Automatic Syncing</h3>
+<p>The sync process is automatic. Whenever a change is made on your device, it is saved to the file in Google Drive. Other devices will periodically grab the resynced file.</p>
+<h2 id="page_Sample_JSON_File">Sample JSON File</h2>
+<p>Although the file is automatically generated and maintained in the app, you may want to manually edit it on your PC so that you don't have to type on a small keyboard or through a DPAD. A sample JSON file looks like one below:</p>
+<pre><code>{&quot;channels&quot;:
+    [
+        YOUR CHANNELS SHOULD GO HERE
+    ],
+    &quot;modified&quot;:1452205685079,
+    &quot;possibleGenres&quot;:[&quot;ANIMAL_WILDLIFE&quot;, &quot;ANIMAL_WILDLIFE&quot;, &quot;ARTS&quot;, &quot;COMEDY&quot;, &quot;DRAMA&quot;, &quot;EDUCATION&quot;, &quot;ENTERTAINMENT&quot;, &quot;FAMILY_KIDS&quot;, &quot;GAMING&quot;, &quot;LIFE_STYLE&quot;, &quot;MOVIES&quot;, &quot;MUSIC&quot;, &quot;NEWS&quot;, &quot;PREMIER&quot;, &quot;SHOPPING&quot;, &quot;SPORTS&quot;, &quot;TECH_SCIENCE&quot;, &quot;TRAVEL&quot;]
+}
+</code></pre>
+<h2 id="page_Channels_Array">Channels Array</h2>
+<p>The array called <code>channels</code> contains every single channel that you've added in order of when you added them.</p>
+<h3 id="page_Channel_Object">Channel Object</h3>
+<p>Each channel contains a series of properties that are used by CumulusTV to interface with Live Channels.</p>
+<ul>
+<li>
+<code>number</code> - The channel number that is displayed <strong>REQUIRED</strong>
+</li>
+<li>
+<code>name</code> - The title for the channel <strong>REQUIRED</strong>
+</li>
+<li>
+<code>logo</code> - A channel can have an optional logo that will appear in the electronic programming guide (EPG)</li>
+<li>
+<code>url</code> - This is the source location for the channel. It may be a video stream or any website. <strong>REQUIRED</strong>
+</li>
+<li>
+<code>splashscreen</code> - A channel may have an alternate image that is displayed on the screen while the video is loading</li>
+<li>
+<code>genres</code> - A channel can select several default genres for its programs that are used if the user filters channels in the electronic programming guide (EPG)</li>
+<li>
+<code>epgUrl</code> - A link to an XMLTV file containing EPG data for the stream. Optional.</li>
+<li>
+<code>source</code> - Leave this blank. It's an optional parameter if a third-party app is used to add a channel to the user's channel list</li>
+</ul>
+<h4 id="page_Examples">Examples</h4>
+<pre><code>{
+    &quot;number&quot;:&quot;1337&quot;,
+    &quot;name&quot;:&quot;Montery Bay Aquarium&quot;,
+    &quot;logo&quot;:&quot;http:\/\/static-cdn1.ustream.tv\/i\/channel\/live\/1_9600798,256x144,b:2015071514.jpg&quot;,
+    &quot;url&quot;:&quot;http:\/\/iphone-streaming.ustream.tv\/uhls\/9600798\/streams\/live\/iphone\/playlist.m3u8&quot;,
+    &quot;splashscreen&quot;:&quot;&quot;,
+    &quot;genres&quot;:&quot;ANIMAL_WILDLIFE,FAMILY_KIDS,NEWS&quot;,
+    &quot;source&quot;:&quot;&quot;
+},
+{
+    &quot;number&quot;:&quot;90&quot;,
+    &quot;name&quot;:&quot;Artbeats Demo&quot;,
+    &quot;logo&quot;:&quot;&quot;,
+    &quot;url&quot;:&quot;http:\/\/cdn-fms.rbs.com.br\/hls-vod\/sample1_1500kbps.f4v.m3u8&quot;,
+    &quot;splashscreen&quot;:&quot;&quot;,
+    &quot;genres&quot;:&quot;ARTS&quot;,
+    &quot;source&quot;:&quot;&quot;
+}
+</code></pre>
+<h3 id="page_JsonListing">JsonListing</h3>
+<p>Instead of saving the channel metadata directly in the array, one can link to an <code>m3u</code> playlist of channels. Whenever the app is loaded, these URLs will be read and those channels will be updated.</p>
+<p>There are only two attributes needed.</p>
+<ul>
+<li>
+<code>type</code> - Must be set to <code>jsonlisting</code> for the app to identify it as such</li>
+<li>
+<code>url</code> - The playlist url</li>
+</ul>
+<h2 id="page_Other_attributes">Other attributes</h2>
+<ul>
+<li>
+<code>modified</code> - This value is a timestamp, the number of milliseconds that have passed since January 1, 1970. It corresponds to the last time this file was modified. This doesn't need to be changed</li>
+<li>
+<code>possibleGenres</code> - This array exists so the user is able to see which genres can be chosen for their channels</li>
+</ul>
+<h3 id="page_and_Escape_Characters"><code>\/</code> and Escape Characters</h3>
+<p>You may notice that the <code>logo</code> and <code>url</code> attributes contain pairs of backslashes and slashes. As a simple explanation, the backslash is called an &quot;escape character&quot; and must be placed in-front of a forward slash in order for the app to properly make sense of it. Note this is only required if you're editing it manually. The parsing is handled behind the scenes in the app.</p>
+<h3 id="page_Coming_Soon">Coming Soon</h3>
+<p>There are always ideas for how to improve the channel object and allow for more functionality. Some of the proposed changes are below. If you have a strong opinion, discuss it on <a href="http://reddit.com/r/cumulustv">the subreddit</a>.</p>
+
+        <nav>
+        <ul class="pager">
+            <li><a href="../Syncing/Importing_Streams.html">Previous</a></li>            <li><a href="../EPG/Creating_a_Program_Guide.html">Next</a></li>        </ul>
+    </nav>
+    </article>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+    <!-- jQuery -->
+    <script src="../themes/daux/js/jquery-1.11.3.min.js"></script>
+
+    <!-- hightlight.js -->
+    <script src="../themes/daux/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <!-- JS -->
+    
+    <script src="../themes/daux/js/daux.js"></script>
+
+            <!-- Tipue Search -->
+        <script type="text/javascript" src="../tipuesearch/tipuesearch_set.js"></script>
+        <script type="text/javascript" src="../tipuesearch/tipuesearch.min.js"></script>
+
+        <script>
+            window.onunload = function(){}; // force $(document).ready to be called on back/forward navigation in firefox
+            $(document).ready(function() {
+                $('#tipue_search_input').tipuesearch({
+                    'show': 10,
+                    'mode': 'json',
+                    'base_url': '../'
+                });
+            });
+        </script>
+    
+</body>
+</html>
