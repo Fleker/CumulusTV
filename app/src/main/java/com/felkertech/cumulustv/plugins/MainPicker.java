@@ -548,7 +548,7 @@ public class MainPicker extends CumulusTvPlugin {
                         }
                     })
                     .create();
-            mDialog.findViewById(R.id.stream_open).setOnClickListener(new View.OnClickListener() {
+            mDialog.getWindow().findViewById(R.id.stream_open).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent i = new Intent(MainPicker.this, CumulusVideoPlayback.class);

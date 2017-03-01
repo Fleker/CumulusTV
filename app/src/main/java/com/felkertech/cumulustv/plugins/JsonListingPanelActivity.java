@@ -13,6 +13,7 @@ import android.support.v17.leanback.widget.VerticalGridView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -115,7 +116,7 @@ public class JsonListingPanelActivity extends Activity {
     }
 
     private void showEditDialog(final JsonListing listing) {
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.CompatTheme))
                 .setTitle(R.string.link_to_m3u)
                 .setMessage(listing.getUrl())
                 .setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {

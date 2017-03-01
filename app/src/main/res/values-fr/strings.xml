@@ -158,4 +158,9 @@
     <string name="toast_scan_channels_added">Les chaînes ont été ajoutées</string>
     <string name="edit_channel">Éditer la chaîne</string>
     <string name="drive_error_not_valid_json">Vous ne pouvez importer qu\'un fichier JSON valide via Google Drive</string>
+    <string name="action_clear_local_data">Clear Local Data</string>
+    <string name="chdb_issue_info">\"An error has been found loading your data. This may be due to a syntax error. Local data can be cleared to allow the app to continue working. Do you want to do this?  Error below:  %1$s\"</string>
+    <string name="chdb_issue_title">Issue with your channel data</string>
+    <string name="exit_app">Exit App</string>
+    <string name="request_permission">Request Permission</string>
 </resources>

@@ -3,15 +3,6 @@
 
     <item
         is-multidex="false"
-        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.afollestad.material-dialogs\core\0.9.0.2\jars\classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.2"
-        sha1="d3f8ab57967a9149262ad36a46477fc2515f6ac8">
-        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\com.afollestad.material-dialogs-core-0.9.0.2_d8d4e8215614448465722848da4d6c3b048b07d2.jar" />
-    </item>
-    <item
-        is-multidex="false"
         jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-ads\10.0.0\jars\classes.jar"
         jumboMode="false"
         optimize="true"
@@ -282,15 +273,6 @@
     </item>
     <item
         is-multidex="false"
-        jar="C:\Users\Nick\.gradle\caches\modules-2\files-2.1\com.squareup.picasso\picasso\2.5.2\7446d06ec8d4f7ffcc53f1da37c95f200dcb9387\picasso-2.5.2.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.2"
-        sha1="7446d06ec8d4f7ffcc53f1da37c95f200dcb9387">
-        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\picasso-2.5.2_8e562cd28b0faa805d07187ca3f3672ff9dbbc0f.jar" />
-    </item>
-    <item
-        is-multidex="false"
         jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\support-compat\25.1.0\jars\classes.jar"
         jumboMode="true"
         optimize="true"
@@ -342,15 +324,6 @@
         revision="21.1.2"
         sha1="ca3c7aa31e2726a400a6e552b93cb9f63c9a1e6d">
         <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\debug\com.android.support-support-compat-25.1.0_b5b3188950b3c30a84d0462ad68970a99ee46776.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.afollestad.material-dialogs\core\0.9.0.2\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="24.0.2"
-        sha1="d3f8ab57967a9149262ad36a46477fc2515f6ac8">
-        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\com.afollestad.material-dialogs-core-0.9.0.2_d8d4e8215614448465722848da4d6c3b048b07d2.jar" />
     </item>
     <item
         is-multidex="false"
@@ -624,15 +597,6 @@
     </item>
     <item
         is-multidex="false"
-        jar="C:\Users\Nick\.gradle\caches\modules-2\files-2.1\com.squareup.picasso\picasso\2.5.2\7446d06ec8d4f7ffcc53f1da37c95f200dcb9387\picasso-2.5.2.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="24.0.2"
-        sha1="7446d06ec8d4f7ffcc53f1da37c95f200dcb9387">
-        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\picasso-2.5.2_8e562cd28b0faa805d07187ca3f3672ff9dbbc0f.jar" />
-    </item>
-    <item
-        is-multidex="false"
         jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-drive\10.0.0\jars\classes.jar"
         jumboMode="true"
         optimize="true"
@@ -831,15 +795,6 @@
     </item>
     <item
         is-multidex="false"
-        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.afollestad.material-dialogs\commons\0.9.0.2\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="24.0.2"
-        sha1="b8040f9d05681dcadce06606dc127fe1c1a9212a">
-        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\com.afollestad.material-dialogs-commons-0.9.0.2_9cf1538cdcaa5372931bab4051ac000d0a774a03.jar" />
-    </item>
-    <item
-        is-multidex="false"
         jar="C:\Users\Nick\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\25.1.0\support-annotations-25.1.0.jar"
         jumboMode="false"
         optimize="true"
@@ -894,15 +849,6 @@
     </item>
     <item
         is-multidex="false"
-        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\me.zhanghai.android.materialprogressbar\library\1.1.7\jars\classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.2"
-        sha1="1478a113f04bf0b679037b4f6bd88bd1837b96a3">
-        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\me.zhanghai.android.materialprogressbar-library-1.1.7_1936a05b56c33f28de720279ea87343241c156e0.jar" />
-    </item>
-    <item
-        is-multidex="false"
         jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.android.support\support-fragment\25.1.0\jars\classes.jar"
         jumboMode="true"
         optimize="true"
@@ -921,15 +867,6 @@
     </item>
     <item
         is-multidex="false"
-        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\me.zhanghai.android.materialprogressbar\library\1.1.7\jars\classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="24.0.2"
-        sha1="1478a113f04bf0b679037b4f6bd88bd1837b96a3">
-        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\me.zhanghai.android.materialprogressbar-library-1.1.7_1936a05b56c33f28de720279ea87343241c156e0.jar" />
-    </item>
-    <item
-        is-multidex="false"
         jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.github.fleker\settingsmanager-common\1.2.1\jars\classes.jar"
         jumboMode="true"
         optimize="true"
@@ -945,15 +882,6 @@
         revision="24.0.2"
         sha1="0a0ef86b7fa568a52bf6214a0326ca1f1d618da7">
         <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\com.android.support-support-core-utils-25.1.0_1f93444f0a9767f9ea663e4298d43bb9ae22f7a5.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\exploded-aar\com.afollestad.material-dialogs\commons\0.9.0.2\jars\classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="24.0.2"
-        sha1="b8040f9d05681dcadce06606dc127fe1c1a9212a">
-        <dex dex="C:\Users\Nick\Development\CumulusTV\app\build\intermediates\pre-dexed\release\com.afollestad.material-dialogs-commons-0.9.0.2_9cf1538cdcaa5372931bab4051ac000d0a774a03.jar" />
     </item>
     <item
         is-multidex="false"

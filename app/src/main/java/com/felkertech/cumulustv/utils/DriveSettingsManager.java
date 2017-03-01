@@ -108,7 +108,7 @@ public class DriveSettingsManager extends SettingsManager {
                                 JSONObject tempJson = new JSONObject(contentsAsString);
                             } catch (JSONException e) {
                                 throw new ChannelDatabase.MalformedChannelDataException(
-                                        e.getMessage());
+                                        e.getMessage() + " User Data: '" + contentsAsString + "'");
                             }
 
                             //Step 3, write to SM
