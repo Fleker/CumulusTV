@@ -4,10 +4,13 @@ import android.content.Context;
 import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.util.Log;
 
 import com.felkertech.cumulustv.model.ChannelDatabase;
 import com.felkertech.cumulustv.model.JsonChannel;
 import com.felkertech.cumulustv.player.CumulusTvPlayer;
+import com.google.android.media.tv.companionlibrary.TvPlayer;
 
 import org.json.JSONException;
 
@@ -15,12 +18,17 @@ import org.json.JSONException;
  * Created by Nick on 3/1/2017.
  */
 
-public class CustomMediaSession extends MediaSession.Callback {
+public class CustomMediaSession extends MediaSessionCompat.Callback {
+    private static final String TAG = CustomMediaSession.class.getSimpleName();
+    private static final boolean DEBUG = true;
+
     private Context mContext;
     private CumulusTvPlayer mPlayer;
+    private Callback mCallback;
 
-    public CustomMediaSession(Context context) {
+    public CustomMediaSession(Context context, Callback callback) {
         mContext = context;
+        mCallback = callback;
     }
 
     @Override
@@ -36,7 +44,11 @@ public class CustomMediaSession extends MediaSession.Callback {
     }
 
     @Override
-    public void onPrepareFromMediaId(String mediaId, Bundle extras) {
+    public void onPlayFromMediaId(String mediaId, Bundle extras) {
+        super.onPlayFromMediaId(mediaId, extras);
+        if (DEBUG) {
+            Log.d(TAG, "Prepare from media id " + mediaId);
+        }
         startPlaying(mediaId); // Media id = url
     }
 
@@ -61,11 +73,26 @@ public class CustomMediaSession extends MediaSession.Callback {
     }
 
     private void startPlaying(JsonChannel channel) {
+        if (channel == null) {
+            return;
+        }
         // Actual playing
         if (mPlayer == null) {
             mPlayer = new CumulusTvPlayer(mContext);
+            mPlayer.registerCallback(new TvPlayer.Callback() {
+                @Override
+                public void onStarted() {
+                    super.onStarted();
+                    Log.d(TAG, "Playback started");
+                }
+            });
         }
+        if (DEBUG) {
+            Log.d(TAG, "Start playing " + channel.getMediaUrl());
+        }
+        mPlayer.play();
         mPlayer.startPlaying(Uri.parse(channel.getMediaUrl()));
+        mCallback.onPlaybackStarted(channel);
     }
 
     private void startPlaying(String uri) {
@@ -75,13 +102,23 @@ public class CustomMediaSession extends MediaSession.Callback {
     @Override
     public void onPause() {
         super.onPause();
-        mPlayer.pause();
+        if (mPlayer != null) {
+            mPlayer.pause();
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mPlayer.stop();
-        mPlayer.release();
+        if (mPlayer != null) {
+            mPlayer.stop();
+            mPlayer.release();
+            mCallback.onPlaybackEnded();
+        }
+    }
+
+    public interface Callback {
+        void onPlaybackStarted(JsonChannel channel);
+        void onPlaybackEnded();
     }
 }

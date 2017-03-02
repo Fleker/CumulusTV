@@ -331,6 +331,7 @@
         </activity>
 
         <service android:name="com.felkertech.cumulustv.services.CumulusBrowseService"
+            android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name=
