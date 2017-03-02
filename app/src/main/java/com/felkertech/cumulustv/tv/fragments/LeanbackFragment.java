@@ -235,11 +235,11 @@ public class LeanbackFragment extends BrowseFragment implements GoogleApiClient.
         ArrayObjectAdapter gridRowAdapter = new ArrayObjectAdapter(mGridPresenter);
         gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_television),
                 getString(R.string.manage_livechannels)));
-        gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_airplay),
+        gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_add_channel),
                 getString(R.string.manage_add_new)));
-        gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_airplay),
+        gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_link_channel),
                 getString(R.string.add_jsonlisting)));
-        gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_airplay),
+        gridRowAdapter.add(new Option(getResources().getDrawable(R.drawable.ic_apps),
                 getString(R.string.installed_plugins)));
         mRowsAdapter.add(new ListRow(gridHeader, gridRowAdapter));
 

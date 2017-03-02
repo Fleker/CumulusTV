@@ -548,17 +548,18 @@ public class MainPicker extends CumulusTvPlugin {
                         }
                     })
                     .create();
-            mDialog.getWindow().findViewById(R.id.stream_open).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(MainPicker.this, CumulusVideoPlayback.class);
-                    i.putExtra(CumulusVideoPlayback.KEY_VIDEO_URL, getUrl());
-                    startActivity(i);
-                }
-            });
             if (AppUtils.isTV(context)) {
                 mDialog.getWindow().findViewById(R.id.stream_open)
                         .setVisibility(View.GONE);
+            } else {
+                mDialog.getWindow().findViewById(R.id.stream_open).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(MainPicker.this, CumulusVideoPlayback.class);
+                        i.putExtra(CumulusVideoPlayback.KEY_VIDEO_URL, getUrl());
+                        startActivity(i);
+                    }
+                });
             }
             final CumulusChannel cumulusChannel = getChannel();
             if (cumulusChannel != null && cumulusChannel.getGenresString() != null) {
