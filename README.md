@@ -1,4 +1,4 @@
-# CumulusTV
+# iChannel TV
 Android TV Live Channel App with builtin live stream files, powered by the TIF Companion Library.
 
 
