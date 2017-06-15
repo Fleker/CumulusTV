@@ -549,8 +549,12 @@ public class MainPicker extends CumulusTvPlugin {
                     })
                     .create();
             if (AppUtils.isTV(context)) {
-                mDialog.getWindow().findViewById(R.id.stream_open)
-                        .setVisibility(View.GONE);
+                if (mDialog == null) {
+                    Toast.makeText(context, "mDialog is null", Toast.LENGTH_SHORT);
+                } else {
+                    mDialog.getWindow().findViewById(R.id.stream_open)
+                            .setVisibility(View.GONE);
+                }
             } else {
                 mDialog.getWindow().findViewById(R.id.stream_open).setOnClickListener(new View.OnClickListener() {
                     @Override
