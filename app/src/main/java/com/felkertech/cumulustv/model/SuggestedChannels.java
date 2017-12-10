@@ -59,6 +59,24 @@ public class SuggestedChannels {
                     .setNumber("133")
                     .build(),
             new JsonChannel.Builder()
+                    .setGenres(TvContract.Programs.Genres.NEWS)
+                    .setLogo("http://www.ewtn.com/images/ewtnLogo_new2016.png")
+                    .setMediaUrl("http://ewtnmmd.mmdlive.lldns.net/ewtnmmd/a8d009b542d24f3faa63c1b" +
+                            "d1c6620fb/manifest.m3u8")
+                    .setName("EWTN")
+                    .setNumber("135")
+                    .setSplashscreen("http://www.ewtn.com/images/bg.jpg")
+                    .build(),
+            new JsonChannel.Builder()
+                    .setGenres(TvContract.Programs.Genres.NEWS)
+                    .setLogo("https://upload.wikimedia.org/wikipedia/en/c/cf/TelecareTV_JPEG.jpg")
+                    .setMediaUrl("http://nlds7.neulion.com/nlds/telecare/telecare/as/live/telecare" +
+                            "_hd_1600_ipad.m3u8")
+                    .setName("Telecare")
+                    .setNumber("137")
+                    .setSplashscreen("http://www.telecaretv.org/fls/24700/site_graphics/siteBg2.jpg")
+                    .build(),
+            new JsonChannel.Builder()
                     .setLogo("http://static-cdn1.ustream.tv/i/channel/live/1_9600798,256x144,b:20" +
                             "15071514.jpg")
                     .setMediaUrl("http://iphone-streaming.ustream.tv/uhls/9600798/streams/live/ip" +
