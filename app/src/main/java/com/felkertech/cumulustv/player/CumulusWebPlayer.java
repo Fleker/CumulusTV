@@ -19,7 +19,7 @@ public class CumulusWebPlayer extends WebView {
         super.getSettings().setSupportZoom(false);
         super.getSettings().setSupportMultipleWindows(false);
         super.setWebViewClient(new BridgeClient());
-        super.getSettings().setUserAgentString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.35 Safari/537.36"); //Claim to be a desktop
+        super.getSettings().setUserAgentString("Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"); // Claim to be iPhone
         super.setKeepScreenOn(true);
         this.mListener = listener;
     }
