@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
@@ -40,7 +39,6 @@ import com.felkertech.cumulustv.utils.AppUtils;
 import com.felkertech.cumulustv.utils.PermissionUtils;
 import com.felkertech.n.cumulustv.R;
 import com.felkertech.settingsmanager.common.CommaArray;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.media.tv.companionlibrary.TvPlayer;
 
 import org.json.JSONException;
@@ -48,7 +46,6 @@ import org.json.JSONException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -397,6 +394,7 @@ public class MainPicker extends CumulusTvPlugin {
     private class MobilePickerDialog extends PickerDialog {
         private AlertDialog mDialog;
         private Context mContext;
+        private View mLayout;
         private boolean mIsNewChannel;
 
         protected MobilePickerDialog() {
@@ -458,6 +456,7 @@ public class MainPicker extends CumulusTvPlugin {
         private AlertDialog build(Context context, boolean isNewChannel) {
             mContext = context;
             mIsNewChannel = isNewChannel;
+            mLayout = getLayoutInflater().inflate(R.layout.dialog_channel_new, null);
             mDialog = new AlertDialog.Builder(context)
                     .setTitle(isNewChannel ? context.getString(R.string.manage_add_new) :
                             context.getString(R.string.edit_channel))
@@ -500,7 +499,7 @@ public class MainPicker extends CumulusTvPlugin {
                             finish();
                         }
                     })
-                    .setView(R.layout.dialog_channel_new)
+                    .setView(mLayout)
                     .setPositiveButton(getPositiveButtonText(), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -556,7 +555,7 @@ public class MainPicker extends CumulusTvPlugin {
                             .setVisibility(View.GONE);
                 }
             } else {
-                mDialog.getWindow().findViewById(R.id.stream_open).setOnClickListener(new View.OnClickListener() {
+                mLayout.findViewById(R.id.stream_open).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent i = new Intent(MainPicker.this, CumulusVideoPlayback.class);
@@ -572,17 +571,17 @@ public class MainPicker extends CumulusTvPlugin {
                 includeGenrePicker(MobilePickerDialog.this, "");
             }
 
-            ((EditText) mDialog.getWindow().findViewById(R.id.number))
+            ((EditText) mLayout.findViewById(R.id.number))
                     .addTextChangedListener(filterTextWatcher);
-            ((EditText) mDialog.getWindow().findViewById(R.id.name))
+            ((EditText) mLayout.findViewById(R.id.name))
                     .addTextChangedListener(filterTextWatcher);
-            ((EditText) mDialog.getWindow().findViewById(R.id.stream))
+            ((EditText) mLayout.findViewById(R.id.stream))
                     .addTextChangedListener(filterTextWatcher);
 
             mDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface dialog) {
-                    RelativeLayout l = (RelativeLayout) mDialog.getWindow().getDecorView();
+                    View l = mLayout;
                     if (DEBUG) {
                         Log.d(TAG, "Populate the form?");
                         Log.d(TAG, (cumulusChannel != null) + "  " + (getChannel() != null));
@@ -616,7 +615,7 @@ public class MainPicker extends CumulusTvPlugin {
         }
 
         public View getCustomView() {
-            return mDialog.getWindow().getDecorView();
+            return mLayout;
         }
 
         @Override
@@ -699,7 +698,7 @@ public class MainPicker extends CumulusTvPlugin {
             if (isNewChannel) {
                 findViewById(R.id.negative_button).setVisibility(View.GONE);
             }
-            streamView = ((EditText) findViewById(R.id.stream));
+            streamView = findViewById(R.id.stream);
             findViewById(R.id.positive_button).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
