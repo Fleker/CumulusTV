@@ -55,6 +55,7 @@ public class ChannelDatabase {
     protected List<JsonChannel> mJsonChannelsList;
 
     private static ChannelDatabase mChannelDatabase;
+    private static Thread mWorker;
 
     public static ChannelDatabase getInstance(Context context) {
         if (mChannelDatabase == null) {
@@ -382,6 +383,11 @@ public class ChannelDatabase {
     }
 
     public HashMap<String, Long> getHashMap() {
+        try {
+            mWorker.join(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return mDatabaseHashMap;
     }
 
@@ -439,7 +445,7 @@ public class ChannelDatabase {
      * @param context The application's context for the {@link ContentResolver}.
      */
     protected void initializeHashMap(final Context context) {
-        new Thread(new Runnable() {
+        mWorker = new Thread(new Runnable() {
             @Override
             public void run() {
                 ContentResolver contentResolver = context.getContentResolver();
@@ -470,7 +476,8 @@ public class ChannelDatabase {
                     cursor.close();
                 }
             }
-        }).start();
+        });
+        mWorker.start();
     }
 
     public void eraseData() {
